@@ -11,7 +11,6 @@
  * @package    Nette\Test
  */
 
-require __DIR__ . '/../Runner/TestJob.php';
 
 
 /**
