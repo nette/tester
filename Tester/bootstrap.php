@@ -9,6 +9,7 @@
 
 require __DIR__ . '/Framework/TestHelpers.php';
 require __DIR__ . '/Framework/Assert.php';
+require __DIR__ . '/Framework/TestCase.php';
 require __DIR__ . '/Runner/TestJob.php';
 
 
