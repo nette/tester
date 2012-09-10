@@ -32,7 +32,7 @@ class Assert
 	{
 		if ($actual !== $expected) {
 			self::log($expected, $actual);
-			self::doFail('Failed asserting that ' . self::dump($actual) . ' is identical to expected ' . self::dump($expected));
+			throw new AssertException('Failed asserting that ' . self::dump($actual) . ' is identical to expected ' . self::dump($expected));
 		}
 	}
 
@@ -48,7 +48,7 @@ class Assert
 	{
 		if ($actual != $expected) {
 			self::log($expected, $actual);
-			self::doFail('Failed asserting that ' . self::dump($actual) . ' is equal to expected ' . self::dump($expected));
+			throw new AssertException('Failed asserting that ' . self::dump($actual) . ' is equal to expected ' . self::dump($expected));
 		}
 	}
 
@@ -62,7 +62,7 @@ class Assert
 	public static function true($actual)
 	{
 		if ($actual !== TRUE) {
-			self::doFail('Failed asserting that ' . self::dump($actual) . ' is TRUE');
+			throw new AssertException('Failed asserting that ' . self::dump($actual) . ' is TRUE');
 		}
 	}
 
@@ -76,7 +76,7 @@ class Assert
 	public static function false($actual)
 	{
 		if ($actual !== FALSE) {
-			self::doFail('Failed asserting that ' . self::dump($actual) . ' is FALSE');
+			throw new AssertException('Failed asserting that ' . self::dump($actual) . ' is FALSE');
 		}
 	}
 
@@ -90,7 +90,7 @@ class Assert
 	public static function null($actual)
 	{
 		if ($actual !== NULL) {
-			self::doFail('Failed asserting that ' . self::dump($actual) . ' is NULL');
+			throw new AssertException('Failed asserting that ' . self::dump($actual) . ' is NULL');
 		}
 	}
 
@@ -106,7 +106,7 @@ class Assert
 	public static function exception($class, $message, $actual)
 	{
 		if (!($actual instanceof $class)) {
-			self::doFail('Failed asserting that ' . get_class($actual) . " is an instance of class $class");
+			throw new AssertException('Failed asserting that ' . get_class($actual) . " is an instance of class $class");
 		}
 		if ($message) {
 			self::match($message, $actual->getMessage());
@@ -126,7 +126,7 @@ class Assert
 	{
 		try {
 			call_user_func($function);
-			self::doFail('Expected exception');
+			throw new AssertException('Expected exception');
 		} catch (Exception $e) {
 			Assert::exception($class, $message, $e);
 		}
@@ -157,7 +157,7 @@ class Assert
 		restore_error_handler();
 
 		if (!$catched) {
-			self::doFail('Expected error');
+			throw new AssertException('Expected error');
 		}
 		if ($catched[0] !== $level) {
 			$consts = get_defined_constants(TRUE);
@@ -169,7 +169,7 @@ class Assert
 					$level = $name;
 				}
 			}
-			self::doFail('Failed asserting that ' . $catched[0] . ' is ' . $level);
+			throw new AssertException('Failed asserting that ' . $catched[0] . ' is ' . $level);
 		}
 		if ($message) {
 			self::match($message, $catched[1]);
@@ -184,7 +184,7 @@ class Assert
 	 */
 	public static function fail($message)
 	{
-		self::doFail($message);
+		throw new AssertException($message);
 	}
 
 
@@ -265,31 +265,8 @@ class Assert
 		}
 		if (!$res) {
 			self::log($expected, $actual);
-			self::doFail('Failed asserting that ' . self::dump($actual) . ' matches expected ' . self::dump($expected));
+			throw new AssertException('Failed asserting that ' . self::dump($actual) . ' matches expected ' . self::dump($expected));
 		}
-	}
-
-
-
-	/**
-	 * Returns message and file and line from call stack.
-	 * @param  string
-	 * @return void
-	 */
-	private static function doFail($message)
-	{
-		$trace = debug_backtrace();
-		while (isset($trace[0]['file']) && $trace[0]['file'] === __FILE__) {
-			array_shift($trace);
-		}
-		while ($trace) {
-			if (isset($trace[0]['file'], $trace[0]['line'])) {
-				$message .= "\nin " . implode(DIRECTORY_SEPARATOR, array_slice(explode(DIRECTORY_SEPARATOR, $trace[0]['file']), -3)) . ':' . $trace[0]['line'];
-			}
-			array_shift($trace);
-		}
-		echo "\n$message";
-		exit(TestJob::CODE_FAIL);
 	}
 
 
@@ -485,4 +462,16 @@ class Assert
 		}
 	}
 
+}
+
+
+
+/**
+ * Assertion exception.
+ *
+ * @author     David Grudl
+ * @package    Nette\Tester
+ */
+class AssertException extends \Exception
+{
 }

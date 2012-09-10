@@ -32,7 +32,7 @@ set_error_handler(function($severity, $message, $file, $line) {
 
 // catch exceptions
 set_exception_handler(function($e) {
-	echo "\n" . get_class($e) . ': ' . $e->getMessage();
+	echo "\n" . ($e instanceof AssertException ? '' : get_class($e) . ': ') . $e->getMessage();
 	$trace = $e->getTrace();
 	while (isset($trace[0]['file']) && substr($trace[0]['file'], strlen(__DIR__))  === __DIR__) {
 		array_shift($trace);
@@ -43,5 +43,5 @@ set_exception_handler(function($e) {
 		}
 		array_shift($trace);
 	}
-	exit(TestJob::CODE_ERROR);
+	exit($e instanceof AssertException ? TestJob::CODE_FAIL : TestJob::CODE_ERROR);
 });
