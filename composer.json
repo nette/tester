@@ -1,0 +1,23 @@
+{
+	"name": "nette/tester",
+	"description": "An easy-to-use PHP Unit Testing framework.",
+	"homepage": "http://nette.org",
+	"keywords": ["testing", "unit", "nette"],
+	"license": ["BSD-3-Clause", "GPL-2.0", "GPL-3.0"],
+	"authors": [
+		{
+			"name": "David Grudl",
+			"homepage": "http://davidgrudl.com"
+		},
+		{
+			"name": "Nette Community",
+			"homepage": "http://nette.org/contributors"
+		}
+	],
+	"require": {
+		"php": ">=5.3.0"
+	},
+	"autoload": {
+		"classmap": ["Tester/"]
+	}
+}
