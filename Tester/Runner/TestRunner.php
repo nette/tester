@@ -56,10 +56,6 @@ class TestRunner
 		exec(escapeshellarg($this->phpBinary) . ' -v', $output);
 		if (!isset($output[0])) {
 			return FALSE;
-
-		} elseif (strpos($output[0], 'cgi-fcgi') === FALSE) {
-			echo "Nette Framework Tests suite requires php-cgi, " . $this->phpBinary . " given.\n\n";
-			return FALSE;
 		}
 		echo $this->log("$output[0] | $this->phpBinary $this->phpArgs\n");
 
