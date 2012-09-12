@@ -3,7 +3,8 @@ Nette Test Framework (v0.4)
 ---------------------------
 <?php
 
-require_once __DIR__ . '/TestRunner.php';
+require_once __DIR__ . '/Runner/TestRunner.php';
+require_once __DIR__ . '/Runner/TestJob.php';
 
 /**
  * Help

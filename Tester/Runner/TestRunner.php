@@ -11,8 +11,6 @@
  * @package    Nette\Test
  */
 
-require __DIR__ . '/TestHelpers.php';
-
 
 
 /**
