@@ -1,10 +1,23 @@
-
-Nette Test Framework (v0.4)
----------------------------
 <?php
+
+/**
+ * Nette Tester (version 0.9-dev)
+ *
+ * Copyright (c) 2009 David Grudl (http://davidgrudl.com)
+ *
+ * For the full copyright and license information, please view
+ * the file license.txt that was distributed with this source code.
+ */
+
 
 require_once __DIR__ . '/Runner/TestRunner.php';
 require_once __DIR__ . '/Runner/TestJob.php';
+
+
+echo "
+Nette Tester (v0.9)
+-------------------
+";
 
 /**
  * Help
