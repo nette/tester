@@ -148,7 +148,7 @@ class Assert
 			if (($severity & error_reporting()) === $severity) {
 				if ($catched) {
 					echo "\nUnexpected error $message in $file:$line";
-					exit(TestCase::CODE_FAIL);
+					exit(TestJob::CODE_FAIL);
 				}
 				$catched = array($severity, $message);
 			}
@@ -289,7 +289,7 @@ class Assert
 			array_shift($trace);
 		}
 		echo "\n$message";
-		exit(TestCase::CODE_FAIL);
+		exit(TestJob::CODE_FAIL);
 	}
 
 

@@ -11,7 +11,7 @@
  * @package    Nette\Test
  */
 
-require __DIR__ . '/TestCase.php';
+require __DIR__ . '/TestJob.php';
 
 
 /**
@@ -82,7 +82,7 @@ class TestHelpers
 	public static function skip($message = '')
 	{
 		echo "\nSkipped:\n$message\n";
-		die(TestCase::CODE_SKIP);
+		die(TestJob::CODE_SKIP);
 	}
 
 

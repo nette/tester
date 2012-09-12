@@ -14,12 +14,12 @@
 
 
 /**
- * Single test case.
+ * Single test job.
  *
  * @author     David Grudl
  * @package    Nette\Test
  */
-class TestCase
+class TestJob
 {
 	const
 		CODE_NONE = -1,
@@ -83,14 +83,14 @@ class TestCase
 	/**
 	 * Runs single test.
 	 * @param  bool
-	 * @return TestCase  provides a fluent interface
+	 * @return TestJob  provides a fluent interface
 	 */
 	public function run($blocking = true)
 	{
 		// pre-skip?
 		if (isset($this->options['skip'])) {
 			$message = $this->options['skip'] ? $this->options['skip'] : 'No message.';
-			throw new TestCaseException($message, TestCaseException::SKIPPED);
+			throw new TestJobException($message, TestJobException::SKIPPED);
 
 		} elseif (isset($this->options['phpversion'])) {
 			$operator = '>=';
@@ -99,7 +99,7 @@ class TestCase
 				$operator = $matches[1];
 			}
 			if (version_compare($this->options['phpversion'], $this->phpVersion, $operator)) {
-				throw new TestCaseException("Requires PHP $operator {$this->options['phpversion']}.", TestCaseException::SKIPPED);
+				throw new TestJobException("Requires PHP $operator {$this->options['phpversion']}.", TestJobException::SKIPPED);
 			}
 		}
 
@@ -113,7 +113,7 @@ class TestCase
 	 * Sets PHP command line.
 	 * @param  string
 	 * @param  string
-	 * @return TestCase  provides a fluent interface
+	 * @return TestJob  provides a fluent interface
 	 */
 	public function setPhp($binary, $args)
 	{
@@ -216,13 +216,13 @@ class TestCase
 		}
 
 		if ($res === self::CODE_ERROR) {
-			throw new TestCaseException($this->output ?: 'Fatal error');
+			throw new TestJobException($this->output ?: 'Fatal error');
 
 		} elseif ($res === self::CODE_FAIL) {
-			throw new TestCaseException($this->output);
+			throw new TestJobException($this->output);
 
 		} elseif ($res === self::CODE_SKIP) { // skip
-			throw new TestCaseException($this->output, TestCaseException::SKIPPED);
+			throw new TestJobException($this->output, TestJobException::SKIPPED);
 
 		} elseif ($res !== self::CODE_OK) {
 			throw new Exception("Unable to execute '$this->cmdLine'.");
@@ -233,7 +233,7 @@ class TestCase
 		if (isset($this->options['assertcode'])) {
 			$code = isset($this->headers['Status']) ? (int) $this->headers['Status'] : 200;
 			if ($code !== (int) $this->options['assertcode']) {
-				throw new TestCaseException('Expected HTTP code ' . $this->options['assertcode'] . ' is not same as actual code ' . $code);
+				throw new TestJobException('Expected HTTP code ' . $this->options['assertcode'] . ' is not same as actual code ' . $code);
 			}
 		}
 	}
@@ -327,7 +327,7 @@ class TestCase
  * @author     David Grudl
  * @package    Nette\Test
  */
-class TestCaseException extends Exception
+class TestJobException extends Exception
 {
 	const SKIPPED = 1;
 

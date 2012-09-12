@@ -79,7 +79,7 @@ class TestRunner
 					continue;
 				}
 
-				$options = TestCase::parseOptions($file);
+				$options = TestJob::parseOptions($file);
 				if (!empty($options['multiple'])) {
 					if (is_numeric($options['multiple'])) {
 						$range = range(0, $options['multiple'] - 1);
@@ -108,12 +108,12 @@ class TestRunner
 			for ($i = count($running); $tests && $i < $this->jobs; $i++) {
 				list($file, $args) = array_shift($tests);
 				$count++;
-				$testCase = new TestCase($file, $args);
+				$testCase = new TestJob($file, $args);
 				$testCase->setPhp($this->phpBinary, $this->phpArgs);
 				try {
 					$parallel = ($this->jobs > 1) && (count($running) + count($tests) > 1);
 					$running[] = $testCase->run(!$parallel);
-				} catch (TestCaseException $e) {
+				} catch (TestJobException $e) {
 					echo 's';
 					$skipped[] = $this->log($this->format('Skipped', $testCase, $e));
 				}
@@ -128,8 +128,8 @@ class TestRunner
 						echo '.';
 						$passed[] = array($testCase->getName(), $testCase->getFile());
 
-					} catch (TestCaseException $e) {
-						if ($e->getCode() === TestCaseException::SKIPPED) {
+					} catch (TestJobException $e) {
+						if ($e->getCode() === TestJobException::SKIPPED) {
 							echo 's';
 							$skipped[] = $this->log($this->format('Skipped', $testCase, $e));
 
