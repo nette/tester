@@ -190,18 +190,6 @@ class Assert
 
 
 	/**
-	 * Initializes shutdown handler.
-	 * @return void
-	 */
-	public static function handler($handler)
-	{
-		ob_start();
-		register_shutdown_function($handler);
-	}
-
-
-
-	/**
 	 * Compares results using mask:
 	 *   %a%    one or more of anything except the end of line characters
 	 *   %a?%   zero or more of anything except the end of line characters
