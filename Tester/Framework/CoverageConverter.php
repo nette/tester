@@ -71,10 +71,12 @@ class CoverageConverter
 			die("Directory '$sourceDirectory' is missing.");
 		}
 
-		if (substr($sourceDirectory, -strlen('/')) !== '/') {
-			$sourceDirectory .= '/';
+		if (strncmp($sourceDirectory, './', 2) === 0) {
+			$sourceDirectory = getcwd() . substr($sourceDirectory, 1);
+		} elseif (strncmp($sourceDirectory, '/', 1) !== 0) {
+			$sourceDirectory = getcwd() . '/' . $sourceDirectory;
 		}
-		$this->sourceDirectory = $sourceDirectory;
+		$this->sourceDirectory = realpath($sourceDirectory) . '/';
 	}
 
 
@@ -104,7 +106,7 @@ class CoverageConverter
 				$this->addExclude($item);
 			}
 		} else {
-			if (strncmp($mask, './', strlen('./')) === 0) {
+			if (strncmp($mask, './', 2) === 0) {
 				$mask = $this->sourceDirectory . substr($mask, 2);
 			}
 			$this->exclude[] = $mask;
