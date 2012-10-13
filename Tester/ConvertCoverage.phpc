@@ -14,7 +14,7 @@
 
 require_once __DIR__ . '/Framework/CoverageConverter.php';
 
-$options = getopt('f:s:d:n:h', array('help'));
+$options = getopt('f:s:d:n:e:h', array('help'));
 
 $errors = array();
 if (!array_key_exists('h', $options) && !array_key_exists('help', $options)) {
@@ -38,6 +38,12 @@ if (!array_key_exists('h', $options) && !array_key_exists('help', $options)) {
 	// workaround for https://bugs.php.net/bug.php?id=43587
 	if (in_array('-n', $_SERVER['argv']) && (!array_key_exists('n', $options) || !is_string($options['n']))) {
 		$errors[] = "Name must be string";
+	}
+
+	//if (!array_key_exists('e', $options) || (!is_string($options['e']) && !is_array($options['e']))) {
+	// workaround for https://bugs.php.net/bug.php?id=43587
+	if (in_array('-e', $_SERVER['argv']) && (!array_key_exists('e', $options) || (!is_string($options['e']) && !is_array($options['e'])))) {
+		$errors[] = "Exclude mask must be string";
 	}
 }
 
@@ -63,6 +69,7 @@ Options:
 	-s <path>   Specify source files directory <path>
 	-d <path>   Specify destination file <path> (optional - default is ./coverage.html)
 	-n <name>   Application / library name (optional)
+	-e <mask>   Exclude files <mask> (optional - multiple)
 
 <?php
 		exit(0);
@@ -74,6 +81,9 @@ Options:
 $converter = new CoverageConverter($options['f'], $options['s']);
 if (array_key_exists('n', $options)) {
 	$converter->setName($options['n']);
+}
+if (array_key_exists('e', $options)) {
+	$converter->addExclude($options['e']);
 }
 if ($options['d'] === '-') {
 	$converter->renderHtml();

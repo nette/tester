@@ -32,6 +32,9 @@ class CoverageConverter
 	private $name;
 
 	/** @var array */
+	private $exclude = array();
+
+	/** @var array */
 	private $files = array();
 
 	/** @var int */
@@ -88,6 +91,29 @@ class CoverageConverter
 
 
 
+	/**
+	 * Restricts the search using mask.
+	 * Excludes directories from recursive traversing.
+	 * @param string|array	exclude path mask
+	 * @return CoverageConverter
+	 */
+	public function addExclude($mask)
+	{
+		if (is_array($mask)) {
+			foreach ($mask as $item) {
+				$this->addExclude($item);
+			}
+		} else {
+			if (strncmp($mask, './', strlen('./')) === 0) {
+				$mask = $this->sourceDirectory . substr($mask, 2);
+			}
+			$this->exclude[] = $mask;
+		}
+		return $this;
+	}
+
+
+
 	public function renderHtml()
 	{
 		$this->setupHighlight();
@@ -138,11 +164,24 @@ class CoverageConverter
 			return;
 		}
 
+		$pattern = NULL;
+		if (count($this->exclude)) {
+			$pattern = $this->getExcludePattern();
+		}
+
 		$this->files = array();
-		foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($this->sourceDirectory)) as $entry) {
+
+		$iterator = new RecursiveDirectoryIterator($this->sourceDirectory);
+		$iterator = new RecursiveCallbackFilterIterator($iterator, function($entry) use($pattern) {
 			if (substr($entry->getBasename(), 0, 1) === '.') { // . or .. or .gitignore
-				continue;
+				return FALSE;
+			} elseif (!is_null($pattern)) {
+				return !preg_match($pattern, strtr($entry, '\\', '/'));
 			}
+			return TRUE;
+		});
+		$iterator = new RecursiveIteratorIterator($iterator);
+		foreach ($iterator as $entry) {
 			$entry = (string) $entry;
 
 			$coverage = $covered = $total = 0;
@@ -171,5 +210,38 @@ class CoverageConverter
 				'light' => $total ? $total < 5 : count(file($entry)) < 50,
 			);
 		}
+	}
+
+
+
+	/**
+	 * Returns exclude patterns to regular expression.
+	 * @return string
+	 */
+	private function getExcludePattern()
+	{
+		$pattern = array();
+		// TODO: accept regexp
+		foreach ($this->exclude as $mask) {
+			$mask = rtrim(strtr($mask, '\\', '/'), '/');
+			$prefix = '';
+			if ($mask === '') {
+				continue;
+
+			} elseif ($mask === '*') {
+				return NULL;
+
+			} elseif ($mask[0] === '/') { // absolute fixing
+				$mask = ltrim($mask, '/');
+				$prefix = '(?<=^/)';
+
+			}
+
+			$pattern[] = $prefix . strtr(preg_quote($mask, '#'),
+				array('\*\*' => '.*', '\*' => '[^/]*', '\?' => '[^/]', '\[\!' => '[^', '\[' => '[', '\]' => ']', '\-' => '-')
+			);
+		}
+
+		return $pattern ? '#/(' . implode('|', $pattern) . ')$#i' : NULL;
 	}
 }
