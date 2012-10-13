@@ -125,6 +125,10 @@ class CoverageConverter
 		$totalSum = $this->totalSum;
 		$coveredSum = $this->coveredSum;
 
+		if ($totalSum <= 0) {
+			die('No data or 0% coverage');
+		}
+
 		include __DIR__ . '/coverage.phtml';
 	}
 
