@@ -23,7 +23,7 @@ class Assert
 {
 
 	/**
-	 * Checks assertion.
+	 * Checks assertion. Values must be exactly the same.
 	 * @param  mixed  expected
 	 * @param  mixed  actual
 	 * @return void
@@ -39,14 +39,14 @@ class Assert
 
 
 	/**
-	 * Checks assertion.
+	 * Checks assertion. The identity of objects and the order of keys in the arrays are ignored.
 	 * @param  mixed  expected
 	 * @param  mixed  actual
 	 * @return void
 	 */
 	public static function equal($expected, $actual)
 	{
-		if ($actual != $expected) {
+		if (!self::compare($expected, $actual)) {
 			self::log($expected, $actual);
 			throw new AssertException('Failed asserting that ' . self::dump($actual) . ' is equal to expected ' . self::dump($expected));
 		}
@@ -185,6 +185,50 @@ class Assert
 	public static function fail($message)
 	{
 		throw new AssertException($message);
+	}
+
+
+
+	/**
+	 * Initializes shutdown handler.
+	 * @return void
+	 */
+	public static function handler($handler)
+	{
+		ob_start();
+		register_shutdown_function($handler);
+	}
+
+
+
+	/**
+	 * Compares two structures. Ignores the identity of objects and the order of keys in the arrays.
+	 * @return bool
+	 */
+	public static function compare($expected, $actual)
+	{
+		if (is_object($expected) && is_object($actual) && get_class($expected) === get_class($actual)) {
+			$expected = (array) $expected;
+			$actual = (array) $actual;
+		}
+
+		if (is_array($expected) && is_array($actual)) {
+			$arr1 = array_keys($expected);
+			sort($arr1);
+			$arr2 = array_keys($actual);
+			sort($arr2);
+			if ($arr1 !== $arr2) {
+				return FALSE;
+			}
+
+			foreach ($expected as $key => $value) {
+				if (!self::compare($value, $actual[$key])) {
+					return FALSE;
+				}
+			}
+			return TRUE;
+		}
+		return $expected === $actual;
 	}
 
 
