@@ -28,6 +28,9 @@ class ReportGenerator
 	/** @var string */
 	private $sourceDir;
 
+	/** @var string */
+	private $title;
+
 	/** @var array */
 	private $files = array();
 
@@ -50,7 +53,7 @@ class ReportGenerator
 	 * @param string	path to coverage.dat file
 	 * @param string	path to source files
 	 */
-	public function __construct($file, $sourceDir = NULL)
+	public function __construct($file, $sourceDir, $title = NULL)
 	{
 		if (!is_file($file)) {
 			throw new \Exception("File '$file' is missing.");
@@ -73,6 +76,7 @@ class ReportGenerator
 		}
 
 		$this->sourceDir = realpath($sourceDir) . DIRECTORY_SEPARATOR;
+		$this->title = $title;
 	}
 
 
@@ -82,6 +86,7 @@ class ReportGenerator
 		$this->setupHighlight();
 		$this->parse();
 
+		$title = $this->title;
 		$classes = self::$classes;
 		$files = $this->files;
 		$totalSum = $this->totalSum;

@@ -5,7 +5,7 @@
 	<meta name="robots" content="noindex,noarchive">
 	<meta name="generator" content="Nette Tester">
 
-	<title>Nette Framework code coverage</title>
+	<title><?php echo $title ? htmlSpecialChars("$title - ") : ''; ?>Code coverage</title>
 
 	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4/jquery.min.js"></script>
 
@@ -88,7 +88,7 @@
 </head>
 
 <body>
-	<h1>Nette Framework Code coverage <?php echo round($coveredSum * 100 / $totalSum) ?>&nbsp;%</h1>
+	<h1><?php echo $title ? htmlSpecialChars("$title - ") : ''; ?>Code coverage <?php echo round($coveredSum * 100 / $totalSum) ?>&nbsp;%</h1>
 
 	<?php foreach ($files as $id => $info): ?>
 	<div>

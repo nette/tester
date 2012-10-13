@@ -15,7 +15,7 @@ Code coverage HTML report generator
 -----------------------------------
 ';
 
-$options = (array) getopt('c:s:o:h', array('help'));
+$options = (array) getopt('c:s:o:t:h', array('help'));
 
 if (!$options) { ?>
 Usage:
@@ -25,6 +25,7 @@ Options:
 	-c <path>  coverage.dat file (default is coverage.dat)
 	-s <path>  directory with source code
 	-o <path>  output file (default is coverage.html)
+	-t ...     title of generated documentation
 
 <?php
 }
@@ -35,10 +36,11 @@ $options += array(
 	'c' => 'coverage.dat',
 	's' => NULL,
 	'o' => 'coverage.html',
+	't' => NULL,
 );
 
 try {
-	$generator = new ReportGenerator($options['c'], $options['s']);
+	$generator = new ReportGenerator($options['c'], $options['s'], $options['t']);
 	if ($options['o'] === '-') {
 		$generator->render();
 	} else {
