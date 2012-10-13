@@ -14,7 +14,7 @@
 
 require_once __DIR__ . '/Framework/CoverageConverter.php';
 
-$options = getopt('f:s:d:h', array('help'));
+$options = getopt('f:s:d:n:h', array('help'));
 
 $errors = array();
 if (!array_key_exists('h', $options) && !array_key_exists('help', $options)) {
@@ -32,6 +32,12 @@ if (!array_key_exists('h', $options) && !array_key_exists('help', $options)) {
 		$errors[] = "Destination file path is not valid path";
 	} elseif (!array_key_exists('d', $options)) {
 		$options['d'] = getcwd() . '/coverage.html';
+	}
+
+	//if (!array_key_exists('n', $options) || !is_string($options['n'])) {
+	// workaround for https://bugs.php.net/bug.php?id=43587
+	if (in_array('-n', $_SERVER['argv']) && (!array_key_exists('n', $options) || !is_string($options['n']))) {
+		$errors[] = "Name must be string";
 	}
 }
 
@@ -56,6 +62,7 @@ Options:
 	-f <path>   Specify coverage.dat file <path>
 	-s <path>   Specify source files directory <path>
 	-d <path>   Specify destination file <path> (optional - default is ./coverage.html)
+	-n <name>   Application / library name (optional)
 
 <?php
 		exit(0);
@@ -65,6 +72,9 @@ Options:
 
 
 $converter = new CoverageConverter($options['f'], $options['s']);
+if (array_key_exists('n', $options)) {
+	$converter->setName($options['n']);
+}
 if ($options['d'] === '-') {
 	$converter->renderHtml();
 } else {

@@ -28,6 +28,9 @@ class CoverageConverter
 	/** @var string */
 	private $sourceDirectory;
 
+	/** @var string */
+	private $name;
+
 	/** @var array */
 	private $files = array();
 
@@ -73,11 +76,24 @@ class CoverageConverter
 
 
 
+	/**
+	 * @param string	application / library name
+	 * @return CoverageConverter
+	 */
+	public function setName($name)
+	{
+		$this->name = $name;
+		return $this;
+	}
+
+
+
 	public function renderHtml()
 	{
 		$this->setupHighlight();
 		$this->parse();
 
+		$name = $this->name;
 		$classes = self::$classes;
 		$files = $this->files;
 		$totalSum = $this->totalSum;
