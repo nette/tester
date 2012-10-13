@@ -65,6 +65,9 @@ class CoverageConverter
 			die("Directory '$sourceDirectory' is missing.");
 		}
 
+		if (substr($sourceDirectory, -strlen('/')) !== '/') {
+			$sourceDirectory .= '/';
+		}
 		$this->sourceDirectory = $sourceDirectory;
 	}
 
@@ -81,6 +84,23 @@ class CoverageConverter
 		$coveredSum = $this->coveredSum;
 
 		include __DIR__ . '/coverage.phtml';
+	}
+
+
+
+	public function generateHtml($file)
+	{
+		ini_set('implicit_flush', FALSE);
+		ob_start();
+		$this->renderHtml();
+		$html = ob_get_contents();
+		ob_end_clean();
+		ini_set('implicit_flush', TRUE);
+
+		if (@file_put_contents($file, $html) === FALSE) {
+			$dir = dirname($file);
+			die("Directory '$dir' is not writable");
+		}
 	}
 
 
