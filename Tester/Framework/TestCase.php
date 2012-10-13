@@ -29,8 +29,25 @@ class TestCase
 	{
 		$rc = new \ReflectionClass($this);
 		foreach ($rc->getMethods(\ReflectionMethod::IS_PUBLIC) as $method) {
-			if (preg_match('#^test[A-Z]#', $method->getName())) {
-				$this->runTest($method->getName());
+			if (!preg_match('#^test[A-Z]#', $method->getName())) {
+				continue;
+			}
+
+			$data = array();
+			preg_match_all('#@dataProvider\s+(\w+)#i', $method->getDocComment(), $matches);
+			if (!$matches[1]) {
+				$data[] = array();
+			}
+			foreach ($matches[1] as $provider) {
+				$res = $this->$provider();
+				if (!is_array($res)) {
+					throw new \RuntimeException("Data provider $provider doesn't return array.");
+				}
+				$data = array_merge($data, $res);
+			}
+
+		    foreach ($data as $args) {
+				$this->runTest($method->getName(), $args);
 			}
 		}
 	}
