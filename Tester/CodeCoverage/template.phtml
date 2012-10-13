@@ -1,85 +1,9 @@
-<?php
-
-/**
- * coverage.dat HTML viewer.
- *
- * This file is part of the Nette Tester.
- * Copyright (c) 2009 David Grudl (http://davidgrudl.com)
- * Copyright (c) 2009 Jakub Vrana (http://php.vrana.cz)
- */
-
-
-
-// load coverage.dat
-$file = __DIR__ . '/coverage.dat';
-if (!is_file($file)) {
-	die("File '$file' is missing.");
-}
-
-$coverageInfo = @unserialize(file_get_contents($file));
-if (!$coverageInfo) {
-	die("Content of file '$file' is invalid.");
-}
-
-
-// search files
-$root = realpath(__DIR__ . '/../../Nette') . DIRECTORY_SEPARATOR;
-$files = array();
-$totalSum = $coveredSum = 0;
-foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($root)) as $entry) {
-	if (substr($entry->getBasename(), 0, 1) === '.') { // . or .. or .gitignore
-		continue;
-	}
-	$entry = (string) $entry;
-
-	$coverage = $covered = $total = 0;
-	$lines = array();
-	if (isset($coverageInfo[$entry])) {
-		$lines = $coverageInfo[$entry];
-		foreach ($lines as $flag) {
-			if ($flag >= -1) {
-				$total++;
-			}
-			if ($flag >= 1) {
-				$covered++;
-			}
-		}
-		$coverage = round($covered * 100 / $total);
-		$totalSum += $total;
-		$coveredSum += $covered;
-	}
-
-	$files[] = (object) array(
-		'name' => str_replace($root, '', $entry),
-		'file' => $entry,
-		'lines' => $lines,
-		'coverage' => $coverage,
-		'total' => $total,
-		'light' => $total ? $total < 5 : count(file($entry)) < 50,
-	);
-}
-
-
-
-$classes = array(
-	1 => 't', // tested
-	-1 => 'u', // untested
-	-2 => 'dead', // dead code
-);
-
-ini_set('highlight.comment', '#999; font-style: italic');
-ini_set('highlight.default', '#000');
-ini_set('highlight.html', '#06B');
-ini_set('highlight.keyword', '#D24; font-weight: bold');
-ini_set('highlight.string', '#080');
-
-?>
 <!DOCTYPE html>
 <html>
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 	<meta name="robots" content="noindex,noarchive">
-	<meta name="generator" content="Nette Test Framework">
+	<meta name="generator" content="Nette Tester">
 
 	<title>Nette Framework code coverage</title>
 
