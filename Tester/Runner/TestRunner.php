@@ -74,25 +74,36 @@ class TestRunner
 				}
 
 				$options = TestJob::parseOptions($file);
-				if (!empty($options['multiple'])) {
-					if (is_numeric($options['multiple'])) {
-						$range = range(0, $options['multiple'] - 1);
+				$methods = array(NULL);
+				if (array_key_exists('testcase', $options)) {
+					$class = pathinfo($file, PATHINFO_FILENAME);
+					if ($options['testcase'] != "") {
+						$class = $options['testcase'];
+					}
+					$methods = TestJob::parseTestCaseClass($file, $class);
+				}
 
-					} elseif (!is_file($multiFile = dirname($file) . '/' . $options['multiple'])) {
-						throw new Exception("Missing @multiple configuration file '$multiFile'.");
+				foreach ($methods as $method) {
+					if (!empty($options['multiple'])) {
+						if (is_numeric($options['multiple'])) {
+							$range = range(0, $options['multiple'] - 1);
 
-					} elseif (($multiple = parse_ini_file($multiFile, TRUE)) === FALSE) {
-						throw new Exception("Cannot parse @multiple configuration file '$multiFile'.");
+						} elseif (!is_file($multiFile = dirname($file) . '/' . $options['multiple'])) {
+							throw new Exception("Missing @multiple configuration file '$multiFile'.");
+
+						} elseif (($multiple = parse_ini_file($multiFile, TRUE)) === FALSE) {
+							throw new Exception("Cannot parse @multiple configuration file '$multiFile'.");
+
+						} else {
+							$range = array_keys($multiple);
+						}
+						foreach ($range as $item) {
+							$tests[] = array($file, escapeshellarg($item), $method);
+						}
 
 					} else {
-						$range = array_keys($multiple);
+						$tests[] = array($file, NULL, $method);
 					}
-					foreach ($range as $item) {
-						$tests[] = array($file, escapeshellarg($item));
-					}
-
-				} else {
-					$tests[] = array($file, NULL);
 				}
 			}
 		}
@@ -100,13 +111,13 @@ class TestRunner
 		$running = array();
 		while ($tests || $running) {
 			for ($i = count($running); $tests && $i < $this->jobs; $i++) {
-				list($file, $args) = array_shift($tests);
+				list($file, $args, $method) = array_shift($tests);
 				$count++;
 				$testCase = new TestJob($file, $args);
 				$testCase->setPhp($this->phpBinary, $this->phpArgs);
 				try {
 					$parallel = ($this->jobs > 1) && (count($running) + count($tests) > 1);
-					$running[] = $testCase->run(!$parallel);
+					$running[] = $testCase->run(!$parallel, $method);
 				} catch (TestJobException $e) {
 					echo 's';
 					$skipped[] = $this->log($this->format('Skipped', $testCase, $e));
