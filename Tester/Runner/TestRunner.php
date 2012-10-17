@@ -42,6 +42,9 @@ class TestRunner
 	/** @var int  run jobs in parallel */
 	private $jobs = 1;
 
+	/** @var array  locally overriden multiple files */
+	private $multiFiles = array();
+
 
 
 	/**
@@ -78,15 +81,30 @@ class TestRunner
 					if (is_numeric($options['multiple'])) {
 						$range = range(0, $options['multiple'] - 1);
 
-					} elseif (!is_file($multiFile = dirname($file) . '/' . $options['multiple'])) {
-						throw new Exception("Missing @multiple configuration file '$multiFile'.");
-
-					} elseif (($multiple = parse_ini_file($multiFile, TRUE)) === FALSE) {
-						throw new Exception("Cannot parse @multiple configuration file '$multiFile'.");
-
 					} else {
+						$multiFile = $annotedMultiFile = dirname($file) . '/' . $options['multiple'];
+						if (isset($this->multiFiles[$annotedMultiFile])) {
+							$multiFile = $this->multiFiles[$annotedMultiFile];
+
+						} else {
+							if (!is_file($multiFile)) {
+								throw new Exception("Missing @multiple configuration file '$multiFile'.");
+							}
+
+							if ($annotedMultiFile !== ($multiFile = self::localizeMultipleFile($multiFile))) {
+								echo $this->log("Overriding " . realpath($annotedMultiFile) . "\n        by " . realpath($multiFile) . "\n");
+							}
+
+							$this->multiFiles[$annotedMultiFile] = $multiFile;
+						}
+
+						if (($multiple = parse_ini_file($multiFile, TRUE)) === FALSE) {
+							throw new Exception("Cannot parse @multiple configuration file '$multiFile'.");
+						}
+
 						$range = array_keys($multiple);
 					}
+
 					foreach ($range as $item) {
 						$tests[] = array($file, escapeshellarg($item));
 					}
@@ -156,6 +174,24 @@ class TestRunner
 			echo $this->log("\n\nOK ($count tests, $skippedCount skipped)");
 		}
 		return TRUE;
+	}
+
+
+
+	/**
+	 * Searchs for multiple file or their local replacement.
+	 * @param  string  path to multiple file
+	 * @return string  path to multiple file or local replacement
+	 */
+	public static function localizeMultipleFile($multiFile)
+	{
+		$tmp = pathinfo($multiFile);
+		$localMultiFile = "$tmp[dirname]/$tmp[filename].local" . (isset($tmp['extension']) ? ".$tmp[extension]" : '');
+		if (is_file($localMultiFile)) {
+			return $localMultiFile;
+		}
+
+		return $multiFile;
 	}
 
 
