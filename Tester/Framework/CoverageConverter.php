@@ -23,6 +23,9 @@
 class CoverageConverter
 {
 	/** @var array */
+	public $fileExtensions = array('php', 'phpc', 'phpt', 'phtml');
+
+	/** @var array */
 	private $data;
 
 	/** @var string */
@@ -183,6 +186,8 @@ class CoverageConverter
 				return FALSE;
 			} elseif (!is_null($pattern)) {
 				return !preg_match($pattern, strtr($entry, '\\', '/'));
+			} elseif (count($this->fileExtensions) && ($extension = strtolower(pathinfo($entry, PATHINFO_EXTENSION)))) {
+				return in_array($extension, $this->fileExtensions);
 			}
 			return TRUE;
 		});
