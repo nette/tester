@@ -198,8 +198,8 @@ class TestJob
 			$res = $this->exitCode;
 		}
 
-		if ($this->phpType === 'CGI') {
-			list($headers, $this->output) = explode("\r\n\r\n", $this->output, 2);
+		if ($this->phpType === 'CGI' && count($tmp = explode("\r\n\r\n", $this->output, 2)) >= 2) {
+			list($headers, $this->output) = $tmp;
 		} else {
 			$headers = '';
 		}
