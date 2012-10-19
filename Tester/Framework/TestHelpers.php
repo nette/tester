@@ -135,13 +135,8 @@ class TestHelpers
 		flock($f, LOCK_EX);
 		fseek($f, 0);
 		$coverage = @unserialize(stream_get_contents($f));
-		$root = realpath(__DIR__ . '/../../Nette') . DIRECTORY_SEPARATOR;
 
 		foreach (xdebug_get_code_coverage() as $filename => $lines) {
-			if (strncmp($root, $filename, strlen($root))) {
-				continue;
-			}
-
 			foreach ($lines as $num => $val) {
 				if (empty($coverage[$filename][$num]) || $val > 0) {
 					$coverage[$filename][$num] = $val; // -1 => untested; -2 => dead code
