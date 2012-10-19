@@ -161,6 +161,7 @@ class TestJob
 		if (isset($method) && $this->phpType != 'CLI') {
 			throw new \TestJobException('@testcase supported only on CLI', TestJobException::SKIPPED);
 		} elseif (isset($method)) {
+			$this->options['method'] = $method;
 			list($class, $shortMethod) = explode('::', $method);
 			$code = "require_once '{$this->file}';\\\$obj=new \\$class;\\\$obj->runTest('$shortMethod');";
 			$this->cmdLine .= ' -r "' . $code . '" ' . $this->args;
@@ -268,6 +269,9 @@ class TestJob
 	 */
 	public function getName()
 	{
+		if (isset($this->options['method'])) {
+			return $this->options['name'] . ' | ' . $this->options['method'];
+		}
 		return $this->options['name'];
 	}
 
