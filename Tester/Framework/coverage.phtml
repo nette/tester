@@ -81,6 +81,10 @@
 	.light td * {
 		color: gray;
 	}
+
+	.not-loaded td * {
+		color: red;
+	}
 	</style>
 </head>
 
@@ -90,7 +94,7 @@
 	<?php foreach ($files as $id => $info): ?>
 	<div>
 		<table>
-		<tr <?php echo $info->light ? 'class="light"' : '' ?>>
+		<tr <?php echo isset($info->class) ? ('class="' . $info->class . '"') : '' ?>>
 			<td class="number"><small><?php echo $info->coverage ?> %</small></td>
 			<td><div class="bar"><div style="width: <?php echo $info->coverage ?>%"></div></div></td>
 			<td><a href="#fragment<?php echo $id ?>" onClick="toggle(this.href);"><span><?php echo $info->name ?></span></a></td>
