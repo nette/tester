@@ -133,8 +133,9 @@ class ReportGenerator
 			$entry = (string) $entry;
 
 			$coverage = $covered = $total = 0;
+			$loaded = isset($this->data[$entry]);
 			$lines = array();
-			if (isset($this->data[$entry])) {
+			if ($loaded) {
 				$lines = $this->data[$entry];
 				foreach ($lines as $flag) {
 					if ($flag >= -1) {
@@ -149,13 +150,14 @@ class ReportGenerator
 				$this->coveredSum += $covered;
 			}
 
+			$light = $total ? $total < 5 : count(file($entry)) < 50;
 			$this->files[] = (object) array(
 				'name' => str_replace($this->sourceDir, '', $entry),
 				'file' => $entry,
 				'lines' => $lines,
 				'coverage' => $coverage,
 				'total' => $total,
-				'light' => $total ? $total < 5 : count(file($entry)) < 50,
+				'class' => $light ? 'light' : ($loaded ? NULL : 'not-loaded'),
 			);
 		}
 	}
