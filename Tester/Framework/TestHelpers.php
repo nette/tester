@@ -135,23 +135,32 @@ class TestHelpers
 		flock($f, LOCK_EX);
 		fseek($f, 0);
 		$coverage = @unserialize(stream_get_contents($f));
-		$root = realpath(__DIR__ . '/../../Nette') . DIRECTORY_SEPARATOR;
+		$coverage = is_array($coverage) ? $coverage : array();
 
-		foreach (xdebug_get_code_coverage() as $filename => $lines) {
-			if (strncmp($root, $filename, strlen($root))) {
-				continue;
-			}
-
-			foreach ($lines as $num => $val) {
-				if (empty($coverage[$filename][$num]) || $val > 0) {
-					$coverage[$filename][$num] = $val; // -1 => untested; -2 => dead code
-				}
-			}
-		}
+		$coverage = self::formatCoverageData($coverage);
 
 		ftruncate($f, 0);
 		fwrite($f, serialize($coverage));
 		fclose($f);
+	}
+
+
+
+	/**
+	 * Format xdebug code coverage data to array.
+	 * @return array
+	 */
+	public static function formatCoverageData(array $data = array())
+	{
+		foreach (xdebug_get_code_coverage() as $filename => $lines) {
+			foreach ($lines as $num => $val) {
+				if (empty($data[$filename][$num]) || $val > 0) {
+					$data[$filename][$num] = $val; // -1 => untested; -2 => dead code
+				}
+			}
+		}
+
+		return $data;
 	}
 
 }

@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta name="robots" content="noindex,noarchive">
+	<meta name="generator" content="Nette Tester">
+
+	<title><?php if (isset($name)) { echo htmlSpecialChars($name, ENT_QUOTES) . " - "; } ?>Code coverage</title>
+
+	<style type="text/css">
+	html {
+		font: 16px/1.5 sans-serif;
+		border-top: 4.7em solid #F4EBDB;
+	}
+
+	body {
+		max-width: 990px;
+		margin: -4.7em auto 0;
+		background: white;
+		color: #333;
+	}
+
+	h1 {
+		font-size: 1.9em;
+		margin: .5em 0 1.5em;
+		background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGwAAAAuCAMAAAD6KAyYAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAADBQTFRF9Ovb/fTky8O30sq9ubKm2tHD6uLT4trL9uzcw7yw+O7e+vHg8unZ7+bW8OfY8ejXi6Cf6QAABKhJREFUeNrsWNmS3DoINWgXLfv//zYg0ObJQ1K371tUUzOeYwQSHJbu6/pPK+eaX8gb+MrKtRLQk+68AQQt3l+3VuGKyTnEAgP4NAXo28ZqLIjoeAX6PfDFRc4WxqpAegHfjBcO3erFTGUA3/diGsamF1/AFxfg24vur7zYiauCVdbhDHnHb/NMpeVFxhmgE1hKqW88dHF+MHEDpsrvIaaU4pLIxIgLwaWrx6PmTxgXEThA/ky3doBWegTZF2EdvTbJDyYuR7tCQl3mj0wUjNSIrLeT3G0L010QD4DUVJz78KJ3BFhKBA5aZUidZ4qig0zBHQtzwhNockxoZqlj5a7XySSs4NY+fLIEq29BZ2mEgcC9jP0AOLYZgpoKdpKREVM41NMbVWzpI5BdH2EImbf5si+Ag5HHqZkMYWdpfmaK4Ly2eiNPW9PXyG7l2EnYeX3uu4EUKmdAexhgYbsXh9i8LkeXFAmnw+fTJ8NwFNOi2SmoAoASmvOD17UDgkjtwnmboePKR4IqAbZCNOpEIqakBboHX2yI5q2t7cAoZhynFTs6C41AAPOeYYYpAplQiSSczu1+GjttMAzoAOxinIDwcThYvL9RrXmVgmdYwJhGvki6VAmaUmPvLn3RkUohDeIny+oVMuRjL9Ncd8J0rprSQrBgS/tZlY0Ei3F6xBJmAdtqKhc52ios7bzB0KCep0OrlXRk5t4SejpwEFQub8YC7AFkBm7MCW1W0wqvVnbNMBuwjGGIF9iRMsS81aq6+5TZs7QSzIJPF7qjc7ESdxjjAjeANPfxGQNPK4expb/N3NcsGPU/bC5iVXXwTQ/1BqJ5UIqynGUai4cx+OzlFdkb0oeElht8X+mo9+7+RHeWPCCZ+JqguJyFRwAdnlpQipETDJ/kTiH8AYQN4H2h75P29Hs3GrRfzso/0XMKBZjDzqhChxrL0Z43gxPd2MFax92tnN2jZyftccObC8HBddaayb1anFMyd0k+dukZOQmgKUzVLXfO7LR+2p3UqfMDYPtli4hrVkGqnD6lJ1upaYGLTwlRCZjhEZejdJVIYyTUSQEXwoAcOKQBZKop6KwRUoVRsjlqfXCaCcFJxS1jG3cIoDeRbeDKHdsQlTpEqm489l0/B9j/4zPPv/Vv/fnHEl7zaY3K84lg/ZunCOePvBhiNLeKiCUP1xM4P0WB59WtQfE+0UBHfyTkt+D70JFvli3U30dIHqBoZ4PgfdCWdrMWHRrAP7ZvM5btZuAreM202kqpY2gujaIqrc3bDYi7O7/gLTqb4LArItkO7+ts6ZsxWsa05pBMuWNe4uLusO/ajCXkU6dWTC3Pjs0PkTY8lV62GCp2V3m6zULhkcTuW1ij/5gx9pE69OOpRJf0NpG119tPER1ZWZ97G9tuxuela+wwP/J9uVzf5bwZa+IPI0VHukznzWxEAc93exOkDfL427ytMUhjSyjts4yBTXUl8tHtH3fELA7nPpeHfBob3wHxEyiR+KlyW5ItWWOgPups1PPU5HlGtzmYO+ZiowdSmom+4F8MyduTpYj8IfuaQz7/yu+RRPM7JG6wtPWdmWf8k4c+GrZ+CTAAEqY0SiZk72cAAAAASUVORK5CYII=") right center no-repeat;
+		color: #7A7772;
+		text-shadow: 1px 1px 0 white;
+	}
+
+	div.code {
+		font: 14px/1.2 Consolas, monospace;
+		background: #FDF5CE;
+		padding: .4em .7em;
+		border: 1px dotted silver;
+		overflow-x: auto;
+	}
+
+	span.line {
+		color: #9F9C7F;
+		font-weight: normal;
+		font-style: normal;
+	}
+
+	.t {
+		background: #99f999;
+	}
+
+	.u {
+		background: #f9ac9e;
+	}
+
+	td {
+		vertical-align: middle;
+	}
+
+	small {
+		color: gray;
+	}
+
+	.number {
+		text-align: right;
+		width: 50px;
+	}
+
+	.bar {
+		border: 1px solid #ACACAC;
+		background: #e50400;
+		width: 35px;
+		height: 1em;
+	}
+
+	.bar div {
+		background: #1A7E1E;
+		height: 1em;
+	}
+
+	.light td {
+		opacity: .5;
+	}
+
+	.light td * {
+		color: gray;
+	}
+
+	.not-loaded td * {
+		color: red;
+	}
+	</style>
+</head>
+
+<body>
+	<h1><?php if (isset($name)) { echo htmlSpecialChars($name, ENT_QUOTES) . " - "; } ?>Code coverage <?php echo round($coveredSum * 100 / $totalSum) ?>&nbsp;%</h1>
+
+	<?php foreach ($files as $id => $info): ?>
+	<div>
+		<table>
+		<tr <?php echo isset($info->class) ? ('class="' . $info->class . '"') : '' ?>>
+			<td class="number"><small><?php echo $info->coverage ?> %</small></td>
+			<td><div class="bar"><div style="width: <?php echo $info->coverage ?>%"></div></div></td>
+			<td><a href="#fragment<?php echo $id ?>" onClick="toggle(this.href);"><span><?php echo $info->name ?></span></a></td>
+		</tr>
+		</table>
+
+		<div class="code" id="fragment<?php echo $id ?>" style="display: none;">
+		<?php
+			$source = explode('<br />', highlight_file($info->file, TRUE));
+
+			end($source);
+			$numWidth = strlen((string) key($source));
+
+			unset($prevColor);
+			$tags = '';
+			foreach ($source as $n => $line) {
+				if (isset($info->lines[$n + 1]) && isset($classes[$info->lines[$n + 1]])) {
+					$color = $classes[$info->lines[$n + 1]];
+				} else {
+					$color = '';  // not executable
+				}
+				if (!isset($prevColor)) {
+					$prevColor = $color;
+				}
+				$line = sprintf("<span class='line'>%{$numWidth}s:    </span>", $n + 1) . $line;
+				if ($prevColor !== $color || $n === count($source) - 1) {
+					echo '<div' . ($prevColor ? " class='$prevColor'" : '') . '>', str_replace(' />', '>', $tags);
+					$openTags = array();
+					preg_match_all('#<([^>]+)#', $tags, $matches);
+					foreach ($matches[1] as $m) {
+						if ($m[0] === '/') {
+							array_pop($openTags);
+						} elseif (substr($m, -1) !== '/') {
+							$openTags[] = $m;
+						}
+					}
+					foreach (array_reverse($openTags) as $tag) {
+						echo '</' . preg_replace('# .*#', '', $tag) . '>';
+					}
+					echo "</div>\n";
+					$tags = ($openTags ? '<' . implode('><', $openTags) . '>' : '');
+					$prevColor = $color;
+				}
+				$tags .= "$line<br />\n";
+			}
+		?></div>
+	</div>
+	<?php endforeach ?>
+	<footer>
+		<p>Generated by <a href="https://github.com/nette/tester">Nette Tester</a> - <?php echo date('Y/m/d H:i:s') ?></p>
+	</footer>
+
+	<script>
+	function toggle(selector) {
+		id = selector.substr(selector.indexOf('#') + 1);
+		var el = document.getElementById(id);
+		if (el.style.display != 'none') {
+			el.style.display = 'none';
+			return false;
+		} else {
+			el.style.display = '';
+		}
+	}
+	</script>
+</body>
+</html>

@@ -1,0 +1,94 @@
+<?php
+
+/**
+ * Nette Tester - Convert coverage to HTML (version 0.9-dev)
+ *
+ * Copyright (c) 2009 David Grudl (http://davidgrudl.com)
+ * Copyright (c) 2012 Patrik Votoček (http://patrik.votocek.cz)
+ *
+ * For the full copyright and license information, please view
+ * the file license.txt that was distributed with this source code.
+ */
+
+
+
+require_once __DIR__ . '/Framework/CoverageConverter.php';
+
+$options = getopt('f:s:d:n:e:h', array('help'));
+
+$errors = array();
+if (!array_key_exists('h', $options) && !array_key_exists('help', $options)) {
+	if (!array_key_exists('f', $options) || !is_string($options['f'])) {
+		$errors[] = "coverage.dat file path is not set";
+	}
+
+	if (!array_key_exists('s', $options) || !is_string($options['s'])) {
+		$errors[] = "Source files directory path is not set";
+	}
+
+	//if (!array_key_exists('d', $options) || !is_string($options['d'])) {
+	// workaround for https://bugs.php.net/bug.php?id=43587
+	if (in_array('-d', $_SERVER['argv']) && (!array_key_exists('d', $options) || !is_string($options['d']))) {
+		$errors[] = "Destination file path is not valid path";
+	} elseif (!array_key_exists('d', $options)) {
+		$options['d'] = getcwd() . '/coverage.html';
+	}
+
+	//if (!array_key_exists('n', $options) || !is_string($options['n'])) {
+	// workaround for https://bugs.php.net/bug.php?id=43587
+	if (in_array('-n', $_SERVER['argv']) && (!array_key_exists('n', $options) || !is_string($options['n']))) {
+		$errors[] = "Name must be string";
+	}
+
+	//if (!array_key_exists('e', $options) || (!is_string($options['e']) && !is_array($options['e']))) {
+	// workaround for https://bugs.php.net/bug.php?id=43587
+	if (in_array('-e', $_SERVER['argv']) && (!array_key_exists('e', $options) || (!is_string($options['e']) && !is_array($options['e'])))) {
+		$errors[] = "Exclude mask must be string";
+	}
+}
+
+
+
+/**
+ * Help
+ */
+if (!array_key_exists('d', $options) || $options['d'] !== '-') { ?>
+Nette Tester Convert coverage to HTML
+-------------------------------------
+<?php
+	if (count($errors) > 0) {
+		echo implode(PHP_EOL, $errors) . PHP_EOL . PHP_EOL;
+	}
+	if (array_key_exists('h', $options) || array_key_exists('help', $options) || count($errors) > 0) {
+?>
+Usage:
+	php ConvertCoverage.phpc -f [coverage.dat file] -s [source files directory] [options]
+
+Options:
+	-f <path>   Specify coverage.dat file <path>
+	-s <path>   Specify source files directory <path>
+	-d <path>   Specify destination file <path> (optional - default is ./coverage.html)
+	-n <name>   Application / library name (optional)
+	-e <mask>   Exclude files <mask> (optional - multiple)
+
+<?php
+		exit(0);
+	}
+}
+
+
+
+$converter = new CoverageConverter($options['f'], $options['s']);
+if (array_key_exists('n', $options)) {
+	$converter->setName($options['n']);
+}
+if (array_key_exists('e', $options)) {
+	$converter->addExclude($options['e']);
+}
+if ($options['d'] === '-') {
+	$converter->renderHtml();
+} else {
+	echo "Converting..." . PHP_EOL;
+	$converter->generateHtml($options['d']);
+	echo "Coverage converted successfully" . PHP_EOL;
+}
