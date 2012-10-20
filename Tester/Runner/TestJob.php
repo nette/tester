@@ -83,9 +83,10 @@ class TestJob
 	/**
 	 * Runs single test.
 	 * @param  bool
+	 * @param  string|null
 	 * @return TestJob  provides a fluent interface
 	 */
-	public function run($blocking = true)
+	public function run($blocking = true, $method = NULL)
 	{
 		// pre-skip?
 		if (isset($this->options['skip'])) {
@@ -103,7 +104,7 @@ class TestJob
 			}
 		}
 
-		$this->execute($blocking);
+		$this->execute($blocking, $method);
 		return $this;
 	}
 
@@ -144,9 +145,10 @@ class TestJob
 	/**
 	 * Execute test.
 	 * @param  bool
+	 * @param  string|null
 	 * @return void
 	 */
-	private function execute($blocking)
+	private function execute($blocking, $method = NULL)
 	{
 		$this->headers = $this->output = NULL;
 
@@ -155,7 +157,17 @@ class TestJob
 				$this->cmdLine .= " -d " . escapeshellarg(trim($item));
 			}
 		}
-		$this->cmdLine .= ' ' . escapeshellarg($this->file) . ' ' . $this->args;
+
+		if (isset($method) && $this->phpType != 'CLI') {
+			throw new \TestJobException('@testcase supported only on CLI', TestJobException::SKIPPED);
+		} elseif (isset($method)) {
+			$this->options['method'] = $method;
+			list($class, $shortMethod) = explode('::', $method);
+			$code = "require_once '{$this->file}';\\\$obj=new \\$class;\\\$obj->runTest('$shortMethod');";
+			$this->cmdLine .= ' -r "' . $code . '" ' . $this->args;
+		} else {
+			$this->cmdLine .= ' ' . escapeshellarg($this->file) . ' ' . $this->args;
+		}
 
 		$descriptors = array(
 			array('pipe', 'r'),
@@ -163,7 +175,7 @@ class TestJob
 			array('pipe', 'w'),
 		);
 
-		$this->proc = proc_open($this->cmdLine, $descriptors, $pipes, dirname($this->file), null, array('bypass_shell' => true));
+		$this->proc = proc_open($this->cmdLine, $descriptors, $pipes, dirname($this->file), NULL, array('bypass_shell' => true));
 		list($stdin, $this->stdout, $stderr) = $pipes;
 		fclose($stdin);
 		stream_set_blocking($this->stdout, $blocking ? 1 : 0);
@@ -257,6 +269,9 @@ class TestJob
 	 */
 	public function getName()
 	{
+		if (isset($this->options['method'])) {
+			return $this->options['name'] . ' | ' . $this->options['method'];
+		}
 		return $this->options['name'];
 	}
 
@@ -315,6 +330,29 @@ class TestJob
 		}
 		$options['name'] = preg_match('#^\s*\*\s*TEST:(.*)#mi', $phpDoc, $matches) ? trim($matches[1]) : $testFile;
 		return $options;
+	}
+
+	/**
+	 * Parse test methods in TestCase class.
+	 * @param  string   file
+	 * @param  string   class
+	 * @return array
+	 */
+	public static function parseTestCaseClass($file, $class)
+	{
+		require_once $file;
+		if (!class_exists($class)) {
+			die("Class '$class' does not exist");
+		}
+
+		$rc = new \ReflectionClass($class);
+		$tests = array();
+		foreach ($rc->getMethods() as $method) {
+			if (preg_match('#^test[A-Z]#', $method->getName())) {
+				$tests[] = $class . '::' . $method->getName();
+			}
+		}
+		return $tests;
 	}
 
 }

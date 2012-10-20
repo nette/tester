@@ -7,10 +7,10 @@
  * @package    Nette\Tester
  */
 
-require __DIR__ . '/Framework/TestHelpers.php';
-require __DIR__ . '/Framework/Assert.php';
-require __DIR__ . '/Framework/TestCase.php';
-require __DIR__ . '/Runner/TestJob.php';
+require_once __DIR__ . '/Framework/TestHelpers.php';
+require_once __DIR__ . '/Framework/Assert.php';
+require_once __DIR__ . '/Framework/TestCase.php';
+require_once __DIR__ . '/Runner/TestJob.php';
 
 
 // configure PHP environment
