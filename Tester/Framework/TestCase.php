@@ -9,6 +9,8 @@
  * the file license.txt that was distributed with this source code.
  */
 
+namespace Tester;
+
 
 
 /**

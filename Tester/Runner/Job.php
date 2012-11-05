@@ -9,6 +9,8 @@
  * the file license.txt that was distributed with this source code.
  */
 
+namespace Tester\Runner;
+
 
 
 /**
@@ -16,7 +18,7 @@
  *
  * @author     David Grudl
  */
-class TestJob
+class Job
 {
 	const
 		CODE_NONE = -1,
@@ -80,14 +82,14 @@ class TestJob
 	/**
 	 * Runs single test.
 	 * @param  bool
-	 * @return TestJob  provides a fluent interface
+	 * @return Job  provides a fluent interface
 	 */
 	public function run($blocking = true)
 	{
 		// pre-skip?
 		if (isset($this->options['skip'])) {
 			$message = $this->options['skip'] ? $this->options['skip'] : 'No message.';
-			throw new TestJobException($message, TestJobException::SKIPPED);
+			throw new JobException($message, JobException::SKIPPED);
 
 		} elseif (isset($this->options['phpversion'])) {
 			$operator = '>=';
@@ -96,7 +98,7 @@ class TestJob
 				$operator = $matches[1];
 			}
 			if (version_compare($this->options['phpversion'], $this->phpVersion, $operator)) {
-				throw new TestJobException("Requires PHP $operator {$this->options['phpversion']}.", TestJobException::SKIPPED);
+				throw new JobException("Requires PHP $operator {$this->options['phpversion']}.", JobException::SKIPPED);
 			}
 		}
 
@@ -110,7 +112,7 @@ class TestJob
 	 * Sets PHP command line.
 	 * @param  string
 	 * @param  string
-	 * @return TestJob  provides a fluent interface
+	 * @return Job  provides a fluent interface
 	 */
 	public function setPhp($binary, $args)
 	{
@@ -120,11 +122,11 @@ class TestJob
 		} else {
 			exec(escapeshellarg($binary) . ' -v', $output, $res);
 			if ($res !== self::CODE_OK && $res !== self::CODE_ERROR) {
-				throw new Exception("Unable to execute '$binary -v'.");
+				throw new \Exception("Unable to execute '$binary -v'.");
 			}
 
 			if (!preg_match('#^PHP (\S+).*c(g|l)i#i', $output[0], $matches)) {
-				throw new Exception("Unable to detect PHP version (output: $output[0]).");
+				throw new \Exception("Unable to detect PHP version (output: $output[0]).");
 			}
 
 			$this->phpVersion = $matches[1];
@@ -213,16 +215,16 @@ class TestJob
 		}
 
 		if ($res === self::CODE_ERROR) {
-			throw new TestJobException($this->output ?: 'Fatal error');
+			throw new JobException($this->output ?: 'Fatal error');
 
 		} elseif ($res === self::CODE_FAIL) {
-			throw new TestJobException($this->output);
+			throw new JobException($this->output);
 
 		} elseif ($res === self::CODE_SKIP) { // skip
-			throw new TestJobException($this->output, TestJobException::SKIPPED);
+			throw new JobException($this->output, JobException::SKIPPED);
 
 		} elseif ($res !== self::CODE_OK) {
-			throw new Exception("Unable to execute '$this->cmdLine'.");
+			throw new \Exception("Unable to execute '$this->cmdLine'.");
 
 		}
 
@@ -230,7 +232,7 @@ class TestJob
 		if (isset($this->options['assertcode'])) {
 			$code = isset($this->headers['Status']) ? (int) $this->headers['Status'] : 200;
 			if ($code !== (int) $this->options['assertcode']) {
-				throw new TestJobException('Expected HTTP code ' . $this->options['assertcode'] . ' is not same as actual code ' . $code);
+				throw new JobException('Expected HTTP code ' . $this->options['assertcode'] . ' is not same as actual code ' . $code);
 			}
 		}
 	}
@@ -323,7 +325,7 @@ class TestJob
  *
  * @author     David Grudl
  */
-class TestJobException extends Exception
+class JobException extends \Exception
 {
 	const SKIPPED = 1;
 

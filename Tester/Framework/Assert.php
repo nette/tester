@@ -9,6 +9,8 @@
  * the file license.txt that was distributed with this source code.
  */
 
+namespace Tester;
+
 
 
 /**
@@ -128,7 +130,7 @@ class Assert
 		try {
 			call_user_func($function);
 			throw new AssertException('Expected exception');
-		} catch (Exception $e) {
+		} catch (\Exception $e) {
 			if (!$e instanceof $class) {
 				throw new AssertException('Failed asserting that ' . get_class($e) . " is an instance of class $class");
 			}
@@ -168,7 +170,7 @@ class Assert
 			if (($severity & error_reporting()) === $severity) {
 				if ($catched) {
 					echo "\nUnexpected error $message in $file:$line";
-					exit(TestJob::CODE_FAIL);
+					exit(\Tester\Runner\Job::CODE_FAIL);
 				}
 				$catched = array($severity, $message);
 			}
@@ -301,7 +303,7 @@ class Assert
 		$res = preg_match("#^$re$#s", $actual);
 		ini_set('pcre.backtrack_limit', $old);
 		if ($res === FALSE || preg_last_error()) {
-			throw new Exception("Error while executing regular expression. (PREG Error Code " . preg_last_error() . ")");
+			throw new \Exception("Error while executing regular expression. (PREG Error Code " . preg_last_error() . ")");
 		}
 		if (!$res) {
 			self::log($expected, $actual);
@@ -360,7 +362,7 @@ class Assert
 		} elseif (is_array($var)) {
 			return "array(" . count($var) . ")";
 
-		} elseif ($var instanceof Exception) {
+		} elseif ($var instanceof \Exception) {
 			return 'Exception ' . get_class($var) . ': ' . ($var->getCode() ? '#' . $var->getCode() . ' ' : '') . $var->getMessage();
 
 		} elseif (is_object($var)) {

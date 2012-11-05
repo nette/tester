@@ -9,6 +9,8 @@
  * the file license.txt that was distributed with this source code.
  */
 
+namespace Tester\Runner;
+
 
 
 /**
@@ -16,7 +18,7 @@
  *
  * @author     David Grudl
  */
-class TestRunner
+class Runner
 {
 	/** waiting time between runs in microseconds */
 	const RUN_USLEEP = 10000;
@@ -61,7 +63,7 @@ class TestRunner
 			if (is_file($path)) {
 				$files = array($path);
 			} else {
-				$files = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($path));
+				$files = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($path));
 			}
 			foreach ($files as $file) {
 				$file = (string) $file;
@@ -70,16 +72,16 @@ class TestRunner
 					continue;
 				}
 
-				$options = TestJob::parseOptions($file);
+				$options = Job::parseOptions($file);
 				if (!empty($options['multiple'])) {
 					if (is_numeric($options['multiple'])) {
 						$range = range(0, $options['multiple'] - 1);
 
 					} elseif (!is_file($multiFile = dirname($file) . '/' . $options['multiple'])) {
-						throw new Exception("Missing @multiple configuration file '$multiFile'.");
+						throw new \Exception("Missing @multiple configuration file '$multiFile'.");
 
 					} elseif (($multiple = parse_ini_file($multiFile, TRUE)) === FALSE) {
-						throw new Exception("Cannot parse @multiple configuration file '$multiFile'.");
+						throw new \Exception("Cannot parse @multiple configuration file '$multiFile'.");
 
 					} else {
 						$range = array_keys($multiple);
@@ -99,12 +101,12 @@ class TestRunner
 			for ($i = count($running); $tests && $i < $this->jobs; $i++) {
 				list($file, $args) = array_shift($tests);
 				$count++;
-				$testCase = new TestJob($file, $args);
+				$testCase = new Job($file, $args);
 				$testCase->setPhp($this->phpBinary, $this->phpArgs);
 				try {
 					$parallel = ($this->jobs > 1) && (count($running) + count($tests) > 1);
 					$running[] = $testCase->run(!$parallel);
-				} catch (TestJobException $e) {
+				} catch (JobException $e) {
 					echo 's';
 					$skipped[] = $this->log($this->format('Skipped', $testCase, $e));
 				}
@@ -119,8 +121,8 @@ class TestRunner
 						echo '.';
 						$passed[] = array($testCase->getName(), $testCase->getFile());
 
-					} catch (TestJobException $e) {
-						if ($e->getCode() === TestJobException::SKIPPED) {
+					} catch (JobException $e) {
+						if ($e->getCode() === JobException::SKIPPED) {
 							echo 's';
 							$skipped[] = $this->log($this->format('Skipped', $testCase, $e));
 
@@ -168,13 +170,13 @@ class TestRunner
 		$this->paths = array();
 		$iniSet = FALSE;
 
-		$args = new ArrayIterator(array_slice(isset($_SERVER['argv']) ? $_SERVER['argv'] : array(), 1));
+		$args = new \ArrayIterator(array_slice(isset($_SERVER['argv']) ? $_SERVER['argv'] : array(), 1));
 		foreach ($args as $arg) {
 			if (!preg_match('#^[-/][a-z]+\z#', $arg)) {
 				if ($path = realpath($arg)) {
 					$this->paths[] = $path;
 				} else {
-					throw new Exception("Invalid path '$arg'.");
+					throw new \Exception("Invalid path '$arg'.");
 				}
 
 			} else switch (substr($arg, 1)) {
@@ -191,7 +193,7 @@ class TestRunner
 					$args->next();
 					$path = realpath($args->current());
 					if ($path === FALSE) {
-						throw new Exception("PHP configuration file '{$args->current()}' not found.");
+						throw new \Exception("PHP configuration file '{$args->current()}' not found.");
 					}
 					$this->phpArgs .= " -c " . escapeshellarg($path);
 					$iniSet = TRUE;
@@ -208,7 +210,7 @@ class TestRunner
 					$this->jobs = max(1, (int) $args->current());
 					break;
 				default:
-					throw new Exception("Unknown option $arg.");
+					throw new \Exception("Unknown option $arg.");
 					exit;
 			}
 		}

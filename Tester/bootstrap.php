@@ -6,10 +6,10 @@
  * @author     David Grudl
  */
 
-require __DIR__ . '/Framework/TestHelpers.php';
+require __DIR__ . '/Framework/Helpers.php';
 require __DIR__ . '/Framework/Assert.php';
 require __DIR__ . '/Framework/TestCase.php';
-require __DIR__ . '/Runner/TestJob.php';
+require __DIR__ . '/Runner/Job.php';
 
 
 // configure PHP environment
@@ -24,7 +24,7 @@ set_error_handler(function($severity, $message, $file, $line) {
 	if (($severity & error_reporting()) === $severity) {
 		$e = new ErrorException($message, 0, $severity, $file, $line);
 		echo "\nError: $message in $file:$line\nStack trace:\n" . $e->getTraceAsString();
-		exit(TestJob::CODE_ERROR);
+		exit(Tester\Runner\Job::CODE_ERROR);
 	}
 	return FALSE;
 });
@@ -32,7 +32,7 @@ set_error_handler(function($severity, $message, $file, $line) {
 
 // catch exceptions
 set_exception_handler(function($e) {
-	echo "\n" . ($e instanceof AssertException ? '' : get_class($e) . ': ') . $e->getMessage();
+	echo "\n" . ($e instanceof Tester\AssertException ? '' : get_class($e) . ': ') . $e->getMessage();
 	$trace = $e->getTrace();
 	while (isset($trace[0]['file']) && substr($trace[0]['file'], strlen(__DIR__))  === __DIR__) {
 		array_shift($trace);
@@ -43,5 +43,5 @@ set_exception_handler(function($e) {
 		}
 		array_shift($trace);
 	}
-	exit($e instanceof AssertException ? TestJob::CODE_FAIL : TestJob::CODE_ERROR);
+	exit($e instanceof Tester\AssertException ? Tester\Runner\Job::CODE_FAIL : Tester\Runner\Job::CODE_ERROR);
 });

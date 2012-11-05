@@ -10,8 +10,8 @@
  */
 
 
-require_once __DIR__ . '/Runner/TestRunner.php';
-require_once __DIR__ . '/Runner/TestJob.php';
+require_once __DIR__ . '/Runner/Runner.php';
+require_once __DIR__ . '/Runner/Job.php';
 
 
 echo "
@@ -54,7 +54,7 @@ set_error_handler(function($severity, $message, $file, $line) {
 try {
 	@unlink(__DIR__ . '/coverage.dat'); // @ - file may not exist
 
-	$manager = new TestRunner;
+	$manager = new Tester\Runner\Runner;
 	$manager->parseArguments();
 	$res = $manager->run();
 	die($res ? 0 : 1);
