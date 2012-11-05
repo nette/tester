@@ -7,8 +7,6 @@
  *
  * For the full copyright and license information, please view
  * the file license.txt that was distributed with this source code.
- *
- * @package    Nette\Test
  */
 
 
@@ -17,7 +15,6 @@
  * Single test job.
  *
  * @author     David Grudl
- * @package    Nette\Test
  */
 class TestJob
 {
@@ -325,7 +322,6 @@ class TestJob
  * Single test exception.
  *
  * @author     David Grudl
- * @package    Nette\Test
  */
 class TestJobException extends Exception
 {

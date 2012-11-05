@@ -7,8 +7,6 @@
  *
  * For the full copyright and license information, please view
  * the file license.txt that was distributed with this source code.
- *
- * @package    Nette\Test
  */
 
 
@@ -17,7 +15,6 @@
  * Test runner.
  *
  * @author     David Grudl
- * @package    Nette\Test
  */
 class TestRunner
 {
@@ -173,7 +170,7 @@ class TestRunner
 
 		$args = new ArrayIterator(array_slice(isset($_SERVER['argv']) ? $_SERVER['argv'] : array(), 1));
 		foreach ($args as $arg) {
-			if (!preg_match('#^[-/][a-z]+$#', $arg)) {
+			if (!preg_match('#^[-/][a-z]+\z#', $arg)) {
 				if ($path = realpath($arg)) {
 					$this->paths[] = $path;
 				} else {

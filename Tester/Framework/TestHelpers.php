@@ -7,8 +7,6 @@
  *
  * For the full copyright and license information, please view
  * the file license.txt that was distributed with this source code.
- *
- * @package    Nette\Test
  */
 
 
@@ -17,7 +15,6 @@
  * Test helpers.
  *
  * @author     David Grudl
- * @package    Nette\Test
  */
 class TestHelpers
 {

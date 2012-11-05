@@ -6,8 +6,6 @@
  * This file is part of the Nette Tester.
  * Copyright (c) 2009 David Grudl (http://davidgrudl.com)
  * Copyright (c) 2009 Jakub Vrana (http://php.vrana.cz)
- *
- * @package    Nette\Test
  */
 
 

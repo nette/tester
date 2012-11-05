@@ -4,7 +4,6 @@
  * Test environment initialization.
  *
  * @author     David Grudl
- * @package    Nette\Tester
  */
 
 require __DIR__ . '/Framework/TestHelpers.php';
