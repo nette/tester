@@ -52,6 +52,29 @@ class Assert
 
 
 	/**
+	 * Checks assertion. Values must contains expected needle.
+	 * @param  mixed  expected
+	 * @param  mixed  actual
+	 * @return void
+	 */
+	public static function contains($needle, $actual)
+	{
+		if (is_array($actual)) {
+			if (!in_array($needle, $actual, TRUE)) {
+				throw new AssertException('Failed asserting that ' . self::dump($actual) . ' contains ' . self::dump($needle));
+			}
+		} elseif (is_string($actual)) {
+			if (strpos($actual, $needle) === FALSE) {
+				throw new AssertException('Failed asserting that ' . self::dump($actual) . ' contains ' . self::dump($needle));
+			}
+		} else {
+			throw new AssertException('Failed asserting that ' . self::dump($actual) . ' is string or array');
+		}
+	}
+
+
+
+	/**
 	 * Checks TRUE assertion.
 	 * @param  mixed  actual
 	 * @return void
