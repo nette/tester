@@ -210,18 +210,6 @@ class Assert
 
 
 	/**
-	 * Initializes shutdown handler.
-	 * @return void
-	 */
-	public static function handler($handler)
-	{
-		ob_start();
-		register_shutdown_function($handler);
-	}
-
-
-
-	/**
 	 * Compares two structures. Ignores the identity of objects and the order of keys in the arrays.
 	 * @return bool
 	 */
