@@ -117,19 +117,24 @@ class Assert
 
 
 	/**
-	 * Checks exception assertion.
+	 * Checks if the function throws exception.
+	 * @param  callable
 	 * @param  string class
 	 * @param  string message
-	 * @param  Exception
 	 * @return void
 	 */
-	public static function exception($class, $message, $actual)
+	public static function exception($function, $class, $message = NULL)
 	{
-		if (!($actual instanceof $class)) {
-			throw new AssertException('Failed asserting that ' . get_class($actual) . " is an instance of class $class");
-		}
-		if ($message) {
-			self::match($message, $actual->getMessage());
+		try {
+			call_user_func($function);
+			throw new AssertException('Expected exception');
+		} catch (Exception $e) {
+			if (!$e instanceof $class) {
+				throw new AssertException('Failed asserting that ' . get_class($e) . " is an instance of class $class");
+			}
+			if ($message) {
+				self::match($message, $e->getMessage());
+			}
 		}
 	}
 
@@ -144,12 +149,7 @@ class Assert
 	 */
 	public static function throws($function, $class, $message = NULL)
 	{
-		try {
-			call_user_func($function);
-			throw new AssertException('Expected exception');
-		} catch (Exception $e) {
-			Assert::exception($class, $message, $e);
-		}
+		self::exception($function, $class, $message);
 	}
 
 
