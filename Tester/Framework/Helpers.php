@@ -23,10 +23,6 @@ class Helpers
 	/** @var array */
 	static public $notes = array();
 
-	/** @var string */
-	static public $coverageFile;
-
-
 
 	/**
 	 * Purges directory.
@@ -93,64 +89,6 @@ class Helpers
 	{
 		static $lock;
 		flock($lock = fopen($path . '/lock-' . md5($name), 'w'), LOCK_EX);
-	}
-
-
-
-	/**
-	 * Starts gathering the information for code coverage.
-	 * @param  string
-	 * @return void
-	 */
-	public static function startCodeCoverage($file)
-	{
-		self::$coverageFile = $file;
-		xdebug_start_code_coverage(XDEBUG_CC_UNUSED | XDEBUG_CC_DEAD_CODE);
-		register_shutdown_function(array(__CLASS__, 'prepareSaveCoverage'));
-	}
-
-
-
-	/**
-	 * Coverage saving helper. Do not call directly.
-	 * @return void
-	 * @internal
-	 */
-	public static function prepareSaveCoverage()
-	{
-		register_shutdown_function(array(__CLASS__, 'saveCoverage'));
-	}
-
-
-
-	/**
-	 * Saves information about code coverage. Do not call directly.
-	 * @return void
-	 * @internal
-	 */
-	public static function saveCoverage()
-	{
-		$f = fopen(self::$coverageFile, 'a+');
-		flock($f, LOCK_EX);
-		fseek($f, 0);
-		$coverage = @unserialize(stream_get_contents($f));
-		$root = realpath(__DIR__ . '/../../Nette') . DIRECTORY_SEPARATOR;
-
-		foreach (xdebug_get_code_coverage() as $filename => $lines) {
-			if (strncmp($root, $filename, strlen($root))) {
-				continue;
-			}
-
-			foreach ($lines as $num => $val) {
-				if (empty($coverage[$filename][$num]) || $val > 0) {
-					$coverage[$filename][$num] = $val; // -1 => untested; -2 => dead code
-				}
-			}
-		}
-
-		ftruncate($f, 0);
-		fwrite($f, serialize($coverage));
-		fclose($f);
 	}
 
 }
