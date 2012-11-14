@@ -121,8 +121,8 @@ class Job
 
 		} else {
 			exec(escapeshellarg($binary) . ' -v', $output, $res);
-			if ($res !== self::CODE_OK && $res !== self::CODE_ERROR) {
-				throw new \Exception("Unable to execute '$binary -v'.");
+			if ($res !== self::CODE_OK) {
+				throw new \Exception("Unable to execute '$binary'.");
 			}
 
 			if (!preg_match('#^PHP (\S+).*c(g|l)i#i', $output[0], $matches)) {
@@ -214,18 +214,11 @@ class Job
 			}
 		}
 
-		if ($res === self::CODE_ERROR) {
-			throw new JobException($this->output ?: 'Fatal error');
-
-		} elseif ($res === self::CODE_FAIL) {
-			throw new JobException($this->output);
-
-		} elseif ($res === self::CODE_SKIP) { // skip
+		if ($res === self::CODE_SKIP) {
 			throw new JobException($this->output, JobException::SKIPPED);
 
 		} elseif ($res !== self::CODE_OK) {
-			throw new \Exception("Unable to execute '$this->cmdLine'.");
-
+			throw new JobException($this->output ?: 'Fatal error');
 		}
 
 		// HTTP code check
