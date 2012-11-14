@@ -20,9 +20,6 @@ namespace Tester;
  */
 class Helpers
 {
-	/** @var array */
-	static public $notes = array();
-
 
 	/**
 	 * Purges directory.
@@ -41,30 +38,6 @@ class Helpers
 				unlink($entry);
 			}
 		}
-	}
-
-
-
-	/**
-	 * Log info.
-	 * @return void
-	 */
-	public static function note($message)
-	{
-		self::$notes[] = $message;
-	}
-
-
-
-	/**
-	 * Returns notes.
-	 * @return array
-	 */
-	public static function fetchNotes()
-	{
-		$res = self::$notes;
-		self::$notes = array();
-		return $res;
 	}
 
 
