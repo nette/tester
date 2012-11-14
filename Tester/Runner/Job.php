@@ -42,14 +42,8 @@ class Job
 	/** @var string  output headers in raw format */
 	private $headers;
 
-	/** @var string  PHP-CGI command line */
-	private $cmdLine;
-
-	/** @var string  PHP version */
-	private $phpVersion;
-
-	/** @var string PHP type (CGI or CLI) */
-	private $phpType;
+	/** @var PhpExecutable */
+	private $php;
 
 	/** @var resource */
 	private $proc;
@@ -60,21 +54,19 @@ class Job
 	/** @var int */
 	private $exitCode = self::CODE_NONE;
 
-	/** @var array */
-	private static $cachedPhp;
-
 
 
 	/**
 	 * @param  string  test file name
-	 * @param  string  PHP-CGI command line
+	 * @param  string  command line
 	 * @return void
 	 */
-	public function __construct($testFile, $args = NULL)
+	public function __construct($testFile, $args = NULL, PhpExecutable $php)
 	{
 		$this->file = (string) $testFile;
 		$this->args = $args;
 		$this->options = self::parseOptions($this->file);
+		$this->php = $php;
 	}
 
 
@@ -97,44 +89,12 @@ class Job
 				$this->options['phpversion'] = trim(substr($this->options['phpversion'], strlen($matches[1])));
 				$operator = $matches[1];
 			}
-			if (version_compare($this->options['phpversion'], $this->phpVersion, $operator)) {
+			if (version_compare($this->options['phpversion'], $this->php->getVersion(), $operator)) {
 				throw new JobException("Requires PHP $operator {$this->options['phpversion']}.", JobException::SKIPPED);
 			}
 		}
 
 		$this->execute($blocking);
-		return $this;
-	}
-
-
-
-	/**
-	 * Sets PHP command line.
-	 * @param  string
-	 * @param  string
-	 * @return Job  provides a fluent interface
-	 */
-	public function setPhp($binary, $args)
-	{
-		if (isset(self::$cachedPhp[$binary])) {
-			list($this->phpVersion, $this->phpType) = self::$cachedPhp[$binary];
-
-		} else {
-			exec(escapeshellarg($binary) . ' -v', $output, $res);
-			if ($res !== self::CODE_OK) {
-				throw new \Exception("Unable to execute '$binary'.");
-			}
-
-			if (!preg_match('#^PHP (\S+).*c(g|l)i#i', $output[0], $matches)) {
-				throw new \Exception("Unable to detect PHP version (output: $output[0]).");
-			}
-
-			$this->phpVersion = $matches[1];
-			$this->phpType = strcasecmp($matches[2], 'g') ? 'CLI' : 'CGI';
-			self::$cachedPhp[$binary] = array($this->phpVersion, $this->phpType);
-		}
-
-		$this->cmdLine = escapeshellarg($binary) . $args;
 		return $this;
 	}
 
@@ -149,12 +109,13 @@ class Job
 	{
 		$this->headers = $this->output = NULL;
 
+		$cmd = $this->php->getCommandLine();
 		if (isset($this->options['phpini'])) {
 			foreach (explode(';', $this->options['phpini']) as $item) {
-				$this->cmdLine .= " -d " . escapeshellarg(trim($item));
+				$cmd .= ' -d ' . escapeshellarg(trim($item));
 			}
 		}
-		$this->cmdLine .= ' ' . escapeshellarg($this->file) . ' ' . $this->args;
+		$cmd .= ' ' . escapeshellarg($this->file) . ' ' . $this->args;
 
 		$descriptors = array(
 			array('pipe', 'r'),
@@ -162,7 +123,7 @@ class Job
 			array('pipe', 'w'),
 		);
 
-		$this->proc = proc_open($this->cmdLine, $descriptors, $pipes, dirname($this->file), null, array('bypass_shell' => true));
+		$this->proc = proc_open($cmd, $descriptors, $pipes, dirname($this->file), null, array('bypass_shell' => true));
 		list($stdin, $this->stdout, $stderr) = $pipes;
 		fclose($stdin);
 		stream_set_blocking($this->stdout, $blocking ? 1 : 0);
@@ -200,7 +161,7 @@ class Job
 			$res = $this->exitCode;
 		}
 
-		if ($this->phpType === 'CGI' && count($tmp = explode("\r\n\r\n", $this->output, 2)) >= 2) {
+		if ($this->php->isCgi() && count($tmp = explode("\r\n\r\n", $this->output, 2)) >= 2) {
 			list($headers, $this->output) = $tmp;
 		} else {
 			$headers = '';

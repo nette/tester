@@ -29,11 +29,8 @@ class Runner
 	/** @var resource */
 	private $logFile;
 
-	/** @var string  php-cgi binary */
-	private $phpBinary;
-
-	/** @var string  php-cgi command-line arguments */
-	private $phpArgs;
+	/** @var PhpExecutable */
+	private $php;
 
 	/** @var bool  display skipped tests information? */
 	private $displaySkipped = FALSE;
@@ -52,11 +49,7 @@ class Runner
 		$count = 0;
 		$failed = $passed = $skipped = array();
 
-		exec(escapeshellarg($this->phpBinary) . ' -v', $output);
-		if (!isset($output[0])) {
-			return FALSE;
-		}
-		echo $this->log("$output[0] | $this->phpBinary $this->phpArgs\n");
+		echo $this->log('PHP ' . $this->php->getVersion() . ' | ' . $this->php->getCommandLine() . "\n");
 
 		$tests = array();
 		foreach ($this->paths as $path) {
@@ -101,8 +94,7 @@ class Runner
 			for ($i = count($running); $tests && $i < $this->jobs; $i++) {
 				list($file, $args) = array_shift($tests);
 				$count++;
-				$testCase = new Job($file, $args);
-				$testCase->setPhp($this->phpBinary, $this->phpArgs);
+				$testCase = new Job($file, $args, $this->php);
 				try {
 					$parallel = ($this->jobs > 1) && (count($running) + count($tests) > 1);
 					$running[] = $testCase->run(!$parallel);
@@ -165,8 +157,8 @@ class Runner
 	 */
 	public function parseArguments()
 	{
-		$this->phpBinary = 'php-cgi';
-		$this->phpArgs = '';
+		$phpExec = 'php-cgi';
+		$phpArgs = '';
 		$this->paths = array();
 		$iniSet = FALSE;
 
@@ -182,7 +174,7 @@ class Runner
 			} else switch (substr($arg, 1)) {
 				case 'p':
 					$args->next();
-					$this->phpBinary = $args->current();
+					$phpExec = $args->current();
 					break;
 				case 'log':
 					$args->next();
@@ -195,12 +187,12 @@ class Runner
 					if ($path === FALSE) {
 						throw new \Exception("PHP configuration file '{$args->current()}' not found.");
 					}
-					$this->phpArgs .= " -c " . escapeshellarg($path);
+					$phpArgs .= " -c " . escapeshellarg($path);
 					$iniSet = TRUE;
 					break;
 				case 'd':
 					$args->next();
-					$this->phpArgs .= " -d " . escapeshellarg($args->current());
+					$phpArgs .= " -d " . escapeshellarg($args->current());
 					break;
 				case 's':
 					$this->displaySkipped = TRUE;
@@ -219,8 +211,9 @@ class Runner
 			$this->paths[] = getcwd(); // current directory
 		}
 		if (!$iniSet) {
-			$this->phpArgs .= " -n";
+			$phpArgs .= " -n";
 		}
+		$this->php = new PhpExecutable($phpExec, $phpArgs);
 	}
 
 
