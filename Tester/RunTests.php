@@ -10,8 +10,12 @@
  */
 
 
-require_once __DIR__ . '/Runner/Runner.php';
-require_once __DIR__ . '/Runner/Job.php';
+require __DIR__ . '/Runner/PhpExecutable.php';
+require __DIR__ . '/Runner/Runner.php';
+require __DIR__ . '/Runner/Job.php';
+require __DIR__ . '/Runner/CliFactory.php';
+require __DIR__ . '/Framework/Helpers.php';
+
 
 
 echo "
@@ -19,47 +23,16 @@ Nette Tester (v0.9)
 -------------------
 ";
 
-/**
- * Help
- */
-if (($showHelp = in_array('-h', $_SERVER['argv']) || in_array('--help', $_SERVER['argv'])) || $_SERVER['argc'] === 1) { ?>
-Usage:
-	php RunTests.php [options] [file or directory]
+Tester\Helpers::setup();
 
-Options:
-	-p <php>    Specify PHP-CGI executable to run.
-	-c <path>   Look for php.ini in directory <path> or use <path> as php.ini.
-	-log <path> Write log to file <path>.
-	-d key=val  Define INI entry 'key' with value 'val'.
-	-s          Show information about skipped tests.
-	-j <num>    Run <num> jobs in parallel.
+$cli = new Tester\Runner\CliFactory;
 
-<?php
-	if ($showHelp) {
-		exit(0);
-	}
+if (!isset($_SERVER['argc']) || $_SERVER['argc'] === 1) {
+	$cli->showHelp();
+} elseif (in_array('-h', $_SERVER['argv']) || in_array('--help', $_SERVER['argv'])) {
+	$cli->showHelp();
+	exit;
 }
 
-
-// throw unexpected errors/warnings/notices
-set_error_handler(function($severity, $message, $file, $line) {
-	if (($severity & error_reporting()) === $severity) {
-		throw new \ErrorException($message, 0, $severity, $file, $line);
-	}
-	return FALSE;
-});
-
-
-// Execute tests
-try {
-	@unlink(__DIR__ . '/coverage.dat'); // @ - file may not exist
-
-	$manager = new Tester\Runner\Runner;
-	$manager->parseArguments();
-	$res = $manager->run();
-	die($res ? 0 : 1);
-
-} catch (Exception $e) {
-	echo 'Error: ', $e->getMessage(), "\n";
-	die(2);
-}
+@unlink(__DIR__ . '/coverage.dat'); // @ - file may not exist
+die($cli->createRunner()->run() ? 0 : 1);

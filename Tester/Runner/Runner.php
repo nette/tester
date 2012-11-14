@@ -26,17 +26,25 @@ class Runner
 	/** @var array  paths to test files/directories */
 	public $paths = array();
 
+	/** @var bool  display skipped tests information? */
+	public $displaySkipped = FALSE;
+
+	/** @var int  run jobs in parallel */
+	public $jobs = 1;
+
 	/** @var resource */
 	private $logFile;
 
 	/** @var PhpExecutable */
 	private $php;
 
-	/** @var bool  display skipped tests information? */
-	private $displaySkipped = FALSE;
 
-	/** @var int  run jobs in parallel */
-	private $jobs = 1;
+
+	public function __construct(PhpExecutable $php, $logFile = NULL)
+	{
+		$this->php = $php;
+		$this->logFile = $logFile ? fopen($logFile, 'w') : NULL;
+	}
 
 
 
@@ -147,73 +155,6 @@ class Runner
 			echo $this->log("\n\nOK ($count tests, $skippedCount skipped)");
 		}
 		return TRUE;
-	}
-
-
-
-	/**
-	 * Parses command line arguments.
-	 * @return void
-	 */
-	public function parseArguments()
-	{
-		$phpExec = 'php-cgi';
-		$phpArgs = '';
-		$this->paths = array();
-		$iniSet = FALSE;
-
-		$args = new \ArrayIterator(array_slice(isset($_SERVER['argv']) ? $_SERVER['argv'] : array(), 1));
-		foreach ($args as $arg) {
-			if (!preg_match('#^[-/][a-z]+\z#', $arg)) {
-				if ($path = realpath($arg)) {
-					$this->paths[] = $path;
-				} else {
-					throw new \Exception("Invalid path '$arg'.");
-				}
-
-			} else switch (substr($arg, 1)) {
-				case 'p':
-					$args->next();
-					$phpExec = $args->current();
-					break;
-				case 'log':
-					$args->next();
-					$this->logFile = fopen($file = $args->current(), 'w');
-					echo "Log: $file\n";
-					break;
-				case 'c':
-					$args->next();
-					$path = realpath($args->current());
-					if ($path === FALSE) {
-						throw new \Exception("PHP configuration file '{$args->current()}' not found.");
-					}
-					$phpArgs .= " -c " . escapeshellarg($path);
-					$iniSet = TRUE;
-					break;
-				case 'd':
-					$args->next();
-					$phpArgs .= " -d " . escapeshellarg($args->current());
-					break;
-				case 's':
-					$this->displaySkipped = TRUE;
-					break;
-				case 'j':
-					$args->next();
-					$this->jobs = max(1, (int) $args->current());
-					break;
-				default:
-					throw new \Exception("Unknown option $arg.");
-					exit;
-			}
-		}
-
-		if (!$this->paths) {
-			$this->paths[] = getcwd(); // current directory
-		}
-		if (!$iniSet) {
-			$phpArgs .= " -n";
-		}
-		$this->php = new PhpExecutable($phpExec, $phpArgs);
 	}
 
 
