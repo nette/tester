@@ -1,0 +1,35 @@
+<?php
+
+/**
+ * @phpversion 5.4
+ */
+
+use Tester\Assert;
+
+require __DIR__ . '/bootstrap.php';
+require __DIR__ . '/../Tester/Runner/PhpExecutable.php';
+require __DIR__ . '/../Tester/Runner/Runner.php';
+
+
+$php = new Tester\Runner\PhpExecutable(PHP_BINARY);
+$runner = new Tester\Runner\Runner($php);
+$runner->paths[] = $fixtures = __DIR__ . DIRECTORY_SEPARATOR . 'fixtures' . DIRECTORY_SEPARATOR;
+
+$tests = Tester\Helpers::with($runner, function() {
+	return $this->findTests();
+});
+
+foreach ($tests as $i => $job) {
+	$tests[$i] = array($job->getFile(), $job->getArguments());
+}
+sort($tests);
+
+Assert::same(array(
+	array($fixtures . 'test.multiple.num.phpt', escapeshellarg('0')),
+	array($fixtures . 'test.multiple.num.phpt', escapeshellarg('1')),
+	array($fixtures . 'test.multiple.phpt', escapeshellarg('bar')),
+	array($fixtures . 'test.multiple.phpt', escapeshellarg('foo')),
+	array($fixtures . 'test.phpt', NULL),
+	array($fixtures . 'testcase.phpt', escapeshellarg('testBar')),
+	array($fixtures . 'testcase.phpt', escapeshellarg('testFoo')),
+), $tests);

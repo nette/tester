@@ -1,0 +1,5 @@
+<?php
+
+/**
+ * @phpversion > 10
+ */
