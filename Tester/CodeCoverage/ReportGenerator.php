@@ -70,7 +70,7 @@ class ReportGenerator
 
 
 
-	public function render()
+	public function render($file = NULL)
 	{
 		$this->setupHighlight();
 		$this->parse();
@@ -80,7 +80,13 @@ class ReportGenerator
 		$totalSum = $this->totalSum;
 		$coveredSum = $this->coveredSum;
 
+		$handle = $file ? @fopen($file, 'w') : STDOUT;
+		if (!$handle) {
+			throw new \Exception("Unable to write to file '$file'.");
+		}
+		ob_start(function($buffer) use ($handle) { fwrite($handle, $buffer); }, 4096);
 		include __DIR__ . '/template.phtml';
+		ob_end_flush();
 	}
 
 
