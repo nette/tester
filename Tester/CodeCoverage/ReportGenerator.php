@@ -26,7 +26,7 @@ class ReportGenerator
 	private $data;
 
 	/** @var string */
-	private $sourceDirectory;
+	private $sourceDir;
 
 	/** @var array */
 	private $files = array();
@@ -50,22 +50,29 @@ class ReportGenerator
 	 * @param string	path to coverage.dat file
 	 * @param string	path to source files
 	 */
-	public function __construct($file, $sourceDirectory)
+	public function __construct($file, $sourceDir = NULL)
 	{
 		if (!is_file($file)) {
 			throw new \Exception("File '$file' is missing.");
 		}
 
 		$this->data = @unserialize(file_get_contents($file));
-		if (!$this->data) {
+		if (!is_array($this->data)) {
 			throw new \Exception("Content of file '$file' is invalid.");
 		}
 
-		if (!is_dir($sourceDirectory)) {
-			throw new \Exception("Directory '$sourceDirectory' is missing.");
+		if (!$sourceDir) {
+			foreach ($this->data as $file => $foo) {
+				if (dirname($file) < $sourceDir || !$sourceDir) {
+					$sourceDir = dirname($file);
+				}
+			}
+
+		} elseif (!is_dir($sourceDir)) {
+			throw new \Exception("Directory '$sourceDir' is missing.");
 		}
 
-		$this->sourceDirectory = realpath($sourceDirectory) . DIRECTORY_SEPARATOR;
+		$this->sourceDir = realpath($sourceDir) . DIRECTORY_SEPARATOR;
 	}
 
 
@@ -109,7 +116,7 @@ class ReportGenerator
 		}
 
 		$this->files = array();
-		foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($this->sourceDirectory)) as $entry) {
+		foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($this->sourceDir)) as $entry) {
 			if (substr($entry->getBasename(), 0, 1) === '.') { // . or .. or .gitignore
 				continue;
 			}
@@ -133,7 +140,7 @@ class ReportGenerator
 			}
 
 			$this->files[] = (object) array(
-				'name' => str_replace($this->sourceDirectory, '', $entry),
+				'name' => str_replace($this->sourceDir, '', $entry),
 				'file' => $entry,
 				'lines' => $lines,
 				'coverage' => $coverage,
