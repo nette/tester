@@ -54,11 +54,86 @@ class Runner
 	 */
 	public function run()
 	{
-		$count = 0;
-		$failed = $passed = $skipped = array();
-
 		echo $this->log('PHP ' . $this->php->getVersion() . ' | ' . $this->php->getCommandLine() . "\n");
 
+		$tests = $this->findTests();
+		if (!$tests) {
+			echo $this->log("No tests found\n");
+			return;
+		}
+
+		list($failed, $skipped) = $this->runTests($tests);
+
+		if ($this->displaySkipped) {
+			echo "\n", implode($skipped);
+		}
+
+		if ($failed) {
+			echo "\n", implode($failed);
+			echo $this->log("\nFAILURES! (" . count($tests) . ' tests, ' . count($failed) . ' failures, ' . count($skipped) . ' skipped)');
+			return FALSE;
+
+		} else {
+			echo $this->log("\n\nOK (" . count($tests) . ' tests, ' . count($skipped) . ' skipped)');
+			return TRUE;
+		}
+	}
+
+
+
+	/**
+	 * @return array
+	 */
+	private function runTests(array $tests)
+	{
+		$failed = $skipped = $running = array();
+
+		while ($tests || $running) {
+			for ($i = count($running); $tests && $i < $this->jobs; $i++) {
+				list($file, $args) = array_shift($tests);
+				$testCase = new Job($file, $args, $this->php);
+				try {
+					$parallel = ($this->jobs > 1) && (count($running) + count($tests) > 1);
+					$running[] = $testCase->run(!$parallel);
+				} catch (JobException $e) {
+					echo 's';
+					$skipped[] = $this->log($this->format('Skipped', $testCase, $e));
+				}
+			}
+			if (count($running) > 1) {
+				usleep(self::RUN_USLEEP); // stream_select() doesn't work with proc_open()
+			}
+			foreach ($running as $key => $testCase) {
+				if ($testCase->isReady()) {
+					try {
+						$testCase->collect();
+						echo '.';
+						//$passed[] = array($testCase->getName(), $testCase->getFile());
+
+					} catch (JobException $e) {
+						if ($e->getCode() === JobException::SKIPPED) {
+							echo 's';
+							$skipped[] = $this->log($this->format('Skipped', $testCase, $e));
+
+						} else {
+							echo 'F';
+							$failed[] = $this->log($this->format('FAILED', $testCase, $e));
+						}
+					}
+					unset($running[$key]);
+				}
+			}
+		}
+		return array($failed, $skipped);
+	}
+
+
+
+	/**
+	 * @return array
+	 */
+	private function findTests()
+	{
 		$tests = array();
 		foreach ($this->paths as $path) {
 			if (is_file($path)) {
@@ -96,65 +171,7 @@ class Runner
 				}
 			}
 		}
-
-		$running = array();
-		while ($tests || $running) {
-			for ($i = count($running); $tests && $i < $this->jobs; $i++) {
-				list($file, $args) = array_shift($tests);
-				$count++;
-				$testCase = new Job($file, $args, $this->php);
-				try {
-					$parallel = ($this->jobs > 1) && (count($running) + count($tests) > 1);
-					$running[] = $testCase->run(!$parallel);
-				} catch (JobException $e) {
-					echo 's';
-					$skipped[] = $this->log($this->format('Skipped', $testCase, $e));
-				}
-			}
-			if (count($running) > 1) {
-				usleep(self::RUN_USLEEP); // stream_select() doesn't work with proc_open()
-			}
-			foreach ($running as $key => $testCase) {
-				if ($testCase->isReady()) {
-					try {
-						$testCase->collect();
-						echo '.';
-						$passed[] = array($testCase->getName(), $testCase->getFile());
-
-					} catch (JobException $e) {
-						if ($e->getCode() === JobException::SKIPPED) {
-							echo 's';
-							$skipped[] = $this->log($this->format('Skipped', $testCase, $e));
-
-						} else {
-							echo 'F';
-							$failed[] = $this->log($this->format('FAILED', $testCase, $e));
-						}
-					}
-					unset($running[$key]);
-				}
-			}
-		}
-
-		$failedCount = count($failed);
-		$skippedCount = count($skipped);
-
-		if ($this->displaySkipped) {
-			echo "\n", implode($skipped);
-		}
-
-		if (!$count) {
-			echo $this->log("No tests found\n");
-
-		} elseif ($failedCount) {
-			echo "\n", implode($failed);
-			echo $this->log("\nFAILURES! ($count tests, $failedCount failures, $skippedCount skipped)");
-			return FALSE;
-
-		} else {
-			echo $this->log("\n\nOK ($count tests, $skippedCount skipped)");
-		}
-		return TRUE;
+		return $tests;
 	}
 
 
