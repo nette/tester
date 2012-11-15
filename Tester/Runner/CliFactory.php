@@ -97,7 +97,7 @@ class CliFactory
 	{
 		echo "
 Usage:
-	php RunTests.php [options] [file or directory]
+	php tester.php [options] [file or directory]
 
 Options:
 	-p <php>    Specify PHP-CGI executable to run.
