@@ -215,8 +215,12 @@ class Assert
 	 * Compares two structures. Ignores the identity of objects and the order of keys in the arrays.
 	 * @return bool
 	 */
-	public static function compare($expected, $actual)
+	public static function compare($expected, $actual, $level = 0)
 	{
+		if ($level > 10) {
+			throw new \Exception('Nesting level too deep or recursive dependency.');
+		}
+
 		if (is_object($expected) && is_object($actual) && get_class($expected) === get_class($actual)) {
 			$expected = (array) $expected;
 			$actual = (array) $actual;
@@ -232,7 +236,7 @@ class Assert
 			}
 
 			foreach ($expected as $key => $value) {
-				if (!self::compare($value, $actual[$key])) {
+				if (!self::compare($value, $actual[$key], ++$level)) {
 					return FALSE;
 				}
 			}
@@ -421,7 +425,7 @@ class Assert
 			if (empty($var)) {
 
 			} elseif ($level > 50 || isset($var[$marker])) {
-				throw new \Exception('Nesting level too deep or recursive dependency.');
+				return '{* Nesting level too deep or recursive dependency *}';
 
 			} else {
 				$s .= "\n";
@@ -447,7 +451,7 @@ class Assert
 			if (empty($arr)) {
 
 			} elseif ($level > 50 || in_array($var, $list, TRUE)) {
-				throw new \Exception('Nesting level too deep or recursive dependency.');
+				return '{* Nesting level too deep or recursive dependency *}';
 
 			} else {
 				$s .= "\n";

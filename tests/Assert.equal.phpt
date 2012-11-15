@@ -15,3 +15,9 @@ Assert::equal(array(new stdClass), array(new stdClass));
 Assert::exception(function(){
 	Assert::equal(1, 1.0);
 }, 'Tester\AssertException', 'Failed asserting that 1.0 is equal to expected 1');
+
+Assert::exception(function(){
+	$rec = array();
+	$rec[] = & $rec;
+	Assert::equal($rec, $rec);
+}, 'Exception', 'Nesting level too deep or recursive dependency.');
