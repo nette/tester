@@ -112,4 +112,11 @@ class Helpers
 		exit($e instanceof AssertException ? Runner\Job::CODE_FAIL : Runner\Job::CODE_ERROR);
 	}
 
+
+
+	public static function with($obj, \Closure $closure)
+	{
+		return $closure->bindTo($obj, $obj)->__invoke();
+	}
+
 }
