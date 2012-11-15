@@ -36,12 +36,15 @@ class TestCase
 			$data = array();
 			preg_match_all('#@dataProvider\s+(\w+)#i', $method->getDocComment(), $matches);
 			if (!$matches[1]) {
+				if ($method->getNumberOfRequiredParameters()) {
+					throw new TestCaseException("Method {$method->getName()}() has arguments, but @dataProvider is missing.");
+				}
 				$data[] = array();
 			}
 			foreach ($matches[1] as $provider) {
 				$res = $this->$provider();
 				if (!is_array($res)) {
-					throw new \RuntimeException("Data provider $provider doesn't return array.");
+					throw new TestCaseException("Data provider $provider() doesn't return array.");
 				}
 				$data = array_merge($data, $res);
 			}
@@ -91,4 +94,10 @@ class TestCase
 	{
 	}
 
+}
+
+
+
+class TestCaseException extends \Exception
+{
 }
