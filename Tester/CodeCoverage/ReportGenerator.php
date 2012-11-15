@@ -23,6 +23,9 @@
 class ReportGenerator
 {
 	/** @var array */
+	public $acceptFiles = array('php', 'phpc', 'phpt', 'phtml');
+
+	/** @var array */
 	private $data;
 
 	/** @var string */
@@ -122,7 +125,9 @@ class ReportGenerator
 
 		$this->files = array();
 		foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($this->sourceDir)) as $entry) {
-			if (substr($entry->getBasename(), 0, 1) === '.') { // . or .. or .gitignore
+			if (substr($entry->getBasename(), 0, 1) === '.'  // . or .. or .gitignore
+				|| !in_array(pathinfo($entry, PATHINFO_EXTENSION), $this->acceptFiles))
+			{
 				continue;
 			}
 			$entry = (string) $entry;
