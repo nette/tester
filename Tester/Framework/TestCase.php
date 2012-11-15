@@ -21,6 +21,10 @@ namespace Tester;
 class TestCase
 {
 
+	/**
+	 * Runs the test case.
+	 * @return void
+	 */
 	public function run()
 	{
 		$rc = new \ReflectionClass($this);
@@ -33,11 +37,15 @@ class TestCase
 
 
 
-	public function runTest($method)
+	/**
+	 * Runs the single test.
+	 * @return void
+	 */
+	public function runTest($name, array $args = array())
 	{
 		$this->setUp();
 		try {
-			$this->$method();
+			call_user_func_array(array($this, $name), $args);
 		} catch (\Exception $e) {
 		}
 		$this->tearDown();
@@ -48,12 +56,20 @@ class TestCase
 
 
 
+	/**
+	 * This method is called before a test is executed.
+	 * @return void
+	 */
 	protected function setUp()
 	{
 	}
 
 
 
+	/**
+	 * This method is called after a test is executed.
+	 * @return void
+	 */
 	protected function tearDown()
 	{
 	}
