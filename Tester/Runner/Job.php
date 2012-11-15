@@ -58,15 +58,14 @@ class Job
 
 	/**
 	 * @param  string  test file name
-	 * @param  string  command line
 	 * @return void
 	 */
-	public function __construct($testFile, $args = NULL, PhpExecutable $php)
+	public function __construct($testFile, PhpExecutable $php, $args = NULL)
 	{
 		$this->file = (string) $testFile;
-		$this->args = $args;
-		$this->options = self::parseOptions($this->file);
 		$this->php = $php;
+		$this->args = $args;
+		$this->options = $this->parseOptions($this->file);
 	}
 
 
@@ -222,6 +221,17 @@ class Job
 	public function getArguments()
 	{
 		return $this->args;
+	}
+
+
+
+	/**
+	 * Returns test options.
+	 * @return array
+	 */
+	public function getOptions()
+	{
+		return $this->options;
 	}
 
 

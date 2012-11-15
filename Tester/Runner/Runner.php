@@ -38,6 +38,15 @@ class Runner
 	/** @var PhpExecutable */
 	private $php;
 
+	/** @var array */
+	private $passed;
+
+	/** @var array */
+	private $failed;
+
+	/** @var array */
+	private $skipped;
+
 
 
 	public function __construct(PhpExecutable $php, $logFile = NULL)
@@ -56,25 +65,26 @@ class Runner
 	{
 		echo $this->log('PHP ' . $this->php->getVersion() . ' | ' . $this->php->getCommandLine() . "\n");
 
+		$this->passed = $this->failed = $this->skipped = array();
 		$tests = $this->findTests();
 		if (!$tests) {
 			echo $this->log("No tests found\n");
 			return;
 		}
 
-		list($failed, $skipped) = $this->runTests($tests);
+		$this->runTests($tests);
 
 		if ($this->displaySkipped) {
-			echo "\n", implode($skipped);
+			echo "\n", implode($this->skipped);
 		}
 
-		if ($failed) {
-			echo "\n", implode($failed);
-			echo $this->log("\nFAILURES! (" . count($tests) . ' tests, ' . count($failed) . ' failures, ' . count($skipped) . ' skipped)');
+		if ($this->failed) {
+			echo "\n", implode($this->failed);
+			echo $this->log("\nFAILURES! (" . count($tests) . ' tests, ' . count($this->failed) . ' failures, ' . count($this->skipped) . ' skipped)');
 			return FALSE;
 
 		} else {
-			echo $this->log("\n\nOK (" . count($tests) . ' tests, ' . count($skipped) . ' skipped)');
+			echo $this->log("\n\nOK (" . count($tests) . ' tests, ' . count($this->skipped) . ' skipped)');
 			return TRUE;
 		}
 	}
@@ -82,96 +92,100 @@ class Runner
 
 
 	/**
-	 * @return array
+	 * @return void
 	 */
-	private function runTests(array $tests)
+	private function runTests(array & $tests)
 	{
-		$failed = $skipped = $running = array();
-
+		$running = array();
 		while ($tests || $running) {
 			for ($i = count($running); $tests && $i < $this->jobs; $i++) {
-				list($file, $args) = array_shift($tests);
-				$testCase = new Job($file, $args, $this->php);
+				$job = array_shift($tests);
 				try {
 					$parallel = ($this->jobs > 1) && (count($running) + count($tests) > 1);
-					$running[] = $testCase->run(!$parallel);
+					$running[] = $job->run(!$parallel);
 				} catch (JobException $e) {
 					echo 's';
-					$skipped[] = $this->log($this->format('Skipped', $testCase, $e));
+					$this->skipped[] = $this->log($this->format('Skipped', $job, $e->getMessage()));
 				}
 			}
+
 			if (count($running) > 1) {
 				usleep(self::RUN_USLEEP); // stream_select() doesn't work with proc_open()
 			}
-			foreach ($running as $key => $testCase) {
-				if ($testCase->isReady()) {
-					try {
-						$testCase->collect();
-						echo '.';
-						//$passed[] = array($testCase->getName(), $testCase->getFile());
 
-					} catch (JobException $e) {
-						if ($e->getCode() === JobException::SKIPPED) {
-							echo 's';
-							$skipped[] = $this->log($this->format('Skipped', $testCase, $e));
-
-						} else {
-							echo 'F';
-							$failed[] = $this->log($this->format('FAILED', $testCase, $e));
-						}
-					}
-					unset($running[$key]);
+			foreach ($running as $key => $job) {
+				if (!$job->isReady()) {
+					continue;
 				}
+				try {
+					$job->collect();
+					echo '.';
+					$this->passed[] = array($job->getName(), $job->getFile());
+
+				} catch (JobException $e) {
+					if ($e->getCode() === JobException::SKIPPED) {
+						echo 's';
+						$this->skipped[] = $this->log($this->format('Skipped', $job, $e->getMessage()));
+
+					} else {
+						echo 'F';
+						$this->failed[] = $this->log($this->format('FAILED', $job, $e->getMessage()));
+					}
+				}
+				unset($running[$key]);
 			}
 		}
-		return array($failed, $skipped);
 	}
 
 
 
 	/**
-	 * @return array
+	 * @return Job[]
 	 */
 	private function findTests()
 	{
 		$tests = array();
 		foreach ($this->paths as $path) {
-			if (is_file($path)) {
-				$files = array($path);
-			} else {
-				$files = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($path));
-			}
+			$files = is_file($path) ? array($path) : new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($path));
 			foreach ($files as $file) {
 				$file = (string) $file;
-				$info = pathinfo($file);
-				if (!isset($info['extension']) || $info['extension'] !== 'phpt') {
-					continue;
-				}
-
-				$options = Job::parseOptions($file);
-				if (!empty($options['multiple'])) {
-					if (is_numeric($options['multiple'])) {
-						$range = range(0, $options['multiple'] - 1);
-
-					} elseif (!is_file($multiFile = dirname($file) . '/' . $options['multiple'])) {
-						throw new \Exception("Missing @multiple configuration file '$multiFile'.");
-
-					} elseif (($multiple = parse_ini_file($multiFile, TRUE)) === FALSE) {
-						throw new \Exception("Cannot parse @multiple configuration file '$multiFile'.");
-
-					} else {
-						$range = array_keys($multiple);
-					}
-					foreach ($range as $item) {
-						$tests[] = array($file, escapeshellarg($item));
-					}
-
-				} else {
-					$tests[] = array($file, NULL);
+				if (pathinfo($file, PATHINFO_EXTENSION) === 'phpt') {
+					$this->processFile($file, $tests);
 				}
 			}
 		}
 		return $tests;
+	}
+
+
+
+	/**
+	 * @return void
+	 */
+	private function processFile($file, & $tests)
+	{
+		$job = new Job($file, $this->php);
+		$options = $job->getOptions();
+		$range = array(NULL);
+
+		if (!empty($options['multiple'])) {
+			if (is_numeric($options['multiple'])) {
+				$range = range(0, $options['multiple'] - 1);
+
+			} elseif (!is_file($multiFile = dirname($file) . '/' . $options['multiple'])) {
+				throw new \Exception("Missing @multiple configuration file '$multiFile'.");
+
+			} elseif (($multiple = parse_ini_file($multiFile, TRUE)) === FALSE) {
+				throw new \Exception("Cannot parse @multiple configuration file '$multiFile'.");
+
+			} else {
+				$range = array_keys($multiple);
+			}
+		}
+
+		foreach ($range as $item) {
+			$tests[] = new Job($file, $this->php, $item === NULL ? NULL : escapeshellarg($item));
+		}
 	}
 
 
@@ -193,12 +207,12 @@ class Runner
 	/**
 	 * @return string
 	 */
-	private function format($s, $testCase, $e)
+	private function format($s, Job $job, $message)
 	{
-		return "\n-- $s: {$testCase->getName()}"
-			. ($testCase->getArguments() ? " [{$testCase->getArguments()}]" : '') . ' | '
-			. implode(DIRECTORY_SEPARATOR, array_slice(explode(DIRECTORY_SEPARATOR, $testCase->getFile()), -3))
-			. str_replace("\n", "\n   ", "\n" . trim($e->getMessage())) . "\n";
+		return "\n-- $s: {$job->getName()}"
+			. ($job->getArguments() ? " [{$job->getArguments()}]" : '') . ' | '
+			. implode(DIRECTORY_SEPARATOR, array_slice(explode(DIRECTORY_SEPARATOR, $job->getFile()), -3))
+			. str_replace("\n", "\n   ", "\n" . trim($message)) . "\n";
 	}
 
 }
