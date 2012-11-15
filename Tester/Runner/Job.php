@@ -76,7 +76,7 @@ class Job
 	 * @param  bool
 	 * @return Job  provides a fluent interface
 	 */
-	public function run($blocking = true)
+	public function run($blocking = TRUE)
 	{
 		// pre-skip?
 		if (isset($this->options['skip'])) {
@@ -123,7 +123,7 @@ class Job
 			array('pipe', 'w'),
 		);
 
-		$this->proc = proc_open($cmd, $descriptors, $pipes, dirname($this->file), null, array('bypass_shell' => true));
+		$this->proc = proc_open($cmd, $descriptors, $pipes, dirname($this->file), NULL, array('bypass_shell' => TRUE));
 		list($stdin, $this->stdout, $stderr) = $pipes;
 		fclose($stdin);
 		stream_set_blocking($this->stdout, $blocking ? 1 : 0);
@@ -216,7 +216,7 @@ class Job
 
 
 	/**
-	 * Returns test args.
+	 * Returns script arguments.
 	 * @return string
 	 */
 	public function getArguments()

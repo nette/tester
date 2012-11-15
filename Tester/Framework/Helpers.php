@@ -82,7 +82,7 @@ class Helpers
 
 
 
-    /** @internal */
+	/** @internal */
 	public static function handleError($severity, $message, $file, $line)
 	{
 		if (($severity & error_reporting()) === $severity) {
@@ -95,7 +95,7 @@ class Helpers
 
 
 
-    /** @internal */
+	/** @internal */
 	public static function handleException($e)
 	{
 		echo "\n" . ($e instanceof AssertException ? '' : get_class($e) . ': ') . $e->getMessage();

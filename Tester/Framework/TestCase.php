@@ -49,7 +49,7 @@ class TestCase
 				$data = array_merge($data, $res);
 			}
 
-		    foreach ($data as $args) {
+			foreach ($data as $args) {
 				$this->runTest($method->getName(), $args);
 			}
 		}

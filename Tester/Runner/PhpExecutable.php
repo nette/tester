@@ -31,7 +31,7 @@ class PhpExecutable
 
 
 
-	public function __construct($path, $args)
+	public function __construct($path, $args = NULL)
 	{
 		exec(escapeshellarg($path) . ' -v', $output, $res);
 		if ($res) {
