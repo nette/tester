@@ -68,11 +68,16 @@ class ReportGenerator
 		}
 
 		if (!$sourceDir) {
-			foreach ($this->data as $file => $foo) {
-				if (dirname($file) < $sourceDir || !$sourceDir) {
-					$sourceDir = dirname($file);
+			$sourceDir = key($this->data);
+			for ($i = 0; $i < strlen($sourceDir); $i++) {
+				foreach ($this->data as $s => $foo) {
+					if (!isset($s[$i]) || $sourceDir[$i] !== $s[$i]) {
+						$sourceDir = substr($sourceDir, 0, $i);
+						break 2;
+					}
 				}
 			}
+			$sourceDir = dirname($sourceDir . 'x');
 
 		} elseif (!is_dir($sourceDir)) {
 			throw new \Exception("Directory '$sourceDir' is missing.");
