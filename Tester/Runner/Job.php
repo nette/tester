@@ -77,35 +77,6 @@ class Job
 	 */
 	public function run($blocking = TRUE)
 	{
-		// pre-skip?
-		if (isset($this->options['skip'])) {
-			$message = $this->options['skip'] ? $this->options['skip'] : 'No message.';
-			throw new JobException($message, JobException::SKIPPED);
-
-		} elseif (isset($this->options['phpversion'])) {
-			$operator = '>=';
-			if (preg_match('#^(<=|le|<|lt|==|=|eq|!=|<>|ne|>=|ge|>|gt)#', $this->options['phpversion'], $matches)) {
-				$this->options['phpversion'] = trim(substr($this->options['phpversion'], strlen($matches[1])));
-				$operator = $matches[1];
-			}
-			if (version_compare($this->options['phpversion'], $this->php->getVersion(), $operator)) {
-				throw new JobException("Requires PHP $operator {$this->options['phpversion']}.", JobException::SKIPPED);
-			}
-		}
-
-		$this->execute($blocking);
-		return $this;
-	}
-
-
-
-	/**
-	 * Execute test.
-	 * @param  bool
-	 * @return void
-	 */
-	private function execute($blocking)
-	{
 		$this->headers = $this->output = NULL;
 
 		$cmd = $this->php->getCommandLine();
@@ -127,6 +98,7 @@ class Job
 		fclose($stdin);
 		stream_set_blocking($this->stdout, $blocking ? 1 : 0);
 		fclose($stderr);
+		return $this;
 	}
 
 

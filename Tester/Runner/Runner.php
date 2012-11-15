@@ -71,6 +71,7 @@ class Runner
 			echo $this->log("No tests found\n");
 			return;
 		}
+		echo str_repeat('s', count($this->skipped));
 
 		$this->runTests($tests);
 
@@ -167,6 +168,22 @@ class Runner
 		$job = new Job($file, $this->php);
 		$options = $job->getOptions();
 		$range = array(NULL);
+
+		if (isset($options['skip'])) {
+			$this->skipped[] = $this->log($this->format('Skipped', $job, $options['skip']));
+			return;
+
+		} elseif (isset($options['phpversion'])) {
+			$operator = '>=';
+			if (preg_match('#^(<=|le|<|lt|==|=|eq|!=|<>|ne|>=|ge|>|gt)#', $options['phpversion'], $matches)) {
+				$options['phpversion'] = trim(substr($options['phpversion'], strlen($matches[1])));
+				$operator = $matches[1];
+			}
+			if (version_compare($options['phpversion'], $this->php->getVersion(), $operator)) {
+				$this->skipped[] = $this->log($this->format('Skipped', $job, "Requires PHP $operator {$options['phpversion']}."));
+				return;
+			}
+		}
 
 		if (!empty($options['multiple'])) {
 			if (is_numeric($options['multiple'])) {
