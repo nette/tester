@@ -28,7 +28,7 @@ class TestCase
 	public function run()
 	{
 		$rc = new \ReflectionClass($this);
-		foreach ($rc->getMethods() as $method) {
+		foreach ($rc->getMethods(\ReflectionMethod::IS_PUBLIC) as $method) {
 			if (preg_match('#^test[A-Z]#', $method->getName())) {
 				$this->runTest($method->getName());
 			}
