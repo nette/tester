@@ -25,10 +25,11 @@ class TestCase
 	 * Runs the test case.
 	 * @return void
 	 */
-	public function run()
+	public function run($method = NULL)
 	{
 		$rc = new \ReflectionClass($this);
-		foreach ($rc->getMethods(\ReflectionMethod::IS_PUBLIC) as $method) {
+		$methods = $method ? array($rc->getMethod($method)) : $rc->getMethods(\ReflectionMethod::IS_PUBLIC);
+		foreach ($methods as $method) {
 			if (!preg_match('#^test[A-Z]#', $method->getName())) {
 				continue;
 			}

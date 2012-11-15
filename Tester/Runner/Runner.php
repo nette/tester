@@ -198,6 +198,9 @@ class Runner
 			} else {
 				$range = array_keys($multiple);
 			}
+
+		} elseif (isset($options['testcase']) && preg_match_all('#\sfunction\s+(test\w+)\(#', file_get_contents($file), $matches)) {
+			$range = $matches[1];
 		}
 
 		foreach ($range as $item) {
