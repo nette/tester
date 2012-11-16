@@ -31,7 +31,7 @@ class Assert
 	{
 		if ($actual !== $expected) {
 			self::log($expected, $actual);
-			throw new AssertException('Failed asserting that ' . self::dump($actual) . ' is identical to expected ' . self::dump($expected));
+			throw new AssertException('Failed asserting that ' . Dumper::toLine($actual) . ' is identical to expected ' . Dumper::toLine($expected));
 		}
 	}
 
@@ -47,7 +47,7 @@ class Assert
 	{
 		if (!self::compare($expected, $actual)) {
 			self::log($expected, $actual);
-			throw new AssertException('Failed asserting that ' . self::dump($actual) . ' is equal to expected ' . self::dump($expected));
+			throw new AssertException('Failed asserting that ' . Dumper::toLine($actual) . ' is equal to expected ' . Dumper::toLine($expected));
 		}
 	}
 
@@ -63,14 +63,14 @@ class Assert
 	{
 		if (is_array($actual)) {
 			if (!in_array($needle, $actual, TRUE)) {
-				throw new AssertException('Failed asserting that ' . self::dump($actual) . ' contains ' . self::dump($needle));
+				throw new AssertException('Failed asserting that ' . Dumper::toLine($actual) . ' contains ' . Dumper::toLine($needle));
 			}
 		} elseif (is_string($actual)) {
 			if (strpos($actual, $needle) === FALSE) {
-				throw new AssertException('Failed asserting that ' . self::dump($actual) . ' contains ' . self::dump($needle));
+				throw new AssertException('Failed asserting that ' . Dumper::toLine($actual) . ' contains ' . Dumper::toLine($needle));
 			}
 		} else {
-			throw new AssertException('Failed asserting that ' . self::dump($actual) . ' is string or array');
+			throw new AssertException('Failed asserting that ' . Dumper::toLine($actual) . ' is string or array');
 		}
 	}
 
@@ -84,7 +84,7 @@ class Assert
 	public static function true($actual)
 	{
 		if ($actual !== TRUE) {
-			throw new AssertException('Failed asserting that ' . self::dump($actual) . ' is TRUE');
+			throw new AssertException('Failed asserting that ' . Dumper::toLine($actual) . ' is TRUE');
 		}
 	}
 
@@ -98,7 +98,7 @@ class Assert
 	public static function false($actual)
 	{
 		if ($actual !== FALSE) {
-			throw new AssertException('Failed asserting that ' . self::dump($actual) . ' is FALSE');
+			throw new AssertException('Failed asserting that ' . Dumper::toLine($actual) . ' is FALSE');
 		}
 	}
 
@@ -112,7 +112,7 @@ class Assert
 	public static function null($actual)
 	{
 		if ($actual !== NULL) {
-			throw new AssertException('Failed asserting that ' . self::dump($actual) . ' is NULL');
+			throw new AssertException('Failed asserting that ' . Dumper::toLine($actual) . ' is NULL');
 		}
 	}
 
@@ -311,166 +311,7 @@ class Assert
 		}
 		if (!$res) {
 			self::log($expected, $actual);
-			throw new AssertException('Failed asserting that ' . self::dump($actual) . ' matches expected ' . self::dump($expected));
-		}
-	}
-
-
-
-	/**
-	 * Dumps information about a variable in readable format.
-	 * @param  mixed  variable to dump
-	 * @return void
-	 */
-	private static function dump($var)
-	{
-		static $tableUtf, $tableBin, $reBinary = '#[^\x09\x0A\x0D\x20-\x7E\xA0-\x{10FFFF}]#u';
-		if ($tableUtf === NULL) {
-			foreach (range("\x00", "\xFF") as $ch) {
-				if (ord($ch) < 32 && strpos("\r\n\t", $ch) === FALSE) {
-					$tableUtf[$ch] = $tableBin[$ch] = '\\x' . str_pad(dechex(ord($ch)), 2, '0', STR_PAD_LEFT);
-				} elseif (ord($ch) < 127) {
-					$tableUtf[$ch] = $tableBin[$ch] = $ch;
-				} else {
-					$tableUtf[$ch] = $ch; $tableBin[$ch] = '\\x' . dechex(ord($ch));
-				}
-			}
-			$tableBin["\\"] = '\\\\';
-			$tableBin["\r"] = '\\r';
-			$tableBin["\n"] = '\\n';
-			$tableBin["\t"] = '\\t';
-			$tableUtf['\\x'] = $tableBin['\\x'] = '\\\\x';
-		}
-
-		if (is_bool($var)) {
-			return $var ? 'TRUE' : 'FALSE';
-
-		} elseif ($var === NULL) {
-			return 'NULL';
-
-		} elseif (is_int($var)) {
-			return "$var";
-
-		} elseif (is_float($var)) {
-			$var = var_export($var, TRUE);
-			return strpos($var, '.') === FALSE ? $var . '.0' : $var;
-
-		} elseif (is_string($var)) {
-			if ($cut = @iconv_strlen($var, 'UTF-8') > 100) {
-				$var = iconv_substr($var, 0, 100, 'UTF-8');
-			} elseif ($cut = strlen($var) > 100) {
-				$var = substr($var, 0, 100);
-			}
-			return '"' . strtr($var, preg_match($reBinary, $var) || preg_last_error() ? $tableBin : $tableUtf) . '"' . ($cut ? ' ...' : '');
-
-		} elseif (is_array($var)) {
-			return "array(" . count($var) . ")";
-
-		} elseif ($var instanceof \Exception) {
-			return 'Exception ' . get_class($var) . ': ' . ($var->getCode() ? '#' . $var->getCode() . ' ' : '') . $var->getMessage();
-
-		} elseif (is_object($var)) {
-			$arr = (array) $var;
-			return "object(" . get_class($var) . ") (" . count($arr) . ")";
-
-		} elseif (is_resource($var)) {
-			return "resource(" . get_resource_type($var) . ")";
-
-		} else {
-			return "unknown type";
-		}
-	}
-
-
-
-	/**
-	 * Dumps variable in PHP format.
-	 * @param  mixed  variable to dump
-	 * @return void
-	 */
-	private static function dumpPhp(&$var, $level = 0)
-	{
-		if (is_float($var)) {
-			$var = var_export($var, TRUE);
-			return strpos($var, '.') === FALSE ? $var . '.0' : $var;
-
-		} elseif (is_bool($var)) {
-			return $var ? 'TRUE' : 'FALSE';
-
-		} elseif (is_string($var) && (preg_match('#[^\x09\x20-\x7E\xA0-\x{10FFFF}]#u', $var) || preg_last_error())) {
-			static $table;
-			if ($table === NULL) {
-				foreach (range("\x00", "\xFF") as $ch) {
-					$table[$ch] = ord($ch) < 32 || ord($ch) >= 127
-						? '\\x' . str_pad(dechex(ord($ch)), 2, '0', STR_PAD_LEFT)
-						: $ch;
-				}
-				$table["\r"] = '\r';
-				$table["\n"] = '\n';
-				$table["\t"] = '\t';
-				$table['$'] = '\\$';
-				$table['\\'] = '\\\\';
-				$table['"'] = '\\"';
-			}
-			return '"' . strtr($var, $table) . '"';
-
-		} elseif (is_array($var)) {
-			$s = '';
-			$space = str_repeat("\t", $level);
-
-			static $marker;
-			if ($marker === NULL) {
-				$marker = uniqid("\x00", TRUE);
-			}
-			if (empty($var)) {
-
-			} elseif ($level > 50 || isset($var[$marker])) {
-				return '{* Nesting level too deep or recursive dependency *}';
-
-			} else {
-				$s .= "\n";
-				$var[$marker] = TRUE;
-				$counter = 0;
-				foreach ($var as $k => &$v) {
-					if ($k !== $marker) {
-						$s .= "$space\t" . ($k === $counter ? '' : self::dumpPhp($k) . " => ") . self::dumpPhp($v, $level + 1) . ",\n";
-						$counter = is_int($k) ? max($k + 1, $counter) : $counter;
-					}
-				}
-				unset($var[$marker]);
-				$s .= $space;
-			}
-			return "array($s)";
-
-		} elseif (is_object($var)) {
-			$arr = (array) $var;
-			$s = '';
-			$space = str_repeat("\t", $level);
-
-			static $list = array();
-			if (empty($arr)) {
-
-			} elseif ($level > 50 || in_array($var, $list, TRUE)) {
-				return '{* Nesting level too deep or recursive dependency *}';
-
-			} else {
-				$s .= "\n";
-				$list[] = $var;
-				foreach ($arr as $k => &$v) {
-					if ($k[0] === "\x00") {
-						$k = substr($k, strrpos($k, "\x00") + 1);
-					}
-					$s .= "$space\t" . self::dumpPhp($k) . " => " . self::dumpPhp($v, $level + 1) . ",\n";
-				}
-				array_pop($list);
-				$s .= $space;
-			}
-			return get_class($var) === 'stdClass'
-				? "(object) array($s)"
-				: get_class($var) . "::__set_state(array($s))";
-
-		} else {
-			return var_export($var, TRUE);
+			throw new AssertException('Failed asserting that ' . Dumper::toLine($actual) . ' matches expected ' . Dumper::toLine($expected));
 		}
 	}
 
@@ -499,12 +340,12 @@ class Assert
 
 		if (is_object($expected) || is_array($expected) || (is_string($expected) && strlen($expected) > 80)) {
 			@mkdir(dirname($file)); // @ - directory may already exist
-			file_put_contents($file . '.expected', is_string($expected) ? $expected : self::dumpPhp($expected));
+			file_put_contents($file . '.expected', is_string($expected) ? $expected : Dumper::toPhp($expected));
 		}
 
 		if (is_object($actual) || is_array($actual) || (is_string($actual) && strlen($actual) > 80)) {
 			@mkdir(dirname($file)); // @ - directory may already exist
-			file_put_contents($file . '.actual', is_string($actual) ? $actual : self::dumpPhp($actual));
+			file_put_contents($file . '.actual', is_string($actual) ? $actual : Dumper::toPhp($actual));
 		}
 	}
 

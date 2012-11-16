@@ -24,7 +24,7 @@ Assert::exception(function(){
 
 Assert::exception(function(){
 	Assert::same(new stdClass, new stdClass);
-}, 'Tester\AssertException', 'Failed asserting that object(stdClass) (0) is identical to expected object(stdClass) (0)');
+}, 'Tester\AssertException', 'Failed asserting that stdClass(0) is identical to expected stdClass(0)');
 
 Assert::exception(function(){
 	$rec = array();
