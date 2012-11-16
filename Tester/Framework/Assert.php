@@ -236,7 +236,7 @@ class Assert
 			}
 
 			foreach ($expected as $key => $value) {
-				if (!self::compare($value, $actual[$key], ++$level)) {
+				if (!self::compare($value, $actual[$key], $level + 1)) {
 					return FALSE;
 				}
 			}
