@@ -220,6 +220,7 @@ class Assert
 		if ($level > 10) {
 			throw new \Exception('Nesting level too deep or recursive dependency.');
 		}
+		$level++;
 
 		if (is_object($expected) && is_object($actual) && get_class($expected) === get_class($actual)) {
 			$expected = (array) $expected;
@@ -236,7 +237,7 @@ class Assert
 			}
 
 			foreach ($expected as $key => $value) {
-				if (!self::compare($value, $actual[$key], ++$level)) {
+				if (!self::compare($value, $actual[$key], $level)) {
 					return FALSE;
 				}
 			}
