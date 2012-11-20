@@ -87,7 +87,7 @@ class Helpers
 	{
 		if (($severity & error_reporting()) === $severity) {
 			$e = new \ErrorException($message, 0, $severity, $file, $line);
-			echo "\nError: $message in $file:$line\nStack trace:\n" . $e->getTraceAsString();
+			echo "\nError: $message\n{$e->getTraceAsString()}\n";
 			exit(Runner\Job::CODE_ERROR);
 		}
 		return FALSE;
@@ -98,18 +98,24 @@ class Helpers
 	/** @internal */
 	public static function handleException($e)
 	{
-		echo "\n" . ($e instanceof AssertException ? '' : get_class($e) . ': ') . $e->getMessage();
-		$trace = $e->getTrace();
-		while (isset($trace[0]['file']) && substr($trace[0]['file'], strlen(__DIR__))  === __DIR__) {
-			array_shift($trace);
-		}
-		while ($trace) {
-			if (isset($trace[0]['file'], $trace[0]['line'])) {
-				echo "\nin " . implode(DIRECTORY_SEPARATOR, array_slice(explode(DIRECTORY_SEPARATOR, $trace[0]['file']), -3)) . ':' . $trace[0]['line'];
+		if ($e instanceof AssertException) {
+			echo "\n{$e->getMessage()}\n";
+			foreach ($e->getTrace() as $item) {
+				if (isset($item['file'], $item['line'])) {
+					if (substr($item['file'], strlen(__DIR__)) !== __DIR__) {
+						echo 'in ' . implode(DIRECTORY_SEPARATOR, array_slice(explode(DIRECTORY_SEPARATOR, $item['file']), -3)) . "($item[line])\n";
+					}
+				}
 			}
-			array_shift($trace);
+			exit(Runner\Job::CODE_FAIL);
 		}
-		exit($e instanceof AssertException ? Runner\Job::CODE_FAIL : Runner\Job::CODE_ERROR);
+
+		$tmp = '';
+		do {
+			echo "\n$tmp" . get_class($e) . ": {$e->getMessage()}\nin {$e->getFile()}({$e->getLine()})\n{$e->getTraceAsString()}\n";
+			$tmp = '(previous) ';
+		} while ($e = $e->getPrevious());
+		exit(Runner\Job::CODE_ERROR);
 	}
 
 
