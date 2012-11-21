@@ -199,6 +199,10 @@ class Runner
 				$range = array_keys($multiple);
 			}
 
+			if (!$range) {
+				$this->skipped[] = $this->log($this->format('Skipped', $job, "Set of '@multiple $options[multiple]' is empty for test."));
+			}
+
 		} elseif (isset($options['testcase']) && preg_match_all('#\sfunction\s+(test\w+)\(#', file_get_contents($file), $matches)) {
 			$range = $matches[1];
 		}
