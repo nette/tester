@@ -67,7 +67,7 @@ class Runner
 
 		$this->passed = $this->failed = $this->skipped = array();
 		$tests = $this->findTests();
-		if (!$tests) {
+		if (!$tests && !$this->skipped) {
 			echo $this->log("No tests found\n");
 			return;
 		}
