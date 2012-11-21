@@ -95,7 +95,7 @@ class Runner
 	/**
 	 * @return void
 	 */
-	private function runTests(array & $tests)
+	private function runTests(array $tests)
 	{
 		$running = array();
 		while ($tests || $running) {
