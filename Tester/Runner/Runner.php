@@ -175,9 +175,12 @@ class Runner
 			}
 		}
 
+		if (isset($options['dataprovider?'])) {
+			$options['dataprovider'] = $options['dataprovider?'];
+		}
 		if (isset($options['dataprovider'])) {
 			if (!is_file($dataFile = dirname($file) . '/' . $options['dataprovider'])) {
-				return $this->logResult(self::FAILED, $job, "Missing @dataProvider configuration file '$dataFile'.");
+				return $this->logResult(isset($options['dataprovider?']) ? self::SKIPPED : self::FAILED, $job, "Missing @dataProvider configuration file '$dataFile'.");
 
 			} elseif (($dataProvider = @parse_ini_file($dataFile, TRUE)) === FALSE) {
 				return $this->logResult(self::FAILED, $job, "Cannot parse @dataProvider configuration file '$dataFile'.");
