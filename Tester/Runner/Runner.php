@@ -185,12 +185,12 @@ class Runner
 			}
 		}
 
-		if (!empty($options['dataprovider'])) {
+		if (isset($options['dataprovider'])) {
 			if (!is_file($dataFile = dirname($file) . '/' . $options['dataprovider'])) {
-				throw new \Exception("Missing @dataProvider configuration file '$dataFile'.");
+				$this->failed[] = $this->log($this->format('FAILED', $job, "Missing @dataProvider configuration file '$dataFile'."));
 
-			} elseif (($dataProvider = parse_ini_file($dataFile, TRUE)) === FALSE) {
-				throw new \Exception("Cannot parse @dataProvider configuration file '$dataFile'.");
+			} elseif (($dataProvider = @parse_ini_file($dataFile, TRUE)) === FALSE) {
+				$this->failed[] = $this->log($this->format('FAILED', $job, "Cannot parse @dataProvider configuration file '$dataFile'."));
 
 			} else {
 				$range = array_keys($dataProvider);
@@ -200,7 +200,7 @@ class Runner
 				$this->skipped[] = $this->log($this->format('Skipped', $job, "Set of '@dataProvider $options[dataprovider]' is empty for test."));
 			}
 
-		} elseif (!empty($options['multiple'])) {
+		} elseif (isset($options['multiple'])) {
 			$range = range(0, $options['multiple'] - 1);
 
 		} elseif (isset($options['testcase']) && preg_match_all('#\sfunction\s+(test\w+)\(#', file_get_contents($file), $matches)) {
