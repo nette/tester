@@ -37,7 +37,7 @@ class TestCase
 			$data = array();
 			$info = Helpers::parseDocComment($method->getDocComment()) + array('dataprovider' => NULL);
 			foreach ((array) $info['dataprovider'] as $provider) {
-				$res = $this->$provider();
+				$res = $this->getData($provider);
 				if (!is_array($res)) {
 					throw new TestCaseException("Data provider $provider() doesn't return array.");
 				}
@@ -73,6 +73,16 @@ class TestCase
 		if (isset($e)) {
 			throw $e;
 		}
+	}
+
+
+
+	/**
+	 * @return array
+	 */
+	protected function getData($provider)
+	{
+		return $this->$provider();
 	}
 
 
