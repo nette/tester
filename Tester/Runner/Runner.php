@@ -165,13 +165,12 @@ class Runner
 			return $this->logResult(self::SKIPPED, $job, $options['skip']);
 
 		} elseif (isset($options['phpversion'])) {
-			$operator = '>=';
-			if (preg_match('#^(<=|le|<|lt|==|=|eq|!=|<>|ne|>=|ge|>|gt)#', $options['phpversion'], $matches)) {
-				$options['phpversion'] = trim(substr($options['phpversion'], strlen($matches[1])));
-				$operator = $matches[1];
-			}
-			if (version_compare($options['phpversion'], $this->php->getVersion(), $operator)) {
-				return $this->logResult(self::SKIPPED, $job, "Requires PHP $operator {$options['phpversion']}.");
+			foreach ((array) $options['phpversion'] as $phpVersion) {
+				if (preg_match('#^(<=|le|<|lt|==|=|eq|!=|<>|ne|>=|ge|>|gt)?\s*(.+)#', $phpVersion, $matches)
+					&& version_compare($matches[2], $this->php->getVersion(), $matches[1] ?: '>='))
+				{
+					return $this->logResult(self::SKIPPED, $job, "Requires PHP $phpVersion}.");
+				}
 			}
 		}
 

@@ -84,7 +84,7 @@ class Job
 
 		$cmd = $this->php->getCommandLine();
 		if (isset($this->options['phpini'])) {
-			foreach (explode(';', $this->options['phpini']) as $item) {
+			foreach ((array) $this->options['phpini'] as $item) {
 				$cmd .= ' -d ' . escapeshellarg(trim($item));
 			}
 		}
