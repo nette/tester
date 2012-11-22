@@ -20,6 +20,11 @@ namespace Tester\Runner;
  */
 class Runner
 {
+	const
+		PASSED = 1,
+		SKIPPED = 2,
+		FAILED = 3;
+
 	/** waiting time between runs in microseconds */
 	const RUN_USLEEP = 10000;
 
@@ -39,13 +44,7 @@ class Runner
 	private $php;
 
 	/** @var array */
-	private $passed;
-
-	/** @var array */
-	private $failed;
-
-	/** @var array */
-	private $skipped;
+	private $results;
 
 
 
@@ -65,27 +64,29 @@ class Runner
 	{
 		echo $this->log('PHP ' . $this->php->getVersion() . ' | ' . $this->php->getCommandLine() . "\n");
 
-		$this->passed = $this->failed = $this->skipped = array();
+		$this->results = array(self::PASSED => NULL, self::SKIPPED => NULL, self::FAILED => NULL);
 		$tests = $this->findTests();
-		if (!$tests && !$this->skipped) {
+		if (!$tests && !$this->results[self::SKIPPED]) {
 			echo $this->log("No tests found\n");
 			return;
 		}
-		echo str_repeat('s', count($this->skipped));
 
 		$this->runTests($tests);
 
 		if ($this->displaySkipped) {
-			echo "\n", implode($this->skipped);
+			echo "\n", implode($this->results[self::SKIPPED]);
 		}
 
-		if ($this->failed) {
-			echo "\n", implode($this->failed);
-			echo $this->log("\nFAILURES! (" . count($tests) . ' tests, ' . count($this->failed) . ' failures, ' . count($this->skipped) . ' skipped)');
+		if ($this->results[self::FAILED]) {
+			echo "\n", implode($this->results[self::FAILED]);
+			echo $this->log("\nFAILURES! (" . count($tests) . ' tests, '
+				. count($this->results[self::FAILED]) . ' failures, '
+				. count($this->results[self::SKIPPED]) . ' skipped)');
 			return FALSE;
 
 		} else {
-			echo $this->log("\n\nOK (" . count($tests) . ' tests, ' . count($this->skipped) . ' skipped)');
+			echo $this->log("\n\nOK (" . count($tests) . ' tests, '
+				. count($this->results[self::SKIPPED]) . ' skipped)');
 			return TRUE;
 		}
 	}
@@ -105,8 +106,7 @@ class Runner
 					$parallel = ($this->jobs > 1) && (count($running) + count($tests) > 1);
 					$running[] = $job->run(!$parallel);
 				} catch (JobException $e) {
-					echo 's';
-					$this->skipped[] = $this->log($this->format('Skipped', $job, $e->getMessage()));
+					$this->logResult(self::SKIPPED, $job, $e->getMessage());
 				}
 			}
 
@@ -120,18 +120,10 @@ class Runner
 				}
 				try {
 					$job->collect();
-					echo '.';
-					$this->passed[] = array($job->getName(), $job->getFile());
+					$this->logResult(self::PASSED, $job);
 
 				} catch (JobException $e) {
-					if ($e->getCode() === JobException::SKIPPED) {
-						echo 's';
-						$this->skipped[] = $this->log($this->format('Skipped', $job, $e->getMessage()));
-
-					} else {
-						echo 'F';
-						$this->failed[] = $this->log($this->format('FAILED', $job, $e->getMessage()));
-					}
+					$this->logResult($e->getCode() === JobException::SKIPPED ? self::SKIPPED : self::FAILED, $job, $e->getMessage());
 				}
 				unset($running[$key]);
 			}
@@ -170,8 +162,7 @@ class Runner
 		$range = array(NULL);
 
 		if (isset($options['skip'])) {
-			$this->skipped[] = $this->log($this->format('Skipped', $job, $options['skip']));
-			return;
+			return $this->logResult(self::SKIPPED, $job, $options['skip']);
 
 		} elseif (isset($options['phpversion'])) {
 			$operator = '>=';
@@ -180,24 +171,21 @@ class Runner
 				$operator = $matches[1];
 			}
 			if (version_compare($options['phpversion'], $this->php->getVersion(), $operator)) {
-				$this->skipped[] = $this->log($this->format('Skipped', $job, "Requires PHP $operator {$options['phpversion']}."));
-				return;
+				return $this->logResult(self::SKIPPED, $job, "Requires PHP $operator {$options['phpversion']}.");
 			}
 		}
 
 		if (isset($options['dataprovider'])) {
 			if (!is_file($dataFile = dirname($file) . '/' . $options['dataprovider'])) {
-				$this->failed[] = $this->log($this->format('FAILED', $job, "Missing @dataProvider configuration file '$dataFile'."));
+				return $this->logResult(self::FAILED, $job, "Missing @dataProvider configuration file '$dataFile'.");
 
 			} elseif (($dataProvider = @parse_ini_file($dataFile, TRUE)) === FALSE) {
-				$this->failed[] = $this->log($this->format('FAILED', $job, "Cannot parse @dataProvider configuration file '$dataFile'."));
-
-			} else {
-				$range = array_keys($dataProvider);
+				return $this->logResult(self::FAILED, $job, "Cannot parse @dataProvider configuration file '$dataFile'.");
 			}
 
+			$range = array_keys($dataProvider);
 			if (!$range) {
-				$this->skipped[] = $this->log($this->format('Skipped', $job, "Set of '@dataProvider $options[dataprovider]' is empty for test."));
+				return $this->logResult(self::SKIPPED, $job, "Set of '@dataProvider $options[dataprovider]' is empty for test.");
 			}
 
 		} elseif (isset($options['multiple'])) {
@@ -229,14 +217,26 @@ class Runner
 
 
 	/**
-	 * @return string
+	 * @return void
 	 */
-	private function format($s, Job $job, $message)
+	private function logResult($result, Job $job, $message = NULL)
 	{
-		return "\n-- $s: {$job->getName()}"
-			. ($job->getArguments() ? " [{$job->getArguments()}]" : '') . ' | '
-			. implode(DIRECTORY_SEPARATOR, array_slice(explode(DIRECTORY_SEPARATOR, $job->getFile()), -3))
-			. str_replace("\n", "\n   ", "\n" . trim($message)) . "\n";
+		static $results = array(
+			self::PASSED => array('.'),
+			self::SKIPPED => array('s', 'Skipped'),
+			self::FAILED => array('F', 'FAILED'),
+		);
+
+		echo $results[$result][0];
+
+		$file = implode(DIRECTORY_SEPARATOR, array_slice(explode(DIRECTORY_SEPARATOR, $job->getFile()), -3));
+		if ($result === self::PASSED) {
+			$this->results[$result][] = "{$job->getName()} $file";
+		} else {
+			$this->results[$result][] = $this->log("\n-- {$results[$result][1]}: {$job->getName()}"
+				. ($job->getArguments() ? " [{$job->getArguments()}]" : '')
+				. " | $file" . str_replace("\n", "\n   ", "\n" . trim($message)) . "\n");
+		}
 	}
 
 }
