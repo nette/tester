@@ -27,6 +27,8 @@ sort($tests);
 Assert::same(array(
 	array($fixtures . 'test.dataProvider.phpt', escapeshellarg('bar')),
 	array($fixtures . 'test.dataProvider.phpt', escapeshellarg('foo')),
+	array($fixtures . 'test.dataProvider.query.phpt', escapeshellarg('foo 2.2.3')),
+	array($fixtures . 'test.dataProvider.query.phpt', escapeshellarg('foo 3 xxx')),
 	array($fixtures . 'test.multiple.phpt', escapeshellarg('0')),
 	array($fixtures . 'test.multiple.phpt', escapeshellarg('1')),
 	array($fixtures . 'test.phpt', NULL),

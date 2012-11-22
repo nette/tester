@@ -15,6 +15,7 @@ require __DIR__ . '/Runner/Runner.php';
 require __DIR__ . '/Runner/Job.php';
 require __DIR__ . '/Runner/CliFactory.php';
 require __DIR__ . '/Framework/Helpers.php';
+require __DIR__ . '/Framework/DataProvider.php';
 
 
 

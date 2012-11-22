@@ -138,6 +138,7 @@ class Runner
 	{
 		$tests = array();
 		foreach ($this->paths as $path) {
+			$path = realpath($path);
 			$files = is_file($path) ? array($path) : new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($path));
 			foreach ($files as $file) {
 				$file = (string) $file;
@@ -177,16 +178,11 @@ class Runner
 			$options['dataprovider'] = $options['dataprovider?'];
 		}
 		if (isset($options['dataprovider'])) {
-			if (!is_file($dataFile = dirname($file) . '/' . $options['dataprovider'])) {
-				return $this->logResult(isset($options['dataprovider?']) ? self::SKIPPED : self::FAILED, $job, "Missing @dataProvider configuration file '$dataFile'.");
-
-			} elseif (($dataProvider = @parse_ini_file($dataFile, TRUE)) === FALSE) {
-				return $this->logResult(self::FAILED, $job, "Cannot parse @dataProvider configuration file '$dataFile'.");
-			}
-
-			$range = array_keys($dataProvider);
-			if (!$range) {
-				return $this->logResult(self::SKIPPED, $job, "Set of '@dataProvider $options[dataprovider]' is empty for test.");
+			list($dataFile, $query) = preg_split('#\s*,?\s+#', $options['dataprovider'] . ' ', 2);
+			try {
+				$range = array_keys(\Tester\DataProvider::load(dirname($file) . '/' . $dataFile, $query));
+			} catch (\Exception $e) {
+				return $this->logResult(isset($options['dataprovider?']) ? self::SKIPPED : self::FAILED, $job, $e->getMessage());
 			}
 
 		} elseif (isset($options['multiple'])) {

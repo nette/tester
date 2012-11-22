@@ -82,7 +82,13 @@ class TestCase
 	 */
 	protected function getData($provider)
 	{
-		return $this->$provider();
+		if (strpos($provider, '.')) {
+			list($file, $query) = preg_split('#\s*,?\s+#', "$provider ", 2);
+			$rc = new \ReflectionClass($this);
+			return DataProvider::load(dirname($rc->getFileName()) . '/' . $file, $query);
+		} else {
+			return $this->$provider();
+	}
 	}
 
 
