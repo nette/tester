@@ -166,7 +166,7 @@ class Runner
 
 		} elseif (isset($options['phpversion'])) {
 			foreach ((array) $options['phpversion'] as $phpVersion) {
-				if (preg_match('#^(<=|le|<|lt|==|=|eq|!=|<>|ne|>=|ge|>|gt)?\s*(.+)#', $phpVersion, $matches)
+				if (preg_match('#^(<=|<|==|=|!=|<>|>=|>)?\s*(.+)#', $phpVersion, $matches)
 					&& version_compare($matches[2], $this->php->getVersion(), $matches[1] ?: '>='))
 				{
 					return $this->logResult(self::SKIPPED, $job, "Requires PHP $phpVersion}.");
