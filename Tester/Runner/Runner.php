@@ -185,23 +185,23 @@ class Runner
 			}
 		}
 
-		if (!empty($options['multiple'])) {
-			if (is_numeric($options['multiple'])) {
-				$range = range(0, $options['multiple'] - 1);
+		if (!empty($options['dataprovider'])) {
+			if (!is_file($dataFile = dirname($file) . '/' . $options['dataprovider'])) {
+				throw new \Exception("Missing @dataProvider configuration file '$dataFile'.");
 
-			} elseif (!is_file($multiFile = dirname($file) . '/' . $options['multiple'])) {
-				throw new \Exception("Missing @multiple configuration file '$multiFile'.");
-
-			} elseif (($multiple = parse_ini_file($multiFile, TRUE)) === FALSE) {
-				throw new \Exception("Cannot parse @multiple configuration file '$multiFile'.");
+			} elseif (($dataProvider = parse_ini_file($dataFile, TRUE)) === FALSE) {
+				throw new \Exception("Cannot parse @dataProvider configuration file '$dataFile'.");
 
 			} else {
-				$range = array_keys($multiple);
+				$range = array_keys($dataProvider);
 			}
 
 			if (!$range) {
-				$this->skipped[] = $this->log($this->format('Skipped', $job, "Set of '@multiple $options[multiple]' is empty for test."));
+				$this->skipped[] = $this->log($this->format('Skipped', $job, "Set of '@dataProvider $options[dataprovider]' is empty for test."));
 			}
+
+		} elseif (!empty($options['multiple'])) {
+			$range = range(0, $options['multiple'] - 1);
 
 		} elseif (isset($options['testcase']) && preg_match_all('#\sfunction\s+(test\w+)\(#', file_get_contents($file), $matches)) {
 			$range = $matches[1];

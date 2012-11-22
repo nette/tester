@@ -1,5 +1,5 @@
 <?php
 
 /**
- * @multiple  multiple.ini
+ * @multiple  2
  */

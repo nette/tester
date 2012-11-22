@@ -25,10 +25,10 @@ foreach ($tests as $i => $job) {
 sort($tests);
 
 Assert::same(array(
-	array($fixtures . 'test.multiple.num.phpt', escapeshellarg('0')),
-	array($fixtures . 'test.multiple.num.phpt', escapeshellarg('1')),
-	array($fixtures . 'test.multiple.phpt', escapeshellarg('bar')),
-	array($fixtures . 'test.multiple.phpt', escapeshellarg('foo')),
+	array($fixtures . 'test.dataProvider.phpt', escapeshellarg('bar')),
+	array($fixtures . 'test.dataProvider.phpt', escapeshellarg('foo')),
+	array($fixtures . 'test.multiple.phpt', escapeshellarg('0')),
+	array($fixtures . 'test.multiple.phpt', escapeshellarg('1')),
 	array($fixtures . 'test.phpt', NULL),
 	array($fixtures . 'testcase.phpt', escapeshellarg('testBar')),
 	array($fixtures . 'testcase.phpt', escapeshellarg('testFoo')),

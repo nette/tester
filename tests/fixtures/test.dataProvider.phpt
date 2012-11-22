@@ -1,0 +1,5 @@
+<?php
+
+/**
+ * @dataProvider  dataprovider.ini
+ */
