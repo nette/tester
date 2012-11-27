@@ -76,7 +76,7 @@ class Job
 	/**
 	 * Runs single test.
 	 * @param  bool
-	 * @return Job  provides a fluent interface
+	 * @return void
 	 */
 	public function run($blocking = TRUE)
 	{
@@ -101,7 +101,6 @@ class Job
 		fclose($stdin);
 		stream_set_blocking($this->stdout, $blocking ? 1 : 0);
 		fclose($stderr);
-		return $this;
 	}
 
 

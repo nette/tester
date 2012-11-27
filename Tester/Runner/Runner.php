@@ -101,10 +101,9 @@ class Runner
 		$running = array();
 		while ($tests || $running) {
 			for ($i = count($running); $tests && $i < $this->jobs; $i++) {
-				$job = array_shift($tests);
 				try {
-					$parallel = ($this->jobs > 1) && (count($running) + count($tests) > 1);
-					$running[] = $job->run(!$parallel);
+					$running[] = $job = array_shift($tests);
+					$job->run($this->jobs <= 1 || (count($running) + count($tests) <= 1));
 				} catch (JobException $e) {
 					$this->logResult(self::SKIPPED, $job, $e->getMessage());
 				}
