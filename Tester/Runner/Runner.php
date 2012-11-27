@@ -179,14 +179,26 @@ class Runner
 			$options['dataprovider'] = $options['dataprovider?'];
 		}
 		if (isset($options['dataprovider'])) {
-			if (!is_file($dataFile = dirname($file) . '/' . $options['dataprovider'])) {
+			if (!preg_match('#^(\S+)(?:\s+\[(.+)\])?\z#', $options['dataprovider'], $m)) {
+				return $this->logResult(self::FAILED, $job, "Syntax error in '$options[dataprovider]' annotation.");
+			}
+
+			$requiredTags = isset($m[2]) ? $this->parseTagsStr($m[2]) : array();
+
+			if (!is_file($dataFile = dirname($file) . '/' . $m[1])) {
 				return $this->logResult(isset($options['dataprovider?']) ? self::SKIPPED : self::FAILED, $job, "Missing @dataProvider configuration file '$dataFile'.");
 
-			} elseif (($dataProvider = @parse_ini_file($dataFile, TRUE)) === FALSE) {
+			} elseif (($dataProvider = $this->parseTaggedIniFile($dataFile)) === FALSE) {
 				return $this->logResult(self::FAILED, $job, "Cannot parse @dataProvider configuration file '$dataFile'.");
 			}
 
-			$range = array_keys($dataProvider);
+			$range = array();
+			foreach ($dataProvider as $name => $params) {
+				if ($this->tagsMatch($requiredTags, $params['tags'])) {
+					$range[] = $name;
+				}
+			}
+
 			if (!$range) {
 				return $this->logResult(self::SKIPPED, $job, "Set of '@dataProvider $options[dataprovider]' is empty for test.");
 			}
@@ -201,6 +213,118 @@ class Runner
 		foreach ($range as $item) {
 			$tests[] = new Job($file, $this->php, $item === NULL ? NULL : escapeshellarg($item));
 		}
+	}
+
+
+
+	/**
+	 * Parses tags string "name op val, ..." used in @dataProvider annotation.
+	 * @param  string
+	 * @param  string  default operator
+	 * @return array[] of [name, op, val]
+	 */
+	private function parseTagsStr($str, $operator = '=')
+	{
+		static $reOps = '<=|<|==|=|!=|<>|>=|>';
+		static $reLetterOps = 'le|lt|eq|ne|ge|gt';
+
+		$res = array();
+
+		$tags = preg_split('#\s*,\s*#', $str, -1, PREG_SPLIT_NO_EMPTY);
+		foreach ($tags as $tag) {
+			$parts = preg_split("#\s*((?:$reOps)|(?:\s(?:$reLetterOps)\s))\s*#", $tag, 2, PREG_SPLIT_NO_EMPTY | PREG_SPLIT_DELIM_CAPTURE);
+
+			$res[] = array(
+				$parts[0],
+				isset($parts[1]) ? trim($parts[1]) : $operator,
+				isset($parts[2]) ? $parts[2] : TRUE,
+			);
+		}
+
+		return $res;
+	}
+
+
+
+	/**
+	 * Parses INI file which contents tags in comment before section (;@ tags, ...).
+	 * @param  string  path to INI file
+	 * @return array
+	 */
+	private function parseTaggedIniFile($file)
+	{
+		if (($raw = @file_get_contents($file)) === FALSE) {
+			return FALSE;
+		}
+
+		if (($sections = @parse_ini_string($raw, TRUE)) === FALSE) {
+			return FALSE;
+		}
+
+		foreach ($sections as $name => $args) {
+			$tags = array();
+			if (preg_match('#;@([^\r\n]+)\n\[' . preg_quote($name, '#') . '\]#', $raw, $m)) {
+				foreach (explode(',', preg_replace('#\s#', '', $m[1])) as $tag) {
+					$parts = explode('=', $tag, 2);
+					$tags[$parts[0]] = isset($parts[1]) ? $parts[1] : TRUE;
+				}
+			}
+
+			$sections[$name] = array(
+				'tags' => $tags,
+				'args' => $args,
+			);
+		}
+
+		return $sections;
+	}
+
+
+
+	/**
+	 * Compares tags.
+	 * @param  array[] of [name, op, val]  required tags
+	 * @param  array[name] => val  offered tags
+	 * @return bool
+	 */
+	private function tagsMatch(array $required, array $offered)
+	{
+		foreach ($required as $req) {
+			list($name, $operator, $value) = $req;
+
+			if (!array_key_exists($name, $offered)) {
+				return FALSE;
+
+			} elseif ($value === TRUE) { // flag
+				continue;
+			}
+
+			switch ($operator) {
+				case '==': case '=': case 'eq':
+					if (strcmp((string) $offered[$name], (string) $value) !== 0) {
+						return FALSE;
+					}
+					break;
+
+				case '!=': case '<>': case 'ne':
+					if (strcmp((string) $offered[$name], (string) $value) === 0) {
+						return FALSE;
+					}
+					break;
+
+				case '<=': case 'le': case '<': case 'lt':
+				case '>=': case 'ge': case '>':	case 'gt':
+					if (!version_compare($offered[$name], $value, $operator)) {
+						return FALSE;
+					}
+					break;
+
+				default:
+					throw new \Exception("Unsupported operator '$operator'.");
+			}
+		}
+
+		return TRUE;
 	}
 
 
