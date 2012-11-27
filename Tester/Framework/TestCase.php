@@ -35,19 +35,19 @@ class TestCase
 			}
 
 			$data = array();
-			preg_match_all('#@dataProvider\s+(\w+)#i', $method->getDocComment(), $matches);
-			if (!$matches[1]) {
-				if ($method->getNumberOfRequiredParameters()) {
-					throw new TestCaseException("Method {$method->getName()}() has arguments, but @dataProvider is missing.");
-				}
-				$data[] = array();
-			}
-			foreach ($matches[1] as $provider) {
+			$info = Helpers::parseDocComment($method->getDocComment()) + array('dataprovider' => NULL);
+			foreach ((array) $info['dataprovider'] as $provider) {
 				$res = $this->$provider();
 				if (!is_array($res)) {
 					throw new TestCaseException("Data provider $provider() doesn't return array.");
 				}
 				$data = array_merge($data, $res);
+			}
+			if (!$info['dataprovider']) {
+				if ($method->getNumberOfRequiredParameters()) {
+					throw new TestCaseException("Method {$method->getName()}() has arguments, but @dataProvider is missing.");
+				}
+				$data[] = array();
 			}
 
 			foreach ($data as $args) {

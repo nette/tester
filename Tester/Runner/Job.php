@@ -65,7 +65,10 @@ class Job
 		$this->file = (string) $testFile;
 		$this->php = $php;
 		$this->args = $args;
-		$this->options = $this->parseOptions($this->file);
+		$this->options = \Tester\Helpers::parseDocComment(file_get_contents($this->file));
+		$this->options['name'] = isset($this->options[0])
+			? preg_replace('#^TEST:#', '', $this->options[0])
+			: $this->file;
 	}
 
 
@@ -226,30 +229,6 @@ class Job
 	public function getHeaders()
 	{
 		return $this->headers;
-	}
-
-
-
-	/********************* helpers ****************d*g**/
-
-
-
-	/**
-	 * Parse phpDoc.
-	 * @param  string  file
-	 * @return array
-	 */
-	public static function parseOptions($testFile)
-	{
-		$content = file_get_contents($testFile);
-		$options = array();
-		$phpDoc = preg_match('#^/\*\*(.*?)\*/#ms', $content, $matches) ? trim($matches[1]) : '';
-		preg_match_all('#^\s*\*\s*@(\S+)(.*)#mi', $phpDoc, $matches, PREG_SET_ORDER);
-		foreach ($matches as $match) {
-			$options[strtolower($match[1])] = isset($match[2]) ? trim($match[2]) : TRUE;
-		}
-		$options['name'] = preg_match('#^\s*\*\s*TEST:(.*)#mi', $phpDoc, $matches) ? trim($matches[1]) : $testFile;
-		return $options;
 	}
 
 }
