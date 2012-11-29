@@ -73,7 +73,7 @@ class Runner
 
 		$this->runTests($tests);
 
-		if ($this->displaySkipped) {
+		if ($this->displaySkipped && $this->results[self::SKIPPED]) {
 			echo "\n", implode($this->results[self::SKIPPED]);
 		}
 
