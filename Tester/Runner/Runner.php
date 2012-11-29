@@ -66,7 +66,7 @@ class Runner
 
 		$this->results = array(self::PASSED => NULL, self::SKIPPED => NULL, self::FAILED => NULL);
 		$tests = $this->findTests();
-		if (!$tests && !$this->results[self::SKIPPED]) {
+		if (!$tests && count($this->results, 1) === count($this->results)) {
 			echo $this->log("No tests found\n");
 			return;
 		}
