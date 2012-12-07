@@ -40,7 +40,7 @@ class DataProvider
 		}
 
 		if (!$data) {
-			throw new \Exception("Set of data-provider file '$file' is empty for test.");
+			throw new \Exception("No records in data-provider file '$file'" . ($query ? " for query '$query'" : '') . '.');
 		}
 		return $data;
 	}
