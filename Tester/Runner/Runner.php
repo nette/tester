@@ -169,7 +169,7 @@ class Runner
 				if (preg_match('#^(<=|<|==|=|!=|<>|>=|>)?\s*(.+)#', $phpVersion, $matches)
 					&& version_compare($matches[2], $this->php->getVersion(), $matches[1] ?: '>='))
 				{
-					return $this->logResult(self::SKIPPED, $job, "Requires PHP $phpVersion}.");
+					return $this->logResult(self::SKIPPED, $job, "Requires PHP $phpVersion.");
 				}
 			}
 		}
@@ -178,7 +178,7 @@ class Runner
 			$options['dataprovider'] = $options['dataprovider?'];
 		}
 		if (isset($options['dataprovider'])) {
-			list($dataFile, $query) = preg_split('#\s*,?\s+#', $options['dataprovider'] . ' ', 2);
+			list($dataFile, $query) = preg_split('#\s*,?\s+#', $options['dataprovider'], 2) + array('', '');
 			try {
 				$range = array_keys(\Tester\DataProvider::load(dirname($file) . '/' . $dataFile, $query));
 			} catch (\Exception $e) {
