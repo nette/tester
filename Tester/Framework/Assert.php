@@ -332,6 +332,10 @@ class Assert
 
 		if ($path) {
 			$path = dirname($path) . '/output/' . basename($path, '.phpt');
+			if (isset($_SERVER['argv'][1])) {
+				$path .= '.[' . preg_replace('#[^a-z0-9-. ]+#i', '_', $_SERVER['argv'][1]) . ']';
+			}
+
 			if (is_object($expected) || is_array($expected) || (is_string($expected) && strlen($expected) > 80)) {
 				@mkdir(dirname($path)); // @ - directory may already exist
 				file_put_contents($path . '.expected', is_string($expected) ? $expected : Dumper::toPhp($expected));
