@@ -337,6 +337,9 @@ class Assert
 			}
 		}
 		$file = dirname($item['file']) . '/output/' . basename($item['file'], '.phpt');
+		if (isset($_SERVER['argv'][1])) {
+			$file .= '.[' . preg_replace('#[^a-z0-9-. ]+#i', '_', $_SERVER['argv'][1]) . ']';
+		}
 
 		if (is_object($expected) || is_array($expected) || (is_string($expected) && strlen($expected) > 80)) {
 			@mkdir(dirname($file)); // @ - directory may already exist
