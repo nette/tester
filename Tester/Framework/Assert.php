@@ -20,6 +20,9 @@ namespace Tester;
  */
 class Assert
 {
+	/** @var callable  function($message, $expected, $actual) */
+	public static $onFailure = array(__CLASS__, 'assertionFailed');
+
 
 	/**
 	 * Checks assertion. Values must be exactly the same.
@@ -30,8 +33,7 @@ class Assert
 	public static function same($expected, $actual)
 	{
 		if ($actual !== $expected) {
-			self::log($expected, $actual);
-			throw new AssertException('Failed asserting that ' . Dumper::toLine($actual) . ' is identical to expected ' . Dumper::toLine($expected));
+			self::fail('Failed asserting that ' . Dumper::toLine($actual) . ' is identical to expected ' . Dumper::toLine($expected), $expected, $actual);
 		}
 	}
 
@@ -46,8 +48,7 @@ class Assert
 	public static function equal($expected, $actual)
 	{
 		if (!self::compare($expected, $actual)) {
-			self::log($expected, $actual);
-			throw new AssertException('Failed asserting that ' . Dumper::toLine($actual) . ' is equal to expected ' . Dumper::toLine($expected));
+			self::fail('Failed asserting that ' . Dumper::toLine($actual) . ' is equal to expected ' . Dumper::toLine($expected), $expected, $actual);
 		}
 	}
 
@@ -63,14 +64,14 @@ class Assert
 	{
 		if (is_array($actual)) {
 			if (!in_array($needle, $actual, TRUE)) {
-				throw new AssertException('Failed asserting that ' . Dumper::toLine($actual) . ' contains ' . Dumper::toLine($needle));
+				self::fail('Failed asserting that ' . Dumper::toLine($actual) . ' contains ' . Dumper::toLine($needle), $needle, $actual);
 			}
 		} elseif (is_string($actual)) {
 			if (strpos($actual, $needle) === FALSE) {
-				throw new AssertException('Failed asserting that ' . Dumper::toLine($actual) . ' contains ' . Dumper::toLine($needle));
+				self::fail('Failed asserting that ' . Dumper::toLine($actual) . ' contains ' . Dumper::toLine($needle), $needle, $actual);
 			}
 		} else {
-			throw new AssertException('Failed asserting that ' . Dumper::toLine($actual) . ' is string or array');
+			self::fail('Failed asserting that ' . Dumper::toLine($actual) . ' is string or array', $needle, $actual);
 		}
 	}
 
@@ -84,7 +85,7 @@ class Assert
 	public static function true($actual)
 	{
 		if ($actual !== TRUE) {
-			throw new AssertException('Failed asserting that ' . Dumper::toLine($actual) . ' is TRUE');
+			self::fail('Failed asserting that ' . Dumper::toLine($actual) . ' is TRUE', TRUE, $actual);
 		}
 	}
 
@@ -98,7 +99,7 @@ class Assert
 	public static function false($actual)
 	{
 		if ($actual !== FALSE) {
-			throw new AssertException('Failed asserting that ' . Dumper::toLine($actual) . ' is FALSE');
+			self::fail('Failed asserting that ' . Dumper::toLine($actual) . ' is FALSE', FALSE, $actual);
 		}
 	}
 
@@ -112,7 +113,7 @@ class Assert
 	public static function null($actual)
 	{
 		if ($actual !== NULL) {
-			throw new AssertException('Failed asserting that ' . Dumper::toLine($actual) . ' is NULL');
+			self::fail('Failed asserting that ' . Dumper::toLine($actual) . ' is NULL', NULL, $actual);
 		}
 	}
 
@@ -129,10 +130,10 @@ class Assert
 	{
 		try {
 			call_user_func($function);
-			throw new AssertException('Expected exception');
+			self::fail('Expected exception');
 		} catch (\Exception $e) {
 			if (!$e instanceof $class) {
-				throw new AssertException('Failed asserting that ' . get_class($e) . " is an instance of class $class");
+				self::fail('Failed asserting that ' . get_class($e) . " is an instance of class $class", $class, get_class($e));
 			}
 			if ($message) {
 				self::match($message, $e->getMessage());
@@ -179,7 +180,7 @@ class Assert
 		restore_error_handler();
 
 		if (!$catched) {
-			throw new AssertException('Expected error');
+			self::fail('Expected error');
 		}
 		if ($catched[0] !== $level) {
 			$consts = get_defined_constants(TRUE);
@@ -191,7 +192,7 @@ class Assert
 					$level = $name;
 				}
 			}
-			throw new AssertException('Failed asserting that ' . $catched[0] . ' is ' . $level);
+			self::fail('Failed asserting that ' . $catched[0] . ' is ' . $level, $level, $catched[0]);
 		}
 		if ($message) {
 			self::match($message, $catched[1]);
@@ -204,9 +205,9 @@ class Assert
 	 * Failed assertion
 	 * @return void
 	 */
-	public static function fail($message)
+	public static function fail($message, $expected = NULL, $actual = NULL)
 	{
-		throw new AssertException($message);
+		call_user_func(self::$onFailure, $message, $expected, $actual);
 	}
 
 
@@ -310,43 +311,39 @@ class Assert
 			throw new \Exception("Error while executing regular expression. (PREG Error Code " . preg_last_error() . ")");
 		}
 		if (!$res) {
-			self::log($expected, $actual);
-			throw new AssertException('Failed asserting that ' . Dumper::toLine($actual) . ' matches expected ' . Dumper::toLine($expected));
+			self::fail('Failed asserting that ' . Dumper::toLine($actual) . ' matches expected ' . Dumper::toLine($expected), $expected, $actual);
 		}
 	}
 
 
 
 	/**
-	 * Logs big variables to file.
-	 * @param  mixed
-	 * @param  mixed
+	 * Logs big variables to file and throws exception.
 	 * @return void
 	 */
-	private static function log($expected, $actual)
+	private static function assertionFailed($message, $expected, $actual)
 	{
-		$trace = debug_backtrace();
-		$item = end($trace);
-		// in case of shutdown handler, we want to skip inner-code blocks
-		// and debugging calls (e.g. those of Nette\Diagnostics\Debugger)
-		// to get correct path to test file (which is the only purpose of this)
-		while (!isset($item['file']) || substr($item['file'], -5) !== '.phpt') {
-			$item = prev($trace);
-			if ($item === FALSE) {
-				return;
+		$exception = new AssertException($message);
+		$path = NULL;
+		foreach ($exception->getTrace() as $item) {
+			// in case of shutdown handler, we want to skip inner-code blocks and debugging calls
+			$path = isset($item['file']) && substr($item['file'], -5) === '.phpt' ? $item['file'] : $path;
+		}
+
+		if ($path) {
+			$path = dirname($path) . '/output/' . basename($path, '.phpt');
+			if (is_object($expected) || is_array($expected) || (is_string($expected) && strlen($expected) > 80)) {
+				@mkdir(dirname($path)); // @ - directory may already exist
+				file_put_contents($path . '.expected', is_string($expected) ? $expected : Dumper::toPhp($expected));
+			}
+
+			if (is_object($actual) || is_array($actual) || (is_string($actual) && strlen($actual) > 80)) {
+				@mkdir(dirname($path)); // @ - directory may already exist
+				file_put_contents($path . '.actual', is_string($actual) ? $actual : Dumper::toPhp($actual));
 			}
 		}
-		$file = dirname($item['file']) . '/output/' . basename($item['file'], '.phpt');
 
-		if (is_object($expected) || is_array($expected) || (is_string($expected) && strlen($expected) > 80)) {
-			@mkdir(dirname($file)); // @ - directory may already exist
-			file_put_contents($file . '.expected', is_string($expected) ? $expected : Dumper::toPhp($expected));
-		}
-
-		if (is_object($actual) || is_array($actual) || (is_string($actual) && strlen($actual) > 80)) {
-			@mkdir(dirname($file)); // @ - directory may already exist
-			file_put_contents($file . '.actual', is_string($actual) ? $actual : Dumper::toPhp($actual));
-		}
+		throw $exception;
 	}
 
 }
