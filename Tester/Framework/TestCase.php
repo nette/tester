@@ -50,8 +50,28 @@ class TestCase
 				$data[] = array();
 			}
 
+			$exception = isset($info['expectedexception']) ? $info['expectedexception'] : NULL;
+			$exceptionMessage = isset($info['expectedexceptionmessage']) ? $info['expectedexceptionmessage'] : NULL;
+
 			foreach ($data as $args) {
-				$this->runTest($method->getName(), $args);
+				try {
+					$this->runTest($method->getName(), $args);
+
+					if ($exception) {
+						Assert::fail("Expected exception " . $exception);
+					}
+
+				} catch (\Exception $e) {
+					if (!$exception) {
+						throw $e;
+					}
+					if (!$e instanceof $exception) {
+						Assert::fail('Failed asserting that ' . get_class($e) . " is an instance of class $exception", $exception, get_class($e));
+					}
+					if ($exceptionMessage) {
+						Assert::match($exceptionMessage, $e->getMessage());
+					}
+				}
 			}
 		}
 	}
