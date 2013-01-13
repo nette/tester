@@ -323,11 +323,13 @@ class Assert
 	 */
 	private static function assertionFailed($message, $expected, $actual)
 	{
-		$exception = new AssertException($message);
-		$path = NULL;
-		foreach ($exception->getTrace() as $item) {
+		$path = $method = NULL;
+		foreach (debug_backtrace(TRUE) as $item) {
 			// in case of shutdown handler, we want to skip inner-code blocks and debugging calls
 			$path = isset($item['file']) && substr($item['file'], -5) === '.phpt' ? $item['file'] : $path;
+			if (isset($item['function']) && $item['function'] === "call_user_func_array" && isset($item['args'][0][0]) && $item['args'][0][0] instanceof TestCase) {
+				$method = get_class($item['args'][0][0]) . '::' . $item['args'][0][1];
+			}
 		}
 
 		if ($path) {
@@ -347,7 +349,7 @@ class Assert
 			}
 		}
 
-		throw $exception;
+		throw new AssertException(($method ? $method . ': ' : '') . $message);
 	}
 
 }
