@@ -88,7 +88,7 @@ class TestCase
 			return DataProvider::load(dirname($rc->getFileName()) . '/' . $file, $query);
 		} else {
 			return $this->$provider();
-	}
+		}
 	}
 
 
