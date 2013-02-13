@@ -130,14 +130,14 @@ class Assert
 	{
 		try {
 			call_user_func($function);
-			self::fail('Expected exception');
 		} catch (\Exception $e) {
-			if (!$e instanceof $class) {
-				self::fail('Failed asserting that ' . get_class($e) . " is an instance of class $class", $class, get_class($e));
-			}
-			if ($message) {
-				self::match($message, $e->getMessage());
-			}
+		}
+		if (!isset($e)) {
+			self::fail("Expected exception $class");
+		} elseif (!$e instanceof $class) {
+			self::fail('Failed asserting that ' . get_class($e) . " is an instance of class $class", $class, get_class($e));
+		} elseif ($message) {
+			self::match($message, $e->getMessage());
 		}
 	}
 

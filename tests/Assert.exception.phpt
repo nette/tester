@@ -20,7 +20,7 @@ Assert::exception(function(){
 Assert::exception(function(){
 	Assert::exception(function(){
 	}, 'Exception');
-}, 'Tester\AssertException', 'Expected exception');
+}, 'Tester\AssertException', 'Expected exception Exception');
 
 Assert::exception(function(){
 	Assert::exception(function(){
