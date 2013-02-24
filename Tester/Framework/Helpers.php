@@ -44,7 +44,10 @@ class Helpers
 	 */
 	public static function purge($dir)
 	{
-		@mkdir($dir, 0777, TRUE); // @ - directory may already exist
+		if (!is_dir($dir)) {
+			mkdir($dir);
+		}
+
 		foreach (new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($dir), \RecursiveIteratorIterator::CHILD_FIRST) as $entry) {
 			if (substr($entry->getBasename(), 0, 1) === '.') { // . or .. or .gitignore
 				// ignore
