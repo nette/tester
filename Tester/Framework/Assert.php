@@ -265,7 +265,6 @@ class Assert
 	 *   %f%    floating point number
 	 *   %h%    one or more HEX digits
 	 *   %ns%   PHP namespace
-	 *   %[..]% reg-exp
 	 * @param  string
 	 * @param  string
 	 * @return bool
@@ -292,12 +291,6 @@ class Assert
 			'%h%' => '[0-9a-fA-F]+',// one or more HEX digits
 			'%ns%'=> '(?:[_0-9a-zA-Z\\\\]+\\\\|N)?',// PHP namespace
 			'%ds%'=> '[\\\\/]',     // directory separator
-			'%[^' => '[^',          // reg-exp
-			'%['  => '[',           // reg-exp
-			']%'  => ']+',          // reg-exp
-			'%('  => '(?:',         // reg-exp
-			')%'  => ')',           // reg-exp
-			')?%' => ')?',          // reg-exp
 
 			'.' => '\.', '\\' => '\\\\', '+' => '\+', '*' => '\*', '?' => '\?', '[' => '\[', '^' => '\^', // preg quote
 			']' => '\]', '$' => '\$', '(' => '\(', ')' => '\)', '{' => '\{', '}' => '\}', '=' => '\=', '!' => '\!',
