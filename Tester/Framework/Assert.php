@@ -297,8 +297,8 @@ class Assert
 			'>' => '\>', '<' => '\<', '|' => '\|', ':' => '\:', '-' => '\-', "\x00" => '\000', '#' => '\#',
 		));
 
-		$old = ini_set('pcre.backtrack_limit', '5000000');
-		$res = preg_match("#^$re$#s", $actual);
+		$old = ini_set('pcre.backtrack_limit', '10000000');
+		$res = preg_match("#^$re$#sU", $actual);
 		ini_set('pcre.backtrack_limit', $old);
 		if ($res === FALSE || preg_last_error()) {
 			throw new \Exception("Error while executing regular expression. (PREG Error Code " . preg_last_error() . ")");
