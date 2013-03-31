@@ -28,22 +28,15 @@ class Dumper
 	 */
 	public static function toLine($var)
 	{
-		static $tableUtf, $tableBin, $reBinary = '#[^\x09\x0A\x0D\x20-\x7E\xA0-\x{10FFFF}]#u';
-		if ($tableUtf === NULL) {
-			foreach (range("\x00", "\xFF") as $ch) {
-				if (ord($ch) < 32 && strpos("\r\n\t", $ch) === FALSE) {
-					$tableUtf[$ch] = $tableBin[$ch] = '\\x' . str_pad(dechex(ord($ch)), 2, '0', STR_PAD_LEFT);
-				} elseif (ord($ch) < 127) {
-					$tableUtf[$ch] = $tableBin[$ch] = $ch;
-				} else {
-					$tableUtf[$ch] = $ch; $tableBin[$ch] = '\\x' . dechex(ord($ch));
-				}
+		static $table;
+		if ($table === NULL) {
+			foreach (array_merge(range("\x00", "\x1F"), range("\x7F", "\xFF")) as $ch) {
+				$table[$ch] = '\x' . str_pad(dechex(ord($ch)), 2, '0', STR_PAD_LEFT);
 			}
-			$tableBin["\\"] = '\\\\';
-			$tableBin["\r"] = '\\r';
-			$tableBin["\n"] = '\\n';
-			$tableBin["\t"] = '\\t';
-			$tableUtf['\\x'] = $tableBin['\\x'] = '\\\\x';
+			$table["\\"] = '\\\\';
+			$table["\r"] = '\r';
+			$table["\n"] = '\n';
+			$table["\t"] = '\t';
 		}
 
 		if (is_bool($var)) {
@@ -65,7 +58,8 @@ class Dumper
 			} elseif ($cut = strlen($var) > 100) {
 				$var = substr($var, 0, 100);
 			}
-			return '"' . strtr($var, preg_match($reBinary, $var) || preg_last_error() ? $tableBin : $tableUtf) . '"' . ($cut ? ' ...' : '');
+			return '"' . (preg_match('#[^\x09\x0A\x0D\x20-\x7E\xA0-\x{10FFFF}]#u', $var) || preg_last_error() ? strtr($var, $table) : $var)
+				. '"' . ($cut ? ' ...' : '');
 
 		} elseif (is_array($var)) {
 			return "array(" . count($var) . ")";
@@ -113,17 +107,15 @@ class Dumper
 		} elseif (is_string($var) && (preg_match('#[^\x09\x20-\x7E\xA0-\x{10FFFF}]#u', $var) || preg_last_error())) {
 			static $table;
 			if ($table === NULL) {
-				foreach (range("\x00", "\xFF") as $ch) {
-					$table[$ch] = ord($ch) < 32 || ord($ch) >= 127
-						? '\\x' . str_pad(dechex(ord($ch)), 2, '0', STR_PAD_LEFT)
-						: $ch;
+				foreach (array_merge(range("\x00", "\x1F"), range("\x7F", "\xFF")) as $ch) {
+					$table[$ch] = '\x' . str_pad(dechex(ord($ch)), 2, '0', STR_PAD_LEFT);
 				}
+				$table['\\'] = '\\\\';
 				$table["\r"] = '\r';
 				$table["\n"] = '\n';
 				$table["\t"] = '\t';
-				$table['$'] = '\\$';
-				$table['\\'] = '\\\\';
-				$table['"'] = '\\"';
+				$table['$'] = '\$';
+				$table['"'] = '\"';
 			}
 			return '"' . strtr($var, $table) . '"';
 
