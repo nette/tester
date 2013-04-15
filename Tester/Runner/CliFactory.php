@@ -27,7 +27,7 @@ class CliFactory
 	public function createRunner()
 	{
 		$phpExec = 'php-cgi';
-		$phpArgs = '';
+		$phpArgs = array();
 		$paths = array();
 		$iniSet = $logFile = $displaySkipped = FALSE;
 		$jobs = 1;
@@ -57,12 +57,12 @@ class CliFactory
 					if ($path === FALSE) {
 						throw new \Exception("PHP configuration file '{$args->current()}' not found.");
 					}
-					$phpArgs .= " -c " . escapeshellarg($path);
+					$phpArgs['c'] = '-c ' . escapeshellarg($path);
 					$iniSet = TRUE;
 					break;
 				case 'd':
 					$args->next();
-					$phpArgs .= " -d " . escapeshellarg($args->current());
+					$phpArgs[] = '-d ' . escapeshellarg($args->current());
 					break;
 				case 's':
 					$displaySkipped = TRUE;
@@ -78,10 +78,10 @@ class CliFactory
 		}
 
 		if (!$iniSet) {
-			$phpArgs .= " -n";
+			$phpArgs[] = '-n';
 		}
 
-		$runner = new Runner(new PhpExecutable($phpExec, $phpArgs), $logFile);
+		$runner = new Runner(new PhpExecutable($phpExec, implode(' ', $phpArgs)), $logFile);
 		$runner->paths = $paths ?: array(getcwd());
 		$runner->displaySkipped = $displaySkipped;
 		$runner->jobs = $jobs;

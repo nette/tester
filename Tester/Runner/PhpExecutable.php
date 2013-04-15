@@ -44,7 +44,7 @@ class PhpExecutable
 
 		$this->version = $matches[1];
 		$this->cgi = strcasecmp($matches[2], 'g') === 0;
-		$this->cmdLine = escapeshellarg($path) . $args;
+		$this->cmdLine = escapeshellarg($path) . ' ' . $args;
 	}
 
 
