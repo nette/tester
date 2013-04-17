@@ -124,7 +124,7 @@ class Assert
 	 * @param  callable
 	 * @param  string class
 	 * @param  string message
-	 * @return void
+	 * @return Exception
 	 */
 	public static function exception($function, $class, $message = NULL)
 	{
@@ -139,6 +139,7 @@ class Assert
 		} elseif ($message) {
 			self::match($message, $e->getMessage());
 		}
+		return $e;
 	}
 
 
@@ -148,11 +149,11 @@ class Assert
 	 * @param  callable
 	 * @param  string class
 	 * @param  string message
-	 * @return void
+	 * @return Exception
 	 */
 	public static function throws($function, $class, $message = NULL)
 	{
-		self::exception($function, $class, $message);
+		return self::exception($function, $class, $message);
 	}
 
 

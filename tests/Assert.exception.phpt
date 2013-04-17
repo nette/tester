@@ -5,9 +5,11 @@ use Tester\Assert;
 require __DIR__ . '/bootstrap.php';
 
 
-Assert::exception(function(){
+$e = Assert::exception(function(){
 	throw new Exception;
 }, 'Exception');
+
+Assert::true( $e instanceof Exception );
 
 Assert::exception(function(){
 	throw new Exception('Text');
