@@ -250,7 +250,7 @@ class Assert
 
 
 	/**
-	 * Compares results using mask:
+	 * Compares result using regular expression or mask:
 	 *   %a%    one or more of anything except the end of line characters
 	 *   %a?%   zero or more of anything except the end of line characters
 	 *   %A%    one or more of anything including the end of line characters
@@ -266,47 +266,60 @@ class Assert
 	 *   %f%    floating point number
 	 *   %h%    one or more HEX digits
 	 *   %ns%   PHP namespace
+	 * @param  string  mask|regexp; only delimiters ~ and # are supported for regexp
 	 * @param  string
-	 * @param  string
-	 * @return bool
+	 * @return array  matches
 	 */
 	public static function match($expected, $actual)
 	{
-		$expected = rtrim(preg_replace("#[\t ]+\n#", "\n", str_replace("\r\n", "\n", $expected)));
-		$actual = rtrim(preg_replace("#[\t ]+\n#", "\n", str_replace("\r\n", "\n", $actual)));
+		if ($byRegexp = preg_match('/^([~#]).+(\1)[imsxUu]*\z/s', $expected)) {
+			$re = $expected;
 
-		$re = strtr($expected, array(
-			'%a%' => '[^\r\n]+',    // one or more of anything except the end of line characters
-			'%a?%'=> '[^\r\n]*',    // zero or more of anything except the end of line characters
-			'%A%' => '.+',          // one or more of anything including the end of line characters
-			'%A?%'=> '.*',          // zero or more of anything including the end of line characters
-			'%s%' => '[\t ]+',      // one or more white space characters except the end of line characters
-			'%s?%'=> '[\t ]*',      // zero or more white space characters except the end of line characters
-			'%S%' => '\S+',         // one or more of characters except the white space
-			'%S?%'=> '\S*',         // zero or more of characters except the white space
-			'%c%' => '[^\r\n]',     // a single character of any sort (except the end of line)
-			'%d%' => '[0-9]+',      // one or more digits
-			'%d?%'=> '[0-9]*',      // zero or more digits
-			'%i%' => '[+-]?[0-9]+', // signed integer value
-			'%f%' => '[+-]?\.?\d+\.?\d*(?:[Ee][+-]?\d+)?', // floating point number
-			'%h%' => '[0-9a-fA-F]+',// one or more HEX digits
-			'%ns%'=> '(?:[_0-9a-zA-Z\\\\]+\\\\|N)?',// PHP namespace
-			'%ds%'=> '[\\\\/]',     // directory separator
+		} else {
+			$expected = rtrim(preg_replace("#[\t ]+\n#", "\n", str_replace("\r\n", "\n", $expected)));
+			$actual = rtrim(preg_replace("#[\t ]+\n#", "\n", str_replace("\r\n", "\n", $actual)));
 
-			'.' => '\.', '\\' => '\\\\', '+' => '\+', '*' => '\*', '?' => '\?', '[' => '\[', '^' => '\^', // preg quote
-			']' => '\]', '$' => '\$', '(' => '\(', ')' => '\)', '{' => '\{', '}' => '\}', '=' => '\=', '!' => '\!',
-			'>' => '\>', '<' => '\<', '|' => '\|', ':' => '\:', '-' => '\-', "\x00" => '\000', '#' => '\#',
-		));
+			$re = strtr($expected, array(
+				'%a%' => '[^\r\n]+',    // one or more of anything except the end of line characters
+				'%a?%'=> '[^\r\n]*',    // zero or more of anything except the end of line characters
+				'%A%' => '.+',          // one or more of anything including the end of line characters
+				'%A?%'=> '.*',          // zero or more of anything including the end of line characters
+				'%s%' => '[\t ]+',      // one or more white space characters except the end of line characters
+				'%s?%'=> '[\t ]*',      // zero or more white space characters except the end of line characters
+				'%S%' => '\S+',         // one or more of characters except the white space
+				'%S?%'=> '\S*',         // zero or more of characters except the white space
+				'%c%' => '[^\r\n]',     // a single character of any sort (except the end of line)
+				'%d%' => '[0-9]+',      // one or more digits
+				'%d?%'=> '[0-9]*',      // zero or more digits
+				'%i%' => '[+-]?[0-9]+', // signed integer value
+				'%f%' => '[+-]?\.?\d+\.?\d*(?:[Ee][+-]?\d+)?', // floating point number
+				'%h%' => '[0-9a-fA-F]+',// one or more HEX digits
+				'%ns%'=> '(?:[_0-9a-zA-Z\\\\]+\\\\|N)?',// PHP namespace
+				'%ds%'=> '[\\\\/]',     // directory separator
+
+				'.' => '\.', '\\' => '\\\\', '+' => '\+', '*' => '\*', '?' => '\?', '[' => '\[', '^' => '\^', // preg quote
+				']' => '\]', '$' => '\$', '(' => '\(', ')' => '\)', '{' => '\{', '}' => '\}', '=' => '\=', '!' => '\!',
+				'>' => '\>', '<' => '\<', '|' => '\|', ':' => '\:', '-' => '\-', "\x00" => '\000', '#' => '\#',
+			));
+
+			$re = "#^$re\z#sU";
+		}
 
 		$old = ini_set('pcre.backtrack_limit', '10000000');
-		$res = preg_match("#^$re$#sU", $actual);
+		$res = preg_match($re, $actual, $matches);
 		ini_set('pcre.backtrack_limit', $old);
 		if ($res === FALSE || preg_last_error()) {
-			throw new \Exception("Error while executing regular expression. (PREG Error Code " . preg_last_error() . ")");
+			throw new \Exception('Error while executing regular expression. (PREG Error Code ' . preg_last_error() . ')');
 		}
 		if (!$res) {
-			self::fail('Failed asserting that ' . Dumper::toLine($actual) . ' matches expected ' . Dumper::toLine($expected), $expected, $actual);
+			if ($byRegexp) {
+				self::fail('Failed asserting that ' . Dumper::toLine($actual) . " matches to regexp '$re'");
+			} else {
+				self::fail('Failed asserting that ' . Dumper::toLine($actual) . ' matches expected ' . Dumper::toLine($expected), $expected, $actual);
+			}
 		}
+
+		return $matches;
 	}
 
 
