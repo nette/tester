@@ -172,6 +172,13 @@ class Runner
 					return $this->logResult(self::SKIPPED, $job, "Requires PHP $phpVersion.");
 				}
 			}
+
+		} elseif (isset($options['phpextension']) || isset($options['phpextensions'])) {
+			foreach (preg_split('#\s*,?\s+#', isset($options['phpextension']) ? $options['phpextension'] : $options['phpextensions']) as $phpExtension) {
+				if (!extension_loaded($phpExtension)) {
+					return $this->logResult(self::SKIPPED, $job, "Requires PHP extension '$phpExtension'.");
+				}
+			}
 		}
 
 		if (isset($options['dataprovider?'])) {
