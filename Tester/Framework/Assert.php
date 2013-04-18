@@ -338,7 +338,7 @@ class Assert
 
 
 	/**
-	 * Compares results using mask:
+	 * Compares result using regular expression or mask:
 	 *   %a%    one or more of anything except the end of line characters
 	 *   %a?%   zero or more of anything except the end of line characters
 	 *   %A%    one or more of anything including the end of line characters
@@ -353,7 +353,7 @@ class Assert
 	 *   %i%    signed integer value
 	 *   %f%    floating point number
 	 *   %h%    one or more HEX digits
-	 * @param  string
+	 * @param  string  mask|regexp; only delimiters ~ and # are supported for regexp
 	 * @param  string
 	 * @return void
 	 */
@@ -395,25 +395,29 @@ class Assert
 			throw new \Exception('Value and pattern must be strings.');
 		}
 
-		$utf8 = preg_match('#\x80-\x{10FFFF}]#u', $pattern) ? 'u' : '';
 		$old = ini_set('pcre.backtrack_limit', '10000000');
-		$patterns = static::$patterns + array(
-			'[.\\\\+*?[^$(){|\x00\#]' => '\$0', // preg quoting
-			'[\t ]*\r?\n' => "[\\t ]*\n", // right trim
-		);
-		$pattern = preg_replace_callback('#' . implode('|', array_keys($patterns)) . '#U' . $utf8, function($m) use ($patterns) {
-			foreach ($patterns as $re => $replacement) {
-				$s = preg_replace("#^$re\\z#", str_replace('\\', '\\\\', $replacement), $m[0], 1, $count);
-				if ($count) {
-					return $s;
-				}
-			}
-		}, rtrim($pattern));
-		$res = preg_match("#^$pattern\\s*$#sU$utf8", str_replace("\r\n", "\n", $actual));
-		ini_set('pcre.backtrack_limit', $old);
 
+		if (!preg_match('/^([~#]).+(\1)[imsxUu]*\z/s', $pattern)) {
+			$utf8 = preg_match('#\x80-\x{10FFFF}]#u', $pattern) ? 'u' : '';
+			$patterns = static::$patterns + array(
+				'[.\\\\+*?[^$(){|\x00\#]' => '\$0', // preg quoting
+				'[\t ]*\r?\n' => "[\\t ]*\n", // right trim
+			);
+			$pattern = '#^' . preg_replace_callback('#' . implode('|', array_keys($patterns)) . '#U' . $utf8, function($m) use ($patterns) {
+				foreach ($patterns as $re => $replacement) {
+					$s = preg_replace("#^$re\\z#", str_replace('\\', '\\\\', $replacement), $m[0], 1, $count);
+					if ($count) {
+						return $s;
+					}
+				}
+			}, rtrim($pattern)) . '\s*$#sU' . $utf8;
+			$actual = str_replace("\r\n", "\n", $actual);
+		}
+
+		$res = preg_match($pattern, $actual);
+		ini_set('pcre.backtrack_limit', $old);
 		if ($res === FALSE || preg_last_error()) {
-			throw new \Exception("Error while executing regular expression. (PREG Error Code " . preg_last_error() . ")");
+			throw new \Exception('Error while executing regular expression. (PREG Error Code ' . preg_last_error() . ')');
 		}
 		return (bool) $res;
 	}
