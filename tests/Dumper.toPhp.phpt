@@ -34,19 +34,8 @@ Assert::match( 'array(
 	1,
 	\'hello\',
 	"\r" => array(),
-	array(
-		1,
-		2,
-	),
-	array(
-		1 => 1,
-		2,
-		3,
-		4,
-		5,
-		6,
-		7,
-	),
+	array(1, 2),
+	array(1 => 1, 2, 3, 4, 5, 6, 7),
 )', Dumper::toPhp(array(1, 'hello', "\r" => array(), array(1, 2), array(1 => 1, 2, 3, 4, 5, 6, 7))) );
 
 Assert::match( "/* resource stream */", Dumper::toPhp(fopen(__FILE__, 'r')) );
@@ -56,10 +45,7 @@ Assert::match( "(object) array(
 )", Dumper::toPhp((object) array('a' => 'b')) );
 
 Assert::match( "Test::__set_state(array(
-	'x' => array(
-		10,
-		NULL,
-	),
+	'x' => array(10, NULL),
 	'y' => 'hello',
 	'z' => 30.0,
 ))", Dumper::toPhp(new Test) );
