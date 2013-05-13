@@ -34,7 +34,16 @@ class TestCase
 			}
 
 			$data = array();
-			$info = Helpers::parseDocComment($method->getDocComment()) + array('dataprovider' => NULL);
+			$info = Helpers::parseDocComment($method->getDocComment()) + array('dataprovider' => NULL, 'throws' => NULL);
+
+			if ($info['throws'] === TRUE) {
+				throw new TestCaseException("Missing class name in @throws annotation for {$method->getName()}().");
+			} elseif (is_array($info['throws'])) {
+				throw new TestCaseException("Annotation @throws for {$method->getName()}() can be specified only once.");
+			} else {
+				$throws = preg_split('#\s+#', $info['throws'], 2) + array(NULL, NULL);
+			}
+
 			foreach ((array) $info['dataprovider'] as $provider) {
 				$res = $this->getData($provider);
 				if (!is_array($res)) {
@@ -51,7 +60,17 @@ class TestCase
 
 			foreach ($data as $key => $args) {
 				try {
-					$this->runTest($method->getName(), $args);
+					if ($info['throws']) {
+						$tmp = $this;
+						$e = Assert::error(function() use ($tmp, $method, $args) {
+							$tmp->runTest($method->getName(), $args);
+						}, $throws[0], $throws[1]);
+						if ($e instanceof AssertException) {
+							throw $e;
+						}
+					} else {
+						$this->runTest($method->getName(), $args);
+					}
 				} catch (AssertException $e) {
 					$e->message .= " in {$method->getName()}" . (substr(Dumper::toLine($args), 5));
 					throw $e;
@@ -90,7 +109,7 @@ class TestCase
 			return DataProvider::load(dirname($rc->getFileName()) . '/' . $file, $query);
 		} else {
 			return $this->$provider();
-	}
+		}
 	}
 
 
