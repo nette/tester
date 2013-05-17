@@ -33,7 +33,7 @@ class PhpExecutable
 
 	public function __construct($path, $args = NULL)
 	{
-		exec(escapeshellarg($path) . ' -v', $output, $res);
+		exec(escapeshellarg($path) . ' -n -v', $output, $res);
 		if ($res) {
 			throw new \Exception("Unable to execute '$path'.");
 		}
