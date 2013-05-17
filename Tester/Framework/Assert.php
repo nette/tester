@@ -26,8 +26,6 @@ class Assert
 
 	/**
 	 * Checks assertion. Values must be exactly the same.
-	 * @param  mixed  expected
-	 * @param  mixed  actual
 	 * @return void
 	 */
 	public static function same($expected, $actual)
@@ -40,9 +38,20 @@ class Assert
 
 
 	/**
+	 * Checks assertion. Values must not be exactly the same.
+	 * @return void
+	 */
+	public static function notSame($expected, $actual)
+	{
+		if ($actual === $expected) {
+			self::fail('Failed asserting that ' . Dumper::toLine($actual) . ' is not identical to expected ' . Dumper::toLine($expected), $expected, $actual);
+		}
+	}
+
+
+
+	/**
 	 * Checks assertion. The identity of objects and the order of keys in the arrays are ignored.
-	 * @param  mixed  expected
-	 * @param  mixed  actual
 	 * @return void
 	 */
 	public static function equal($expected, $actual)
@@ -55,9 +64,20 @@ class Assert
 
 
 	/**
+	 * Checks assertion. The identity of objects and the order of keys in the arrays are ignored.
+	 * @return void
+	 */
+	public static function notEqual($expected, $actual)
+	{
+		if (self::compare($expected, $actual)) {
+			self::fail('Failed asserting that ' . Dumper::toLine($actual) . ' is not equal to expected ' . Dumper::toLine($expected), $expected, $actual);
+		}
+	}
+
+
+
+	/**
 	 * Checks assertion. Values must contains expected needle.
-	 * @param  mixed  expected
-	 * @param  mixed  actual
 	 * @return void
 	 */
 	public static function contains($needle, $actual)
@@ -69,6 +89,27 @@ class Assert
 		} elseif (is_string($actual)) {
 			if (strpos($actual, $needle) === FALSE) {
 				self::fail('Failed asserting that ' . Dumper::toLine($actual) . ' contains ' . Dumper::toLine($needle), $needle, $actual);
+			}
+		} else {
+			self::fail('Failed asserting that ' . Dumper::toLine($actual) . ' is string or array', $needle, $actual);
+		}
+	}
+
+
+
+	/**
+	 * Checks assertion. Values must not contains expected needle.
+	 * @return void
+	 */
+	public static function notContains($needle, $actual)
+	{
+		if (is_array($actual)) {
+			if (in_array($needle, $actual, TRUE)) {
+				self::fail('Failed asserting that ' . Dumper::toLine($actual) . ' not contains ' . Dumper::toLine($needle), $needle, $actual);
+			}
+		} elseif (is_string($actual)) {
+			if (strpos($actual, $needle) !== FALSE) {
+				self::fail('Failed asserting that ' . Dumper::toLine($actual) . ' not contains ' . Dumper::toLine($needle), $needle, $actual);
 			}
 		} else {
 			self::fail('Failed asserting that ' . Dumper::toLine($actual) . ' is string or array', $needle, $actual);
@@ -114,6 +155,19 @@ class Assert
 	{
 		if ($actual !== NULL) {
 			self::fail('Failed asserting that ' . Dumper::toLine($actual) . ' is NULL', NULL, $actual);
+		}
+	}
+
+
+
+	/**
+	 * Checks assertion.
+	 * @return void
+	 */
+	public static function type($type, $object)
+	{
+		if (!$object instanceof $type) {
+			self::fail('Failed asserting that ' . Dumper::toLine($object) . " is instance of $type.", $type, $object);
 		}
 	}
 

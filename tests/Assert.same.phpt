@@ -31,3 +31,9 @@ Assert::exception(function(){
 	$rec[] = & $rec;
 	Assert::same($rec, array());
 }, 'Tester\AssertException', 'Failed asserting that array(0) is identical to expected array(1)');
+
+Assert::notSame(1, 1.0);
+
+Assert::exception(function(){
+	Assert::notSame(1, 1);
+}, 'Tester\AssertException', 'Failed asserting that 1 is not identical to expected 1');
