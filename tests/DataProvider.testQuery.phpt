@@ -51,4 +51,3 @@ Assert::false( DataProvider::testQuery('bar', 'foo, < 10') );
 Assert::false( DataProvider::testQuery('bar', 'foo, >= 2.2.3') );
 Assert::false( DataProvider::testQuery('bar', 'foo, >= 1.2.3, != xxx') );
 Assert::false( DataProvider::testQuery('bar', 'foo, >= 1.2.3, = yyy') );
-                                                                                                                               

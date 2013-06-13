@@ -53,8 +53,8 @@ class ReportGenerator
 
 
 	/**
-	 * @param string	path to coverage.dat file
-	 * @param string	path to source files
+	 * @param string  path to coverage.dat file
+	 * @param string  path to source files
 	 */
 	public function __construct($file, $sourceDir, $title = NULL)
 	{
