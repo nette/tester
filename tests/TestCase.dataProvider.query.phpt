@@ -23,5 +23,5 @@ $test->run();
 
 Assert::same(array(
 	array('MyTest::testFileDataProvider', array('1')),
-	array('MyTest::testFileDataProvider',	array('2')),
+	array('MyTest::testFileDataProvider', array('2')),
 ), $test->order);
