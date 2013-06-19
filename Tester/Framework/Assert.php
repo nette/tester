@@ -166,6 +166,9 @@ class Assert
 	 */
 	public static function type($type, $object)
 	{
+		if (!is_object($type) && !is_string($type)) {
+			throw new \Exception('Type must be a object or a string.');
+		}
 		if (!$object instanceof $type) {
 			self::fail('Failed asserting that ' . Dumper::toLine($object) . " is instance of $type.", $type, $object);
 		}
