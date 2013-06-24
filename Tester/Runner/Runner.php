@@ -62,8 +62,9 @@ class Runner
 	 */
 	public function run()
 	{
-		echo $this->log('PHP ' . $this->php->getVersion() . ' | ' . $this->php->getCommandLine() . "\n");
+		echo $this->log('PHP ' . $this->php->getVersion() . ' | ' . $this->php->getCommandLine() . " | $this->jobs threads\n");
 
+		$time = -microtime(TRUE);
 		$this->results = array(self::PASSED => NULL, self::SKIPPED => NULL, self::FAILED => NULL);
 		$tests = $this->findTests();
 		if (!$tests && count($this->results, 1) === count($this->results)) {
@@ -72,6 +73,7 @@ class Runner
 		}
 
 		$this->runTests($tests);
+		$time += microtime(TRUE);
 
 		if ($this->displaySkipped && $this->results[self::SKIPPED]) {
 			echo "\n", implode($this->results[self::SKIPPED]);
@@ -81,12 +83,12 @@ class Runner
 			echo "\n", implode($this->results[self::FAILED]);
 			echo $this->log("\nFAILURES! (" . count($tests) . ' tests, '
 				. count($this->results[self::FAILED]) . ' failures, '
-				. count($this->results[self::SKIPPED]) . ' skipped)');
+				. count($this->results[self::SKIPPED]) . ' skipped, ' . sprintf('%0.1f', $time) . ' seconds)');
 			return FALSE;
 
 		} else {
 			echo $this->log("\n\nOK (" . count($tests) . ' tests, '
-				. count($this->results[self::SKIPPED]) . ' skipped)');
+				. count($this->results[self::SKIPPED]) . ' skipped, ' . sprintf('%0.1f', $time) . ' seconds)');
 			return TRUE;
 		}
 	}
