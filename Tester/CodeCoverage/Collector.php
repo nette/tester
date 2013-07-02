@@ -12,7 +12,6 @@
 namespace Tester\CodeCoverage;
 
 
-
 /**
  * Code coverage collector.
  *
@@ -22,7 +21,6 @@ class Collector
 {
 	/** @var string */
 	static public $file;
-
 
 
 	/**
@@ -38,7 +36,6 @@ class Collector
 			register_shutdown_function(array(__CLASS__, 'save'));
 		});
 	}
-
 
 
 	/**

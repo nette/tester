@@ -12,7 +12,6 @@
 namespace Tester\Runner;
 
 
-
 /**
  * Test runner.
  *
@@ -47,13 +46,11 @@ class Runner
 	private $results;
 
 
-
 	public function __construct(PhpExecutable $php, $logFile = NULL)
 	{
 		$this->php = $php;
 		$this->logFile = $logFile ? fopen($logFile, 'w') : NULL;
 	}
-
 
 
 	/**
@@ -94,7 +91,6 @@ class Runner
 	}
 
 
-
 	/**
 	 * @return void
 	 */
@@ -132,7 +128,6 @@ class Runner
 	}
 
 
-
 	/**
 	 * @return Job[]
 	 */
@@ -151,7 +146,6 @@ class Runner
 		}
 		return $tests;
 	}
-
 
 
 	/**
@@ -200,7 +194,6 @@ class Runner
 	}
 
 
-
 	/**
 	 * Writes to log
 	 * @return string
@@ -212,7 +205,6 @@ class Runner
 		}
 		return "$s\n";
 	}
-
 
 
 	/**

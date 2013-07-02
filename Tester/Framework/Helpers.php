@@ -12,7 +12,6 @@
 namespace Tester;
 
 
-
 /**
  * Test helpers.
  *
@@ -35,7 +34,6 @@ class Helpers
 		set_error_handler(array(__CLASS__, 'handleError'));
 		set_exception_handler(array(__CLASS__, 'handleException'));
 	}
-
 
 
 	/**
@@ -61,7 +59,6 @@ class Helpers
 	}
 
 
-
 	/**
 	 * Skips this test.
 	 * @return void
@@ -71,7 +68,6 @@ class Helpers
 		echo "\nSkipped:\n$message\n";
 		die(\Tester\Runner\Job::CODE_SKIP);
 	}
-
 
 
 	/**
@@ -85,7 +81,6 @@ class Helpers
 	}
 
 
-
 	/** @internal */
 	public static function handleError($severity, $message, $file, $line)
 	{
@@ -96,7 +91,6 @@ class Helpers
 		}
 		return FALSE;
 	}
-
 
 
 	/** @internal */
@@ -123,12 +117,10 @@ class Helpers
 	}
 
 
-
 	public static function with($obj, \Closure $closure)
 	{
 		return $closure->bindTo($obj, $obj)->__invoke();
 	}
-
 
 
 	/**

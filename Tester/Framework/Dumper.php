@@ -12,7 +12,6 @@
 namespace Tester;
 
 
-
 /**
  * Dumps PHP variables.
  *
@@ -79,7 +78,6 @@ class Dumper
 	}
 
 
-
 	/**
 	 * Dumps variable in PHP format.
 	 * @param  mixed  variable to dump
@@ -89,7 +87,6 @@ class Dumper
 	{
 		return self::_toPhp($var);
 	}
-
 
 
 	/**

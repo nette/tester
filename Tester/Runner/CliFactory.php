@@ -12,7 +12,6 @@
 namespace Tester\Runner;
 
 
-
 /**
  * CLI layer.
  *
@@ -87,7 +86,6 @@ class CliFactory
 		$runner->jobs = $jobs;
 		return $runner;
 	}
-
 
 
 	/**

@@ -12,7 +12,6 @@
 namespace Tester;
 
 
-
 /**
  * Data provider helpers.
  *
@@ -46,7 +45,6 @@ class DataProvider
 	}
 
 
-
 	public static function testQuery($input, $query)
 	{
 		static $replaces = array('' => '=', '=>' => '>=', '=<' => '<=');
@@ -65,7 +63,6 @@ class DataProvider
 		}
 		return TRUE;
 	}
-
 
 
 	private static function compare($l, $operator, $r)

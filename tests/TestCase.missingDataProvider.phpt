@@ -15,7 +15,6 @@ class MissingDataProviderTest extends Tester\TestCase
 }
 
 
-
 Assert::exception(function(){
 	$test = new MissingDataProviderTest;
 	$test->run();

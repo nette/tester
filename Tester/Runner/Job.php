@@ -12,7 +12,6 @@
 namespace Tester\Runner;
 
 
-
 /**
  * Single test job.
  *
@@ -55,7 +54,6 @@ class Job
 	private $exitCode = self::CODE_NONE;
 
 
-
 	/**
 	 * @param  string  test file name
 	 * @return void
@@ -70,7 +68,6 @@ class Job
 			? preg_replace('#^TEST:#', '', $this->options[0])
 			: $this->file;
 	}
-
 
 
 	/**
@@ -104,7 +101,6 @@ class Job
 	}
 
 
-
 	/**
 	 * Checks if the test results are ready.
 	 * @return bool
@@ -118,7 +114,6 @@ class Job
 		}
 		return !$status['running'];
 	}
-
 
 
 	/**
@@ -165,7 +160,6 @@ class Job
 	}
 
 
-
 	/**
 	 * Returns test file path.
 	 * @return string
@@ -174,7 +168,6 @@ class Job
 	{
 		return $this->file;
 	}
-
 
 
 	/**
@@ -187,7 +180,6 @@ class Job
 	}
 
 
-
 	/**
 	 * Returns script arguments.
 	 * @return string
@@ -196,7 +188,6 @@ class Job
 	{
 		return $this->args;
 	}
-
 
 
 	/**
@@ -209,7 +200,6 @@ class Job
 	}
 
 
-
 	/**
 	 * Returns test output.
 	 * @return string
@@ -218,7 +208,6 @@ class Job
 	{
 		return $this->output;
 	}
-
 
 
 	/**
@@ -231,7 +220,6 @@ class Job
 	}
 
 }
-
 
 
 /**

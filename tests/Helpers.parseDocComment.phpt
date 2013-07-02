@@ -6,7 +6,6 @@ use Tester\Assert,
 require __DIR__ . '/bootstrap.php';
 
 
-
 Assert::same( array(), Helpers::parseDocComment('') );
 Assert::same( array(), Helpers::parseDocComment('/** */') );
 Assert::same( array(), Helpers::parseDocComment("/**\n*/ ") );

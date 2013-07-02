@@ -12,7 +12,6 @@
 namespace Tester;
 
 
-
 /**
  * Assertion test helpers.
  *
@@ -36,7 +35,6 @@ class Assert
 	}
 
 
-
 	/**
 	 * Checks assertion. Values must not be exactly the same.
 	 * @return void
@@ -47,7 +45,6 @@ class Assert
 			self::fail('Failed asserting that ' . Dumper::toLine($actual) . ' is not identical to expected ' . Dumper::toLine($expected), $expected, $actual);
 		}
 	}
-
 
 
 	/**
@@ -62,7 +59,6 @@ class Assert
 	}
 
 
-
 	/**
 	 * Checks assertion. The identity of objects and the order of keys in the arrays are ignored.
 	 * @return void
@@ -73,7 +69,6 @@ class Assert
 			self::fail('Failed asserting that ' . Dumper::toLine($actual) . ' is not equal to expected ' . Dumper::toLine($expected), $expected, $actual);
 		}
 	}
-
 
 
 	/**
@@ -96,7 +91,6 @@ class Assert
 	}
 
 
-
 	/**
 	 * Checks assertion. Values must not contains expected needle.
 	 * @return void
@@ -117,7 +111,6 @@ class Assert
 	}
 
 
-
 	/**
 	 * Checks TRUE assertion.
 	 * @param  mixed  actual
@@ -129,7 +122,6 @@ class Assert
 			self::fail('Failed asserting that ' . Dumper::toLine($actual) . ' is TRUE', TRUE, $actual);
 		}
 	}
-
 
 
 	/**
@@ -145,7 +137,6 @@ class Assert
 	}
 
 
-
 	/**
 	 * Checks NULL assertion.
 	 * @param  mixed  actual
@@ -157,7 +148,6 @@ class Assert
 			self::fail('Failed asserting that ' . Dumper::toLine($actual) . ' is NULL', NULL, $actual);
 		}
 	}
-
 
 
 	/**
@@ -173,7 +163,6 @@ class Assert
 			self::fail('Failed asserting that ' . Dumper::toLine($object) . " is instance of $type.", $type, $object);
 		}
 	}
-
 
 
 	/**
@@ -200,7 +189,6 @@ class Assert
 	}
 
 
-
 	/**
 	 * Checks if the function throws exception.
 	 * @param  callable
@@ -212,7 +200,6 @@ class Assert
 	{
 		return self::exception($function, $class, $message);
 	}
-
 
 
 	/**
@@ -258,7 +245,6 @@ class Assert
 	}
 
 
-
 	/**
 	 * Failed assertion
 	 * @return void
@@ -267,7 +253,6 @@ class Assert
 	{
 		call_user_func(self::$onFailure, $message, $expected, $actual);
 	}
-
 
 
 	/**
@@ -303,7 +288,6 @@ class Assert
 		}
 		return $expected === $actual;
 	}
-
 
 
 	/**
@@ -367,7 +351,6 @@ class Assert
 	}
 
 
-
 	/**
 	 * Logs big variables to file and throws exception.
 	 * @return void
@@ -402,7 +385,6 @@ class Assert
 	}
 
 }
-
 
 
 /**

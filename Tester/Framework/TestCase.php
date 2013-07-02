@@ -12,7 +12,6 @@
 namespace Tester;
 
 
-
 /**
  * Single test case.
  *
@@ -57,7 +56,6 @@ class TestCase
 	}
 
 
-
 	/**
 	 * Runs the single test.
 	 * @return void
@@ -76,7 +74,6 @@ class TestCase
 	}
 
 
-
 	/**
 	 * @return array
 	 */
@@ -92,7 +89,6 @@ class TestCase
 	}
 
 
-
 	/**
 	 * This method is called before a test is executed.
 	 * @return void
@@ -100,7 +96,6 @@ class TestCase
 	protected function setUp()
 	{
 	}
-
 
 
 	/**
@@ -112,7 +107,6 @@ class TestCase
 	}
 
 }
-
 
 
 class TestCaseException extends \Exception

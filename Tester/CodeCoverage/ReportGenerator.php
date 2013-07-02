@@ -12,7 +12,6 @@
  */
 
 
-
 /**
  * Code coverage report generator.
  *
@@ -51,7 +50,6 @@ class ReportGenerator
 	);
 
 
-
 	/**
 	 * @param string  path to coverage.dat file
 	 * @param string  path to source files
@@ -88,7 +86,6 @@ class ReportGenerator
 	}
 
 
-
 	public function render($file = NULL)
 	{
 		$this->setupHighlight();
@@ -110,7 +107,6 @@ class ReportGenerator
 	}
 
 
-
 	private function setupHighlight()
 	{
 		ini_set('highlight.comment', '#999; font-style: italic');
@@ -119,7 +115,6 @@ class ReportGenerator
 		ini_set('highlight.keyword', '#D24; font-weight: bold');
 		ini_set('highlight.string', '#080');
 	}
-
 
 
 	private function parse()

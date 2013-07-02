@@ -12,7 +12,6 @@
 namespace Tester\Runner;
 
 
-
 /**
  * PHP executable command-line.
  *
@@ -28,7 +27,6 @@ class PhpExecutable
 
 	/** @var bool is CGI? */
 	private $cgi;
-
 
 
 	public function __construct($path, $args = NULL)
@@ -48,7 +46,6 @@ class PhpExecutable
 	}
 
 
-
 	/**
 	 * @return string
 	 */
@@ -58,7 +55,6 @@ class PhpExecutable
 	}
 
 
-
 	/**
 	 * @return string
 	 */
@@ -66,7 +62,6 @@ class PhpExecutable
 	{
 		return $this->version;
 	}
-
 
 
 	/**

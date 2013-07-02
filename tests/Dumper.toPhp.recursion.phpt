@@ -6,7 +6,6 @@ use Tester\Assert,
 require __DIR__ . '/bootstrap.php';
 
 
-
 $arr = array(1, 2, 3);
 $arr[] = & $arr;
 Assert::match( 'array(

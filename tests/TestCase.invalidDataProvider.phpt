@@ -19,7 +19,6 @@ class InvalidDataProviderTest extends Tester\TestCase
 }
 
 
-
 Assert::exception(function(){
 	$test = new InvalidDataProviderTest;
 	$test->run();

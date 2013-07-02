@@ -18,7 +18,6 @@ require __DIR__ . '/Framework/Helpers.php';
 require __DIR__ . '/Framework/DataProvider.php';
 
 
-
 echo "
 Nette Tester (v0.9)
 -------------------

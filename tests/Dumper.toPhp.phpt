@@ -6,7 +6,6 @@ use Tester\Assert,
 require __DIR__ . '/bootstrap.php';
 
 
-
 class Test
 {
 	public $x = array(10, NULL);

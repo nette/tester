@@ -31,7 +31,6 @@ Options:
 }
 
 
-
 $options += array(
 	'c' => 'coverage.dat',
 	's' => NULL,

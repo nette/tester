@@ -12,7 +12,6 @@
 namespace Tester;
 
 
-
 /**
  * DomQuery simplifies querying (X)HTML documents.
  *
@@ -35,7 +34,6 @@ class DomQuery extends \SimpleXMLElement
 	}
 
 
-
 	/**
 	 * @return DomQuery
 	 */
@@ -43,7 +41,6 @@ class DomQuery extends \SimpleXMLElement
 	{
 		return simplexml_load_string($xml, __CLASS__);
 	}
-
 
 
 	/**
@@ -56,7 +53,6 @@ class DomQuery extends \SimpleXMLElement
 	}
 
 
-
 	/**
 	 * Check the current document against a selector.
 	 * @return bool
@@ -65,7 +61,6 @@ class DomQuery extends \SimpleXMLElement
 	{
 		return (bool) $this->find($selector);
 	}
-
 
 
 	/**
