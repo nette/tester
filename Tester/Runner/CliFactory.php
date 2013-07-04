@@ -33,7 +33,7 @@ class CliFactory
 		$jobs = 1;
 
 		$args = new \ArrayIterator(array_slice(isset($_SERVER['argv']) ? $_SERVER['argv'] : array(), 1));
-		foreach ($args as $arg) {   
+		foreach ($args as $arg) {
 			if (!preg_match('#^[-/][a-z]+\z#', $arg)) {
 				if ($path = realpath($arg)) {
 					$paths[] = $path;

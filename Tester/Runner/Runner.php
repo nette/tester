@@ -255,7 +255,7 @@ class Runner
 			$arr['/(OK.*)/i'] = "\033[42m \033[30m" . '\1' . "\033[0m";
 			$arr['/(FAIL.*)/i'] = "\033[41m \033[37m" . '\1' . "\033[0m";
 			return preg_replace(array_keys($arr), $arr, $result);
-		} else 
+		} else
 			return $result;
 	}
 }
