@@ -81,14 +81,17 @@ class Runner
 
 		if ($this->results[self::FAILED]) {
 			echo "\n", implode($this->results[self::FAILED]);
-			echo $this->formatResult($this->log("\nFAILURES! (" . count($tests) . ' tests, '
+			echo $this->formatResult(
+				$this->log("\nFAILURES! (" . count($tests) . ' tests, '
 				. count($this->results[self::FAILED]) . ' failures, '
-				. count($this->results[self::SKIPPED]) . ' skipped, ' . sprintf('%0.1f', $time) . ' seconds)');
+				. count($this->results[self::SKIPPED]) . ' skipped, ' . sprintf('%0.1f', $time) . ' seconds)')
+			);
 			return FALSE;
-
 		} else {
-			echo $this->formatResult($this->log("\n\nOK (" . count($tests) . ' tests, '
-				. count($this->results[self::SKIPPED]) . ' skipped, ' . sprintf('%0.1f', $time) . ' seconds)');
+			echo $this->formatResult(
+				$this->log("\n\nOK (" . count($tests) . ' tests, '
+				. count($this->results[self::SKIPPED]) . ' skipped, ' . sprintf('%0.1f', $time) . ' seconds)')
+			);
 			return TRUE;
 		}
 	}
