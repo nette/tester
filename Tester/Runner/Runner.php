@@ -37,6 +37,9 @@ class Runner
 	/** @var int  run jobs in parallel */
 	public $jobs = 1;
 
+	/** @var bool  display colors in the result? */
+	public $displayColors = FALSE;
+
 	/** @var resource */
 	private $logFile;
 
@@ -248,8 +251,11 @@ class Runner
 	 */
 	private function formatResult($result)
 	{
-		$arr['/(OK.*)/i'] = "\033[42m \033[30m" . '\1' . "\033[0m";
-		$arr['/(FAIL.*)/i'] = "\033[41m \033[37m" . '\1' . "\033[0m";
-		return preg_replace(array_keys($arr), $arr, $result);
+		if($this->displayColors) {
+			$arr['/(OK.*)/i'] = "\033[42m \033[30m" . '\1' . "\033[0m";
+			$arr['/(FAIL.*)/i'] = "\033[41m \033[37m" . '\1' . "\033[0m";
+			return preg_replace(array_keys($arr), $arr, $result);
+		} else 
+			return $result;
 	}
 }
