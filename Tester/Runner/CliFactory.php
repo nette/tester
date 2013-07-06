@@ -28,7 +28,7 @@ class CliFactory
 		$phpExec = 'php-cgi';
 		$phpArgs = array();
 		$paths = array();
-		$iniSet = $logFile = $displaySkipped = FALSE;
+		$iniSet = $logFile = $displaySkipped = $displayColors = FALSE;
 		$jobs = 1;
 
 		$args = new \ArrayIterator(array_slice(isset($_SERVER['argv']) ? $_SERVER['argv'] : array(), 1));
@@ -70,6 +70,9 @@ class CliFactory
 					$args->next();
 					$jobs = max(1, (int) $args->current());
 					break;
+				case 'colors':
+					$displayColors = TRUE;
+					break;
 				default:
 					throw new \Exception("Unknown option $arg.");
 					exit;
@@ -83,6 +86,7 @@ class CliFactory
 		$runner = new Runner(new PhpExecutable($phpExec, implode(' ', $phpArgs)), $logFile);
 		$runner->paths = $paths ?: array(getcwd());
 		$runner->displaySkipped = $displaySkipped;
+		$runner->displayColors = $displayColors;
 		$runner->jobs = $jobs;
 		return $runner;
 	}
@@ -104,6 +108,7 @@ Options:
 	-d key=val  Define INI entry 'key' with value 'val'.
 	-s          Show information about skipped tests.
 	-j <num>    Run <num> jobs in parallel.
+	-colors     Show colors in the result (requires shell support)
 
 ";
 	}

@@ -36,6 +36,9 @@ class Runner
 	/** @var int  run jobs in parallel */
 	public $jobs = 1;
 
+	/** @var bool  display colors in the result? */
+	public $displayColors = FALSE;
+
 	/** @var resource */
 	private $logFile;
 
@@ -78,14 +81,17 @@ class Runner
 
 		if ($this->results[self::FAILED]) {
 			echo "\n", implode($this->results[self::FAILED]);
-			echo $this->log("\nFAILURES! (" . count($tests) . ' tests, '
+			echo $this->formatResult(
+				$this->log("\nFAILURES! (" . count($tests) . ' tests, '
 				. count($this->results[self::FAILED]) . ' failures, '
-				. count($this->results[self::SKIPPED]) . ' skipped, ' . sprintf('%0.1f', $time) . ' seconds)');
+				. count($this->results[self::SKIPPED]) . ' skipped, ' . sprintf('%0.1f', $time) . ' seconds)')
+			);
 			return FALSE;
-
 		} else {
-			echo $this->log("\n\nOK (" . count($tests) . ' tests, '
-				. count($this->results[self::SKIPPED]) . ' skipped, ' . sprintf('%0.1f', $time) . ' seconds)');
+			echo $this->formatResult(
+				$this->log("\n\nOK (" . count($tests) . ' tests, '
+				. count($this->results[self::SKIPPED]) . ' skipped, ' . sprintf('%0.1f', $time) . ' seconds)')
+			);
 			return TRUE;
 		}
 	}
@@ -230,4 +236,18 @@ class Runner
 		}
 	}
 
+
+
+	/**
+	 * @return string
+	 */
+	private function formatResult($result)
+	{
+		if($this->displayColors) {
+			$arr['/(OK.*)/i'] = "\033[42m \033[30m" . '\1' . "\033[0m";
+			$arr['/(FAIL.*)/i'] = "\033[41m \033[37m" . '\1' . "\033[0m";
+			return preg_replace(array_keys($arr), $arr, $result);
+		} else
+			return $result;
+	}
 }
