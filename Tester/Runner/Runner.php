@@ -59,13 +59,13 @@ class Runner
 	 */
 	public function run()
 	{
-		echo $this->log('PHP ' . $this->php->getVersion() . ' | ' . $this->php->getCommandLine() . " | $this->jobs threads\n");
+		$this->printAndLog('PHP ' . $this->php->getVersion() . ' | ' . $this->php->getCommandLine() . " | $this->jobs threads\n");
 
 		$time = -microtime(TRUE);
 		$this->results = array(self::PASSED => NULL, self::SKIPPED => NULL, self::FAILED => NULL);
 		$tests = $this->findTests();
 		if (!$tests && count($this->results, 1) === count($this->results)) {
-			echo $this->log("No tests found\n");
+			$this->printAndLog("No tests found\n");
 			return;
 		}
 
@@ -73,18 +73,18 @@ class Runner
 		$time += microtime(TRUE);
 
 		if ($this->displaySkipped && $this->results[self::SKIPPED]) {
-			echo "\n", implode($this->results[self::SKIPPED]);
+			$this->printAndLog("\n" . implode($this->results[self::SKIPPED]), FALSE);
 		}
 
 		if ($this->results[self::FAILED]) {
-			echo "\n", implode($this->results[self::FAILED]);
-			echo $this->log("\nFAILURES! (" . count($tests) . ' tests, '
+			$this->printAndLog("\n" . implode($this->results[self::FAILED]), FALSE);
+			$this->printAndLog("\nFAILURES! (" . count($tests) . ' tests, '
 				. count($this->results[self::FAILED]) . ' failures, '
 				. count($this->results[self::SKIPPED]) . ' skipped, ' . sprintf('%0.1f', $time) . ' seconds)');
 			return FALSE;
 
 		} else {
-			echo $this->log("\n\nOK (" . count($tests) . ' tests, '
+			$this->printAndLog("\n\nOK (" . count($tests) . ' tests, '
 				. count($this->results[self::SKIPPED]) . ' skipped, ' . sprintf('%0.1f', $time) . ' seconds)');
 			return TRUE;
 		}
@@ -103,7 +103,7 @@ class Runner
 					$running[] = $job = array_shift($tests);
 					$job->run($this->jobs <= 1 || (count($running) + count($tests) <= 1));
 				} catch (JobException $e) {
-					$this->logResult(self::SKIPPED, $job, $e->getMessage());
+					$this->printAndLogResult(self::SKIPPED, $job, $e->getMessage());
 				}
 			}
 
@@ -117,10 +117,10 @@ class Runner
 				}
 				try {
 					$job->collect();
-					$this->logResult(self::PASSED, $job);
+					$this->printAndLogResult(self::PASSED, $job);
 
 				} catch (JobException $e) {
-					$this->logResult($e->getCode() === JobException::SKIPPED ? self::SKIPPED : self::FAILED, $job, $e->getMessage());
+					$this->printAndLogResult($e->getCode() === JobException::SKIPPED ? self::SKIPPED : self::FAILED, $job, $e->getMessage());
 				}
 				unset($running[$key]);
 			}
@@ -158,14 +158,14 @@ class Runner
 		$range = array(NULL);
 
 		if (isset($options['skip'])) {
-			return $this->logResult(self::SKIPPED, $job, $options['skip']);
+			return $this->printAndLogResult(self::SKIPPED, $job, $options['skip']);
 
 		} elseif (isset($options['phpversion'])) {
 			foreach ((array) $options['phpversion'] as $phpVersion) {
 				if (preg_match('#^(<=|<|==|=|!=|<>|>=|>)?\s*(.+)#', $phpVersion, $matches)
 					&& version_compare($matches[2], $this->php->getVersion(), $matches[1] ?: '>='))
 				{
-					return $this->logResult(self::SKIPPED, $job, "Requires PHP $phpVersion.");
+					return $this->printAndLogResult(self::SKIPPED, $job, "Requires PHP $phpVersion.");
 				}
 			}
 		}
@@ -178,7 +178,7 @@ class Runner
 			try {
 				$range = array_keys(\Tester\DataProvider::load(dirname($file) . '/' . $dataFile, $query));
 			} catch (\Exception $e) {
-				return $this->logResult(isset($options['dataprovider?']) ? self::SKIPPED : self::FAILED, $job, $e->getMessage());
+				return $this->printAndLogResult(isset($options['dataprovider?']) ? self::SKIPPED : self::FAILED, $job, $e->getMessage());
 			}
 
 		} elseif (isset($options['multiple'])) {
@@ -195,22 +195,26 @@ class Runner
 
 
 	/**
-	 * Writes to log
-	 * @return string
+	 * Prints and writes to log.
+	 * @return void
 	 */
-	private function log($s)
+	private function printAndLog($s, $log = TRUE)
 	{
-		if ($this->logFile) {
-			fputs($this->logFile, "$s\n");
+		if (strlen($s) > 1) {
+			$s .= "\n";
 		}
-		return "$s\n";
+		echo $s;
+
+		if ($this->logFile && $log) {
+			fputs($this->logFile, $s);
+		}
 	}
 
 
 	/**
 	 * @return void
 	 */
-	private function logResult($result, Job $job, $message = NULL)
+	private function printAndLogResult($result, Job $job, $message = NULL)
 	{
 		static $results = array(
 			self::PASSED => array('.'),
@@ -218,15 +222,19 @@ class Runner
 			self::FAILED => array('F', 'FAILED'),
 		);
 
-		echo $results[$result][0];
+		$this->printAndLog($results[$result][0], FALSE);
 
 		$file = implode(DIRECTORY_SEPARATOR, array_slice(explode(DIRECTORY_SEPARATOR, $job->getFile()), -3));
 		if ($result === self::PASSED) {
 			$this->results[$result][] = "{$job->getName()} $file";
 		} else {
-			$this->results[$result][] = $this->log("\n-- {$results[$result][1]}: {$job->getName()}"
+			$this->results[$result][] = $s = "\n-- {$results[$result][1]}: {$job->getName()}"
 				. ($job->getArguments() ? " [{$job->getArguments()}]" : '')
-				. " | $file" . str_replace("\n", "\n   ", "\n" . trim($message)) . "\n");
+				. " | $file" . str_replace("\n", "\n   ", "\n" . trim($message)) . "\n";
+
+			if ($this->logFile) {
+				fputs($this->logFile, "$s\n");
+			}
 		}
 	}
 
