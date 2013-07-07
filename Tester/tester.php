@@ -20,7 +20,7 @@ require __DIR__ . '/Framework/DataProvider.php';
 use Tester\Runner\CommandLine as Cmd;
 
 
-Tester\Helpers::setup();
+Tester\Helpers::setup(FALSE);
 
 
 $cmd = new Cmd("

@@ -19,13 +19,16 @@ namespace Tester;
  */
 class Helpers
 {
+	/** @var bool */
+    public static $debugMode;
 
 	/**
 	 * Configures PHP environment.
 	 * @return void
 	 */
-	public static function setup()
+	public static function setup($debugMode = TRUE)
 	{
+		self::$debugMode = $debugMode;
 		class_exists('Tester\Runner\Job');
 		error_reporting(E_ALL | E_STRICT);
 		ini_set('display_errors', TRUE);
@@ -85,9 +88,7 @@ class Helpers
 	public static function handleError($severity, $message, $file, $line)
 	{
 		if (($severity & error_reporting()) === $severity) {
-			$e = new \ErrorException($message, 0, $severity, $file, $line);
-			echo "\nError: $message\n{$e->getTraceAsString()}\n";
-			exit(Runner\Job::CODE_ERROR);
+			self::handleException(new \ErrorException($message, 0, $severity, $file, $line));
 		}
 		return FALSE;
 	}
@@ -96,6 +97,11 @@ class Helpers
 	/** @internal */
 	public static function handleException($e)
 	{
+		if (!self::$debugMode) {
+			echo "\nError: {$e->getMessage()}\n";
+			exit(Runner\Job::CODE_ERROR);
+		}
+
 		if ($e instanceof AssertException) {
 			echo "\n{$e->getMessage()}\n";
 			foreach ($e->getTrace() as $item) {
