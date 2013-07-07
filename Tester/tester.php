@@ -37,11 +37,13 @@ Options:
 	-d <key=val>...  Define INI entry 'key' with value 'val'.
 	-s               Show information about skipped tests.
 	-j <num>         Run <num> jobs in parallel.
+	-w <path>        Watch directory.
 	-h | --help      This help.
 
 ", array(
 	'-p' => array(Cmd::REALPATH => TRUE),
 	'-c' => array(Cmd::REALPATH => TRUE),
+	'-w' => array(Cmd::REALPATH => TRUE),
 	'paths' => array(Cmd::REALPATH => TRUE, Cmd::REPEATABLE => TRUE, Cmd::VALUE => getcwd()),
 ));
 
@@ -69,4 +71,24 @@ $runner->jobs = max(1, (int) $options['-j']);
 
 @unlink(__DIR__ . '/coverage.dat'); // @ - file may not exist
 
-die($runner->run() ? 0 : 1);
+if (!$options['-w']) {
+	die($runner->run() ? 0 : 1);
+}
+
+$prev = array();
+$counter = 0;
+while (TRUE) {
+	$state = array();
+	foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($options['-w'])) as $file) {
+		if (substr($file->getExtension(), 0, 3) === 'php') {
+			$state[(string) $file] = md5_file((string) $file);
+		}
+	}
+	if ($state !== $prev) {
+		$prev = $state;
+		$runner->run();
+		echo "\n";
+	}
+	echo "Watching {$options['-w']} " . str_repeat('.', ++$counter % 5) . "    \r";
+	sleep(2);
+}
