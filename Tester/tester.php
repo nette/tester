@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Nette Tester (version 0.9-dev)
+ * Nette Tester.
  *
  * Copyright (c) 2009 David Grudl (http://davidgrudl.com)
  *
@@ -24,9 +24,8 @@ Tester\Helpers::setup(FALSE);
 
 
 $cmd = new Cmd("
-Nette Tester (v0.9)
--------------------
-
+Nette Tester (v0.9.1)
+---------------------
 Usage:
 	tester.php [options] [<test file> | <directory>]...
 
