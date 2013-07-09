@@ -19,6 +19,13 @@ namespace Tester;
  */
 class TestCase
 {
+	/** @var string */
+	protected $expectedException;
+
+	/** @var string */
+	protected $expectedExceptionMessage;
+
+
 
 	/**
 	 * Runs the test case.
@@ -57,18 +64,44 @@ class TestCase
 
 
 	/**
+	 * Sets expected exception.
+	 * @param  string exception class
+	 * @param  string exception message
+	 */
+	public function setExpectedException($class, $message = '')
+	{
+		$this->expectedException = $class;
+		$this->expectedExceptionMessage = $message;
+	}
+
+
+
+	/**
 	 * Runs the single test.
+	 * @param  string method name
+	 * @param  array arguments
 	 * @return void
 	 */
 	public function runTest($name, array $args = array())
 	{
+		$this->expectedException = NULL;
+		$this->expectedExceptionMessage = NULL;
+		$e = NULL;
+
 		$this->setUp();
 		try {
 			call_user_func_array(array($this, $name), $args);
 		} catch (\Exception $e) {
 		}
 		$this->tearDown();
-		if (isset($e)) {
+
+		if ($this->expectedException) {
+			Assert::exception(function() use($e) {
+				if ($e instanceof \Exception) {
+					throw $e;
+				}
+			}, $this->expectedException, $this->expectedExceptionMessage);
+		} elseif ($e) {
 			throw $e;
 		}
 	}
