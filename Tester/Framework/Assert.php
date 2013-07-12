@@ -203,22 +203,22 @@ class Assert
 
 
 	/**
-	 * Checks if the function throws exception.
+	 * Checks if the function generates error.
 	 * @param  callable
-	 * @param  int
+	 * @param  int error level
 	 * @param  string message
 	 * @return void
 	 */
 	public static function error($function, $level, $message = NULL)
 	{
-		$catched = NULL;
-		set_error_handler(function($severity, $message, $file, $line) use (& $catched) {
-			if (($severity & error_reporting()) === $severity) {
-				if ($catched) {
-					echo "\nUnexpected error $message in $file:$line";
-					exit(\Tester\Runner\Job::CODE_FAIL);
+		$catched = $next = NULL;
+		set_error_handler(function($severity, $message, $file, $line) use (& $catched, & $next) {
+			if ($severity & error_reporting()) {
+				if (!$catched) {
+					$catched = new \ErrorException($message, 0, $severity, $file, $line);
+				} elseif (!$next) {
+					$next = new \ErrorException($message, 0, $severity, $file, $line);
 				}
-				$catched = array($severity, $message);
 			}
 		});
 		call_user_func($function);
@@ -227,20 +227,18 @@ class Assert
 		if (!$catched) {
 			self::fail('Expected error');
 		}
-		if ($catched[0] !== $level) {
-			$consts = get_defined_constants(TRUE);
-			foreach ($consts['Core'] as $name => $val) {
-				if ($catched[0] === $val && substr($name, 0, 2) === 'E_') {
-					$catched[0] = $name;
-				}
-				if ($level === $val && substr($name, 0, 2) === 'E_') {
-					$level = $name;
-				}
-			}
-			self::fail('Failed asserting that ' . $catched[0] . ' is ' . $level, $level, $catched[0]);
+		if ($catched->getSeverity() !== $level) {
+			$severity = self::severityName($catched->getSeverity());
+			$level = self::severityName($level);
+			self::fail("Failed asserting that $severity is $level", $level, $severity);
 		}
 		if ($message) {
-			self::match($message, $catched[1]);
+			self::match($message, $catched->getMessage());
+		}
+
+		if ($next) {
+			$severity = self::severityName($next->getSeverity());
+			self::fail("Unexpected error $severity ({$next->getMessage()}) in file {$next->getFile()}({$next->getLine()})");
 		}
 	}
 
@@ -382,6 +380,28 @@ class Assert
 		}
 
 		throw $exception;
+	}
+
+
+	/**
+	 * Converts error severity value to its name.
+	 * @param  int
+	 * @return string|int
+	 */
+	private static function severityName($severity)
+	{
+		static $names;
+		if ($names === NULL) {
+			$names = array();
+			$consts = get_defined_constants(TRUE);
+			foreach ($consts['Core'] as $name => $val) {
+				if (substr($name, 0, 2) === 'E_') {
+					$names[$val] = $name;
+				}
+			}
+		}
+
+		return isset($names[$severity]) ? $names[$severity] : $severity;
 	}
 
 }
