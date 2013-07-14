@@ -51,16 +51,16 @@ class MyTest extends Tester\TestCase
 	{
 		throw new Exception;
 	}
-	
+
 	public function dataProvider()
 	{
 		return array(array(1));
 	}
-	
+
 	/**
 	 * @dataprovider dataProvider
-	 * @throws Exception	 
-	 */	 	
+	 * @throws Exception
+	 */
 	public function testThrowsWithDataprovider($x)
 	{
 	}
@@ -73,7 +73,7 @@ $test->run('testThrowsMessage');
 
 Assert::exception(function() use ($test) {
 	$test->run('testThrowsButDont');
-}, 'Tester\AssertException', 'Expected exception Exception in MyTest::testThrowsButDont() method');
+}, 'Tester\AssertException', 'Expected exception Exception');
 
 Assert::exception(function() use ($test) {
 	$test->run('testFailAssertPass');
@@ -81,11 +81,11 @@ Assert::exception(function() use ($test) {
 
 Assert::exception(function() use ($test) {
 	$test->run('testThrowsBadClass');
-}, 'Tester\AssertException', 'Failed asserting that Exception is an instance of class MyException in MyTest::testThrowsBadClass() method');
+}, 'Tester\AssertException', 'Failed asserting that Exception is an instance of class MyException');
 
 Assert::exception(function() use ($test) {
 	$test->run('testThrowsBadMessage');
-}, 'Tester\AssertException', 'Failed asserting that "Bad message" matches expected "With message" in MyTest::testThrowsBadMessage() method');
+}, 'Tester\AssertException', 'Failed asserting that "Bad message" matches expected "With message"');
 
 Assert::exception(function() use ($test) {
 	$test->run('testWithoutThrows');
@@ -93,10 +93,4 @@ Assert::exception(function() use ($test) {
 
 Assert::exception(function() use ($test) {
 	$test->run('testThrowsWithDataprovider');
-}, 'Exception', 'Expected exception Exception in MyTest::testThrowsWithDataprovider() method (dataprovider #0)');
-
-
-
-Assert::exception(function() use ($test) {
-	$test->run('testUndefinedMethod');
-}, 'ReflectionException', 'Method testUndefinedMethod does not exist');
+}, 'Exception', 'Expected exception Exception');

@@ -33,14 +33,21 @@ class TestCase
 				continue;
 			}
 
-			$methodName = get_class($this) . '::' . $method->getName();
+			$traceRecord = array(
+				'file' => $method->getFileName(),
+				'line' => $method->getStartLine(),
+				'function' => $method->getName(),
+				'class' => get_class($this),
+				'type' => '->',
+			);
 
 			$data = array();
 			$info = Helpers::parseDocComment($method->getDocComment()) + array('dataprovider' => NULL, 'throws' => NULL);
 			if ($info['throws'] === TRUE) {
-				throw new TestCaseException("Missing class name in @throws annotation for $methodName() method.");
+				throw Helpers::appendTrace(new TestCaseException('Missing class name in @throws annotation.'), $traceRecord);
+
 			} elseif (is_array($info['throws'])) {
-				throw new TestCaseException("Cannot specify @throws annotation for $methodName() method more then once.");
+				throw Helpers::appendTrace(new TestCaseException('Cannot specify @throws annotation more then once.'), $traceRecord);
 			}
 
 			foreach ((array) $info['dataprovider'] as $provider) {
@@ -52,7 +59,7 @@ class TestCase
 			}
 			if (!$info['dataprovider']) {
 				if ($method->getNumberOfRequiredParameters()) {
-					throw new TestCaseException("Method {$method->getName()}() has arguments, but @dataProvider is missing.");
+					throw Helpers::appendTrace(new TestCaseException('Method has arguments, but @dataProvider is missing.'), $traceRecord);
 				}
 				$data[] = array();
 			}
@@ -69,15 +76,20 @@ class TestCase
 				}
 
 				if ($info['throws'] === NULL) {
-					if ($e) throw $e;
+					if ($e) {
+						throw $e;
+					}
 
 				} else {
 					try {
 						Assert::exception(function() use ($e) {
-							if ($e) throw $e;
+							if ($e) {
+								throw $e;
+							}
 						}, $throwsClass, $throwsMessage);
+
 					} catch (AssertException $ae) {
-						Assert::fail($ae->getMessage() . " in $methodName() method" . ($info['dataprovider'] ? " (dataprovider #$key)" : ''));
+						throw Helpers::appendTrace($ae, $traceRecord + array('line' => $method->getEndLine(), 'args' => $args));
 					}
 				}
 			}

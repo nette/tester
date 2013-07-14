@@ -154,4 +154,42 @@ class Helpers
 		return $options;
 	}
 
+
+	/**
+	 * Appends record into exception trace.
+	 * @internal
+	 */
+	final public static function appendTrace(\Exception $e, array $record)
+	{
+		static $required = array('file', 'line', 'function');
+		foreach ($required as $key) {
+			if (!isset($record[$key])) {
+				throw new \Exception("Missing required key '$key' for trace record.");
+			}
+		}
+
+		$add = array(
+			'file' => (string) $record['file'],
+			'line' => (int) $record['line'],
+			'function' => (string) $record['function'],
+		);
+		if (isset($record['class'], $record['type'])) {
+			$add['class'] = (string) $record['class'];
+			$add['type'] = $record['type'] === '->' ? $record['type'] : '::';
+		}
+		$add['args'] = isset($record['args']) ? (array) $record['args'] : array();
+
+		static $rp;
+		if ($rp === NULL) {
+			$rp = new \ReflectionProperty('Exception', 'trace');
+		}
+		$rp->setAccessible(TRUE);
+		$trace = $rp->getValue($e);
+		$trace[] = $add;
+		$rp->setValue($e, $trace);
+		$rp->setAccessible(FALSE);
+
+		return $e;
+	}
+
 }

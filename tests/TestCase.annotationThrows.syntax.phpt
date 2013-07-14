@@ -4,7 +4,6 @@ use Tester\Assert;
 
 require __DIR__ . '/bootstrap.php';
 
-
 class MyTest extends Tester\TestCase
 {
 	/**
@@ -28,8 +27,19 @@ $test = new MyTest;
 
 Assert::exception(function() use ($test) {
 	$test->run('testThrowsNoClass');
-}, 'Tester\TestCaseException', 'Missing class name in @throws annotation for MyTest::testThrowsNoClass() method.');
+}, 'Tester\TestCaseException', 'Missing class name in @throws annotation.');
 
-Assert::exception(function() use ($test) {
+$e = Assert::exception(function() use ($test) {
 	$test->run('testThrowsMultiple');
-}, 'Tester\TestCaseException', 'Cannot specify @throws annotation for MyTest::testThrowsMultiple() method more then once.');
+}, 'Tester\TestCaseException', 'Cannot specify @throws annotation more then once.');
+
+$rm = new ReflectionMethod($test, 'testThrowsMultiple');
+$trace = $e->getTrace();
+Assert::same(array(
+	'file' => __FILE__,
+	'line' => $rm->getStartLine(),
+	'function' => 'testThrowsMultiple',
+	'class' => 'MyTest',
+	'type' => '->',
+	'args' => array(),
+), end($trace));
