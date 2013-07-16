@@ -33,8 +33,23 @@ class TestCase
 				continue;
 			}
 
+			$traceRecord = array(
+				'file' => $method->getFileName(),
+				'line' => $method->getStartLine(),
+				'function' => $method->getName(),
+				'class' => get_class($this),
+				'type' => '->',
+			);
+
 			$data = array();
-			$info = Helpers::parseDocComment($method->getDocComment()) + array('dataprovider' => NULL);
+			$info = Helpers::parseDocComment($method->getDocComment()) + array('dataprovider' => NULL, 'throws' => NULL);
+			if ($info['throws'] === TRUE) {
+				throw Helpers::appendTrace(new TestCaseException('Missing class name in @throws annotation.'), $traceRecord);
+
+			} elseif (is_array($info['throws'])) {
+				throw Helpers::appendTrace(new TestCaseException('Cannot specify @throws annotation more then once.'), $traceRecord);
+			}
+
 			foreach ((array) $info['dataprovider'] as $provider) {
 				$res = $this->getData($provider);
 				if (!is_array($res)) {
@@ -44,13 +59,39 @@ class TestCase
 			}
 			if (!$info['dataprovider']) {
 				if ($method->getNumberOfRequiredParameters()) {
-					throw new TestCaseException("Method {$method->getName()}() has arguments, but @dataProvider is missing.");
+					throw Helpers::appendTrace(new TestCaseException('Method has arguments, but @dataProvider is missing.'), $traceRecord);
 				}
 				$data[] = array();
 			}
 
-			foreach ($data as $args) {
-				$this->runTest($method->getName(), $args);
+			list($throwsClass, $throwsMessage) = preg_split('#\s+#', $info['throws'], 2) + array(NULL, NULL);
+
+			foreach ($data as $key => $args) {
+				$e = NULL;
+				try {
+					$this->runTest($method->getName(), $args);
+				} catch (AssertException $e) {
+					throw $e;
+				} catch (\Exception $e) {
+				}
+
+				if ($info['throws'] === NULL) {
+					if ($e) {
+						throw $e;
+					}
+
+				} else {
+					try {
+						Assert::exception(function() use ($e) {
+							if ($e) {
+								throw $e;
+							}
+						}, $throwsClass, $throwsMessage);
+
+					} catch (AssertException $ae) {
+						throw Helpers::appendTrace($ae, $traceRecord + array('line' => $method->getEndLine(), 'args' => $args));
+					}
+				}
 			}
 		}
 	}
@@ -85,7 +126,7 @@ class TestCase
 			return DataProvider::load(dirname($rc->getFileName()) . '/' . $file, $query);
 		} else {
 			return $this->$provider();
-	}
+		}
 	}
 
 
