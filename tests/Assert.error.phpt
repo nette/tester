@@ -29,3 +29,10 @@ Assert::exception(function(){
 		$a++;
 	}, E_NOTICE, 'Abc');
 }, 'Tester\AssertException', 'Failed asserting that "Undefined variable: a" matches expected "Abc"');
+
+Assert::exception(function(){
+	Assert::error(function(){
+		$a++;
+		$b++;
+	}, E_NOTICE, 'Undefined variable: a');
+}, 'Tester\AssertException', 'Unexpected error E_NOTICE (Undefined variable: b) in file %a%(%d%)');
