@@ -192,19 +192,6 @@ class Assert
 	/**
 	 * Checks if the function throws exception.
 	 * @param  callable
-	 * @param  string class
-	 * @param  string message
-	 * @return Exception
-	 */
-	public static function throws($function, $class, $message = NULL)
-	{
-		return self::exception($function, $class, $message);
-	}
-
-
-	/**
-	 * Checks if the function throws exception.
-	 * @param  callable
 	 * @param  int
 	 * @param  string message
 	 * @return void
