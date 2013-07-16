@@ -22,16 +22,16 @@ Assert::exception(function(){
 Assert::exception(function(){
 	Assert::exception(function(){
 	}, 'Exception');
-}, 'Tester\AssertException', 'Expected exception Exception');
+}, 'Tester\AssertException', 'Expected Exception but no exception was thrown.');
 
 Assert::exception(function(){
 	Assert::exception(function(){
 		throw new Exception;
 	}, 'Unknown');
-}, 'Tester\AssertException', 'Failed asserting that Exception is an instance of class Unknown');
+}, 'Tester\AssertException', "Expected Unknown but Exception with message '' was thrown.");
 
 Assert::exception(function(){
 	Assert::exception(function(){
 		throw new Exception('Text');
 	}, 'Exception', 'Abc');
-}, 'Tester\AssertException', 'Failed asserting that "Text" matches expected "Abc"');
+}, 'Tester\AssertException', 'Exception message "Text" not matches expected "Abc"');

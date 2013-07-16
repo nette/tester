@@ -179,55 +179,47 @@ class Assert
 		} catch (\Exception $e) {
 		}
 		if (!isset($e)) {
-			self::fail("Expected exception $class");
+			self::fail("Expected $class but no exception was thrown.");
 		} elseif (!$e instanceof $class) {
-			self::fail('Failed asserting that ' . get_class($e) . " is an instance of class $class", $class, get_class($e));
-		} elseif ($message) {
-			self::match($message, $e->getMessage());
+			self::fail("Expected $class but " . get_class($e) . " with message '{$e->getMessage()}' was thrown.", $class, get_class($e));
+		} elseif ($message && !self::comparePattern($message, $e->getMessage())) {
+			self::fail('Exception message ' . Dumper::toLine($e->getMessage()) . ' not matches expected ' . Dumper::toLine($message), $message, $e->getMessage());
 		}
 		return $e;
 	}
 
 
 	/**
-	 * Checks if the function throws exception.
+	 * Checks if the function generates error.
 	 * @param  callable
 	 * @param  int
 	 * @param  string message
 	 * @return void
 	 */
-	public static function error($function, $level, $message = NULL)
+	public static function error($function, $expectedError, $expectedMessage = NULL)
 	{
-		$catched = NULL;
-		set_error_handler(function($severity, $message, $file, $line) use (& $catched) {
-			if (($severity & error_reporting()) === $severity) {
-				if ($catched) {
-					echo "\nUnexpected error $message in $file:$line";
-					exit(\Tester\Runner\Job::CODE_FAIL);
-				}
-				$catched = array($severity, $message);
+		$expected = self::errorTypeToString($expectedError);
+		$catched = FALSE;
+		set_error_handler(function($severity, $message, $file, $line) use (& $catched, $expectedError, $expectedMessage, $expected) {
+			$errorStr = Assert::errorTypeToString($severity) . " ($message in file $file on line $line)";
+			if (($severity & error_reporting()) !== $severity) {
+				return;
+
+			} elseif ($catched) {
+				Assert::fail("Expected $expected, got it, but another $errorStr was generated.");
+
+			} elseif ($severity !== $expectedError) {
+				Assert::fail("Expected $expected but $errorStr was generated.");
+
+			} elseif ($expectedMessage && !Assert::comparePattern($expectedMessage, $message)) {
+				Assert::fail('Error message ' . Dumper::toLine($message) . ' not matches expected ' . Dumper::toLine($expectedMessage), $expectedMessage, $message);
 			}
+			$catched = TRUE;
 		});
 		call_user_func($function);
 		restore_error_handler();
-
 		if (!$catched) {
-			self::fail('Expected error');
-		}
-		if ($catched[0] !== $level) {
-			$consts = get_defined_constants(TRUE);
-			foreach ($consts['Core'] as $name => $val) {
-				if ($catched[0] === $val && substr($name, 0, 2) === 'E_') {
-					$catched[0] = $name;
-				}
-				if ($level === $val && substr($name, 0, 2) === 'E_') {
-					$level = $name;
-				}
-			}
-			self::fail('Failed asserting that ' . $catched[0] . ' is ' . $level, $level, $catched[0]);
-		}
-		if ($message) {
-			self::match($message, $catched[1]);
+			self::fail("Expected $expected but no error was generated.");
 		}
 	}
 
@@ -381,6 +373,20 @@ class Assert
 		}
 
 		throw $exception;
+	}
+
+
+	/**
+	 * @internal
+	 */
+	/*private*/ static function errorTypeToString($type)
+	{
+		$consts = get_defined_constants(TRUE);
+		foreach ($consts['Core'] as $name => $val) {
+			if ($type === $val && substr($name, 0, 2) === 'E_') {
+				return $name;
+			}
+		}
 	}
 
 }
