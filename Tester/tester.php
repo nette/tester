@@ -20,7 +20,7 @@ require __DIR__ . '/Framework/DataProvider.php';
 use Tester\Runner\CommandLine as Cmd;
 
 
-Tester\Helpers::setup(FALSE);
+Tester\Helpers::setup();
 
 
 $cmd = new Cmd("
@@ -43,10 +43,13 @@ Options:
 	'-c' => array(Cmd::REALPATH => TRUE),
 	'-w' => array(Cmd::REALPATH => TRUE),
 	'paths' => array(Cmd::REALPATH => TRUE, Cmd::REPEATABLE => TRUE, Cmd::VALUE => getcwd()),
+	'--debug' => array(),
 ));
 
 
 $options = $cmd->parse();
+
+Tester\Helpers::$debugMode = (bool) $options['--debug'];
 
 if ($cmd->isEmpty()) {
 	$cmd->help();

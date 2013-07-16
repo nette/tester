@@ -19,16 +19,15 @@ namespace Tester;
  */
 class Helpers
 {
-	/** @var bool */
-    public static $debugMode;
+	/** @var bool  used for debugging Tester itself */
+	public static $debugMode = TRUE;
 
 	/**
 	 * Configures PHP environment.
 	 * @return void
 	 */
-	public static function setup($debugMode = TRUE)
+	public static function setup()
 	{
-		self::$debugMode = $debugMode;
 		class_exists('Tester\Runner\Job');
 		error_reporting(E_ALL | E_STRICT);
 		ini_set('display_errors', TRUE);
