@@ -22,8 +22,8 @@ class Job
 	const
 		CODE_NONE = -1,
 		CODE_OK = 0,
-		CODE_SKIP = 253,
-		CODE_ERROR = 252,
+		CODE_SKIP = 4,
+		CODE_ERROR = 255,
 		CODE_FAIL = 254;
 
 	/** @var string  test file */
