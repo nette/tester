@@ -40,7 +40,6 @@ Options:
 	-h | --help      This help.
 
 ", array(
-	'-p' => array(Cmd::REALPATH => TRUE),
 	'-c' => array(Cmd::REALPATH => TRUE),
 	'-w' => array(Cmd::REALPATH => TRUE),
 	'paths' => array(Cmd::REALPATH => TRUE, Cmd::REPEATABLE => TRUE, Cmd::VALUE => getcwd()),
