@@ -253,7 +253,17 @@ class Assert
 
 
 	/**
-	 * Checks if the function generates PHP error or exception.
+	 * Checks if the function throws exception, alias for exception().
+	 * @return Exception
+	 */
+	public static function throws($function, $class, $message = NULL)
+	{
+		return self::exception($function, $class, $message);
+	}
+
+
+	/**
+	 * Checks if the function generates PHP error or throws exception.
 	 * @param  callable
 	 * @param  int|string
 	 * @param  string message
