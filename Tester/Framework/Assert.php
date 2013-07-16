@@ -245,6 +245,7 @@ class Assert
 	/**
 	 * Compares two structures. Ignores the identity of objects and the order of keys in the arrays.
 	 * @return bool
+	 * @internal
 	 */
 	public static function compare($expected, $actual, $level = 0)
 	{
@@ -298,12 +299,25 @@ class Assert
 	 * @param  string
 	 * @return bool
 	 */
-	public static function match($expected, $actual)
+	public static function match($pattern, $actual)
 	{
-		$expected = rtrim(preg_replace("#[\t ]+\n#", "\n", str_replace("\r\n", "\n", $expected)));
+		if (!self::comparePattern($pattern, $actual)) {
+			self::fail('Failed asserting that ' . Dumper::toLine($actual) . ' matches expected ' . Dumper::toLine($pattern), $pattern, $actual);
+		}
+	}
+
+
+	/**
+	 * Compares using mask.
+	 * @return bool
+	 * @internal
+	 */
+	public static function comparePattern($pattern, $actual)
+	{
+		$pattern = rtrim(preg_replace("#[\t ]+\n#", "\n", str_replace("\r\n", "\n", $pattern)));
 		$actual = rtrim(preg_replace("#[\t ]+\n#", "\n", str_replace("\r\n", "\n", $actual)));
 
-		$re = strtr($expected, array(
+		$re = strtr($pattern, array(
 			'%a%' => '[^\r\n]+',    // one or more of anything except the end of line characters
 			'%a?%'=> '[^\r\n]*',    // zero or more of anything except the end of line characters
 			'%A%' => '.+',          // one or more of anything including the end of line characters
@@ -332,9 +346,7 @@ class Assert
 		if ($res === FALSE || preg_last_error()) {
 			throw new \Exception("Error while executing regular expression. (PREG Error Code " . preg_last_error() . ")");
 		}
-		if (!$res) {
-			self::fail('Failed asserting that ' . Dumper::toLine($actual) . ' matches expected ' . Dumper::toLine($expected), $expected, $actual);
-		}
+		return (bool) $res;
 	}
 
 
