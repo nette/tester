@@ -124,9 +124,9 @@ class Job
 	{
 		$this->output .= stream_get_contents($this->stdout);
 		fclose($this->stdout);
-		$res = proc_close($this->proc);
-		if ($res === self::CODE_NONE) {
-			$res = $this->exitCode;
+		$exitCode = proc_close($this->proc);
+		if ($exitCode === self::CODE_NONE) {
+			$exitCode = $this->exitCode;
 		}
 
 		if ($this->php->isCgi() && count($tmp = explode("\r\n\r\n", $this->output, 2)) >= 2) {
@@ -143,11 +143,16 @@ class Job
 			}
 		}
 
-		if ($res === self::CODE_SKIP) {
+		$expectedCode = isset($this->options['exitcode']) ? (int) $this->options['exitcode'] : self::CODE_OK;
+
+		if ($exitCode === self::CODE_SKIP) {
 			throw new JobException($this->output, JobException::SKIPPED);
 
-		} elseif ($res !== self::CODE_OK) {
-			throw new JobException($this->output ?: "Fatal error (code $res)");
+		} elseif ($exitCode !== $expectedCode) {
+			throw new JobException($exitCode === self::CODE_FAIL && $this->output
+				? $this->output
+				: "Exited with error code $exitCode (expected $expectedCode)\n$this->output"
+			);
 		}
 
 		// HTTP code check
