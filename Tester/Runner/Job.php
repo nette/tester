@@ -156,10 +156,10 @@ class Job
 		}
 
 		// HTTP code check
-		if (isset($this->options['assertcode'])) {
+		if (isset($this->options['httpcode']) && $this->php->isCgi()) {
 			$code = isset($this->headers['Status']) ? (int) $this->headers['Status'] : 200;
-			if ($code !== (int) $this->options['assertcode']) {
-				throw new JobException('Expected HTTP code ' . $this->options['assertcode'] . ' is not same as actual code ' . $code);
+			if ($code !== (int) $this->options['httpcode']) {
+				throw new JobException("Exited with HTTP code $code (expected {$this->options['httpcode']})");
 			}
 		}
 	}
