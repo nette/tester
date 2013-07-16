@@ -44,7 +44,9 @@ class Helpers
 		register_shutdown_function(function(){
 			$error = error_get_last();
 			if (in_array($error['type'], array(E_ERROR, E_CORE_ERROR, E_COMPILE_ERROR, E_PARSE)) && ($error['type'] & error_reporting()) !== $error['type']) {
-				echo "\nFatal error: $error[message] in $error[file] on line $error[line]\n";
+				register_shutdown_function(function() use ($error) {
+					echo "\nFatal error: $error[message] in $error[file] on line $error[line]\n";
+				});
 			}
 		});
 	}
