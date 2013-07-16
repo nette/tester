@@ -34,8 +34,20 @@ class Helpers
 		ini_set('display_errors', TRUE);
 		ini_set('html_errors', FALSE);
 		ini_set('log_errors', FALSE);
-		set_error_handler(array(__CLASS__, 'handleError'));
+
 		set_exception_handler(array(__CLASS__, 'handleException'));
+		set_error_handler(function($severity, $message, $file, $line) {
+			if (in_array($severity, array(E_RECOVERABLE_ERROR, E_USER_ERROR)) || ($severity & error_reporting()) === $severity) {
+				Helpers::handleException(new \ErrorException($message, 0, $severity, $file, $line));
+			}
+			return FALSE;
+		});
+		register_shutdown_function(function(){
+			$error = error_get_last();
+			if (in_array($error['type'], array(E_ERROR, E_CORE_ERROR, E_COMPILE_ERROR, E_PARSE)) && ($error['type'] & error_reporting()) !== $error['type']) {
+				echo "\nFatal error: $error[message] in $error[file] on line $error[line]\n";
+			}
+		});
 	}
 
 
@@ -81,16 +93,6 @@ class Helpers
 	{
 		static $lock;
 		flock($lock = fopen($path . '/lock-' . md5($name), 'w'), LOCK_EX);
-	}
-
-
-	/** @internal */
-	public static function handleError($severity, $message, $file, $line)
-	{
-		if (($severity & error_reporting()) === $severity) {
-			self::handleException(new \ErrorException($message, 0, $severity, $file, $line));
-		}
-		return FALSE;
 	}
 
 
