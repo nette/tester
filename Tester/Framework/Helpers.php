@@ -106,17 +106,24 @@ class Helpers
 		}
 
 		$tmp = '';
+		$colors = static::detectColors();
 		do {
 			$trace = $e->getTrace();
 			array_splice($trace, 0, $e instanceof \ErrorException ? 1 : 0, array(array('file' => $e->getFile(), 'line' => $e->getLine())));
-			echo "\n$tmp" . ($e instanceof AssertException ? 'Failed' : get_class($e)) . ": {$e->getMessage()}\n";
+			$last = & $trace[count($trace) - 1]['file'];
+
+			echo "\n$tmp" . ($colors ? "\033[1;37m" : '')
+				. ($e instanceof AssertException ? 'Failed' : get_class($e)) . ": {$e->getMessage()}\n\n"
+				. ($colors ? "\033[0m" : '');
 
 			foreach ($trace as $item) {
 				$item += array('file' => NULL);
-				echo 'in '
-					. ($item['file'] ? implode(DIRECTORY_SEPARATOR, array_slice(explode(DIRECTORY_SEPARATOR, $item['file']), -3)) . "($item[line]): " : '')
+				echo 'in ' . ($colors && $item['file'] === $last ? "\033[1;37m" : '')
+					. ($item['file'] ? implode(DIRECTORY_SEPARATOR, array_slice(explode(DIRECTORY_SEPARATOR, $item['file']), -3)) . "($item[line])" : '[internal function]')
+					. ($colors ? "\033[1;30m" : '') . ': '
 					. (isset($item['class']) ? $item['class'] . $item['type'] : '')
-					. (isset($item['function']) ? $item['function'] . '()' : '') . "\n";
+					. (isset($item['function']) ? $item['function'] . '()' : '') . "\n"
+					. ($colors ? "\033[0m" : '');
 			}
 			$tmp = '(previous) ';
 		} while ($e = $e->getPrevious());
