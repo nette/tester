@@ -306,7 +306,6 @@ class Assert
 	 *   %i%    signed integer value
 	 *   %f%    floating point number
 	 *   %h%    one or more HEX digits
-	 *   %ns%   PHP namespace
 	 * @param  string
 	 * @param  string
 	 * @return void
@@ -351,7 +350,6 @@ class Assert
 			'%i%' => '[+-]?[0-9]+', // signed integer value
 			'%f%' => '[+-]?\.?\d+\.?\d*(?:[Ee][+-]?\d+)?', // floating point number
 			'%h%' => '[0-9a-fA-F]+',// one or more HEX digits
-			'%ns%'=> '(?:[_0-9a-zA-Z\\\\]+\\\\|N)?',// PHP namespace
 			'%ds%'=> '[\\\\/]',     // directory separator
 
 			'.' => '\.', '\\' => '\\\\', '+' => '\+', '*' => '\*', '?' => '\?', '[' => '\[', '^' => '\^', // preg quote
