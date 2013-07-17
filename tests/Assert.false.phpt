@@ -9,12 +9,12 @@ Assert::false(false);
 
 Assert::exception(function(){
 	Assert::false(true);
-}, 'Tester\AssertException', 'Failed asserting that TRUE is FALSE');
+}, 'Tester\AssertException', 'TRUE should be FALSE');
 
 Assert::exception(function(){
 	Assert::false(0);
-}, 'Tester\AssertException', 'Failed asserting that 0 is FALSE');
+}, 'Tester\AssertException', '0 should be FALSE');
 
 Assert::exception(function(){
 	Assert::false(null);
-}, 'Tester\AssertException', 'Failed asserting that NULL is FALSE');
+}, 'Tester\AssertException', 'NULL should be FALSE');

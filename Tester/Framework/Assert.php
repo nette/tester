@@ -30,7 +30,7 @@ class Assert
 	public static function same($expected, $actual)
 	{
 		if ($actual !== $expected) {
-			self::fail('Failed asserting that ' . Dumper::toLine($actual) . ' is identical to expected ' . Dumper::toLine($expected), $expected, $actual);
+			self::fail(Dumper::toLine($actual) . ' should be ' . Dumper::toLine($expected), $expected, $actual);
 		}
 	}
 
@@ -42,7 +42,7 @@ class Assert
 	public static function notSame($expected, $actual)
 	{
 		if ($actual === $expected) {
-			self::fail('Failed asserting that ' . Dumper::toLine($actual) . ' is not identical to expected ' . Dumper::toLine($expected), $expected, $actual);
+			self::fail(Dumper::toLine($actual) . ' should not be ' . Dumper::toLine($expected), $expected, $actual);
 		}
 	}
 
@@ -54,7 +54,7 @@ class Assert
 	public static function equal($expected, $actual)
 	{
 		if (!self::compare($expected, $actual)) {
-			self::fail('Failed asserting that ' . Dumper::toLine($actual) . ' is equal to expected ' . Dumper::toLine($expected), $expected, $actual);
+			self::fail(Dumper::toLine($actual) . ' should be equal to ' . Dumper::toLine($expected), $expected, $actual);
 		}
 	}
 
@@ -66,7 +66,7 @@ class Assert
 	public static function notEqual($expected, $actual)
 	{
 		if (self::compare($expected, $actual)) {
-			self::fail('Failed asserting that ' . Dumper::toLine($actual) . ' is not equal to expected ' . Dumper::toLine($expected), $expected, $actual);
+			self::fail(Dumper::toLine($actual) . ' should not be equal to ' . Dumper::toLine($expected), $expected, $actual);
 		}
 	}
 
@@ -79,14 +79,14 @@ class Assert
 	{
 		if (is_array($actual)) {
 			if (!in_array($needle, $actual, TRUE)) {
-				self::fail('Failed asserting that ' . Dumper::toLine($actual) . ' contains ' . Dumper::toLine($needle), $needle, $actual);
+				self::fail(Dumper::toLine($actual) . ' should contain ' . Dumper::toLine($needle), $needle, $actual);
 			}
 		} elseif (is_string($actual)) {
 			if (strpos($actual, $needle) === FALSE) {
-				self::fail('Failed asserting that ' . Dumper::toLine($actual) . ' contains ' . Dumper::toLine($needle), $needle, $actual);
+				self::fail(Dumper::toLine($actual) . ' should contain ' . Dumper::toLine($needle), $needle, $actual);
 			}
 		} else {
-			self::fail('Failed asserting that ' . Dumper::toLine($actual) . ' is string or array');
+			self::fail(Dumper::toLine($actual) . ' should be string or array');
 		}
 	}
 
@@ -99,14 +99,14 @@ class Assert
 	{
 		if (is_array($actual)) {
 			if (in_array($needle, $actual, TRUE)) {
-				self::fail('Failed asserting that ' . Dumper::toLine($actual) . ' not contains ' . Dumper::toLine($needle), $needle, $actual);
+				self::fail(Dumper::toLine($actual) . ' should not contain ' . Dumper::toLine($needle), $needle, $actual);
 			}
 		} elseif (is_string($actual)) {
 			if (strpos($actual, $needle) !== FALSE) {
-				self::fail('Failed asserting that ' . Dumper::toLine($actual) . ' not contains ' . Dumper::toLine($needle), $needle, $actual);
+				self::fail(Dumper::toLine($actual) . ' should not contain ' . Dumper::toLine($needle), $needle, $actual);
 			}
 		} else {
-			self::fail('Failed asserting that ' . Dumper::toLine($actual) . ' is string or array');
+			self::fail(Dumper::toLine($actual) . ' should be string or array');
 		}
 	}
 
@@ -119,7 +119,7 @@ class Assert
 	public static function true($actual)
 	{
 		if ($actual !== TRUE) {
-			self::fail('Failed asserting that ' . Dumper::toLine($actual) . ' is TRUE');
+			self::fail(Dumper::toLine($actual) . ' should be TRUE');
 		}
 	}
 
@@ -132,7 +132,7 @@ class Assert
 	public static function false($actual)
 	{
 		if ($actual !== FALSE) {
-			self::fail('Failed asserting that ' . Dumper::toLine($actual) . ' is FALSE');
+			self::fail(Dumper::toLine($actual) . ' should be FALSE');
 		}
 	}
 
@@ -145,7 +145,7 @@ class Assert
 	public static function null($actual)
 	{
 		if ($actual !== NULL) {
-			self::fail('Failed asserting that ' . Dumper::toLine($actual) . ' is NULL');
+			self::fail(Dumper::toLine($actual) . ' should be NULL');
 		}
 	}
 
@@ -160,7 +160,7 @@ class Assert
 			throw new \Exception('Type must be a object or a string.');
 		}
 		if (!$object instanceof $type) {
-			self::fail('Failed asserting that ' . Dumper::toLine($object) . " is instance of $type.");
+			self::fail(Dumper::toLine($object) . " should be instance of $type");
 		}
 	}
 
@@ -296,7 +296,7 @@ class Assert
 	public static function match($pattern, $actual)
 	{
 		if (!self::comparePattern($pattern, $actual)) {
-			self::fail('Failed asserting that ' . Dumper::toLine($actual) . ' matches expected ' . Dumper::toLine($pattern), $pattern, $actual);
+			self::fail(Dumper::toLine($actual) . ' should match ' . Dumper::toLine($pattern), $pattern, $actual);
 		}
 	}
 

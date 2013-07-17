@@ -14,7 +14,7 @@ Assert::equal(array(new stdClass), array(new stdClass));
 
 Assert::exception(function(){
 	Assert::equal(1, 1.0);
-}, 'Tester\AssertException', 'Failed asserting that 1.0 is equal to expected 1');
+}, 'Tester\AssertException', '1.0 should be equal to 1');
 
 Assert::exception(function(){
 	$rec = array();
@@ -26,4 +26,4 @@ Assert::notEqual(1, 1.0);
 
 Assert::exception(function(){
 	Assert::notEqual(1, 1);
-}, 'Tester\AssertException', 'Failed asserting that 1 is not equal to expected 1');
+}, 'Tester\AssertException', '1 should not be equal to 1');

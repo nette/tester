@@ -16,24 +16,24 @@ $rec[] = & $rec;
 
 Assert::exception(function(){
 	Assert::same(1, 1.0);
-}, 'Tester\AssertException', 'Failed asserting that 1.0 is identical to expected 1');
+}, 'Tester\AssertException', '1.0 should be 1');
 
 Assert::exception(function(){
 	Assert::same(array('a' => true, 'b' => false), array('b' => false, 'a' => true));
-}, 'Tester\AssertException', 'Failed asserting that array(2) is identical to expected array(2)');
+}, 'Tester\AssertException', 'array(2) should be array(2)');
 
 Assert::exception(function(){
 	Assert::same(new stdClass, new stdClass);
-}, 'Tester\AssertException', 'Failed asserting that stdClass(0) is identical to expected stdClass(0)');
+}, 'Tester\AssertException', 'stdClass(0) should be stdClass(0)');
 
 Assert::exception(function(){
 	$rec = array();
 	$rec[] = & $rec;
 	Assert::same($rec, array());
-}, 'Tester\AssertException', 'Failed asserting that array(0) is identical to expected array(1)');
+}, 'Tester\AssertException', 'array(0) should be array(1)');
 
 Assert::notSame(1, 1.0);
 
 Assert::exception(function(){
 	Assert::notSame(1, 1);
-}, 'Tester\AssertException', 'Failed asserting that 1 is not identical to expected 1');
+}, 'Tester\AssertException', '1 should not be 1');

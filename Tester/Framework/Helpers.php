@@ -105,7 +105,7 @@ class Helpers
 			exit(Runner\Job::CODE_ERROR);
 
 		} elseif ($e instanceof AssertException) {
-			echo "\n{$e->getMessage()}\n";
+			echo "\nFailed: {$e->getMessage()}\n\n";
 			foreach ($e->getTrace() as $item) {
 				if (isset($item['file'], $item['line'])) {
 					if (substr($item['file'], strlen(__DIR__)) !== __DIR__) {

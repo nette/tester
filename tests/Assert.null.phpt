@@ -9,8 +9,8 @@ Assert::null(null);
 
 Assert::exception(function(){
 	Assert::null(false);
-}, 'Tester\AssertException', 'Failed asserting that FALSE is NULL');
+}, 'Tester\AssertException', 'FALSE should be NULL');
 
 Assert::exception(function(){
 	Assert::null(0);
-}, 'Tester\AssertException', 'Failed asserting that 0 is NULL');
+}, 'Tester\AssertException', '0 should be NULL');
