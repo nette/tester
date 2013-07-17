@@ -309,11 +309,14 @@ class Assert
 	 *   %ns%   PHP namespace
 	 * @param  string
 	 * @param  string
-	 * @return bool
+	 * @return void
 	 */
 	public static function match($pattern, $actual)
 	{
-		if (!self::isMatching($pattern, $actual)) {
+		if (!is_string($pattern)) {
+			throw new \Exception('Pattern must be a string.');
+
+		} elseif (!is_scalar($actual) || !self::isMatching($pattern, $actual)) {
 			self::fail(Dumper::toLine($actual) . ' should match ' . Dumper::toLine($pattern), $pattern, $actual);
 		}
 	}
@@ -326,9 +329,13 @@ class Assert
 	 */
 	public static function isMatching($pattern, $actual)
 	{
-		$pattern = rtrim(preg_replace("#[\t ]+\n#", "\n", str_replace("\r\n", "\n", $pattern)));
-		$actual = rtrim(preg_replace("#[\t ]+\n#", "\n", str_replace("\r\n", "\n", $actual)));
+		if (!is_string($pattern) && !is_scalar($actual)) {
+			throw new \Exception('Value and pattern must be strings.');
+		}
 
+		$pattern = str_replace("\r\n", "\n", $pattern);
+		$actual = str_replace("\r\n", "\n", $actual);
+		$pattern = preg_replace("#[\t ]*\n#", "%s?%\n", rtrim($pattern));
 		$re = strtr($pattern, array(
 			'%a%' => '[^\r\n]+',    // one or more of anything except the end of line characters
 			'%a?%'=> '[^\r\n]*',    // zero or more of anything except the end of line characters
@@ -350,7 +357,7 @@ class Assert
 			'.' => '\.', '\\' => '\\\\', '+' => '\+', '*' => '\*', '?' => '\?', '[' => '\[', '^' => '\^', // preg quote
 			']' => '\]', '$' => '\$', '(' => '\(', ')' => '\)', '{' => '\{', '}' => '\}', '=' => '\=', '!' => '\!',
 			'>' => '\>', '<' => '\<', '|' => '\|', ':' => '\:', '-' => '\-', "\x00" => '\000', '#' => '\#',
-		));
+		)) . '\\s*';
 
 		$old = ini_set('pcre.backtrack_limit', '10000000');
 		$res = preg_match("#^$re$#sU", $actual);
