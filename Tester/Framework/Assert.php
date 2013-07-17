@@ -161,6 +161,11 @@ class Assert
 		if (!is_object($type) && !is_string($type)) {
 			throw new \Exception('Type must be a object or a string.');
 
+		} elseif ($type === 'list') {
+			if (!is_array($value) || ($value && array_keys($value) !== range(0, count($value) - 1))) {
+				self::fail(Dumper::toLine($value) . " should be $type");
+			}
+
 		} elseif (in_array($type, array('array', 'bool', 'callable', 'float',
 			'int', 'integer', 'null', 'object', 'resource', 'scalar', 'string'), TRUE)
 		) {

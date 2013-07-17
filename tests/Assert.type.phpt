@@ -22,6 +22,10 @@ $cases = array(
 	array('resource', fopen(__FILE__, 'r')),
 	array('scalar', 'x'),
 	array('string', 'x'),
+	array('list', NULL, 'NULL should be list'),
+	array('list', array()),
+	array('list', array(1)),
+	array('list', array(4 => 1), 'array(1) should be list'),
 );
 
 foreach ($cases as $case) {
@@ -34,3 +38,8 @@ foreach ($cases as $case) {
 		Assert::type($type, $actual);
 	}
 }
+
+
+$arr = array();
+$arr[] = & $arr;
+Assert::type('list', $arr);
