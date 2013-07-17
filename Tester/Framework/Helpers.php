@@ -103,26 +103,25 @@ class Helpers
 		if (!self::$debugMode) {
 			echo "\nError: {$e->getMessage()}\n";
 			exit(Runner\Job::CODE_ERROR);
-
-		} elseif ($e instanceof AssertException) {
-			echo "\nFailed: {$e->getMessage()}\n\n";
-			foreach ($e->getTrace() as $item) {
-				if (isset($item['file'], $item['line'])) {
-					if (substr($item['file'], strlen(__DIR__)) !== __DIR__) {
-						echo 'in ' . implode(DIRECTORY_SEPARATOR, array_slice(explode(DIRECTORY_SEPARATOR, $item['file']), -3)) . "($item[line])\n";
-					}
-				}
-			}
-			exit(Runner\Job::CODE_FAIL);
-
-		} else {
-			$tmp = '';
-			do {
-				echo "\n$tmp" . get_class($e) . ": {$e->getMessage()}\nin {$e->getFile()}({$e->getLine()})\n{$e->getTraceAsString()}\n";
-				$tmp = '(previous) ';
-			} while ($e = $e->getPrevious());
-			exit(Runner\Job::CODE_ERROR);
 		}
+
+		$tmp = '';
+		do {
+			$trace = $e->getTrace();
+			array_splice($trace, 0, $e instanceof \ErrorException ? 1 : 0, array(array('file' => $e->getFile(), 'line' => $e->getLine())));
+			echo "\n$tmp" . ($e instanceof AssertException ? 'Failed' : get_class($e)) . ": {$e->getMessage()}\n";
+
+			foreach ($trace as $item) {
+				$item += array('file' => NULL);
+				echo 'in '
+					. ($item['file'] ? implode(DIRECTORY_SEPARATOR, array_slice(explode(DIRECTORY_SEPARATOR, $item['file']), -3)) . "($item[line]): " : '')
+					. (isset($item['class']) ? $item['class'] . $item['type'] : '')
+					. (isset($item['function']) ? $item['function'] . '()' : '') . "\n";
+			}
+			$tmp = '(previous) ';
+		} while ($e = $e->getPrevious());
+
+		exit($e instanceof AssertException ? Runner\Job::CODE_FAIL : Runner\Job::CODE_ERROR);
 	}
 
 
