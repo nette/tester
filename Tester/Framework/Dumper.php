@@ -57,23 +57,23 @@ class Dumper
 			} elseif ($cut = strlen($var) > 100) {
 				$var = substr($var, 0, 100);
 			}
-			return '"' . (preg_match('#[^\x09\x0A\x0D\x20-\x7E\xA0-\x{10FFFF}]#u', $var) || preg_last_error() ? strtr($var, $table) : $var)
-				. '"' . ($cut ? ' ...' : '');
+			return (preg_match('#[^\x09\x0A\x0D\x20-\x7E\xA0-\x{10FFFF}]#u', $var) || preg_last_error() ? '"' . strtr($var, $table) . '"' : "'$var'")
+				. ($cut ? ' ...' : '');
 
 		} elseif (is_array($var)) {
-			return "array(" . count($var) . ")";
+			return 'array(' . count($var) . ')';
 
 		} elseif ($var instanceof \Exception) {
 			return 'Exception ' . get_class($var) . ': ' . ($var->getCode() ? '#' . $var->getCode() . ' ' : '') . $var->getMessage();
 
 		} elseif (is_object($var)) {
-			return get_class($var) . "(" . count((array) $var) . ")";
+			return get_class($var) . '(' . count((array) $var) . ')';
 
 		} elseif (is_resource($var)) {
-			return "resource(" . get_resource_type($var) . ")";
+			return 'resource(' . get_resource_type($var) . ')';
 
 		} else {
-			return "unknown type";
+			return 'unknown type';
 		}
 	}
 
@@ -164,7 +164,7 @@ class Dumper
 					if ($k[0] === "\x00") {
 						$k = substr($k, strrpos($k, "\x00") + 1);
 					}
-					$out .= "$space\t" . self::_toPhp($k, $level + 1) . " => " . self::_toPhp($v, $level + 1) . ",\n";
+					$out .= "$space\t" . self::_toPhp($k, $level + 1) . ' => ' . self::_toPhp($v, $level + 1) . ",\n";
 				}
 				array_pop($list);
 				$out .= $space;
@@ -174,7 +174,7 @@ class Dumper
 				: get_class($var) . "::__set_state(array($out))";
 
 		} elseif (is_resource($var)) {
-			return "/* resource " . get_resource_type($var) . " */";
+			return '/* resource ' . get_resource_type($var) . ' */';
 
 		} else {
 			return var_export($var, TRUE);

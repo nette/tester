@@ -185,7 +185,7 @@ class Assert
 			self::fail("$class was expected but got " . get_class($e) . ($e->getMessage() ? " ({$e->getMessage()})" : ''));
 
 		} elseif ($message && !self::comparePattern($message, $e->getMessage())) {
-			self::fail("$class with a message matching \"$message\" was expected but got " . Dumper::toLine($e->getMessage()), $message, $e->getMessage());
+			self::fail("$class with a message matching '$message' was expected but got " . Dumper::toLine($e->getMessage()), $message, $e->getMessage());
 		}
 		return $e;
 	}
@@ -214,7 +214,7 @@ class Assert
 				Assert::fail("$expectedTypeStr was expected, but $errorStr was generated in file $file on line $line");
 
 			} elseif ($expectedMessage && !Assert::comparePattern($expectedMessage, $message)) {
-				Assert::fail("$expectedTypeStr with a message matching \"$expectedMessage\" was expected but got " . Dumper::toLine($message), $expectedMessage, $message);
+				Assert::fail("$expectedTypeStr with a message matching '$expectedMessage' was expected but got " . Dumper::toLine($message), $expectedMessage, $message);
 			}
 			$catched = TRUE;
 		});
