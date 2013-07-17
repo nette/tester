@@ -12,6 +12,7 @@ $equals = array(
 	array(array('a' => TRUE, 'b' => FALSE), array('b' => FALSE, 'a' => TRUE), 'array(2) should not be equal to array(2)'),
 	array(new stdClass, new stdClass, 'stdClass(0) should not be equal to stdClass(0)'),
 	array(array(new stdClass), array(new stdClass), 'array(1) should not be equal to array(1)'),
+	array(1/3, 1 - 2/3, '0.33%d% should not be equal to 0.33%d%'),
 );
 
 $notEquals = array(

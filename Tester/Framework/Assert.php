@@ -19,6 +19,8 @@ namespace Tester;
  */
 class Assert
 {
+	const EPSILON = 1e-10;
+
 	/** @var callable  function($message, $expected, $actual) */
 	public static $onFailure = array(__CLASS__, 'assertionFailed');
 
@@ -245,6 +247,10 @@ class Assert
 	{
 		if ($level > 10) {
 			throw new \Exception('Nesting level too deep or recursive dependency.');
+		}
+
+		if (is_float($expected) && is_float($actual)) {
+			return abs($expected - $actual) < self::EPSILON;
 		}
 
 		if (is_object($expected) && is_object($actual) && get_class($expected) === get_class($actual)) {
