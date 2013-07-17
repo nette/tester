@@ -207,11 +207,11 @@ class Runner
 			$s .= "\n";
 		}
 
-		if ($this->detectColors()) {
+		if (\Tester\Helpers::detectColors()) {
 			$repl = array(
-				'#^OK .*#m' => "\033[42m\033[1;37m\\0\033[0m",
-				'#^FAILURES! .*#m' => "\033[1;41m\033[37m\\0\033[0m",
-				'#^F\z#' => "\033[1;41m\033[37m\\0\033[0m",
+				'#^OK .*#m' => "\033[1;42;1;37m\\0\033[0m",
+				'#^FAILURES! .*#m' => "\033[1;41;37m\\0\033[0m",
+				'#^F\z#' => "\033[1;41;37m\\0\033[0m",
 				'#^-- FAILED: .*#m' => "\033[1;31m\\0\033[0m",
 			);
 			$s = preg_replace(array_keys($repl), $repl, $s);
@@ -249,17 +249,6 @@ class Runner
 				fputs($this->logFile, "$s\n");
 			}
 		}
-	}
-
-
-	/**
-	 * @return bool
-	 */
-	private function detectColors()
-	{
-		return getenv('ConEmuANSI') === 'ON'
-			|| getenv('ANSICON') !== FALSE
-			|| (defined('STDOUT') && function_exists('posix_isatty') && posix_isatty(STDOUT));
 	}
 
 }

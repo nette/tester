@@ -156,4 +156,15 @@ class Helpers
 		return $options;
 	}
 
+
+	/**
+	 * @return bool
+	 */
+	public static function detectColors()
+	{
+		return getenv('ConEmuANSI') === 'ON'
+			|| getenv('ANSICON') !== FALSE
+			|| (defined('STDOUT') && function_exists('posix_isatty') && posix_isatty(STDOUT));
+	}
+
 }
