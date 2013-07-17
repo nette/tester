@@ -31,6 +31,7 @@ $matches = array(
 	array('%f%', '-1e5'),
 	array('%h%', 'aBcDeF'),
 	array('%ds%%ds%', '\\/'),
+	array('%[a-c]+%', 'abc'),
 	array('.\\+*?[^]$(){}=!<>|:-#', '.\\+*?[^]$(){}=!<>|:-#'),
 );
 
@@ -50,6 +51,7 @@ $notMatches = array(
 	array('%f%', ''),
 	array('%h%', 'gh'),
 	array('%h%', ''),
+	array('%[a-c]+%', 'Abc'),
 );
 
 foreach ($matches as $case) {

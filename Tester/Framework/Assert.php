@@ -39,6 +39,7 @@ class Assert
 		'%f%' => '[+-]?\.?\d+\.?\d*(?:[Ee][+-]?\d+)?', // floating point number
 		'%h%' => '[0-9a-fA-F]+',// one or more HEX digits
 		'%ds%'=> '[\\\\/]', // directory separator
+		'%(\[.*\].*)%'=> '$1',  // range
 	);
 
 	/** @var callable  function($message, $expected, $actual) */
