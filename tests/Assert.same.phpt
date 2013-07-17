@@ -5,35 +5,48 @@ use Tester\Assert;
 require __DIR__ . '/bootstrap.php';
 
 
-Assert::same(1, 1);
-Assert::same('1', '1');
-Assert::same(array('1'), array('1'));
-Assert::same($obj = new stdClass, $obj);
+$same = array(
+	array(1, 1, '1 should not be 1'),
+	array('1', '1', "'1' should not be '1'"),
+	array(array('1'), array('1'), 'array(1) should not be array(1)'),
+	array($obj = new stdClass, $obj, 'stdClass(0) should not be stdClass(0)'),
+);
 
-$rec = array();
-$rec[] = & $rec;
-// Assert::same($rec, $rec); // works since PHP 5.3.15 and 5.4.5
+$notSame = array(
+	array(1, 1.0, '1.0 should be 1'),
+	array(array('a' => TRUE, 'b' => FALSE), array('b' => FALSE, 'a' => TRUE), 'array(2) should be array(2)'),
+	array(new stdClass, new stdClass, 'stdClass(0) should be stdClass(0)'),
+	array(array(new stdClass), array(new stdClass), 'array(1) should be array(1)'),
+);
 
-Assert::exception(function(){
-	Assert::same(1, 1.0);
-}, 'Tester\AssertException', '1.0 should be 1');
+foreach ($same as $case) {
+	list($expected, $actual, $message) = $case;
 
-Assert::exception(function(){
-	Assert::same(array('a' => true, 'b' => false), array('b' => false, 'a' => true));
-}, 'Tester\AssertException', 'array(2) should be array(2)');
+	Assert::same($expected, $actual);
 
-Assert::exception(function(){
-	Assert::same(new stdClass, new stdClass);
-}, 'Tester\AssertException', 'stdClass(0) should be stdClass(0)');
+	Assert::exception(function() use ($expected, $actual) {
+		Assert::notSame($expected, $actual);
+	}, 'Tester\AssertException', $message);
+}
+
+foreach ($notSame as $case) {
+	list($expected, $actual, $message) = $case;
+	Assert::notSame($case[0], $case[1]);
+
+	Assert::exception(function() use ($expected, $actual) {
+		Assert::same($expected, $actual);
+	}, 'Tester\AssertException', $message);
+}
+
+
+if ((PHP_VERSION_ID >= 50315 && PHP_VERSION_ID < 50400) || PHP_VERSION_ID >= 50405) {
+	$rec = array();
+	$rec[] = & $rec;
+	Assert::same($rec, $rec);
+}
 
 Assert::exception(function(){
 	$rec = array();
 	$rec[] = & $rec;
 	Assert::same($rec, array());
 }, 'Tester\AssertException', 'array(0) should be array(1)');
-
-Assert::notSame(1, 1.0);
-
-Assert::exception(function(){
-	Assert::notSame(1, 1);
-}, 'Tester\AssertException', '1 should not be 1');

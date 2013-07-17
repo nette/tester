@@ -5,12 +5,18 @@ use Tester\Assert;
 require __DIR__ . '/bootstrap.php';
 
 
-Assert::null(null);
+Assert::null(NULL);
 
-Assert::exception(function(){
-	Assert::null(false);
-}, 'Tester\AssertException', 'FALSE should be NULL');
+$notNull = array(
+	array(FALSE, 'FALSE should be NULL'),
+	array(0, '0 should be NULL'),
+	array('', "'' should be NULL"),
+	array('NULL', "'NULL' should be NULL"),
+);
 
-Assert::exception(function(){
-	Assert::null(0);
-}, 'Tester\AssertException', '0 should be NULL');
+foreach ($notNull as $case) {
+	list($actual, $message) = $case;
+	Assert::exception(function() use ($actual) {
+		Assert::null($actual);
+	}, 'Tester\AssertException', $message);
+}

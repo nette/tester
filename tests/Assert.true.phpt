@@ -5,16 +5,19 @@ use Tester\Assert;
 require __DIR__ . '/bootstrap.php';
 
 
-Assert::true(true);
+Assert::true(TRUE);
 
-Assert::exception(function(){
-	Assert::true(false);
-}, 'Tester\AssertException', 'FALSE should be TRUE');
+$notTrue = array(
+	array(FALSE, 'FALSE should be TRUE'),
+	array(0, '0 should be TRUE'),
+	array(1, '1 should be TRUE'),
+	array(NULL, 'NULL should be TRUE'),
+	array('TRUE', "'TRUE' should be TRUE"),
+);
 
-Assert::exception(function(){
-	Assert::true(1);
-}, 'Tester\AssertException', '1 should be TRUE');
-
-Assert::exception(function(){
-	Assert::true(null);
-}, 'Tester\AssertException', 'NULL should be TRUE');
+foreach ($notTrue as $case) {
+	list($actual, $message) = $case;
+	Assert::exception(function() use ($actual) {
+		Assert::true($actual);
+	}, 'Tester\AssertException', $message);
+}
