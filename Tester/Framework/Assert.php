@@ -86,7 +86,7 @@ class Assert
 				self::fail('Failed asserting that ' . Dumper::toLine($actual) . ' contains ' . Dumper::toLine($needle), $needle, $actual);
 			}
 		} else {
-			self::fail('Failed asserting that ' . Dumper::toLine($actual) . ' is string or array', $needle, $actual);
+			self::fail('Failed asserting that ' . Dumper::toLine($actual) . ' is string or array');
 		}
 	}
 
@@ -106,7 +106,7 @@ class Assert
 				self::fail('Failed asserting that ' . Dumper::toLine($actual) . ' not contains ' . Dumper::toLine($needle), $needle, $actual);
 			}
 		} else {
-			self::fail('Failed asserting that ' . Dumper::toLine($actual) . ' is string or array', $needle, $actual);
+			self::fail('Failed asserting that ' . Dumper::toLine($actual) . ' is string or array');
 		}
 	}
 
@@ -119,7 +119,7 @@ class Assert
 	public static function true($actual)
 	{
 		if ($actual !== TRUE) {
-			self::fail('Failed asserting that ' . Dumper::toLine($actual) . ' is TRUE', TRUE, $actual);
+			self::fail('Failed asserting that ' . Dumper::toLine($actual) . ' is TRUE');
 		}
 	}
 
@@ -132,7 +132,7 @@ class Assert
 	public static function false($actual)
 	{
 		if ($actual !== FALSE) {
-			self::fail('Failed asserting that ' . Dumper::toLine($actual) . ' is FALSE', FALSE, $actual);
+			self::fail('Failed asserting that ' . Dumper::toLine($actual) . ' is FALSE');
 		}
 	}
 
@@ -145,7 +145,7 @@ class Assert
 	public static function null($actual)
 	{
 		if ($actual !== NULL) {
-			self::fail('Failed asserting that ' . Dumper::toLine($actual) . ' is NULL', NULL, $actual);
+			self::fail('Failed asserting that ' . Dumper::toLine($actual) . ' is NULL');
 		}
 	}
 
@@ -160,7 +160,7 @@ class Assert
 			throw new \Exception('Type must be a object or a string.');
 		}
 		if (!$object instanceof $type) {
-			self::fail('Failed asserting that ' . Dumper::toLine($object) . " is instance of $type.", $type, $object);
+			self::fail('Failed asserting that ' . Dumper::toLine($object) . " is instance of $type.");
 		}
 	}
 
@@ -181,7 +181,7 @@ class Assert
 		if (!isset($e)) {
 			self::fail("Expected exception $class");
 		} elseif (!$e instanceof $class) {
-			self::fail('Failed asserting that ' . get_class($e) . " is an instance of class $class", $class, get_class($e));
+			self::fail('Failed asserting that ' . get_class($e) . " is an instance of class $class");
 		} elseif ($message) {
 			self::match($message, $e->getMessage());
 		}
@@ -224,7 +224,7 @@ class Assert
 					$level = $name;
 				}
 			}
-			self::fail('Failed asserting that ' . $catched[0] . ' is ' . $level, $level, $catched[0]);
+			self::fail('Failed asserting that ' . $catched[0] . ' is ' . $level);
 		}
 		if ($message) {
 			self::match($message, $catched[1]);
