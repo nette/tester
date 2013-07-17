@@ -55,7 +55,7 @@ class Assert
 	 */
 	public static function equal($expected, $actual)
 	{
-		if (!self::compare($expected, $actual)) {
+		if (!self::isEqual($expected, $actual)) {
 			self::fail(Dumper::toLine($actual) . ' should be equal to ' . Dumper::toLine($expected), $expected, $actual);
 		}
 	}
@@ -67,7 +67,7 @@ class Assert
 	 */
 	public static function notEqual($expected, $actual)
 	{
-		if (self::compare($expected, $actual)) {
+		if (self::isEqual($expected, $actual)) {
 			self::fail(Dumper::toLine($actual) . ' should not be equal to ' . Dumper::toLine($expected), $expected, $actual);
 		}
 	}
@@ -198,7 +198,7 @@ class Assert
 		} elseif (!$e instanceof $class) {
 			self::fail("$class was expected but got " . get_class($e) . ($e->getMessage() ? " ({$e->getMessage()})" : ''));
 
-		} elseif ($message && !self::comparePattern($message, $e->getMessage())) {
+		} elseif ($message && !self::isMatching($message, $e->getMessage())) {
 			self::fail("$class with a message matching '$message' was expected but got " . Dumper::toLine($e->getMessage()), $message, $e->getMessage());
 		}
 		return $e;
@@ -227,7 +227,7 @@ class Assert
 			} elseif ($severity !== $expectedType) {
 				Assert::fail("$expectedTypeStr was expected, but $errorStr was generated in file $file on line $line");
 
-			} elseif ($expectedMessage && !Assert::comparePattern($expectedMessage, $message)) {
+			} elseif ($expectedMessage && !Assert::isMatching($expectedMessage, $message)) {
 				Assert::fail("$expectedTypeStr with a message matching '$expectedMessage' was expected but got " . Dumper::toLine($message), $expectedMessage, $message);
 			}
 			$catched = TRUE;
@@ -255,7 +255,7 @@ class Assert
 	 * @return bool
 	 * @internal
 	 */
-	public static function compare($expected, $actual, $level = 0)
+	public static function isEqual($expected, $actual, $level = 0)
 	{
 		if ($level > 10) {
 			throw new \Exception('Nesting level too deep or recursive dependency.');
@@ -280,7 +280,7 @@ class Assert
 			}
 
 			foreach ($expected as $key => $value) {
-				if (!self::compare($value, $actual[$key], $level + 1)) {
+				if (!self::isEqual($value, $actual[$key], $level + 1)) {
 					return FALSE;
 				}
 			}
@@ -313,7 +313,7 @@ class Assert
 	 */
 	public static function match($pattern, $actual)
 	{
-		if (!self::comparePattern($pattern, $actual)) {
+		if (!self::isMatching($pattern, $actual)) {
 			self::fail(Dumper::toLine($actual) . ' should match ' . Dumper::toLine($pattern), $pattern, $actual);
 		}
 	}
@@ -324,7 +324,7 @@ class Assert
 	 * @return bool
 	 * @internal
 	 */
-	public static function comparePattern($pattern, $actual)
+	public static function isMatching($pattern, $actual)
 	{
 		$pattern = rtrim(preg_replace("#[\t ]+\n#", "\n", str_replace("\r\n", "\n", $pattern)));
 		$actual = rtrim(preg_replace("#[\t ]+\n#", "\n", str_replace("\r\n", "\n", $actual)));
