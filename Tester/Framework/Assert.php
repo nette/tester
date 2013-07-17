@@ -156,13 +156,20 @@ class Assert
 	 * Checks assertion.
 	 * @return void
 	 */
-	public static function type($type, $object)
+	public static function type($type, $value)
 	{
 		if (!is_object($type) && !is_string($type)) {
 			throw new \Exception('Type must be a object or a string.');
-		}
-		if (!$object instanceof $type) {
-			self::fail(Dumper::toLine($object) . " should be instance of $type");
+
+		} elseif (in_array($type, array('array', 'bool', 'callable', 'float',
+			'int', 'integer', 'null', 'object', 'resource', 'scalar', 'string'), TRUE)
+		) {
+			if (!call_user_func("is_$type", $value)) {
+				self::fail(Dumper::toLine($value) . " should be $type");
+			}
+
+		} elseif (!$value instanceof $type) {
+			self::fail(Dumper::toLine($value) . " should be instance of $type");
 		}
 	}
 
