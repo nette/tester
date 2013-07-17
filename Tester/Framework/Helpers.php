@@ -103,9 +103,8 @@ class Helpers
 		if (!self::$debugMode) {
 			echo "\nError: {$e->getMessage()}\n";
 			exit(Runner\Job::CODE_ERROR);
-		}
 
-		if ($e instanceof AssertException) {
+		} elseif ($e instanceof AssertException) {
 			echo "\n{$e->getMessage()}\n";
 			foreach ($e->getTrace() as $item) {
 				if (isset($item['file'], $item['line'])) {
@@ -115,14 +114,15 @@ class Helpers
 				}
 			}
 			exit(Runner\Job::CODE_FAIL);
-		}
 
-		$tmp = '';
-		do {
-			echo "\n$tmp" . get_class($e) . ": {$e->getMessage()}\nin {$e->getFile()}({$e->getLine()})\n{$e->getTraceAsString()}\n";
-			$tmp = '(previous) ';
-		} while ($e = $e->getPrevious());
-		exit(Runner\Job::CODE_ERROR);
+		} else {
+			$tmp = '';
+			do {
+				echo "\n$tmp" . get_class($e) . ": {$e->getMessage()}\nin {$e->getFile()}({$e->getLine()})\n{$e->getTraceAsString()}\n";
+				$tmp = '(previous) ';
+			} while ($e = $e->getPrevious());
+			exit(Runner\Job::CODE_ERROR);
+		}
 	}
 
 
