@@ -67,3 +67,6 @@ foreach ($notMatches as $case) {
 Assert::exception(function(){
 	Assert::match(NULL, '');
 }, 'Exception', 'Pattern must be a string.');
+
+
+Assert::matchFile(__DIR__ . '/Assert.matchFile.txt', '! Hello !');

@@ -322,6 +322,22 @@ class Assert
 
 
 	/**
+	 * Compares results using mask sorted in file.
+	 * @return void
+	 */
+	public static function matchFile($file, $actual)
+	{
+		$pattern = @file_get_contents($file);
+		if ($pattern === FALSE) {
+			throw new \Exception("Unable to read file '$file'.");
+
+		} elseif (!is_scalar($actual) || !self::isMatching($pattern, $actual)) {
+			self::fail(Dumper::toLine($actual) . ' should match ' . Dumper::toLine($pattern), $pattern, $actual);
+		}
+	}
+
+
+	/**
 	 * Compares using mask.
 	 * @return bool
 	 * @internal
