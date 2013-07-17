@@ -369,12 +369,13 @@ class Assert
 			throw new \Exception('Value and pattern must be strings.');
 		}
 
+		$utf8 = preg_match('#\x80-\x{10FFFF}]#u', $pattern) ? 'u' : '';
 		$old = ini_set('pcre.backtrack_limit', '10000000');
 		$patterns = static::$patterns + array(
 			'[.\\\\+*?[^$(){|\x00\#]' => '\$0', // preg quoting
 			'[\t ]*\r?\n' => "[\\t ]*\n", // right trim
 		);
-		$pattern = preg_replace_callback('#' . implode('|', array_keys($patterns)) . '#U', function($m) use ($patterns) {
+		$pattern = preg_replace_callback('#' . implode('|', array_keys($patterns)) . '#U' . $utf8, function($m) use ($patterns) {
 			foreach ($patterns as $re => $replacement) {
 				$s = preg_replace("#^$re\\z#", str_replace('\\', '\\\\', $replacement), $m[0], 1, $count);
 				if ($count) {
@@ -382,7 +383,7 @@ class Assert
 				}
 			}
 		}, rtrim($pattern));
-		$res = preg_match("#^$pattern\\s*$#sU", str_replace("\r\n", "\n", $actual));
+		$res = preg_match("#^$pattern\\s*$#sU$utf8", str_replace("\r\n", "\n", $actual));
 		ini_set('pcre.backtrack_limit', $old);
 
 		if ($res === FALSE || preg_last_error()) {
