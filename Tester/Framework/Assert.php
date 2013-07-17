@@ -19,7 +19,27 @@ namespace Tester;
  */
 class Assert
 {
+	/** used by equal() for comparing floats */
 	const EPSILON = 1e-10;
+
+	/** used by match(); in values, each $ followed by number is backreference */
+	static public $patterns = array(
+		'%a%' => '[^\r\n]+',    // one or more of anything except the end of line characters
+		'%a\?%'=> '[^\r\n]*',   // zero or more of anything except the end of line characters
+		'%A%' => '.+',          // one or more of anything including the end of line characters
+		'%A\?%'=> '.*',         // zero or more of anything including the end of line characters
+		'%s%' => '[\t ]+',      // one or more white space characters except the end of line characters
+		'%s\?%'=> '[\t ]*',     // zero or more white space characters except the end of line characters
+		'%S%' => '\S+',         // one or more of characters except the white space
+		'%S\?%'=> '\S*',        // zero or more of characters except the white space
+		'%c%' => '[^\r\n]',     // a single character of any sort (except the end of line)
+		'%d%' => '[0-9]+',      // one or more digits
+		'%d\?%'=> '[0-9]*',     // zero or more digits
+		'%i%' => '[+-]?[0-9]+', // signed integer value
+		'%f%' => '[+-]?\.?\d+\.?\d*(?:[Ee][+-]?\d+)?', // floating point number
+		'%h%' => '[0-9a-fA-F]+',// one or more HEX digits
+		'%ds%'=> '[\\\\/]', // directory separator
+	);
 
 	/** @var callable  function($message, $expected, $actual) */
 	public static $onFailure = array(__CLASS__, 'assertionFailed');
@@ -348,34 +368,22 @@ class Assert
 			throw new \Exception('Value and pattern must be strings.');
 		}
 
-		$pattern = str_replace("\r\n", "\n", $pattern);
-		$actual = str_replace("\r\n", "\n", $actual);
-		$pattern = preg_replace("#[\t ]*\n#", "%s?%\n", rtrim($pattern));
-		$re = strtr($pattern, array(
-			'%a%' => '[^\r\n]+',    // one or more of anything except the end of line characters
-			'%a?%'=> '[^\r\n]*',    // zero or more of anything except the end of line characters
-			'%A%' => '.+',          // one or more of anything including the end of line characters
-			'%A?%'=> '.*',          // zero or more of anything including the end of line characters
-			'%s%' => '[\t ]+',      // one or more white space characters except the end of line characters
-			'%s?%'=> '[\t ]*',      // zero or more white space characters except the end of line characters
-			'%S%' => '\S+',         // one or more of characters except the white space
-			'%S?%'=> '\S*',         // zero or more of characters except the white space
-			'%c%' => '[^\r\n]',     // a single character of any sort (except the end of line)
-			'%d%' => '[0-9]+',      // one or more digits
-			'%d?%'=> '[0-9]*',      // zero or more digits
-			'%i%' => '[+-]?[0-9]+', // signed integer value
-			'%f%' => '[+-]?\.?\d+\.?\d*(?:[Ee][+-]?\d+)?', // floating point number
-			'%h%' => '[0-9a-fA-F]+',// one or more HEX digits
-			'%ds%'=> '[\\\\/]',     // directory separator
-
-			'.' => '\.', '\\' => '\\\\', '+' => '\+', '*' => '\*', '?' => '\?', '[' => '\[', '^' => '\^', // preg quote
-			']' => '\]', '$' => '\$', '(' => '\(', ')' => '\)', '{' => '\{', '}' => '\}', '=' => '\=', '!' => '\!',
-			'>' => '\>', '<' => '\<', '|' => '\|', ':' => '\:', '-' => '\-', "\x00" => '\000', '#' => '\#',
-		)) . '\\s*';
-
 		$old = ini_set('pcre.backtrack_limit', '10000000');
-		$res = preg_match("#^$re$#sU", $actual);
+		$patterns = static::$patterns + array(
+			'[.\\\\+*?[^$(){|\x00\#]' => '\$0', // preg quoting
+			'[\t ]*\r?\n' => "[\\t ]*\n", // right trim
+		);
+		$pattern = preg_replace_callback('#' . implode('|', array_keys($patterns)) . '#U', function($m) use ($patterns) {
+			foreach ($patterns as $re => $replacement) {
+				$s = preg_replace("#^$re\\z#", str_replace('\\', '\\\\', $replacement), $m[0], 1, $count);
+				if ($count) {
+					return $s;
+				}
+			}
+		}, rtrim($pattern));
+		$res = preg_match("#^$pattern\\s*$#sU", str_replace("\r\n", "\n", $actual));
 		ini_set('pcre.backtrack_limit', $old);
+
 		if ($res === FALSE || preg_last_error()) {
 			throw new \Exception("Error while executing regular expression. (PREG Error Code " . preg_last_error() . ")");
 		}
