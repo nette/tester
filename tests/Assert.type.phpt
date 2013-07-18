@@ -8,9 +8,9 @@ require __DIR__ . '/bootstrap.php';
 $cases = array(
 	array('\stdClass', new stdClass),
 	array('STDCLASS', new stdClass),
-	array('x', new stdClass, 'stdClass(0) should be instance of x'),
-	array('Int', new stdClass, 'stdClass(0) should be instance of Int'),
-	array('int', new stdClass, 'stdClass(0) should be int'),
+	array('x', new stdClass, 'stdClass(#%a%) should be instance of x'),
+	array('Int', new stdClass, 'stdClass(#%a%) should be instance of Int'),
+	array('int', new stdClass, 'stdClass(#%a%) should be int'),
 	array('array', array()),
 	array('bool', TRUE),
 	array('callable', function() {}),

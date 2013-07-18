@@ -67,7 +67,7 @@ class Dumper
 			return 'Exception ' . get_class($var) . ': ' . ($var->getCode() ? '#' . $var->getCode() . ' ' : '') . $var->getMessage();
 
 		} elseif (is_object($var)) {
-			return get_class($var) . '(' . count((array) $var) . ')';
+			return get_class($var) . '(#' . substr(md5(spl_object_hash($var)), 0, 4) . ')';
 
 		} elseif (is_resource($var)) {
 			return 'resource(' . get_resource_type($var) . ')';

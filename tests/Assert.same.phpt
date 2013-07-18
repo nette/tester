@@ -9,13 +9,13 @@ $same = array(
 	array(1, 1, '1 should not be 1'),
 	array('1', '1', "'1' should not be '1'"),
 	array(array('1'), array('1'), 'array(1) should not be array(1)'),
-	array($obj = new stdClass, $obj, 'stdClass(0) should not be stdClass(0)'),
+	array($obj = new stdClass, $obj, 'stdClass(#%a%) should not be stdClass(#%a%)'),
 );
 
 $notSame = array(
 	array(1, 1.0, '1.0 should be 1'),
 	array(array('a' => TRUE, 'b' => FALSE), array('b' => FALSE, 'a' => TRUE), 'array(2) should be array(2)'),
-	array(new stdClass, new stdClass, 'stdClass(0) should be stdClass(0)'),
+	array(new stdClass, new stdClass, 'stdClass(#%a%) should be stdClass(#%a%)'),
 	array(array(new stdClass), array(new stdClass), 'array(1) should be array(1)'),
 );
 
