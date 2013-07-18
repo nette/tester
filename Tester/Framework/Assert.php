@@ -174,6 +174,32 @@ class Assert
 
 
 	/**
+	 * Checks truthy assertion.
+	 * @param  mixed  actual
+	 * @return void
+	 */
+	public static function truthy($actual)
+	{
+		if (!$actual) {
+			self::fail(Dumper::toLine($actual) . ' should be truthy');
+		}
+	}
+
+
+	/**
+	 * Checks falsey (empty) assertion.
+	 * @param  mixed  actual
+	 * @return void
+	 */
+	public static function falsey($actual)
+	{
+		if ($actual) {
+			self::fail(Dumper::toLine($actual) . ' should be falsey');
+		}
+	}
+
+
+	/**
 	 * Checks assertion.
 	 * @return void
 	 */
