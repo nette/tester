@@ -237,10 +237,8 @@ class Runner
 
 		$this->printAndLog($results[$result][0], FALSE);
 
-		$file = implode(DIRECTORY_SEPARATOR, array_slice(explode(DIRECTORY_SEPARATOR, $job->getFile()), -3));
 		$this->results[$result][] = $s = "\n-- {$results[$result][1]}: {$job->getName()}"
-			. ($job->getArguments() ? " [{$job->getArguments()}]" : '')
-			. " | $file" . ($message ? str_replace("\n", "\n   ", "\n" . trim($message)) . "\n" : '');
+			. ($message ? str_replace("\n", "\n   ", "\n" . trim($message)) . "\n" : '');
 
 		if ($this->logFile) {
 			fputs($this->logFile, preg_replace('#\033\[[\d;]+m#', '', $s) . "\n");

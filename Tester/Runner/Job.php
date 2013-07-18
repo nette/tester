@@ -66,9 +66,10 @@ class Job
 		$this->php = $php;
 		$this->args = $args;
 		$this->options = Tester\Helpers::parseDocComment(file_get_contents($this->file));
-		$this->options['name'] = isset($this->options[0])
-			? preg_replace('#^TEST:#', '', $this->options[0])
-			: $this->file;
+		$this->options['name'] =
+			(isset($this->options[0]) ? preg_replace('#^TEST:\s*#i', '', $this->options[0]) . ' | ' : '')
+			. implode(DIRECTORY_SEPARATOR, array_slice(explode(DIRECTORY_SEPARATOR, $this->file), -3))
+			. ($args ? " [{$args}]" : '');
 	}
 
 
