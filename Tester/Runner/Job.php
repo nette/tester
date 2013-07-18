@@ -11,6 +11,8 @@
 
 namespace Tester\Runner;
 
+use Tester;
+
 
 /**
  * Single test job.
@@ -63,7 +65,7 @@ class Job
 		$this->file = (string) $testFile;
 		$this->php = $php;
 		$this->args = $args;
-		$this->options = \Tester\Helpers::parseDocComment(file_get_contents($this->file));
+		$this->options = Tester\Helpers::parseDocComment(file_get_contents($this->file));
 		$this->options['name'] = isset($this->options[0])
 			? preg_replace('#^TEST:#', '', $this->options[0])
 			: $this->file;
@@ -164,6 +166,18 @@ class Job
 			$code = isset($this->headers['Status']) ? (int) $this->headers['Status'] : 200;
 			if ($code !== (int) $this->options['httpcode']) {
 				throw new JobException("Exited with HTTP code $code (expected {$this->options['httpcode']})");
+			}
+		}
+
+		if (isset($this->options['outputmatch'])) {
+			$file = dirname($this->file) . '/' . $this->options['outputmatch'];
+			if (!is_file($file)) {
+				throw new \Exception("Missing matching file '$file'.");
+			}
+			if (!Tester\Assert::isMatching($pattern = file_get_contents($file), $this->output)) {
+				Tester\Helpers::dumpOutput($this->file, $this->output, '.actual');
+				Tester\Helpers::dumpOutput($this->file, $pattern, '.expected');
+				throw new JobException("Failed: output should match file '$file'.", self::CODE_FAIL);
 			}
 		}
 	}
