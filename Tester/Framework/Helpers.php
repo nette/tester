@@ -33,6 +33,7 @@ class Helpers
 		ini_set('display_errors', TRUE);
 		ini_set('html_errors', FALSE);
 		ini_set('log_errors', FALSE);
+		putenv('NETTE_TESTER_COLORS=' . static::detectColors());
 
 		set_exception_handler(array(__CLASS__, 'handleException'));
 		set_error_handler(function($severity, $message, $file, $line) {
@@ -169,6 +170,10 @@ class Helpers
 	 */
 	public static function detectColors()
 	{
+		if (($colors = getenv('NETTE_TESTER_COLORS')) !== FALSE) {
+			return (bool) $colors;
+		}
+
 		return getenv('ConEmuANSI') === 'ON'
 			|| getenv('ANSICON') !== FALSE
 			|| (defined('STDOUT') && function_exists('posix_isatty') && posix_isatty(STDOUT));
