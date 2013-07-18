@@ -42,7 +42,7 @@ class Assert
 		'%(\[.*\].*)%'=> '$1',  // range
 	);
 
-	/** @var callable  function($message, $expected, $actual) */
+	/** @var callable  function($message, $actual, $expected) */
 	public static $onFailure = array(__CLASS__, 'assertionFailed');
 
 
@@ -53,7 +53,7 @@ class Assert
 	public static function same($expected, $actual)
 	{
 		if ($actual !== $expected) {
-			self::fail(Dumper::toLine($actual) . ' should be ' . Dumper::toLine($expected), $expected, $actual);
+			self::fail('%1 should be %2', $actual, $expected);
 		}
 	}
 
@@ -65,7 +65,7 @@ class Assert
 	public static function notSame($expected, $actual)
 	{
 		if ($actual === $expected) {
-			self::fail(Dumper::toLine($actual) . ' should not be ' . Dumper::toLine($expected), $expected, $actual);
+			self::fail('%1 should not be %2', $actual, $expected);
 		}
 	}
 
@@ -77,7 +77,7 @@ class Assert
 	public static function equal($expected, $actual)
 	{
 		if (!self::isEqual($expected, $actual)) {
-			self::fail(Dumper::toLine($actual) . ' should be equal to ' . Dumper::toLine($expected), $expected, $actual);
+			self::fail('%1 should be equal to %2', $actual, $expected);
 		}
 	}
 
@@ -89,7 +89,7 @@ class Assert
 	public static function notEqual($expected, $actual)
 	{
 		if (self::isEqual($expected, $actual)) {
-			self::fail(Dumper::toLine($actual) . ' should not be equal to ' . Dumper::toLine($expected), $expected, $actual);
+			self::fail('%1 should not be equal to %2', $actual, $expected);
 		}
 	}
 
@@ -102,14 +102,14 @@ class Assert
 	{
 		if (is_array($actual)) {
 			if (!in_array($needle, $actual, TRUE)) {
-				self::fail(Dumper::toLine($actual) . ' should contain ' . Dumper::toLine($needle), $needle, $actual);
+				self::fail('%1 should contain %2', $actual, $needle);
 			}
 		} elseif (is_string($actual)) {
 			if (strpos($actual, $needle) === FALSE) {
-				self::fail(Dumper::toLine($actual) . ' should contain ' . Dumper::toLine($needle), $needle, $actual);
+				self::fail('%1 should contain %2', $actual, $needle);
 			}
 		} else {
-			self::fail(Dumper::toLine($actual) . ' should be string or array');
+			self::fail('%1 should be string or array', $actual);
 		}
 	}
 
@@ -122,14 +122,14 @@ class Assert
 	{
 		if (is_array($actual)) {
 			if (in_array($needle, $actual, TRUE)) {
-				self::fail(Dumper::toLine($actual) . ' should not contain ' . Dumper::toLine($needle), $needle, $actual);
+				self::fail('%1 should not contain %2', $actual, $needle);
 			}
 		} elseif (is_string($actual)) {
 			if (strpos($actual, $needle) !== FALSE) {
-				self::fail(Dumper::toLine($actual) . ' should not contain ' . Dumper::toLine($needle), $needle, $actual);
+				self::fail('%1 should not contain %2', $actual, $needle);
 			}
 		} else {
-			self::fail(Dumper::toLine($actual) . ' should be string or array');
+			self::fail('%1 should be string or array', $actual);
 		}
 	}
 
@@ -142,7 +142,7 @@ class Assert
 	public static function true($actual)
 	{
 		if ($actual !== TRUE) {
-			self::fail(Dumper::toLine($actual) . ' should be TRUE');
+			self::fail('%1 should be TRUE', $actual);
 		}
 	}
 
@@ -155,7 +155,7 @@ class Assert
 	public static function false($actual)
 	{
 		if ($actual !== FALSE) {
-			self::fail(Dumper::toLine($actual) . ' should be FALSE');
+			self::fail('%1 should be FALSE', $actual);
 		}
 	}
 
@@ -168,7 +168,7 @@ class Assert
 	public static function null($actual)
 	{
 		if ($actual !== NULL) {
-			self::fail(Dumper::toLine($actual) . ' should be NULL');
+			self::fail('%1 should be NULL', $actual);
 		}
 	}
 
@@ -181,7 +181,7 @@ class Assert
 	public static function truthy($actual)
 	{
 		if (!$actual) {
-			self::fail(Dumper::toLine($actual) . ' should be truthy');
+			self::fail('%1 should be truthy', $actual);
 		}
 	}
 
@@ -194,7 +194,7 @@ class Assert
 	public static function falsey($actual)
 	{
 		if ($actual) {
-			self::fail(Dumper::toLine($actual) . ' should be falsey');
+			self::fail('%1 should be falsey', $actual);
 		}
 	}
 
@@ -210,18 +210,18 @@ class Assert
 
 		} elseif ($type === 'list') {
 			if (!is_array($value) || ($value && array_keys($value) !== range(0, count($value) - 1))) {
-				self::fail(Dumper::toLine($value) . " should be $type");
+				self::fail("%1 should be $type", $value);
 			}
 
 		} elseif (in_array($type, array('array', 'bool', 'callable', 'float',
 			'int', 'integer', 'null', 'object', 'resource', 'scalar', 'string'), TRUE)
 		) {
 			if (!call_user_func("is_$type", $value)) {
-				self::fail(Dumper::toLine($value) . " should be $type");
+				self::fail("%1 should be $type", $value);
 			}
 
 		} elseif (!$value instanceof $type) {
-			self::fail(Dumper::toLine($value) . " should be instance of $type");
+			self::fail("%1 should be instance of $type", $value);
 		}
 	}
 
@@ -246,7 +246,7 @@ class Assert
 			self::fail("$class was expected but got " . get_class($e) . ($e->getMessage() ? " ({$e->getMessage()})" : ''));
 
 		} elseif ($message && !self::isMatching($message, $e->getMessage())) {
-			self::fail("$class with a message matching '$message' was expected but got " . Dumper::toLine($e->getMessage()), $message, $e->getMessage());
+			self::fail("$class with a message matching %2 was expected but got %1", $e->getMessage(), $message);
 		}
 		return $e;
 	}
@@ -275,7 +275,7 @@ class Assert
 				Assert::fail("$expectedTypeStr was expected, but $errorStr was generated in file $file on line $line");
 
 			} elseif ($expectedMessage && !Assert::isMatching($expectedMessage, $message)) {
-				Assert::fail("$expectedTypeStr with a message matching '$expectedMessage' was expected but got " . Dumper::toLine($message), $expectedMessage, $message);
+				Assert::fail("$expectedTypeStr with a message matching %2 was expected but got %1", $message, $expectedMessage);
 			}
 			$catched = TRUE;
 		});
@@ -284,16 +284,6 @@ class Assert
 		if (!$catched) {
 			self::fail("$expectedTypeStr was expected, but none was generated");
 		}
-	}
-
-
-	/**
-	 * Failed assertion
-	 * @return void
-	 */
-	public static function fail($message, $expected = NULL, $actual = NULL)
-	{
-		call_user_func(self::$onFailure, $message, $expected, $actual);
 	}
 
 
@@ -363,7 +353,7 @@ class Assert
 			throw new \Exception('Pattern must be a string.');
 
 		} elseif (!is_scalar($actual) || !self::isMatching($pattern, $actual)) {
-			self::fail(Dumper::toLine($actual) . ' should match ' . Dumper::toLine($pattern), $pattern, $actual);
+			self::fail('%1 should match %2', $actual, rtrim($pattern));
 		}
 	}
 
@@ -379,7 +369,7 @@ class Assert
 			throw new \Exception("Unable to read file '$file'.");
 
 		} elseif (!is_scalar($actual) || !self::isMatching($pattern, $actual)) {
-			self::fail(Dumper::toLine($actual) . ' should match ' . Dumper::toLine($pattern), $pattern, $actual);
+			self::fail('%1 should match %2', $actual, rtrim($pattern));
 		}
 	}
 
@@ -424,11 +414,25 @@ class Assert
 
 
 	/**
+	 * Failed assertion
+	 * @return void
+	 */
+	public static function fail($message, $actual = NULL, $expected = NULL)
+	{
+		call_user_func(self::$onFailure, $message, $actual, $expected);
+	}
+
+
+	/**
 	 * Logs big variables to file and throws exception.
 	 * @return void
 	 */
-	private static function assertionFailed($message, $expected, $actual)
+	private static function assertionFailed($message, $actual, $expected)
 	{
+		$message = strtr($message, array(
+			'%1' => Dumper::toLine($actual),
+			'%2' => Dumper::toLine($expected),
+		));
 		$exception = new AssertException($message);
 		foreach (array_reverse($exception->getTrace()) as $item) {
 			// in case of shutdown handler, we want to skip inner-code blocks and debugging calls
