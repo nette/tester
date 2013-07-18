@@ -7,7 +7,7 @@
 require __DIR__ . '/bootstrap.php';
 
 
-register_shutdown_function(function(){
+register_shutdown_function(function() {
 	die(231);
 });
 

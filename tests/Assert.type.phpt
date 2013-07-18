@@ -13,7 +13,7 @@ $cases = array(
 	array('int', new stdClass, 'stdClass(0) should be int'),
 	array('array', array()),
 	array('bool', TRUE),
-	array('callable', function(){}),
+	array('callable', function() {}),
 	array('float', 0.0),
 	array('int', 0),
 	array('integer', 0),

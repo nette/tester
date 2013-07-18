@@ -19,7 +19,7 @@ class InvalidDataProviderTest extends Tester\TestCase
 }
 
 
-Assert::exception(function(){
+Assert::exception(function() {
 	$test = new InvalidDataProviderTest;
 	$test->run();
 }, 'Tester\TestCaseException', "Data provider invalidDataProvider() doesn't return array.");

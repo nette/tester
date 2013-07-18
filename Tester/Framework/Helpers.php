@@ -41,7 +41,7 @@ class Helpers
 			}
 			return FALSE;
 		});
-		register_shutdown_function(function(){
+		register_shutdown_function(function() {
 			$error = error_get_last();
 			if (in_array($error['type'], array(E_ERROR, E_CORE_ERROR, E_COMPILE_ERROR, E_PARSE)) && ($error['type'] & error_reporting()) !== $error['type']) {
 				register_shutdown_function(function() use ($error) {

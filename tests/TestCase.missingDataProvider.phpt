@@ -15,7 +15,7 @@ class MissingDataProviderTest extends Tester\TestCase
 }
 
 
-Assert::exception(function(){
+Assert::exception(function() {
 	$test = new MissingDataProviderTest;
 	$test->run();
 }, 'Tester\TestCaseException', "Method testDataProvider() has arguments, but @dataProvider is missing.");

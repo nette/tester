@@ -74,14 +74,14 @@ test(function() { // complex
 
 
 test(function() { // pseudoclass
-	Assert::exception(function(){
+	Assert::exception(function() {
 		DomQuery::css2xpath('a:first-child');
 	}, 'InvalidArgumentException');
 });
 
 
 test(function() { // adjacent sibling combinator
-	Assert::exception(function(){
+	Assert::exception(function() {
 		DomQuery::css2xpath('div + span');
 	}, 'InvalidArgumentException');
 });

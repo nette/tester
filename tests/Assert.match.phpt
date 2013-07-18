@@ -66,7 +66,7 @@ foreach ($notMatches as $case) {
 	}, 'Tester\AssertException', $message);
 }
 
-Assert::exception(function(){
+Assert::exception(function() {
 	Assert::match(NULL, '');
 }, 'Exception', 'Pattern must be a string.');
 

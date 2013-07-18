@@ -38,7 +38,7 @@ foreach ($notEquals as $case) {
 	}, 'Tester\AssertException', $message);
 }
 
-Assert::exception(function(){
+Assert::exception(function() {
 	$rec = array();
 	$rec[] = & $rec;
 	Assert::equal($rec, $rec);

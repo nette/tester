@@ -5,33 +5,33 @@ use Tester\Assert;
 require __DIR__ . '/bootstrap.php';
 
 
-Assert::error(function(){
+Assert::error(function() {
 	$a++;
 }, E_NOTICE);
 
-Assert::error(function(){
+Assert::error(function() {
 	$a++;
 }, E_NOTICE, 'Undefined variable: %a%');
 
-Assert::exception(function(){
-	Assert::error(function(){
+Assert::exception(function() {
+	Assert::error(function() {
 	}, E_NOTICE);
 }, 'Tester\AssertException', 'E_NOTICE was expected, but none was generated');
 
-Assert::exception(function(){
-	Assert::error(function(){
+Assert::exception(function() {
+	Assert::error(function() {
 		$a++;
 	}, E_WARNING);
 }, 'Tester\AssertException', 'E_WARNING was expected, but E_NOTICE (Undefined variable: a) was generated in file %a% on line %d%');
 
-Assert::exception(function(){
-	Assert::error(function(){
+Assert::exception(function() {
+	Assert::error(function() {
 		$a++;
 	}, E_NOTICE, 'Abc');
 }, 'Tester\AssertException', "E_NOTICE with a message matching 'Abc' was expected but got 'Undefined variable: a'");
 
-Assert::exception(function(){
-	Assert::error(function(){
+Assert::exception(function() {
+	Assert::error(function() {
 		$a++;
 		$b++;
 	}, E_NOTICE, 'Undefined variable: a');

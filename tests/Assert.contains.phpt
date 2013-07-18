@@ -36,10 +36,10 @@ foreach ($notContains as $case) {
 }
 
 
-Assert::exception(function(){
+Assert::exception(function() {
 	Assert::contains(1, 1);
 }, 'Tester\AssertException', '1 should be string or array');
 
-Assert::exception(function(){
+Assert::exception(function() {
 	Assert::notContains(1, 1);
 }, 'Tester\AssertException', '1 should be string or array');

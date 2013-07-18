@@ -45,7 +45,7 @@ if ((PHP_VERSION_ID >= 50315 && PHP_VERSION_ID < 50400) || PHP_VERSION_ID >= 504
 	Assert::same($rec, $rec);
 }
 
-Assert::exception(function(){
+Assert::exception(function() {
 	$rec = array();
 	$rec[] = & $rec;
 	Assert::same($rec, array());
