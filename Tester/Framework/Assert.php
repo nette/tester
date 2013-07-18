@@ -400,17 +400,13 @@ class Assert
 	private static function assertionFailed($message, $expected, $actual)
 	{
 		$exception = new AssertException($message);
-		foreach (array_reverse($exception->getTrace()) as $item) {
-			// in case of shutdown handler, we want to skip inner-code blocks and debugging calls
-			if (isset($item['file']) && substr($item['file'], -5) === '.phpt') {
-				$args = isset($_SERVER['argv'][1]) ? '.[' . preg_replace('#[^a-z0-9-. ]+#i', '_', $_SERVER['argv'][1]) . ']' : '';
-				if (is_object($expected) || is_array($expected) || (is_string($expected) && strlen($expected) > 80)) {
-					Helpers::dumpOutput($item['file'], $expected, $args . '.expected');
-				}
-				if (is_object($actual) || is_array($actual) || (is_string($actual) && strlen($actual) > 80)) {
-					Helpers::dumpOutput($item['file'], $actual, $args . '.actual');
-				}
-				break;
+		if (isset($_SERVER['argv'][0])) {
+			$args = isset($_SERVER['argv'][1]) ? '.[' . preg_replace('#[^a-z0-9-. ]+#i', '_', $_SERVER['argv'][1]) . ']' : '';
+			if (is_object($expected) || is_array($expected) || (is_string($expected) && strlen($expected) > 80)) {
+				Helpers::dumpOutput($_SERVER['argv'][0], $expected, $args . '.expected');
+			}
+			if (is_object($actual) || is_array($actual) || (is_string($actual) && strlen($actual) > 80)) {
+				Helpers::dumpOutput($_SERVER['argv'][0], $actual, $args . '.actual');
 			}
 		}
 		throw $exception;
