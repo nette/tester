@@ -253,15 +253,26 @@ class Assert
 
 
 	/**
-	 * Checks if the function generates error.
+	 * Checks if the function generates PHP error or exception.
 	 * @param  callable
-	 * @param  int
+	 * @param  int|string
 	 * @param  string message
 	 * @return void
 	 */
 	public static function error($function, $expectedType, $expectedMessage = NULL)
 	{
-		$expectedTypeStr = self::errorTypeToString($expectedType);
+		if (is_int($expectedType)) {
+			$expectedTypeStr = self::errorTypeToString($expectedType);
+
+		} elseif (!is_string($expectedType)) {
+			throw new \Exception('Error type must be E_* constant or Exception class name.');
+
+		} elseif (preg_match('#^E_[A-Z_]+\z#', $expectedType)) {
+			$expectedType = constant($expectedTypeStr = $expectedType);
+		} else {
+			return static::exception($function, $expectedType, $expectedMessage);
+		}
+
 		$catched = FALSE;
 		set_error_handler(function($severity, $message, $file, $line) use (& $catched, $expectedType, $expectedMessage, $expectedTypeStr) {
 			$errorStr = Assert::errorTypeToString($severity) . ($message ? " ($message)" : '');

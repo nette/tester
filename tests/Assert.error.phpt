@@ -11,6 +11,10 @@ Assert::error(function() {
 
 Assert::error(function() {
 	$a++;
+}, 'E_NOTICE');
+
+Assert::error(function() {
+	$a++;
 }, E_NOTICE, 'Undefined variable: %a%');
 
 Assert::exception(function() {
@@ -36,3 +40,20 @@ Assert::exception(function() {
 		$b++;
 	}, E_NOTICE, 'Undefined variable: a');
 }, 'Tester\AssertException', 'Expected one E_NOTICE, but another E_NOTICE (Undefined variable: b) was generated in file %a% on line %d%');
+
+
+
+$e = Assert::error(function() {
+	throw new Exception;
+}, 'Exception');
+
+Assert::true( $e instanceof Exception );
+
+Assert::error(function() {
+	throw new Exception('Text 123');
+}, 'Exception', 'Text %d%');
+
+
+Assert::exception(function() {
+	Assert::error(function() {}, NULL);
+}, 'Exception', 'Error type must be E_* constant or Exception class name.');

@@ -12,10 +12,6 @@ $e = Assert::exception(function() {
 Assert::true( $e instanceof Exception );
 
 Assert::exception(function() {
-	throw new Exception('Text');
-}, 'Exception');
-
-Assert::exception(function() {
 	throw new Exception('Text 123');
 }, 'Exception', 'Text %d%');
 
