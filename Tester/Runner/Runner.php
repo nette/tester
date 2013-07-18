@@ -123,7 +123,7 @@ class Runner
 					$this->printAndLogResult(self::PASSED, $job);
 
 				} catch (JobException $e) {
-					$this->printAndLogResult($e->getCode() === JobException::SKIPPED ? self::SKIPPED : self::FAILED, $job, $e->getMessage());
+					$this->printAndLogResult($e->getCode() === Job::CODE_SKIP ? self::SKIPPED : self::FAILED, $job, $e->getMessage());
 				}
 				unset($running[$key]);
 			}

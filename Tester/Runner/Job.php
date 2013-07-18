@@ -22,9 +22,9 @@ class Job
 	const
 		CODE_NONE = -1,
 		CODE_OK = 0,
-		CODE_SKIP = 4,
-		CODE_ERROR = 255,
-		CODE_FAIL = 254;
+		CODE_SKIP = 177,
+		CODE_FAIL = 178,
+		CODE_ERROR = 255;
 
 	/** @var string  test file */
 	private $file;
@@ -146,12 +146,12 @@ class Job
 		$expectedCode = isset($this->options['exitcode']) ? (int) $this->options['exitcode'] : self::CODE_OK;
 
 		if ($exitCode === self::CODE_SKIP) {
-			throw new JobException($this->output, JobException::SKIPPED);
+			throw new JobException($this->output, $exitCode);
 
 		} elseif ($exitCode !== $expectedCode) {
-			throw new JobException($exitCode === self::CODE_FAIL && $this->output
-				? $this->output
-				: "Exited with error code $exitCode (expected $expectedCode)\n$this->output"
+			throw new JobException(
+				($exitCode !== self::CODE_FAIL ? "Exited with error code $exitCode (expected $expectedCode)\n" : '') . $this->output,
+				$exitCode
 			);
 		}
 
@@ -234,6 +234,4 @@ class Job
  */
 class JobException extends \Exception
 {
-	const SKIPPED = 1;
-
 }
