@@ -219,7 +219,7 @@ class Runner
 		echo $s;
 
 		if ($this->logFile && $log) {
-			fputs($this->logFile, $s);
+			fputs($this->logFile, preg_replace('#\033\[[\d;]+m#', '', $s));
 		}
 	}
 
@@ -243,7 +243,7 @@ class Runner
 			. " | $file" . ($message ? str_replace("\n", "\n   ", "\n" . trim($message)) . "\n" : '');
 
 		if ($this->logFile) {
-			fputs($this->logFile, "$s\n");
+			fputs($this->logFile, preg_replace('#\033\[[\d;]+m#', '', $s) . "\n");
 		}
 	}
 
