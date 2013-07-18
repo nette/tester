@@ -230,7 +230,7 @@ class Runner
 	private function printAndLogResult($result, Job $job, $message = NULL)
 	{
 		static $results = array(
-			self::PASSED => array('.'),
+			self::PASSED => array('.', 'OK'),
 			self::SKIPPED => array('s', 'Skipped'),
 			self::FAILED => array('F', 'FAILED'),
 		);
@@ -238,16 +238,12 @@ class Runner
 		$this->printAndLog($results[$result][0], FALSE);
 
 		$file = implode(DIRECTORY_SEPARATOR, array_slice(explode(DIRECTORY_SEPARATOR, $job->getFile()), -3));
-		if ($result === self::PASSED) {
-			$this->results[$result][] = "{$job->getName()} $file";
-		} else {
-			$this->results[$result][] = $s = "\n-- {$results[$result][1]}: {$job->getName()}"
-				. ($job->getArguments() ? " [{$job->getArguments()}]" : '')
-				. " | $file" . str_replace("\n", "\n   ", "\n" . trim($message)) . "\n";
+		$this->results[$result][] = $s = "\n-- {$results[$result][1]}: {$job->getName()}"
+			. ($job->getArguments() ? " [{$job->getArguments()}]" : '')
+			. " | $file" . ($message ? str_replace("\n", "\n   ", "\n" . trim($message)) . "\n" : '');
 
-			if ($this->logFile) {
-				fputs($this->logFile, "$s\n");
-			}
+		if ($this->logFile) {
+			fputs($this->logFile, "$s\n");
 		}
 	}
 
