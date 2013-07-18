@@ -28,6 +28,8 @@ class Job
 		CODE_FAIL = 178,
 		CODE_ERROR = 255;
 
+	const DUMP_LINES = 10;
+
 	/** @var string  test file */
 	private $file;
 
@@ -142,7 +144,8 @@ class Job
 		}
 
 		if ($this->exitCode === self::CODE_SKIP) {
-			throw new JobException($this->output, $this->exitCode);
+			$lines = explode("\n", trim($this->output));
+			throw new JobException(end($lines), $this->exitCode);
 		}
 
 		$this->checkOptions();
@@ -158,8 +161,10 @@ class Job
 		$opts = $this->options;
 		$expected = isset($opts['exitcode']) ? (int) $opts['exitcode'] : self::CODE_OK;
 		if ($this->exitCode !== $expected) {
+			$lines = explode("\n", trim($this->output), self::DUMP_LINES + 1);
+			$lines[self::DUMP_LINES] = isset($lines[self::DUMP_LINES]) ? '...' : '';
 			throw new JobException(
-				($this->exitCode !== self::CODE_FAIL ? "Exited with error code $this->exitCode (expected $expected)\n" : '') . $this->output,
+				($this->exitCode !== self::CODE_FAIL ? "Exited with error code $this->exitCode (expected $expected)\n" : '') . implode("\n", $lines),
 				$this->exitCode
 			);
 		}
