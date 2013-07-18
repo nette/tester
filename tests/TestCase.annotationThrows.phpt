@@ -46,6 +46,30 @@ class MyTest extends Tester\TestCase
 		throw new Exception('Bad message');
 	}
 
+	/** @throws E_NOTICE */
+	public function testNotice()
+	{
+		$a++;
+	}
+
+	/** @throws E_NOTICE  Undefined variable: a */
+	public function testNoticeMessage()
+	{
+		$a++;
+	}
+
+	/** @throws E_WARNING */
+	public function testBadError()
+	{
+		$a++;
+	}
+
+	/** @throws E_NOTICE  With message */
+	public function testNoticeBadMessage()
+	{
+		$a++;
+	}
+
 	// Without @throws
 	public function testWithoutThrows()
 	{
@@ -64,6 +88,7 @@ class MyTest extends Tester\TestCase
 	public function testThrowsWithDataprovider($x)
 	{
 	}
+
 }
 
 
@@ -98,3 +123,14 @@ Assert::exception(function() use ($test) {
 Assert::exception(function() use ($test) {
 	$test->run('testUndefinedMethod');
 }, 'ReflectionException', 'Method testUndefinedMethod does not exist');
+
+$test->run('testNotice');
+$test->run('testNoticeMessage');
+
+Assert::exception(function() use ($test) {
+	$test->run('testBadError');
+}, 'Tester\AssertException', 'E_WARNING was expected, but E_NOTICE (Undefined variable: a) was generated in %a%testBadError()');
+
+Assert::exception(function() use ($test) {
+	$test->run('testNoticeBadMessage');
+}, 'Tester\AssertException', "E_NOTICE with a message matching 'With message' was expected but got 'Undefined variable: a' in testNoticeBadMessage()");
