@@ -49,8 +49,13 @@ class TestCase
 				$data[] = array();
 			}
 
-			foreach ($data as $args) {
-				$this->runTest($method->getName(), $args);
+			foreach ($data as $key => $args) {
+				try {
+					$this->runTest($method->getName(), $args);
+				} catch (AssertException $e) {
+					$e->message .= " in {$method->getName()}" . (substr(Dumper::toLine($args), 5));
+					throw $e;
+				}
 			}
 		}
 	}

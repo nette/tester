@@ -39,6 +39,11 @@ class MyTest extends Tester\TestCase
 		$this->order[] = array(__METHOD__, func_get_args());
 	}
 
+	/** @dataProvider dataProvider*/
+	public function testAssertion()
+	{
+		Assert::true(FALSE);
+	}
 }
 
 
@@ -69,3 +74,9 @@ Assert::same(array(
 	array('MyTest::testFileDataProvider', array('1')),
 	array('MyTest::testFileDataProvider', array('2')),
 ), $test->order);
+
+
+Assert::exception(function() {
+	$test = new MyTest;
+	$test->run('testAssertion');
+}, 'Tester\AssertException', 'FALSE should be TRUE in testAssertion(1, 2)');

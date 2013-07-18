@@ -488,4 +488,5 @@ class Assert
  */
 class AssertException extends \Exception
 {
+	public $message;
 }
