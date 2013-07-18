@@ -122,40 +122,44 @@ class Job
 	 */
 	public function collect()
 	{
-		$this->output .= stream_get_contents($this->stdout);
 		fclose($this->stdout);
-		$exitCode = proc_close($this->proc);
-		if ($exitCode === self::CODE_NONE) {
-			$exitCode = $this->exitCode;
+		$code = proc_close($this->proc);
+		if ($code !== self::CODE_NONE) {
+			$this->exitCode = $code;
 		}
 
 		if ($this->php->isCgi() && count($tmp = explode("\r\n\r\n", $this->output, 2)) >= 2) {
 			list($headers, $this->output) = $tmp;
-		} else {
-			$headers = '';
-		}
-
-		$this->headers = array();
-		foreach (explode("\r\n", $headers) as $header) {
-			$a = strpos($header, ':');
-			if ($a !== FALSE) {
-				$this->headers[trim(substr($header, 0, $a))] = (string) trim(substr($header, $a + 1));
+			foreach (explode("\r\n", $headers) as $header) {
+				$a = strpos($header, ':');
+				if ($a !== FALSE) {
+					$this->headers[trim(substr($header, 0, $a))] = (string) trim(substr($header, $a + 1));
+				}
 			}
 		}
 
+		if ($this->exitCode === self::CODE_SKIP) {
+			throw new JobException($this->output, $this->exitCode);
+		}
+
+		$this->checkOptions();
+	}
+
+
+	/**
+	 * Checks test results.
+	 * @return void
+	 */
+	public function checkOptions()
+	{
 		$expectedCode = isset($this->options['exitcode']) ? (int) $this->options['exitcode'] : self::CODE_OK;
-
-		if ($exitCode === self::CODE_SKIP) {
-			throw new JobException($this->output, $exitCode);
-
-		} elseif ($exitCode !== $expectedCode) {
+		if ($this->exitCode !== $expectedCode) {
 			throw new JobException(
-				($exitCode !== self::CODE_FAIL ? "Exited with error code $exitCode (expected $expectedCode)\n" : '') . $this->output,
-				$exitCode
+				($this->exitCode !== self::CODE_FAIL ? "Exited with error code $this->exitCode (expected $expectedCode)\n" : '') . $this->output,
+				$this->exitCode
 			);
 		}
 
-		// HTTP code check
 		if (isset($this->options['httpcode']) && $this->php->isCgi()) {
 			$code = isset($this->headers['Status']) ? (int) $this->headers['Status'] : 200;
 			if ($code !== (int) $this->options['httpcode']) {
