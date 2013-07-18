@@ -299,46 +299,6 @@ class Assert
 
 
 	/**
-	 * Compares two structures. Ignores the identity of objects and the order of keys in the arrays.
-	 * @return bool
-	 * @internal
-	 */
-	public static function isEqual($expected, $actual, $level = 0)
-	{
-		if ($level > 10) {
-			throw new \Exception('Nesting level too deep or recursive dependency.');
-		}
-
-		if (is_float($expected) && is_float($actual)) {
-			return abs($expected - $actual) < self::EPSILON;
-		}
-
-		if (is_object($expected) && is_object($actual) && get_class($expected) === get_class($actual)) {
-			$expected = (array) $expected;
-			$actual = (array) $actual;
-		}
-
-		if (is_array($expected) && is_array($actual)) {
-			$arr1 = array_keys($expected);
-			sort($arr1);
-			$arr2 = array_keys($actual);
-			sort($arr2);
-			if ($arr1 !== $arr2) {
-				return FALSE;
-			}
-
-			foreach ($expected as $key => $value) {
-				if (!self::isEqual($value, $actual[$key], $level + 1)) {
-					return FALSE;
-				}
-			}
-			return TRUE;
-		}
-		return $expected === $actual;
-	}
-
-
-	/**
 	 * Compares result using regular expression or mask:
 	 *   %a%    one or more of anything except the end of line characters
 	 *   %a?%   zero or more of anything except the end of line characters
@@ -386,6 +346,47 @@ class Assert
 
 
 	/**
+	 * Failed assertion
+	 * @return void
+	 */
+	public static function fail($message, $actual = NULL, $expected = NULL)
+	{
+		call_user_func(self::$onFailure, $message, $actual, $expected);
+	}
+
+
+	/********************* helpers ****************d*g**/
+
+
+	/**
+	 * Logs big variables to file and throws exception.
+	 * @return void
+	 */
+	private static function assertionFailed($message, $actual, $expected)
+	{
+		$message = strtr($message, array(
+			'%1' => Dumper::toLine($actual),
+			'%2' => Dumper::toLine($expected),
+		));
+		$exception = new AssertException($message);
+		foreach (array_reverse($exception->getTrace()) as $item) {
+			// in case of shutdown handler, we want to skip inner-code blocks and debugging calls
+			if (isset($item['file']) && substr($item['file'], -5) === '.phpt') {
+				$args = isset($_SERVER['argv'][1]) ? '.[' . preg_replace('#[^a-z0-9-. ]+#i', '_', $_SERVER['argv'][1]) . ']' : '';
+				if (is_object($expected) || is_array($expected) || (is_string($expected) && strlen($expected) > 80)) {
+					Helpers::dumpOutput($item['file'], $expected, $args . '.expected');
+				}
+				if (is_object($actual) || is_array($actual) || (is_string($actual) && strlen($actual) > 80)) {
+					Helpers::dumpOutput($item['file'], $actual, $args . '.actual');
+				}
+				break;
+			}
+		}
+		throw $exception;
+	}
+
+
+	/**
 	 * Compares using mask.
 	 * @return bool
 	 * @internal
@@ -425,40 +426,42 @@ class Assert
 
 
 	/**
-	 * Failed assertion
-	 * @return void
+	 * Compares two structures. Ignores the identity of objects and the order of keys in the arrays.
+	 * @return bool
+	 * @internal
 	 */
-	public static function fail($message, $actual = NULL, $expected = NULL)
+	public static function isEqual($expected, $actual, $level = 0)
 	{
-		call_user_func(self::$onFailure, $message, $actual, $expected);
-	}
-
-
-	/**
-	 * Logs big variables to file and throws exception.
-	 * @return void
-	 */
-	private static function assertionFailed($message, $actual, $expected)
-	{
-		$message = strtr($message, array(
-			'%1' => Dumper::toLine($actual),
-			'%2' => Dumper::toLine($expected),
-		));
-		$exception = new AssertException($message);
-		foreach (array_reverse($exception->getTrace()) as $item) {
-			// in case of shutdown handler, we want to skip inner-code blocks and debugging calls
-			if (isset($item['file']) && substr($item['file'], -5) === '.phpt') {
-				$args = isset($_SERVER['argv'][1]) ? '.[' . preg_replace('#[^a-z0-9-. ]+#i', '_', $_SERVER['argv'][1]) . ']' : '';
-				if (is_object($expected) || is_array($expected) || (is_string($expected) && strlen($expected) > 80)) {
-					Helpers::dumpOutput($item['file'], $expected, $args . '.expected');
-				}
-				if (is_object($actual) || is_array($actual) || (is_string($actual) && strlen($actual) > 80)) {
-					Helpers::dumpOutput($item['file'], $actual, $args . '.actual');
-				}
-				break;
-			}
+		if ($level > 10) {
+			throw new \Exception('Nesting level too deep or recursive dependency.');
 		}
-		throw $exception;
+
+		if (is_float($expected) && is_float($actual)) {
+			return abs($expected - $actual) < self::EPSILON;
+		}
+
+		if (is_object($expected) && is_object($actual) && get_class($expected) === get_class($actual)) {
+			$expected = (array) $expected;
+			$actual = (array) $actual;
+		}
+
+		if (is_array($expected) && is_array($actual)) {
+			$arr1 = array_keys($expected);
+			sort($arr1);
+			$arr2 = array_keys($actual);
+			sort($arr2);
+			if ($arr1 !== $arr2) {
+				return FALSE;
+			}
+
+			foreach ($expected as $key => $value) {
+				if (!self::isEqual($value, $actual[$key], $level + 1)) {
+					return FALSE;
+				}
+			}
+			return TRUE;
+		}
+		return $expected === $actual;
 	}
 
 
