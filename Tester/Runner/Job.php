@@ -65,8 +65,8 @@ class Job
 		$this->args = $args;
 		$this->options = \Tester\Helpers::parseDocComment(file_get_contents($this->file));
 		$this->options['name'] = isset($this->options[0])
-			? preg_replace('#^TEST:#', '', $this->options[0])
-			: $this->file;
+			? preg_replace('#^TEST:\s*#', '', $this->options[0])
+			: basename($this->file);
 	}
 
 
