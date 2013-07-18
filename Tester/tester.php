@@ -15,6 +15,8 @@ require __DIR__ . '/Runner/Runner.php';
 require __DIR__ . '/Runner/Job.php';
 require __DIR__ . '/Runner/CommandLine.php';
 require __DIR__ . '/Framework/Helpers.php';
+require __DIR__ . '/Framework/Assert.php';
+require __DIR__ . '/Framework/Dumper.php';
 require __DIR__ . '/Framework/DataProvider.php';
 
 use Tester\Runner\CommandLine as Cmd;
