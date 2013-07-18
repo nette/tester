@@ -214,9 +214,10 @@ class Runner
 				'#^F\z#' => "\033[1;41;37m\\0\033[0m",
 				'#^-- FAILED: .*#m' => "\033[1;31m\\0\033[0m",
 			);
-			$s = preg_replace(array_keys($repl), $repl, $s);
+			echo preg_replace(array_keys($repl), $repl, $s);
+		} else {
+			echo $s;
 		}
-		echo $s;
 
 		if ($this->logFile && $log) {
 			fputs($this->logFile, $s);
