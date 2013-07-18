@@ -400,29 +400,19 @@ class Assert
 	private static function assertionFailed($message, $expected, $actual)
 	{
 		$exception = new AssertException($message);
-		$path = NULL;
-		foreach ($exception->getTrace() as $item) {
+		foreach (array_reverse($exception->getTrace()) as $item) {
 			// in case of shutdown handler, we want to skip inner-code blocks and debugging calls
-			$path = isset($item['file']) && substr($item['file'], -5) === '.phpt' ? $item['file'] : $path;
-		}
-
-		if ($path) {
-			$path = dirname($path) . '/output/' . basename($path, '.phpt');
-			if (isset($_SERVER['argv'][1])) {
-				$path .= '.[' . preg_replace('#[^a-z0-9-. ]+#i', '_', $_SERVER['argv'][1]) . ']';
-			}
-
-			if (is_object($expected) || is_array($expected) || (is_string($expected) && strlen($expected) > 80)) {
-				@mkdir(dirname($path)); // @ - directory may already exist
-				file_put_contents($path . '.expected', is_string($expected) ? $expected : Dumper::toPhp($expected));
-			}
-
-			if (is_object($actual) || is_array($actual) || (is_string($actual) && strlen($actual) > 80)) {
-				@mkdir(dirname($path)); // @ - directory may already exist
-				file_put_contents($path . '.actual', is_string($actual) ? $actual : Dumper::toPhp($actual));
+			if (isset($item['file']) && substr($item['file'], -5) === '.phpt') {
+				$args = isset($_SERVER['argv'][1]) ? '.[' . preg_replace('#[^a-z0-9-. ]+#i', '_', $_SERVER['argv'][1]) . ']' : '';
+				if (is_object($expected) || is_array($expected) || (is_string($expected) && strlen($expected) > 80)) {
+					Helpers::dumpOutput($item['file'], $expected, $args . '.expected');
+				}
+				if (is_object($actual) || is_array($actual) || (is_string($actual) && strlen($actual) > 80)) {
+					Helpers::dumpOutput($item['file'], $actual, $args . '.actual');
+				}
+				break;
 			}
 		}
-
 		throw $exception;
 	}
 

@@ -174,4 +174,16 @@ class Helpers
 			|| (defined('STDOUT') && function_exists('posix_isatty') && posix_isatty(STDOUT));
 	}
 
+
+	/**
+	 * Dumps data to folder 'output'.
+	 * @return void
+	 */
+	public static function dumpOutput($testFile, $content, $suffix = '')
+	{
+		$path = dirname($testFile) . '/output/' . basename($testFile, '.phpt') . $suffix;
+		@mkdir(dirname($path)); // @ - directory may already exist
+		file_put_contents($path, is_string($content) ? $content : Dumper::toPhp($content));
+	}
+
 }
