@@ -8,12 +8,12 @@ require __DIR__ . '/bootstrap.php';
 $contains = array(
 	array('1', '1', "'1' should not contain '1'"),
 	array('1', 'a1', "'a1' should not contain '1'"),
-	array('1', array('1'), "array(1) should not contain '1'"),
+	array('1', array('1'), "array('1') should not contain '1'"),
 );
 
 $notContains = array(
 	array('2', 'a1', "'a1' should contain '2'"),
-	array('1', array(TRUE), "array(1) should contain '1'"),
+	array('1', array(TRUE), "array(TRUE) should contain '1'"),
 );
 
 foreach ($contains as $case) {

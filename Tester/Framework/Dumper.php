@@ -61,7 +61,19 @@ class Dumper
 				. ($cut ? ' ...' : '');
 
 		} elseif (is_array($var)) {
-			return 'array(' . count($var) . ')';
+			$out = '';
+			$counter = 0;
+			foreach ($var as $k => & $v) {
+				$out .= ($out === '' ? '' : ', ');
+				if (strlen($out) > 50) {
+					$out .= '...';
+					break;
+				}
+				$out .= ($k === $counter ? '' : self::toLine($k) . ' => ')
+					. (is_array($v) ? 'array(...)' : self::toLine($v));
+				$counter = is_int($k) ? max($k + 1, $counter) : $counter;
+			}
+			return "array($out)";
 
 		} elseif ($var instanceof \Exception) {
 			return 'Exception ' . get_class($var) . ': ' . ($var->getCode() ? '#' . $var->getCode() . ' ' : '') . $var->getMessage();

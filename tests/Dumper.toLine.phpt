@@ -21,6 +21,11 @@ Assert::match( "'	'", Dumper::toLine("\t") );
 Assert::match( '"\\xff"', Dumper::toLine("\xFF") );
 Assert::match( "'multi\nline'", Dumper::toLine("multi\nline") );
 Assert::match( "'Iñtërnâtiônàlizætiøn'", Dumper::toLine("I\xc3\xb1t\xc3\xabrn\xc3\xa2ti\xc3\xb4n\xc3\xa0liz\xc3\xa6ti\xc3\xb8n") );
-Assert::match( 'array(5)', Dumper::toLine(array(1, 2, 3, 4, 'x')) );
 Assert::match( "resource(stream)", Dumper::toLine(fopen(__FILE__, 'r')) );
 Assert::match( 'stdClass(#%a%)', Dumper::toLine((object) array(1, 2)) );
+
+Assert::match( "array()", Dumper::toLine(array()) );
+Assert::match( "array(1, 2, 3, 4, 'x')", Dumper::toLine(array(1, 2, 3, 4, 'x')) );
+Assert::match( "array(1 => 1, 2, 3)", Dumper::toLine(array(1 => 1, 2, 3)) );
+Assert::match( "array('a' => array(...))", Dumper::toLine(array('a' => array(1, 2))) );
+Assert::match( "array('one', 'two', 'three', 'four', 'five', 'six', 'seven', ...)", Dumper::toLine(array('one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine')) );

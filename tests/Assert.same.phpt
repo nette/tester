@@ -8,15 +8,15 @@ require __DIR__ . '/bootstrap.php';
 $same = array(
 	array(1, 1, '1 should not be 1'),
 	array('1', '1', "'1' should not be '1'"),
-	array(array('1'), array('1'), 'array(1) should not be array(1)'),
+	array(array('1'), array('1'), "array('1') should not be array('1')"),
 	array($obj = new stdClass, $obj, 'stdClass(#%a%) should not be stdClass(#%a%)'),
 );
 
 $notSame = array(
 	array(1, 1.0, '1.0 should be 1'),
-	array(array('a' => TRUE, 'b' => FALSE), array('b' => FALSE, 'a' => TRUE), 'array(2) should be array(2)'),
+	array(array('a' => TRUE, 'b' => FALSE), array('b' => FALSE, 'a' => TRUE), "array('b' => FALSE, 'a' => TRUE) should be array('a' => TRUE, 'b' => FALSE)"),
 	array(new stdClass, new stdClass, 'stdClass(#%a%) should be stdClass(#%a%)'),
-	array(array(new stdClass), array(new stdClass), 'array(1) should be array(1)'),
+	array(array(new stdClass), array(new stdClass), 'array(stdClass(#%a%)) should be array(stdClass(#%a%))'),
 );
 
 foreach ($same as $case) {
@@ -49,4 +49,4 @@ Assert::exception(function() {
 	$rec = array();
 	$rec[] = & $rec;
 	Assert::same($rec, array());
-}, 'Tester\AssertException', 'array(0) should be array(1)');
+}, 'Tester\AssertException', 'array() should be array(array(...))');

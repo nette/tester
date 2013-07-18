@@ -25,7 +25,7 @@ $cases = array(
 	array('list', NULL, 'NULL should be list'),
 	array('list', array()),
 	array('list', array(1)),
-	array('list', array(4 => 1), 'array(1) should be list'),
+	array('list', array(4 => 1), 'array(4 => 1) should be list'),
 );
 
 foreach ($cases as $case) {
