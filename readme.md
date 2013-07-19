@@ -57,7 +57,7 @@ Now we run tests from command-line using the `tester` command:
 ```
 > tester
 
-Nette Tester (v0.9.1)
+Nette Tester (v0.9.2)
 ---------------------
 
 PHP 5.3.16 | "php-cgi" -n | 1 threads
