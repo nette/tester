@@ -170,8 +170,8 @@ class Job
 		}
 
 		if ($this->php->isCgi()) {
-			$expected = isset($opts['httpcode']) ? (int) $opts['httpcode'] : 200;
 			$code = isset($this->headers['Status']) ? (int) $this->headers['Status'] : 200;
+			$expected = isset($opts['httpcode']) ? (int) $opts['httpcode'] : (isset($opts['assertcode']) ? (int) $opts['assertcode'] : $code);
 			if ($expected && $code !== $expected) {
 				throw new JobException("Exited with HTTP code $code (expected $expected})");
 			}
