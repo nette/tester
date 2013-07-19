@@ -194,6 +194,32 @@ class Dumper
 	}
 
 
+	/** @internal */
+	public static function dumpException(\Exception $e)
+	{
+		$trace = $e->getTrace();
+		array_splice($trace, 0, $e instanceof \ErrorException ? 1 : 0, array(array('file' => $e->getFile(), 'line' => $e->getLine())));
+		$last = & $trace[count($trace) - 1]['file'];
+
+		$s = "\033[1;37m" . ($e instanceof AssertException ? 'Failed' : get_class($e))	. ": {$e->getMessage()}\033[0m\n\n";
+
+		foreach ($trace as $item) {
+			$item += array('file' => NULL);
+			$s .= 'in ' . ($item['file'] === $last ? "\033[1;37m" : '')
+				. ($item['file'] ? implode(DIRECTORY_SEPARATOR, array_slice(explode(DIRECTORY_SEPARATOR, $item['file']), -3)) . "($item[line])" : '[internal function]')
+				. "\033[1;30m "
+				. (isset($item['class']) ? $item['class'] . $item['type'] : '')
+				. (isset($item['function']) ? $item['function'] . '()' : '')
+				. "\033[0m\n";
+		}
+
+		if ($e->getPrevious()) {
+			$s .= "\n(previous) " . static::dumpException($e->getPrevious());
+		}
+		return $s;
+	}
+
+
 	public static function removeColors($s)
 	{
 		return preg_replace('#\033\[[\d;]+m#', '', $s);
