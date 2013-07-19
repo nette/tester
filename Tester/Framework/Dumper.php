@@ -202,9 +202,18 @@ class Dumper
 		$last = & $trace[count($trace) - 1]['file'];
 
 		if ($e instanceof AssertException) {
-			$message = 'Failed: ' . strtr($e->getMessage(), array(
-				'%1' => Dumper::toLine($e->actual),
-				'%2' => Dumper::toLine($e->expected),
+			$message = 'Failed: ' . $e->getMessage();
+			if ((is_string($e->actual) && is_string($e->expected)) || (is_array($e->actual) && is_array($e->expected))) {
+				preg_match('#^(.*)(%\d)(.*)(%\d.*)\z#', $message, $m);
+				if (($delta = strlen($m[1]) - strlen($m[3])) >= 3) {
+					$message = "$m[1]$m[2]\n" . str_repeat(' ', $delta - 3) . "...$m[3]$m[4]";
+				} else {
+					$message = "$m[1]$m[2]$m[3]\n" . str_repeat(' ', strlen($m[1]) - 4) . "... $m[4]";
+				}
+			}
+			$message = strtr($message, array(
+				'%1' => "\033[1;33m" . Dumper::toLine($e->actual) . "\033[1;37m",
+				'%2' => "\033[1;33m" . Dumper::toLine($e->expected) . "\033[1;37m",
 			));
 		} else {
 			$message = get_class($e) . ": {$e->getMessage()}";

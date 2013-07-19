@@ -19,7 +19,7 @@ $cases = array(
 	"Failed: NULL should not be NULL" => function() { Assert::notSame(NULL, NULL); },
 	"Failed: TRUE should be instance of x" => function() { Assert::type('x', TRUE); },
 	"Failed: resource(stream) should be int" => function() { Assert::type('int', fopen(__FILE__, 'r')); },
-	"Failed: 'Hello\nWorld' should match '%a%'" => function() { Assert::match('%a%', "Hello\nWorld"); },
+	"Failed: 'Hello\nWorld' should match\n    ... '%a%'" => function() { Assert::match('%a%', "Hello\nWorld"); },
 );
 
 foreach ($cases as $message => $closure) {
