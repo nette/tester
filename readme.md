@@ -177,7 +177,7 @@ Usage:
 	tester.php [options] [<test file> | <directory>]...
 
 Options:
-	-p <path>        Specify PHP executable to run.
+	-p <path>        Specify PHP executable to run (default: php-cgi).
 	-c <path>        Look for php.ini in directory <path> or use <path> as php.ini.
 	-log <path>      Write log to file <path>.
 	-d <key=val>...  Define INI entry 'key' with value 'val'.
