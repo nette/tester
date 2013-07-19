@@ -100,34 +100,8 @@ class Helpers
 	/** @internal */
 	public static function handleException($e)
 	{
-		if (!self::$debugMode) {
-			echo "\nError: {$e->getMessage()}\n";
-			exit(Runner\Job::CODE_ERROR);
-		}
-
-		$tmp = '';
-		$colors = static::detectColors();
-		do {
-			$trace = $e->getTrace();
-			array_splice($trace, 0, $e instanceof \ErrorException ? 1 : 0, array(array('file' => $e->getFile(), 'line' => $e->getLine())));
-			$last = & $trace[count($trace) - 1]['file'];
-
-			echo "\n$tmp" . ($colors ? "\033[1;37m" : '')
-				. ($e instanceof AssertException ? 'Failed' : get_class($e)) . ": {$e->getMessage()}\n\n"
-				. ($colors ? "\033[0m" : '');
-
-			foreach ($trace as $item) {
-				$item += array('file' => NULL);
-				echo 'in ' . ($colors && $item['file'] === $last ? "\033[1;37m" : '')
-					. ($item['file'] ? implode(DIRECTORY_SEPARATOR, array_slice(explode(DIRECTORY_SEPARATOR, $item['file']), -3)) . "($item[line])" : '[internal function]')
-					. ($colors ? "\033[1;30m" : '') . ': '
-					. (isset($item['class']) ? $item['class'] . $item['type'] : '')
-					. (isset($item['function']) ? $item['function'] . '()' : '') . "\n"
-					. ($colors ? "\033[0m" : '');
-			}
-			$tmp = '(previous) ';
-		} while ($e = $e->getPrevious());
-
+		$s = self::$debugMode ? Dumper::dumpException($e) : "\nError: {$e->getMessage()}\n";
+		echo static::detectColors() ? $s : Dumper::removeColors($s);
 		exit($e instanceof AssertException ? Runner\Job::CODE_FAIL : Runner\Job::CODE_ERROR);
 	}
 
