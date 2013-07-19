@@ -52,9 +52,10 @@ class CommandLine
 			}
 
 			$name = isset($m[1][1]) ? $m[1][1] : $m[1][0];
-			$this->options[$name] = (isset($this->options[$name]) ? $this->options[$name] : array()) + array(
+			$opts = isset($this->options[$name]) ? $this->options[$name] : array();
+			$this->options[$name] = $opts + array(
 				self::ARGUMENT => $m[2][0] ? trim($m[2][0], '<>[]') : NULL,
-				self::OPTIONAL => isset($line[2]) ? TRUE : ($m[2][0] ? $m[2][0][0] === '[' : NULL),
+				self::OPTIONAL => isset($line[2]) || ($m[2][0] && $m[2][0][0] === '[') || isset($opts[self::VALUE]),
 				self::REPEATABLE => (bool) $m[3][0],
 				self::VALUE => isset($line[2]) ? $line[2] : NULL,
 			);
