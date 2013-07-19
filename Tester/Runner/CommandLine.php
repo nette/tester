@@ -94,29 +94,30 @@ class CommandLine
 					$params[$name][] = $arg;
 				}
 				continue;
+			}
 
-			} elseif (isset($this->aliases[$arg])) {
-				$name = $this->aliases[$arg];
+			list($name, $arg) = strpos($arg, '=') ? explode('=', $arg, 2) : array($arg, TRUE);
 
-			} elseif (isset($this->options[$arg])) {
-				$name = $arg;
+			if (isset($this->aliases[$name])) {
+				$name = $this->aliases[$name];
 
-			} else {
-				throw new \Exception("Unknown option $arg.");
+			} elseif (!isset($this->options[$name])) {
+				throw new \Exception("Unknown option $name.");
 			}
 
 			$opt = $this->options[$name];
 
-			if (isset($args[$i]) && $args[$i][0] !== '-' && !empty($opt[self::ARGUMENT])) {
-				$arg = $args[$i++];
-				$this->checkArg($opt, $arg);
+			if ($arg !== TRUE && empty($opt[self::ARGUMENT])) {
+				throw new \Exception("Option $name has not argument.");
 
-			} elseif (empty($opt[self::OPTIONAL]) && !empty($opt[self::ARGUMENT])) {
-				throw new \Exception("Option $arg requires argument.");
-
-			} else {
-				$arg = TRUE;
+			} elseif ($arg === TRUE && !empty($opt[self::ARGUMENT])) {
+				if (isset($args[$i]) && $args[$i][0] !== '-') {
+					$arg = $args[$i++];
+				} elseif (empty($opt[self::OPTIONAL])) {
+					throw new \Exception("Option $name requires argument.");
+				}
 			}
+			$this->checkArg($opt, $arg);
 
 			if (empty($opt[self::REPEATABLE])) {
 				$params[$name] = $arg;
