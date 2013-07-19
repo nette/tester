@@ -33,14 +33,14 @@ Usage:
 	tester.php [options] [<test file> | <directory>]...
 
 Options:
-	-p <path>        Specify PHP executable to run.
+	-p <path>        Specify PHP executable to run (default: php-cgi).
 	-c <path>        Look for php.ini in directory <path> or use <path> as php.ini.
 	-log <path>      Write log to file <path>.
 	-d <key=val>...  Define INI entry 'key' with value 'val'.
 	-s               Show information about skipped tests.
 	-j <num>         Run <num> jobs in parallel.
 	-w <path>        Watch directory.
-	--colors [1/0]  Enable or disable colors.
+	--colors [1/0]   Enable or disable colors.
 	-h | --help      This help.
 
 ", array(
@@ -74,7 +74,7 @@ foreach ($options['-d'] as $item) {
 	$phpArgs .= ' -d ' . escapeshellarg($item);
 }
 
-$runner = new Tester\Runner\Runner(new Tester\Runner\PhpExecutable($options['-p'] ?: 'php-cgi', $phpArgs), $options['-log']);
+$runner = new Tester\Runner\Runner(new Tester\Runner\PhpExecutable($options['-p'], $phpArgs), $options['-log']);
 $runner->paths = $options['paths'];
 $runner->displaySkipped = $options['-s'];
 $runner->jobs = max(1, (int) $options['-j']);

@@ -225,7 +225,7 @@ class Dumper
 			$item += array('file' => NULL);
 			$s .= 'in ' . ($item['file'] === $last ? "\033[1;37m" : '')
 				. ($item['file'] ? implode(DIRECTORY_SEPARATOR, array_slice(explode(DIRECTORY_SEPARATOR, $item['file']), -3)) . "($item[line])" : '[internal function]')
-				. "\033[1;30m: "
+				. "\033[1;30m "
 				. (isset($item['class']) ? $item['class'] . $item['type'] : '')
 				. (isset($item['function']) ? $item['function'] . '()' : '')
 				. "\033[0m\n";
