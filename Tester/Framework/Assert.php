@@ -42,7 +42,7 @@ class Assert
 		'%(\[.*\].*)%'=> '$1',  // range
 	);
 
-	/** @var callable  function($message, $actual, $expected) */
+	/** @var callable  function(AssertException $exception) */
 	public static $onFailure = array(__CLASS__, 'assertionFailed');
 
 
@@ -361,7 +361,10 @@ class Assert
 	 */
 	public static function fail($message, $actual = NULL, $expected = NULL)
 	{
-		call_user_func(self::$onFailure, $message, $actual, $expected);
+		$e = new AssertException($message);
+		$e->actual = $actual;
+		$e->expected = $expected;
+		call_user_func(self::$onFailure, $e);
 	}
 
 
@@ -378,26 +381,22 @@ class Assert
 	 * Logs big variables to file and throws exception.
 	 * @return void
 	 */
-	private static function assertionFailed($message, $actual, $expected)
+	private static function assertionFailed(AssertException $e)
 	{
-		$exception = new AssertException($message);
-		$exception->actual = $actual;
-		$exception->expected = $expected;
-
-		foreach (array_reverse($exception->getTrace()) as $item) {
+		foreach (array_reverse($e->getTrace()) as $item) {
 			// in case of shutdown handler, we want to skip inner-code blocks and debugging calls
 			if (isset($item['file']) && substr($item['file'], -5) === '.phpt') {
 				$args = isset($_SERVER['argv'][1]) ? '.[' . preg_replace('#[^a-z0-9-. ]+#i', '_', $_SERVER['argv'][1]) . ']' : '';
-				if (is_object($expected) || is_array($expected) || (is_string($expected) && strlen($expected) > 80)) {
-					Helpers::dumpOutput($item['file'], $expected, $args . '.expected');
+				if (is_object($e->expected) || is_array($e->expected) || (is_string($e->expected) && strlen($e->expected) > 80)) {
+					Helpers::dumpOutput($item['file'], $e->expected, $args . '.expected');
 				}
-				if (is_object($actual) || is_array($actual) || (is_string($actual) && strlen($actual) > 80)) {
-					Helpers::dumpOutput($item['file'], $actual, $args . '.actual');
+				if (is_object($e->actual) || is_array($e->actual) || (is_string($e->actual) && strlen($e->actual) > 80)) {
+					Helpers::dumpOutput($item['file'], $e->actual, $args . '.actual');
 				}
 				break;
 			}
 		}
-		throw $exception;
+		throw $e;
 	}
 
 
