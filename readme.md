@@ -184,6 +184,7 @@ Options:
 	-s               Show information about skipped tests.
 	-j <num>         Run <num> jobs in parallel.
 	-w <path>        Watch directory.
+	--colors [1|0]   Enable or disable colors.
 	-h | --help      This help.
 ```
 
