@@ -169,13 +169,10 @@ class Helpers
 	 */
 	public static function detectColors()
 	{
-		if (($colors = getenv('NETTE_TESTER_COLORS')) !== FALSE) {
-			return (bool) $colors;
-		}
-
-		return getenv('ConEmuANSI') === 'ON'
-			|| getenv('ANSICON') !== FALSE
-			|| (defined('STDOUT') && function_exists('posix_isatty') && posix_isatty(STDOUT));
+		$colors = getenv('NETTE_TESTER_COLORS');
+		return $colors === FALSE
+			? (defined('STDOUT') && function_exists('posix_isatty') && posix_isatty(STDOUT))
+			: (bool) $colors;
 	}
 
 
