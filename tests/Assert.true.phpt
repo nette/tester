@@ -7,17 +7,10 @@ require __DIR__ . '/bootstrap.php';
 
 Assert::true(TRUE);
 
-$notTrue = array(
-	array(FALSE, 'FALSE should be TRUE'),
-	array(0, '0 should be TRUE'),
-	array(1, '1 should be TRUE'),
-	array(NULL, 'NULL should be TRUE'),
-	array('TRUE', "'TRUE' should be TRUE"),
-);
+$notTrue = array(FALSE, 0, 1, NULL, 'TRUE');
 
-foreach ($notTrue as $case) {
-	list($actual, $message) = $case;
-	Assert::exception(function() use ($actual) {
-		Assert::true($actual);
-	}, 'Tester\AssertException', $message);
+foreach ($notTrue as $value) {
+	Assert::exception(function() use ($value) {
+		Assert::true($value);
+	}, 'Tester\AssertException', '%1 should be TRUE');
 }

@@ -380,11 +380,10 @@ class Assert
 	 */
 	private static function assertionFailed($message, $actual, $expected)
 	{
-		$message = strtr($message, array(
-			'%1' => Dumper::toLine($actual),
-			'%2' => Dumper::toLine($expected),
-		));
 		$exception = new AssertException($message);
+		$exception->actual = $actual;
+		$exception->expected = $expected;
+
 		foreach (array_reverse($exception->getTrace()) as $item) {
 			// in case of shutdown handler, we want to skip inner-code blocks and debugging calls
 			if (isset($item['file']) && substr($item['file'], -5) === '.phpt') {
@@ -505,4 +504,9 @@ class Assert
 class AssertException extends \Exception
 {
 	public $message;
+
+	public $actual;
+
+	public $expected;
+
 }

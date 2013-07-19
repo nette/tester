@@ -8,17 +8,18 @@ require __DIR__ . '/bootstrap.php';
 $truthy = array(1, '1', array(1), TRUE, new stdClass);
 $notTruthy = array(0, '', '0', array(), NULL, new SimpleXMLElement('<xml></xml>'));
 
-foreach ($truthy as $actual) {
-	Assert::truthy($actual);
-	Assert::exception(function() use ($actual) {
-		Assert::falsey($actual);
-	}, 'Tester\AssertException');
+foreach ($truthy as $value) {
+	Assert::truthy($value);
+
+	Assert::exception(function() use ($value) {
+		Assert::falsey($value);
+	}, 'Tester\AssertException', '%1 should be falsey');
 }
 
-foreach ($notTruthy as $actual) {
-	Assert::falsey($actual);
+foreach ($notTruthy as $value) {
+	Assert::falsey($value);
 
-	Assert::exception(function() use ($actual) {
-		Assert::truthy($actual);
-	}, 'Tester\AssertException');
+	Assert::exception(function() use ($value) {
+		Assert::truthy($value);
+	}, 'Tester\AssertException', '%1 should be truthy');
 }

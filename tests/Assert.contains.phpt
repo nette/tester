@@ -6,40 +6,41 @@ require __DIR__ . '/bootstrap.php';
 
 
 $contains = array(
-	array('1', '1', "'1' should not contain '1'"),
-	array('1', 'a1', "'a1' should not contain '1'"),
-	array('1', array('1'), "array('1') should not contain '1'"),
+	array('1', '1'),
+	array('1', 'a1'),
+	array('1', array('1')),
 );
 
 $notContains = array(
-	array('2', 'a1', "'a1' should contain '2'"),
-	array('1', array(TRUE), "array(TRUE) should contain '1'"),
+	array('2', 'a1'),
+	array('1', array(TRUE)),
 );
 
 foreach ($contains as $case) {
-	list($expected, $actual, $message) = $case;
+	list($expected, $value) = $case;
 
-	Assert::contains($expected, $actual);
+	Assert::contains($expected, $value);
 
-	Assert::exception(function() use ($expected, $actual) {
-		Assert::notContains($expected, $actual);
-	}, 'Tester\AssertException', $message);
+	Assert::exception(function() use ($expected, $value) {
+		Assert::notContains($expected, $value);
+	}, 'Tester\AssertException', "%1 should not contain %2");
 }
 
 foreach ($notContains as $case) {
-	list($expected, $actual, $message) = $case;
+	list($expected, $value) = $case;
+
 	Assert::notContains($case[0], $case[1]);
 
-	Assert::exception(function() use ($expected, $actual) {
-		Assert::contains($expected, $actual);
-	}, 'Tester\AssertException', $message);
+	Assert::exception(function() use ($expected, $value) {
+		Assert::contains($expected, $value);
+	}, 'Tester\AssertException', "%1 should contain %2");
 }
 
 
 Assert::exception(function() {
 	Assert::contains(1, 1);
-}, 'Tester\AssertException', '1 should be string or array');
+}, 'Tester\AssertException', '%1 should be string or array');
 
 Assert::exception(function() {
 	Assert::notContains(1, 1);
-}, 'Tester\AssertException', '1 should be string or array');
+}, 'Tester\AssertException', '%1 should be string or array');
