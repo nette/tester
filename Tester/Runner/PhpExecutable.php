@@ -31,13 +31,16 @@ class PhpExecutable
 
 	public function __construct($path, $args = NULL)
 	{
-		exec(escapeshellarg($path) . ' -n -v', $output, $res);
-		if ($res) {
+		$descriptors = array(array('pipe', 'r'), array('pipe', 'w'), array('pipe', 'w'));
+		$proc = @proc_open(escapeshellarg($path) . ' -n -v', $descriptors, $pipes, NULL, NULL, array('bypass_shell' => TRUE));
+		if (!$proc) {
 			throw new \Exception("Unable to execute '$path'.");
 		}
+		$output = stream_get_contents($pipes[1]);
+		proc_close($proc);
 
-		if (!preg_match('#^PHP (\S+).*c(g|l)i#i', $output[0], $matches)) {
-			throw new \Exception("Unable to detect PHP version (output: $output[0]).");
+		if (!preg_match('#^PHP (\S+).*c(g|l)i#i', $output, $matches)) {
+			throw new \Exception("Unable to detect PHP version (output: $output).");
 		}
 
 		$this->version = $matches[1];
