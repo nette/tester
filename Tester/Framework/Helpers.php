@@ -30,11 +30,8 @@ class Helpers
 		if (!is_dir($dir)) {
 			mkdir($dir);
 		}
-
-		foreach (new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($dir), \RecursiveIteratorIterator::CHILD_FIRST) as $entry) {
-			if (substr($entry->getBasename(), 0, 1) === '.') { // . or .. or .gitignore
-				// ignore
-			} elseif ($entry->isDir()) {
+		foreach (new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($dir, \RecursiveDirectoryIterator::SKIP_DOTS), \RecursiveIteratorIterator::CHILD_FIRST) as $entry) {
+			if ($entry->isDir()) {
 				rmdir($entry);
 			} else {
 				unlink($entry);
