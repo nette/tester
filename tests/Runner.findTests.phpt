@@ -15,7 +15,7 @@ $php = new Tester\Runner\PhpExecutable(PHP_BINARY);
 $runner = new Tester\Runner\Runner($php);
 $runner->paths[] = $fixtures = __DIR__ . DIRECTORY_SEPARATOR . 'fixtures' . DIRECTORY_SEPARATOR;
 
-$tests = Tester\Helpers::with($runner, function() {
+$tests = Assert::with($runner, function() {
 	return $this->findTests();
 });
 

@@ -106,12 +106,6 @@ class Helpers
 	}
 
 
-	public static function with($obj, \Closure $closure)
-	{
-		return $closure->bindTo($obj, $obj)->__invoke();
-	}
-
-
 	/**
 	 * Parse phpDoc comment.
 	 * @return array
