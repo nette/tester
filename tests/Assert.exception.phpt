@@ -30,4 +30,4 @@ Assert::exception(function() {
 	Assert::exception(function() {
 		throw new Exception('Text');
 	}, 'Exception', 'Abc');
-}, 'Tester\AssertException', "Exception with a message matching 'Abc' was expected but got 'Text'");
+}, 'Tester\AssertException', "Exception with a message matching %2 was expected but got %1");

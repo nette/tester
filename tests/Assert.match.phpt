@@ -36,7 +36,7 @@ $matches = array(
 );
 
 $notMatches = array(
-	array('a', ' a ', "' a ' should match 'a'"),
+	array('a', ' a '),
 	array('%a%', "a\nb"),
 	array('%a%', ''),
 	array('%A%', ''),
@@ -55,15 +55,15 @@ $notMatches = array(
 );
 
 foreach ($matches as $case) {
-	list($expected, $actual) = $case;
-	Assert::match($expected, $actual);
+	list($expected, $value) = $case;
+	Assert::match($expected, $value);
 }
 
 foreach ($notMatches as $case) {
-	@list($expected, $actual, $message) = $case;
-	Assert::exception(function() use ($expected, $actual) {
-		Assert::match($expected, $actual);
-	}, 'Tester\AssertException', $message);
+	list($expected, $value) = $case;
+	Assert::exception(function() use ($expected, $value) {
+		Assert::match($expected, $value);
+	}, 'Tester\AssertException', "%1 should match %2");
 }
 
 Assert::exception(function() {

@@ -32,7 +32,7 @@ Assert::exception(function() {
 	Assert::error(function() {
 		$a++;
 	}, E_NOTICE, 'Abc');
-}, 'Tester\AssertException', "E_NOTICE with a message matching 'Abc' was expected but got 'Undefined variable: a'");
+}, 'Tester\AssertException', "E_NOTICE with a message matching %2 was expected but got %1");
 
 Assert::exception(function() {
 	Assert::error(function() {

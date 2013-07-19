@@ -110,7 +110,7 @@ Assert::exception(function() use ($test) {
 
 Assert::exception(function() use ($test) {
 	$test->run('testThrowsBadMessage');
-}, 'Tester\AssertException', "Exception with a message matching 'With message' was expected but got 'Bad message' in testThrowsBadMessage()");
+}, 'Tester\AssertException', "Exception with a message matching %2 was expected but got %1 in testThrowsBadMessage()");
 
 Assert::exception(function() use ($test) {
 	$test->run('testWithoutThrows');
@@ -133,4 +133,4 @@ Assert::exception(function() use ($test) {
 
 Assert::exception(function() use ($test) {
 	$test->run('testNoticeBadMessage');
-}, 'Tester\AssertException', "E_NOTICE with a message matching 'With message' was expected but got 'Undefined variable: a' in testNoticeBadMessage()");
+}, 'Tester\AssertException', "E_NOTICE with a message matching %2 was expected but got %1 in testNoticeBadMessage()");

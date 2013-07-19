@@ -6,36 +6,37 @@ require __DIR__ . '/bootstrap.php';
 
 
 $equals = array(
-	array(1, 1, '1 should not be equal to 1'),
-	array('1', '1', "'1' should not be equal to '1'"),
-	array(array('1'), array('1'), "array('1') should not be equal to array('1')"),
-	array(array('a' => TRUE, 'b' => FALSE), array('b' => FALSE, 'a' => TRUE), "array('b' => FALSE, 'a' => TRUE) should not be equal to array('a' => TRUE, 'b' => FALSE)"),
-	array(new stdClass, new stdClass, 'stdClass(#%a%) should not be equal to stdClass(#%a%)'),
-	array(array(new stdClass), array(new stdClass), 'array(stdClass(#%a%)) should not be equal to array(stdClass(#%a%))'),
-	array(1/3, 1 - 2/3, '0.33%d% should not be equal to 0.33%d%'),
+	array(1, 1),
+	array('1', '1'),
+	array(array('1'), array('1')),
+	array(array('a' => TRUE, 'b' => FALSE), array('b' => FALSE, 'a' => TRUE)),
+	array(new stdClass, new stdClass),
+	array(array(new stdClass), array(new stdClass)),
+	array(1/3, 1 - 2/3),
 );
 
 $notEquals = array(
-	array(1, 1.0, '1.0 should be equal to 1'),
+	array(1, 1.0),
 );
 
 foreach ($equals as $case) {
-	list($expected, $actual, $message) = $case;
+	list($expected, $value) = $case;
 
-	Assert::equal($expected, $actual);
+	Assert::equal($expected, $value);
 
-	Assert::exception(function() use ($expected, $actual) {
-		Assert::notEqual($expected, $actual);
-	}, 'Tester\AssertException', $message);
+	Assert::exception(function() use ($expected, $value) {
+		Assert::notEqual($expected, $value);
+	}, 'Tester\AssertException', '%1 should not be equal to %2');
 }
 
 foreach ($notEquals as $case) {
-	list($expected, $actual, $message) = $case;
+	list($expected, $value) = $case;
+
 	Assert::notEqual($case[0], $case[1]);
 
-	Assert::exception(function() use ($expected, $actual) {
-		Assert::equal($expected, $actual);
-	}, 'Tester\AssertException', $message);
+	Assert::exception(function() use ($expected, $value) {
+		Assert::equal($expected, $value);
+	}, 'Tester\AssertException', '%1 should be equal to %2');
 }
 
 Assert::exception(function() {

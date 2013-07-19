@@ -201,7 +201,16 @@ class Dumper
 		array_splice($trace, 0, $e instanceof \ErrorException ? 1 : 0, array(array('file' => $e->getFile(), 'line' => $e->getLine())));
 		$last = & $trace[count($trace) - 1]['file'];
 
-		$s = "\033[1;37m" . ($e instanceof AssertException ? 'Failed' : get_class($e))	. ": {$e->getMessage()}\033[0m\n\n";
+		if ($e instanceof AssertException) {
+			$message = 'Failed: ' . strtr($e->getMessage(), array(
+				'%1' => Dumper::toLine($e->actual),
+				'%2' => Dumper::toLine($e->expected),
+			));
+		} else {
+			$message = get_class($e) . ": {$e->getMessage()}";
+		}
+
+		$s = "\033[1;37m$message\033[0m\n\n";
 
 		foreach ($trace as $item) {
 			$item += array('file' => NULL);
