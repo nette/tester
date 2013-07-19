@@ -193,4 +193,10 @@ class Dumper
 		}
 	}
 
+
+	public static function removeColors($s)
+	{
+		return preg_replace('#\033\[[\d;]+m#', '', $s);
+	}
+
 }

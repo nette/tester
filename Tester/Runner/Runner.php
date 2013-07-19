@@ -11,6 +11,8 @@
 
 namespace Tester\Runner;
 
+use Tester;
+
 
 /**
  * Test runner.
@@ -179,7 +181,7 @@ class Runner
 		if (isset($options['dataprovider'])) {
 			list($dataFile, $query) = preg_split('#\s*,?\s+#', $options['dataprovider'], 2) + array('', '');
 			try {
-				$range = array_keys(\Tester\DataProvider::load(dirname($file) . '/' . $dataFile, $query));
+				$range = array_keys(Tester\DataProvider::load(dirname($file) . '/' . $dataFile, $query));
 			} catch (\Exception $e) {
 				return $this->printAndLogResult(isset($options['dataprovider?']) ? self::SKIPPED : self::FAILED, $job, $e->getMessage());
 			}
@@ -207,7 +209,7 @@ class Runner
 			$s .= "\n";
 		}
 
-		if (\Tester\Helpers::detectColors()) {
+		if (Tester\Helpers::detectColors()) {
 			$repl = array(
 				'#^OK .*#m' => "\033[1;42;1;37m\\0\033[0m",
 				'#^FAILURES! .*#m' => "\033[1;41;37m\\0\033[0m",
@@ -219,7 +221,7 @@ class Runner
 		echo $s;
 
 		if ($this->logFile && $log) {
-			fputs($this->logFile, preg_replace('#\033\[[\d;]+m#', '', $s));
+			fputs($this->logFile, Tester\Dumper::removeColors($s));
 		}
 	}
 
@@ -241,7 +243,7 @@ class Runner
 			. ($message ? str_replace("\n", "\n   ", "\n" . trim($message)) . "\n" : '');
 
 		if ($this->logFile) {
-			fputs($this->logFile, preg_replace('#\033\[[\d;]+m#', '', $s) . "\n");
+			fputs($this->logFile, Tester\Dumper::removeColors($s) . "\n");
 		}
 	}
 
