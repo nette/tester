@@ -22,6 +22,8 @@ class Environment
 	/** @var bool  used for debugging Tester itself */
 	public static $debugMode = TRUE;
 
+	/** @var bool */
+	public static $useColors;
 
 	/**
 	 * Configures PHP environment.
@@ -29,6 +31,11 @@ class Environment
 	 */
 	public static function setup()
 	{
+		self::$useColors = getenv('NETTE_TESTER_COLORS') !== FALSE
+			? (bool) getenv('NETTE_TESTER_COLORS')
+			: (PHP_SAPI === 'cli' && ((function_exists('posix_isatty') && posix_isatty(STDOUT))
+				|| getenv('ConEmuANSI') === 'ON' || getenv('ANSICON') !== FALSE));
+
 		class_exists('Tester\Runner\Job');
 		error_reporting(E_ALL | E_STRICT);
 		ini_set('display_errors', TRUE);
@@ -57,21 +64,8 @@ class Environment
 	public static function handleException($e)
 	{
 		$s = self::$debugMode ? Dumper::dumpException($e) : "\nError: {$e->getMessage()}\n";
-		echo static::hasColors() ? $s : Dumper::removeColors($s);
+		echo self::$useColors ? $s : Dumper::removeColors($s);
 		exit($e instanceof AssertException ? Runner\Job::CODE_FAIL : Runner\Job::CODE_ERROR);
-	}
-
-
-	/**
-	 * @return bool
-	 * @internal
-	 */
-	public static function hasColors()
-	{
-		$colors = getenv('NETTE_TESTER_COLORS');
-		return $colors === FALSE
-			? (defined('STDOUT') && function_exists('posix_isatty') && posix_isatty(STDOUT))
-			: (bool) $colors;
 	}
 
 

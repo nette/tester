@@ -55,17 +55,15 @@ $options = $cmd->parse();
 
 Tester\Environment::$debugMode = (bool) $options['--debug'];
 
+if (isset($options['--colors'])) {
+	Tester\Environment::$useColors = (bool) $options['--colors'];
+}
+
 if ($cmd->isEmpty()) {
 	$cmd->help();
 } elseif ($options['--help']) {
 	$cmd->help();
 	exit;
-}
-
-if (isset($options['--colors'])) {
-	putenv('NETTE_TESTER_COLORS=' . (int) $options['--colors']);
-} elseif (getenv('NETTE_TESTER_COLORS') === FALSE && (getenv('ConEmuANSI') === 'ON' || getenv('ANSICON') !== FALSE)) {
-	putenv('NETTE_TESTER_COLORS=1');
 }
 
 $phpArgs = $options['-c'] ? '-c ' . escapeshellarg($options['-c']) : '-n';

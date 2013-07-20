@@ -209,7 +209,7 @@ class Runner
 			$s .= "\n";
 		}
 
-		if (Tester\Environment::hasColors()) {
+		if (Tester\Environment::$useColors) {
 			$repl = array(
 				'#^OK .*#m' => "\033[1;42;1;37m\\0\033[0m",
 				'#^FAILURES! .*#m' => "\033[1;41;37m\\0\033[0m",

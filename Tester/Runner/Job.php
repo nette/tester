@@ -98,6 +98,7 @@ class Job
 			array('pipe', 'w'),
 		);
 
+		putenv('NETTE_TESTER_COLORS=' . (int) Tester\Environment::$useColors);
 		$this->proc = proc_open($cmd, $descriptors, $pipes, dirname($this->file), NULL, array('bypass_shell' => TRUE));
 		list($stdin, $this->stdout, $stderr) = $pipes;
 		fclose($stdin);
