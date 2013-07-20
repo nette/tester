@@ -51,15 +51,15 @@ class CommandLine
 				throw new \InvalidArgumentException("Unable to parse '$line[1]'.");
 			}
 
-			$name = isset($m[1][1]) ? $m[1][1] : $m[1][0];
+			$name = end($m[1]);
 			$opts = isset($this->options[$name]) ? $this->options[$name] : array();
 			$this->options[$name] = $opts + array(
-				self::ARGUMENT => $m[2][0] ? trim($m[2][0], '<>[]') : NULL,
-				self::OPTIONAL => isset($line[2]) || ($m[2][0] && $m[2][0][0] === '[') || isset($opts[self::VALUE]),
-				self::REPEATABLE => (bool) $m[3][0],
+				self::ARGUMENT => (bool) end($m[2]),
+				self::OPTIONAL => isset($line[2]) || (substr(end($m[2]), 0, 1) === '[') || isset($opts[self::VALUE]),
+				self::REPEATABLE => (bool) end($m[3]),
 				self::VALUE => isset($line[2]) ? $line[2] : NULL,
 			);
-			if (isset($m[1][1])) {
+			if ($name !== $m[1][0]) {
 				$this->aliases[$m[1][0]] = $name;
 			}
 		}
