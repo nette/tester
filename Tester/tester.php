@@ -64,7 +64,7 @@ if ($cmd->isEmpty()) {
 
 if (isset($options['--colors'])) {
 	putenv('NETTE_TESTER_COLORS=' . (int) $options['--colors']);
-} elseif (getenv('NETTE_TESTER_COLORS') === FALSE && (getenv('ConEmuANSI') === 'ON' || getenv('ANSICON') !== FALSE)) {
+} elseif (getenv('NETTE_TESTER_COLORS') === FALSE && Tester\Environment::detectColors()) {
 	putenv('NETTE_TESTER_COLORS=1');
 }
 
