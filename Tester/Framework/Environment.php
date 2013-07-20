@@ -70,8 +70,22 @@ class Environment
 	{
 		$colors = getenv('NETTE_TESTER_COLORS');
 		return $colors === FALSE
-			? (defined('STDOUT') && function_exists('posix_isatty') && posix_isatty(STDOUT))
+			? static::detectColors()
 			: (bool) $colors;
+	}
+
+
+	/**
+	 * @return bool
+	 * @internal
+	 */
+	public static function detectColors()
+	{
+		return PHP_SAPI === 'cli' && (
+			getenv('ConEmuANSI') === 'ON'
+			|| getenv('ANSICON') !== FALSE
+			|| (defined('STDOUT') && function_exists('posix_isatty') && posix_isatty(STDOUT))
+		);
 	}
 
 
