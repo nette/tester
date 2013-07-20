@@ -33,19 +33,19 @@ Usage:
 	tester.php [options] [<test file> | <directory>]...
 
 Options:
-	-p <path>        Specify PHP executable to run (default: php-cgi).
-	-c <path>        Look for php.ini in directory <path> or use <path> as php.ini.
-	-log <path>      Write log to file <path>.
-	-d <key=val>...  Define INI entry 'key' with value 'val'.
-	-s               Show information about skipped tests.
-	-j <num>         Run <num> jobs in parallel.
-	-w <path>        Watch directory.
-	--colors [1|0]   Enable or disable colors.
-	-h | --help      This help.
+	-p <path>            Specify PHP executable to run (default: php-cgi).
+	-c <path>            Look for php.ini in directory <path> or use <path> as php.ini.
+	-log <path>          Write log to file <path>.
+	-d <key=value>...    Define INI entry 'key' with value 'val'.
+	-s                   Show information about skipped tests.
+	-j <num>             Run <num> jobs in parallel.
+	-w | --watch <path>  Watch directory.
+	--colors [1|0]       Enable or disable colors.
+	-h | --help          This help.
 
 ", array(
 	'-c' => array(Cmd::REALPATH => TRUE),
-	'-w' => array(Cmd::REALPATH => TRUE),
+	'--watch' => array(Cmd::REALPATH => TRUE),
 	'paths' => array(Cmd::REALPATH => TRUE, Cmd::REPEATABLE => TRUE, Cmd::VALUE => getcwd()),
 	'--debug' => array(),
 ));
@@ -82,7 +82,7 @@ $runner->jobs = max(1, (int) $options['-j']);
 
 @unlink(__DIR__ . '/coverage.dat'); // @ - file may not exist
 
-if (!$options['-w']) {
+if (!$options['--watch']) {
 	die($runner->run() ? 0 : 1);
 }
 
@@ -90,7 +90,7 @@ $prev = array();
 $counter = 0;
 while (TRUE) {
 	$state = array();
-	foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($options['-w'])) as $file) {
+	foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($options['--watch'])) as $file) {
 		if (substr($file->getExtension(), 0, 3) === 'php') {
 			$state[(string) $file] = md5_file((string) $file);
 		}
@@ -100,6 +100,6 @@ while (TRUE) {
 		$runner->run();
 		echo "\n";
 	}
-	echo "Watching {$options['-w']} " . str_repeat('.', ++$counter % 5) . "    \r";
+	echo "Watching {$options['--watch']} " . str_repeat('.', ++$counter % 5) . "    \r";
 	sleep(2);
 }
