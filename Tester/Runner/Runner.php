@@ -29,6 +29,9 @@ class Runner
 	/** waiting time between runs in microseconds */
 	const RUN_USLEEP = 10000;
 
+	/** count of lines to print */
+	const PRINT_LINES = 15;
+
 	/** @var array  paths to test files/directories */
 	public $paths = array();
 
@@ -239,12 +242,13 @@ class Runner
 
 		$this->printAndLog($results[$result][0], FALSE);
 
-		$this->results[$result][] = $s = "\n-- {$results[$result][1]}: {$job->getName()}"
-			. ($message ? str_replace("\n", "\n   ", "\n" . trim($message)) . "\n" : '');
-
+		$s = "\n-- {$results[$result][1]}: {$job->getName()}" . str_replace("\n", "\n   ", "\n" . trim($message));
 		if ($this->logFile) {
 			fputs($this->logFile, Tester\Dumper::removeColors($s) . "\n");
 		}
+		$lines = explode("\n", $s, self::PRINT_LINES + 1);
+		$lines[self::PRINT_LINES] = isset($lines[self::PRINT_LINES]) ? "\n   ..." : '';
+		$this->results[$result][] = implode("\n", $lines);
 	}
 
 }
