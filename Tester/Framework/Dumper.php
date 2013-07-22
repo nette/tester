@@ -55,12 +55,11 @@ class Dumper
 
 		} elseif (is_string($var)) {
 			if ($cut = @iconv_strlen($var, 'UTF-8') > self::MAX_LENGTH) {
-				$var = iconv_substr($var, 0, self::MAX_LENGTH, 'UTF-8');
+				$var = iconv_substr($var, 0, self::MAX_LENGTH, 'UTF-8') . '...';
 			} elseif ($cut = strlen($var) > self::MAX_LENGTH) {
-				$var = substr($var, 0, self::MAX_LENGTH);
+				$var = substr($var, 0, self::MAX_LENGTH) . '...';
 			}
-			return (preg_match('#[^\x09\x0A\x0D\x20-\x7E\xA0-\x{10FFFF}]#u', $var) || preg_last_error() ? '"' . strtr($var, $table) . '"' : "'$var'")
-				. ($cut ? ' ...' : '');
+			return (preg_match('#[^\x09\x0A\x0D\x20-\x7E\xA0-\x{10FFFF}]#u', $var) || preg_last_error() ? '"' . strtr($var, $table) . '"' : "'$var'");
 
 		} elseif (is_array($var)) {
 			$out = '';
@@ -204,6 +203,16 @@ class Dumper
 		$last = & $trace[count($trace) - 1]['file'];
 
 		if ($e instanceof AssertException) {
+			if ((is_string($e->actual) && is_string($e->expected))) {
+				for ($i = 0; $i < strlen($e->actual) && isset($e->expected[$i]) && $e->actual[$i] === $e->expected[$i]; $i++);
+				$i = max(0, min($i, max(strlen($e->actual), strlen($e->expected)) - self::MAX_LENGTH + 3));
+				for (; $i && $i < count($e->actual) && $e->actual[$i-1] >= "\x80" && $e->actual[$i] >= "\x80" && $e->actual[$i] < "\xC0"; $i--);
+				if ($i) {
+					$e->expected = substr_replace($e->expected, '...', 0, $i);
+					$e->actual = substr_replace($e->actual, '...', 0, $i);
+				}
+			}
+
 			$message = 'Failed: ' . $e->getMessage();
 			if ((is_string($e->actual) && is_string($e->expected)) || (is_array($e->actual) && is_array($e->expected))) {
 				preg_match('#^(.*)(%\d)(.*)(%\d.*)\z#', $message, $m);
