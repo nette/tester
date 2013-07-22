@@ -19,6 +19,8 @@ namespace Tester;
  */
 class Dumper
 {
+	const MAX_LENGTH = 80;
+	const MAX_DEPTH = 50;
 
 	/**
 	 * Dumps information about a variable in readable format.
@@ -52,10 +54,10 @@ class Dumper
 			return strpos($var, '.') === FALSE ? $var . '.0' : $var;
 
 		} elseif (is_string($var)) {
-			if ($cut = @iconv_strlen($var, 'UTF-8') > 100) {
-				$var = iconv_substr($var, 0, 100, 'UTF-8');
-			} elseif ($cut = strlen($var) > 100) {
-				$var = substr($var, 0, 100);
+			if ($cut = @iconv_strlen($var, 'UTF-8') > self::MAX_LENGTH) {
+				$var = iconv_substr($var, 0, self::MAX_LENGTH, 'UTF-8');
+			} elseif ($cut = strlen($var) > self::MAX_LENGTH) {
+				$var = substr($var, 0, self::MAX_LENGTH);
 			}
 			return (preg_match('#[^\x09\x0A\x0D\x20-\x7E\xA0-\x{10FFFF}]#u', $var) || preg_last_error() ? '"' . strtr($var, $table) . '"' : "'$var'")
 				. ($cut ? ' ...' : '');
@@ -65,7 +67,7 @@ class Dumper
 			$counter = 0;
 			foreach ($var as $k => & $v) {
 				$out .= ($out === '' ? '' : ', ');
-				if (strlen($out) > 50) {
+				if (strlen($out) > self::MAX_LENGTH) {
 					$out .= '...';
 					break;
 				}
@@ -138,7 +140,7 @@ class Dumper
 			if (empty($var)) {
 				$out = '';
 
-			} elseif ($level > 50 || isset($var[$marker])) {
+			} elseif ($level > self::MAX_DEPTH || isset($var[$marker])) {
 				return '/* Nesting level too deep or recursive dependency */';
 
 			} else {
@@ -166,7 +168,7 @@ class Dumper
 			if (empty($arr)) {
 				$out = '';
 
-			} elseif ($level > 50 || in_array($var, $list, TRUE)) {
+			} elseif ($level > self::MAX_DEPTH || in_array($var, $list, TRUE)) {
 				return '/* Nesting level too deep or recursive dependency */';
 
 			} else {

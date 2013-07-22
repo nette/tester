@@ -28,4 +28,4 @@ Assert::match( "array()", Dumper::toLine(array()) );
 Assert::match( "array(1, 2, 3, 4, 'x')", Dumper::toLine(array(1, 2, 3, 4, 'x')) );
 Assert::match( "array(1 => 1, 2, 3)", Dumper::toLine(array(1 => 1, 2, 3)) );
 Assert::match( "array('a' => array(...))", Dumper::toLine(array('a' => array(1, 2))) );
-Assert::match( "array('one', 'two', 'three', 'four', 'five', 'six', 'seven', ...)", Dumper::toLine(array('one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine')) );
+Assert::match( "array('one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'eleven', ...)", Dumper::toLine(array('one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'eleven', 'twelve')) );
