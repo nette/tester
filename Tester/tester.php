@@ -38,6 +38,7 @@ Options:
 	-log <path>          Write log to file <path>.
 	-d <key=value>...    Define INI entry 'key' with value 'val'.
 	-s                   Show information about skipped tests.
+	--tap                Generate Test Anything Protocol.
 	-j <num>             Run <num> jobs in parallel.
 	-w | --watch <path>  Watch directory.
 	--colors [1|0]       Enable or disable colors.
@@ -74,6 +75,7 @@ foreach ($options['-d'] as $item) {
 $runner = new Tester\Runner\Runner(new Tester\Runner\PhpExecutable($options['-p'], $phpArgs), $options['-log']);
 $runner->paths = $options['paths'];
 $runner->displaySkipped = $options['-s'];
+$runner->displayTap = $options['--tap'];
 $runner->jobs = max(1, (int) $options['-j']);
 
 

@@ -35,6 +35,9 @@ class Runner
 	/** @var array  paths to test files/directories */
 	public $paths = array();
 
+	/** @var bool  generate Test Anything Protocol? */
+	public $displayTap = FALSE;
+
 	/** @var bool  display skipped tests information? */
 	public $displaySkipped = FALSE;
 
@@ -67,7 +70,7 @@ class Runner
 	 */
 	public function run()
 	{
-		$this->printAndLog('PHP ' . $this->php->getVersion() . ' | ' . $this->php->getCommandLine() . " | $this->jobs threads\n");
+		$this->printAndLog($this->displayTap ? 'TAP version 13' : ('PHP ' . $this->php->getVersion() . ' | ' . $this->php->getCommandLine() . " | $this->jobs threads\n"));
 
 		$time = -microtime(TRUE);
 		$this->results = array(self::PASSED => NULL, self::SKIPPED => NULL, self::FAILED => NULL);
@@ -80,6 +83,11 @@ class Runner
 
 		$this->runTests($tests);
 		$time += microtime(TRUE);
+
+		if ($this->displayTap) {
+			$this->printAndLog("1..$count");
+			return;
+		}
 
 		$this->printAndLog("\n\n", FALSE);
 		if ($this->displaySkipped && $this->results[self::SKIPPED]) {
@@ -236,7 +244,11 @@ class Runner
 	 */
 	private function printAndLogResult($result, Job $job, $message = NULL)
 	{
-		$outputs = array(
+		$outputs = $this->displayTap ? array(
+			self::PASSED => "ok {$job->getName()}",
+			self::SKIPPED => "ok {$job->getName()} #skip $message",
+			self::FAILED => "not ok {$job->getName()}" . str_replace("\n", "\n# ", "\n" . trim($message)),
+		) : array(
 			self::PASSED => '.',
 			self::SKIPPED => 's',
 			self::FAILED => 'F',
