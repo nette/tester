@@ -72,27 +72,29 @@ class Runner
 		$time = -microtime(TRUE);
 		$this->results = array(self::PASSED => NULL, self::SKIPPED => NULL, self::FAILED => NULL);
 		$tests = $this->findTests();
-		if (!$tests && count($this->results, 1) === count($this->results)) {
-			$this->printAndLog("No tests found\n");
+		$count = count($tests) + count($this->results, 1) - count($this->results);
+		if (!$count) {
+			$this->printAndLog('No tests found');
 			return;
 		}
 
 		$this->runTests($tests);
 		$time += microtime(TRUE);
 
+		$this->printAndLog("\n\n", FALSE);
 		if ($this->displaySkipped && $this->results[self::SKIPPED]) {
-			$this->printAndLog("\n" . implode($this->results[self::SKIPPED]), FALSE);
+			$this->printAndLog(implode("\n", $this->results[self::SKIPPED]), FALSE);
 		}
 
 		if ($this->results[self::FAILED]) {
-			$this->printAndLog("\n" . implode($this->results[self::FAILED]), FALSE);
-			$this->printAndLog("\nFAILURES! (" . count($tests) . ' tests, '
+			$this->printAndLog(implode("\n", $this->results[self::FAILED]), FALSE);
+			$this->printAndLog("\nFAILURES! ($count tests, "
 				. count($this->results[self::FAILED]) . ' failures, '
 				. count($this->results[self::SKIPPED]) . ' skipped, ' . sprintf('%0.1f', $time) . ' seconds)');
 			return FALSE;
 
 		} else {
-			$this->printAndLog("\n\nOK (" . count($tests) . ' tests, '
+			$this->printAndLog("OK ($count tests, "
 				. count($this->results[self::SKIPPED]) . ' skipped, ' . sprintf('%0.1f', $time) . ' seconds)');
 			return TRUE;
 		}
@@ -234,19 +236,22 @@ class Runner
 	 */
 	private function printAndLogResult($result, Job $job, $message = NULL)
 	{
-		static $results = array(
-			self::PASSED => array('.', 'OK'),
-			self::SKIPPED => array('s', 'Skipped'),
-			self::FAILED => array('F', 'FAILED'),
+		$outputs = array(
+			self::PASSED => '.',
+			self::SKIPPED => 's',
+			self::FAILED => 'F',
 		);
+		$this->printAndLog($outputs[$result], FALSE);
 
-		$this->printAndLog($results[$result][0], FALSE);
-
-		$s = "\n-- {$results[$result][1]}: {$job->getName()}" . str_replace("\n", "\n   ", "\n" . trim($message));
+		$outputs = array(
+			self::PASSED => "-- OK: {$job->getName()}",
+			self::SKIPPED => "-- Skipped: {$job->getName()}\n   $message",
+			self::FAILED => "-- FAILED: {$job->getName()}" . str_replace("\n", "\n   ", "\n" . trim($message)),
+		);
 		if ($this->logFile) {
-			fputs($this->logFile, Tester\Dumper::removeColors($s) . "\n");
+			fputs($this->logFile, Tester\Dumper::removeColors($outputs[$result]) . "\n\n");
 		}
-		$lines = explode("\n", $s, self::PRINT_LINES + 1);
+		$lines = explode("\n", $outputs[$result], self::PRINT_LINES + 1);
 		$lines[self::PRINT_LINES] = isset($lines[self::PRINT_LINES]) ? "\n   ..." : '';
 		$this->results[$result][] = implode("\n", $lines);
 	}
