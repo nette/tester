@@ -163,17 +163,18 @@ class Runner
 	{
 		$job = new Job($file, $this->php);
 		$options = $job->getOptions();
+		$name = $options['name'];
 		$range = array(NULL);
 
 		if (isset($options['skip'])) {
-			return $this->printAndLogResult(self::SKIPPED, $job, $options['skip']);
+			return $this->printAndLogResult($name, self::SKIPPED, $options['skip']);
 
 		} elseif (isset($options['phpversion'])) {
 			foreach ((array) $options['phpversion'] as $phpVersion) {
 				if (preg_match('#^(<=|<|==|=|!=|<>|>=|>)?\s*(.+)#', $phpVersion, $matches)
 					&& version_compare($matches[2], $this->php->getVersion(), $matches[1] ?: '>='))
 				{
-					return $this->printAndLogResult(self::SKIPPED, $job, "Requires PHP $phpVersion.");
+					return $this->printAndLogResult($name, self::SKIPPED, "Requires PHP $phpVersion.");
 				}
 			}
 		}
@@ -186,7 +187,7 @@ class Runner
 			try {
 				$range = array_keys(Tester\DataProvider::load(dirname($file) . '/' . $dataFile, $query));
 			} catch (\Exception $e) {
-				return $this->printAndLogResult(isset($options['dataprovider?']) ? self::SKIPPED : self::FAILED, $job, $e->getMessage());
+				return $this->printAndLogResult($name, isset($options['dataprovider?']) ? self::SKIPPED : self::FAILED, $e->getMessage());
 			}
 
 		} elseif (isset($options['multiple'])) {
@@ -210,15 +211,16 @@ class Runner
 	private function processResult(Job $job)
 	{
 		$options = $job->getOptions();
+		$name = $options['name'];
 
 		if ($job->getExitCode() === Job::CODE_SKIP) {
 			$lines = explode("\n", trim($job->getOutput()));
-			return $this->printAndLogResult(self::SKIPPED, $job, end($lines));
+			return $this->printAndLogResult($name, self::SKIPPED, end($lines));
 		}
 
 		$expected = isset($options['exitcode']) ? (int) $options['exitcode'] : Job::CODE_OK;
 		if ($job->getExitCode() !== $expected) {
-			return $this->printAndLogResult(self::FAILED, $job, ($job->getExitCode() !== Job::CODE_FAIL ? "Exited with error code {$job->getExitCode()} (expected $expected)\n" : '') . $job->getOutput());
+			return $this->printAndLogResult($name, self::FAILED, ($job->getExitCode() !== Job::CODE_FAIL ? "Exited with error code {$job->getExitCode()} (expected $expected)\n" : '') . $job->getOutput());
 		}
 
 		if ($this->php->isCgi()) {
@@ -226,14 +228,14 @@ class Runner
 			$code = isset($headers['Status']) ? (int) $headers['Status'] : 200;
 			$expected = isset($options['httpcode']) ? (int) $options['httpcode'] : (isset($options['assertcode']) ? (int) $options['assertcode'] : $code);
 			if ($expected && $code !== $expected) {
-				return $this->printAndLogResult(self::FAILED, $job, "Exited with HTTP code $code (expected $expected})");
+				return $this->printAndLogResult($name, self::FAILED, "Exited with HTTP code $code (expected $expected})");
 			}
 		}
 
 		if (isset($options['outputmatchfile'])) {
 			$file = dirname($job->getFile()) . '/' . $options['outputmatchfile'];
 			if (!is_file($file)) {
-				return $this->printAndLogResult(self::FAILED, $job, "Missing matching file '$file'.");
+				return $this->printAndLogResult($name, self::FAILED, "Missing matching file '$file'.");
 			}
 			$options['outputmatch'] = file_get_contents($file);
 		} elseif (isset($options['outputmatch']) && !is_string($options['outputmatch'])) {
@@ -243,10 +245,10 @@ class Runner
 		if (isset($options['outputmatch']) && !Tester\Assert::isMatching($options['outputmatch'], $job->getOutput())) {
 			Tester\Helpers::dumpOutput($job->getFile(), $job->getOutput(), '.actual');
 			Tester\Helpers::dumpOutput($job->getFile(), $options['outputmatch'], '.expected');
-			return $this->printAndLogResult(self::FAILED, $job, 'Failed: output should match ' . Tester\Dumper::toLine($options['outputmatch']));
+			return $this->printAndLogResult($name, self::FAILED, 'Failed: output should match ' . Tester\Dumper::toLine($options['outputmatch']));
 		}
 
-		return $this->printAndLogResult(self::PASSED, $job);
+		return $this->printAndLogResult($name, self::PASSED);
 	}
 
 
@@ -280,12 +282,12 @@ class Runner
 	/**
 	 * @return void
 	 */
-	private function printAndLogResult($result, Job $job, $message = NULL)
+	private function printAndLogResult($name, $result, $message = NULL)
 	{
 		$outputs = $this->displayTap ? array(
-			self::PASSED => "ok {$job->getName()}",
-			self::SKIPPED => "ok {$job->getName()} #skip $message",
-			self::FAILED => "not ok {$job->getName()}" . str_replace("\n", "\n# ", "\n" . trim($message)),
+			self::PASSED => "ok $name",
+			self::SKIPPED => "ok $name #skip $message",
+			self::FAILED => "not ok $name" . str_replace("\n", "\n# ", "\n" . trim($message)),
 		) : array(
 			self::PASSED => '.',
 			self::SKIPPED => 's',
@@ -294,9 +296,9 @@ class Runner
 		$this->printAndLog($outputs[$result], FALSE);
 
 		$outputs = array(
-			self::PASSED => "-- OK: {$job->getName()}",
-			self::SKIPPED => "-- Skipped: {$job->getName()}\n   $message",
-			self::FAILED => "-- FAILED: {$job->getName()}" . str_replace("\n", "\n   ", "\n" . trim($message)),
+			self::PASSED => "-- OK: $name",
+			self::SKIPPED => "-- Skipped: $name\n   $message",
+			self::FAILED => "-- FAILED: $name" . str_replace("\n", "\n   ", "\n" . trim($message)),
 		);
 		if ($this->logFile) {
 			fputs($this->logFile, Tester\Dumper::removeColors($outputs[$result]) . "\n\n");
