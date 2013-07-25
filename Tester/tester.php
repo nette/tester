@@ -64,9 +64,7 @@ if (isset($options['--colors'])) {
 	Tester\Environment::$useColors = (bool) $options['--colors'];
 }
 
-if ($cmd->isEmpty()) {
-	$cmd->help();
-} elseif ($options['--help']) {
+if ($cmd->isEmpty() || $options['--help']) {
 	$cmd->help();
 	exit;
 }
