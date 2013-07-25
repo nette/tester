@@ -19,8 +19,11 @@ namespace Tester\Runner;
  */
 class PhpExecutable
 {
-	/** @var string  PHP command line */
-	private $cmdLine;
+	/** @var string  PHP arguments */
+	public $arguments;
+
+	/** @var string  PHP executable */
+	private $path;
 
 	/** @var string  PHP version */
 	private $version;
@@ -43,7 +46,8 @@ class PhpExecutable
 
 		$this->version = $matches[1];
 		$this->cgi = strcasecmp($matches[2], 'g') === 0;
-		$this->cmdLine = escapeshellarg($path) . ' ' . $args;
+		$this->path = escapeshellarg($path);
+		$this->arguments = $args;
 	}
 
 
@@ -52,7 +56,7 @@ class PhpExecutable
 	 */
 	public function getCommandLine()
 	{
-		return $this->cmdLine;
+		return $this->path . ' ' . $this->arguments;
 	}
 
 
