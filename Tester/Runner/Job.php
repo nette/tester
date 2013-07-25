@@ -35,7 +35,7 @@ class Job
 	private $args;
 
 	/** @var array  */
-	private $options;
+	public $options;
 
 	/** @var string  test output */
 	private $output;
@@ -65,11 +65,6 @@ class Job
 		$this->file = (string) $testFile;
 		$this->php = $php;
 		$this->args = $args;
-		$this->options = Tester\Helpers::parseDocComment(file_get_contents($this->file));
-		$this->options['name'] =
-			(isset($this->options[0]) ? preg_replace('#^TEST:\s*#i', '', $this->options[0]) . ' | ' : '')
-			. implode(DIRECTORY_SEPARATOR, array_slice(explode(DIRECTORY_SEPARATOR, $this->file), -3))
-			. ($args ? " [{$args}]" : '');
 	}
 
 
@@ -80,24 +75,19 @@ class Job
 	 */
 	public function run($blocking = TRUE)
 	{
-		$this->headers = $this->output = NULL;
-
-		$cmd = $this->php->getCommandLine();
-		if (isset($this->options['phpini'])) {
-			foreach ((array) $this->options['phpini'] as $item) {
-				$cmd .= ' -d ' . escapeshellarg(trim($item));
-			}
-		}
-		$cmd .= ' ' . escapeshellarg($this->file) . ' ' . $this->args;
-
-		$descriptors = array(
-			array('pipe', 'r'),
-			array('pipe', 'w'),
-			array('pipe', 'w'),
-		);
-
 		putenv('NETTE_TESTER_COLORS=' . (int) Tester\Environment::$useColors);
-		$this->proc = proc_open($cmd, $descriptors, $pipes, dirname($this->file), NULL, array('bypass_shell' => TRUE));
+		$this->proc = proc_open(
+			$this->php->getCommandLine() . ' ' . escapeshellarg($this->file) . ' ' . $this->args,
+			array(
+				array('pipe', 'r'),
+				array('pipe', 'w'),
+				array('pipe', 'w'),
+			),
+			$pipes,
+			dirname($this->file),
+			NULL,
+			array('bypass_shell' => TRUE)
+		);
 		list($stdin, $this->stdout, $stderr) = $pipes;
 		fclose($stdin);
 		stream_set_blocking($this->stdout, $blocking ? 1 : 0);
@@ -155,32 +145,12 @@ class Job
 
 
 	/**
-	 * Returns test name.
-	 * @return string
-	 */
-	public function getName()
-	{
-		return $this->options['name'];
-	}
-
-
-	/**
 	 * Returns script arguments.
 	 * @return string
 	 */
 	public function getArguments()
 	{
 		return $this->args;
-	}
-
-
-	/**
-	 * Returns test options.
-	 * @return array
-	 */
-	public function getOptions()
-	{
-		return $this->options;
 	}
 
 

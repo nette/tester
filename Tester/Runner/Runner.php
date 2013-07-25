@@ -161,9 +161,9 @@ class Runner
 	 */
 	private function processFile($file, & $tests)
 	{
-		$job = new Job($file, $this->php);
-		$options = $job->getOptions();
-		$name = $options['name'];
+		$options = Tester\Helpers::parseDocComment(file_get_contents($file));
+		$options['name'] = $name = (isset($options[0]) ? preg_replace('#^TEST:\s*#i', '', $options[0]) . ' | ' : '')
+			. implode(DIRECTORY_SEPARATOR, array_slice(explode(DIRECTORY_SEPARATOR, $file), -3));
 		$range = array(NULL);
 
 		if (isset($options['skip'])) {
@@ -197,8 +197,17 @@ class Runner
 			$range = $matches[1];
 		}
 
+		$php = clone $this->php;
+		if (isset($options['phpini'])) {
+			foreach ((array) $options['phpini'] as $item) {
+				$php->arguments .= ' -d ' . escapeshellarg(trim($item));
+			}
+		}
+
 		foreach ($range as $item) {
-			$tests[] = new Job($file, $this->php, $item === NULL ? NULL : escapeshellarg($item));
+			$tests[] = $job = new Job($file, $php, $item === NULL ? NULL : escapeshellarg($item));
+			$job->options = $options;
+			$job->options['name'] .= $item ? " [$item]" : '';
 		}
 	}
 
@@ -210,7 +219,7 @@ class Runner
 	 */
 	private function processResult(Job $job)
 	{
-		$options = $job->getOptions();
+		$options = $job->options;
 		$name = $options['name'];
 
 		if ($job->getExitCode() === Job::CODE_SKIP) {
