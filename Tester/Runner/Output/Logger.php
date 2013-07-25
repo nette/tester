@@ -40,7 +40,7 @@ class Logger implements Tester\Runner\OutputHandler
 	{
 		fputs($this->file, 'PHP ' . $this->runner->getPhp()->getVersion()
 			. ' | ' . $this->runner->getPhp()->getCommandLine()
-			. " | {$this->runner->jobs} threads\n\n");
+			. " | {$this->runner->jobCount} threads\n\n");
 	}
 
 

@@ -76,7 +76,7 @@ foreach ($options['-d'] as $item) {
 
 $runner = new Tester\Runner\Runner(new Tester\Runner\PhpExecutable($options['-p'], $phpArgs));
 $runner->paths = $options['paths'];
-$runner->jobs = max(1, (int) $options['-j']);
+$runner->jobCount = max(1, (int) $options['-j']);
 
 $runner->outputHandlers[] = $options['--tap']
 	? new Tester\Runner\Output\TapPrinter($runner)

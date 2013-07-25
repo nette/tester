@@ -17,7 +17,8 @@ $runner->paths[] = $fixtures = __DIR__ . DIRECTORY_SEPARATOR . 'fixtures' . DIRE
 
 $tests = Assert::with($runner, function() {
 	$this->results = array($this::SKIPPED => 0);
-	return $this->findTests();
+	$this->findTests();
+	return $this->jobs;
 });
 
 foreach ($tests as $i => $job) {

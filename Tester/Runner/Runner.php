@@ -33,13 +33,16 @@ class Runner
 	public $paths = array();
 
 	/** @var int  run jobs in parallel */
-	public $jobs = 1;
+	public $jobCount = 1;
 
 	/** @var OutputHandler[] */
 	public $outputHandlers = array();
 
 	/** @var PhpExecutable */
 	private $php;
+
+	/** @var Job[] */
+	private $jobs;
 
 	/** @var array */
 	private $results;
@@ -62,25 +65,12 @@ class Runner
 		}
 
 		$this->results = array(self::PASSED => 0, self::SKIPPED => 0, self::FAILED => 0);
-		$this->runTests($this->findTests());
-
-		foreach ($this->outputHandlers as $hander) {
-			$hander->end();
-		}
-		return !$this->results[self::FAILED];
-	}
-
-
-	/**
-	 * @return void
-	 */
-	private function runTests(array $tests)
-	{
-		$running = array();
-		while ($tests || $running) {
-			for ($i = count($running); $tests && $i < $this->jobs; $i++) {
-				$running[] = $job = array_shift($tests);
-				$job->run($this->jobs <= 1 || (count($running) + count($tests) <= 1));
+		$this->jobs = $running = array();
+		$this->findTests();
+		while ($this->jobs || $running) {
+			for ($i = count($running); $this->jobs && $i < $this->jobCount; $i++) {
+				$running[] = $job = array_shift($this->jobs);
+				$job->run($this->jobCount <= 1 || (count($running) + count($this->jobs) <= 1));
 			}
 
 			if (count($running) > 1) {
@@ -94,33 +84,36 @@ class Runner
 				}
 			}
 		}
-	}
 
-
-	/**
-	 * @return Job[]
-	 */
-	private function findTests()
-	{
-		$tests = array();
-		foreach ($this->paths as $path) {
-			$path = realpath($path);
-			$files = is_file($path) ? array($path) : new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($path));
-			foreach ($files as $file) {
-				$file = (string) $file;
-				if (pathinfo($file, PATHINFO_EXTENSION) === 'phpt') {
-					$this->processFile($file, $tests);
-				}
-			}
+		foreach ($this->outputHandlers as $hander) {
+			$hander->end();
 		}
-		return $tests;
+		return !$this->results[self::FAILED];
 	}
 
 
 	/**
 	 * @return void
 	 */
-	private function processFile($file, & $tests)
+	private function findTests()
+	{
+		foreach ($this->paths as $path) {
+			$path = realpath($path);
+			$files = is_file($path) ? array($path) : new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($path));
+			foreach ($files as $file) {
+				$file = (string) $file;
+				if (pathinfo($file, PATHINFO_EXTENSION) === 'phpt') {
+					$this->processFile($file);
+				}
+			}
+		}
+	}
+
+
+	/**
+	 * @return void
+	 */
+	private function processFile($file)
 	{
 		$options = Tester\Helpers::parseDocComment(file_get_contents($file));
 		$options['name'] = $name = (isset($options[0]) ? preg_replace('#^TEST:\s*#i', '', $options[0]) . ' | ' : '')
@@ -166,7 +159,7 @@ class Runner
 		}
 
 		foreach ($range as $item) {
-			$tests[] = $job = new Job($file, $php, $item === NULL ? NULL : escapeshellarg($item));
+			$this->addJob($job = new Job($file, $php, $item === NULL ? NULL : escapeshellarg($item)));
 			$job->options = $options;
 			$job->options['name'] .= $item ? " [$item]" : '';
 		}
@@ -219,6 +212,16 @@ class Runner
 		}
 
 		return $this->writeResult($name, self::PASSED);
+	}
+
+
+	/**
+	 * Appends new job to queue.
+	 * @return void
+	 */
+	public function addJob(Job $job)
+	{
+		$this->jobs[] = $job;
 	}
 
 
