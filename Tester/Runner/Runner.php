@@ -117,12 +117,8 @@ class Runner
 		$running = array();
 		while ($tests || $running) {
 			for ($i = count($running); $tests && $i < $this->jobs; $i++) {
-				try {
-					$running[] = $job = array_shift($tests);
-					$job->run($this->jobs <= 1 || (count($running) + count($tests) <= 1));
-				} catch (JobException $e) {
-					$this->printAndLogResult(self::SKIPPED, $job, $e->getMessage());
-				}
+				$running[] = $job = array_shift($tests);
+				$job->run($this->jobs <= 1 || (count($running) + count($tests) <= 1));
 			}
 
 			if (count($running) > 1) {
@@ -130,17 +126,11 @@ class Runner
 			}
 
 			foreach ($running as $key => $job) {
-				if (!$job->isReady()) {
-					continue;
-				}
-				try {
+				if ($job->isReady()) {
 					$job->collect();
-					$this->printAndLogResult(self::PASSED, $job);
-
-				} catch (JobException $e) {
-					$this->printAndLogResult($e->getCode() === Job::CODE_SKIP ? self::SKIPPED : self::FAILED, $job, $e->getMessage());
+					$this->processResult($job);
+					unset($running[$key]);
 				}
-				unset($running[$key]);
 			}
 		}
 	}
@@ -209,6 +199,54 @@ class Runner
 		foreach ($range as $item) {
 			$tests[] = new Job($file, $this->php, $item === NULL ? NULL : escapeshellarg($item));
 		}
+	}
+
+
+
+	/**
+	 * Checks test results.
+	 * @return void
+	 */
+	private function processResult(Job $job)
+	{
+		$options = $job->getOptions();
+
+		if ($job->getExitCode() === Job::CODE_SKIP) {
+			$lines = explode("\n", trim($job->getOutput()));
+			return $this->printAndLogResult(self::SKIPPED, $job, end($lines));
+		}
+
+		$expected = isset($options['exitcode']) ? (int) $options['exitcode'] : Job::CODE_OK;
+		if ($job->getExitCode() !== $expected) {
+			return $this->printAndLogResult(self::FAILED, $job, ($job->getExitCode() !== Job::CODE_FAIL ? "Exited with error code {$job->getExitCode()} (expected $expected)\n" : '') . $job->getOutput());
+		}
+
+		if ($this->php->isCgi()) {
+			$headers = $job->getHeaders();
+			$code = isset($headers['Status']) ? (int) $headers['Status'] : 200;
+			$expected = isset($options['httpcode']) ? (int) $options['httpcode'] : (isset($options['assertcode']) ? (int) $options['assertcode'] : $code);
+			if ($expected && $code !== $expected) {
+				return $this->printAndLogResult(self::FAILED, $job, "Exited with HTTP code $code (expected $expected})");
+			}
+		}
+
+		if (isset($options['outputmatchfile'])) {
+			$file = dirname($job->getFile()) . '/' . $options['outputmatchfile'];
+			if (!is_file($file)) {
+				return $this->printAndLogResult(self::FAILED, $job, "Missing matching file '$file'.");
+			}
+			$options['outputmatch'] = file_get_contents($file);
+		} elseif (isset($options['outputmatch']) && !is_string($options['outputmatch'])) {
+			$options['outputmatch'] = '';
+		}
+
+		if (isset($options['outputmatch']) && !Tester\Assert::isMatching($options['outputmatch'], $job->getOutput())) {
+			Tester\Helpers::dumpOutput($job->getFile(), $job->getOutput(), '.actual');
+			Tester\Helpers::dumpOutput($job->getFile(), $options['outputmatch'], '.expected');
+			return $this->printAndLogResult(self::FAILED, $job, 'Failed: output should match ' . Tester\Dumper::toLine($options['outputmatch']));
+		}
+
+		return $this->printAndLogResult(self::PASSED, $job);
 	}
 
 

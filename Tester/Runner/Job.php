@@ -141,54 +141,6 @@ class Job
 				}
 			}
 		}
-
-		if ($this->exitCode === self::CODE_SKIP) {
-			$lines = explode("\n", trim($this->output));
-			throw new JobException(end($lines), $this->exitCode);
-		}
-
-		$this->checkOptions();
-	}
-
-
-	/**
-	 * Checks test results.
-	 * @return void
-	 */
-	public function checkOptions()
-	{
-		$opts = $this->options;
-		$expected = isset($opts['exitcode']) ? (int) $opts['exitcode'] : self::CODE_OK;
-		if ($this->exitCode !== $expected) {
-			throw new JobException(
-				($this->exitCode !== self::CODE_FAIL ? "Exited with error code $this->exitCode (expected $expected)\n" : '') . $this->output,
-				$this->exitCode
-			);
-		}
-
-		if ($this->php->isCgi()) {
-			$code = isset($this->headers['Status']) ? (int) $this->headers['Status'] : 200;
-			$expected = isset($opts['httpcode']) ? (int) $opts['httpcode'] : (isset($opts['assertcode']) ? (int) $opts['assertcode'] : $code);
-			if ($expected && $code !== $expected) {
-				throw new JobException("Exited with HTTP code $code (expected $expected})");
-			}
-		}
-
-		if (isset($opts['outputmatchfile'])) {
-			$file = dirname($this->file) . '/' . $opts['outputmatchfile'];
-			if (!is_file($file)) {
-				throw new \Exception("Missing matching file '$file'.");
-			}
-			$opts['outputmatch'] = file_get_contents($file);
-		} elseif (isset($opts['outputmatch']) && !is_string($opts['outputmatch'])) {
-			$opts['outputmatch'] = '';
-		}
-
-		if (isset($opts['outputmatch']) && !Tester\Assert::isMatching($opts['outputmatch'], $this->output)) {
-			Tester\Helpers::dumpOutput($this->file, $this->output, '.actual');
-			Tester\Helpers::dumpOutput($this->file, $opts['outputmatch'], '.expected');
-			throw new JobException('Failed: output should match ' . Tester\Dumper::toLine($opts['outputmatch']), self::CODE_FAIL);
-		}
 	}
 
 
@@ -233,6 +185,16 @@ class Job
 
 
 	/**
+	 * Returns exit code.
+	 * @return int
+	 */
+	public function getExitCode()
+	{
+		return $this->exitCode;
+	}
+
+
+	/**
 	 * Returns test output.
 	 * @return string
 	 */
@@ -251,14 +213,4 @@ class Job
 		return $this->headers;
 	}
 
-}
-
-
-/**
- * Single test exception.
- *
- * @author     David Grudl
- */
-class JobException extends \Exception
-{
 }
