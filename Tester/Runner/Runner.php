@@ -126,8 +126,7 @@ class Runner
 			}
 
 			foreach ($running as $key => $job) {
-				if ($job->isReady()) {
-					$job->collect();
+				if (!$job->isRunning()) {
 					$this->processResult($job);
 					unset($running[$key]);
 				}

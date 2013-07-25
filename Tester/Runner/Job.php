@@ -96,31 +96,24 @@ class Job
 
 
 	/**
-	 * Checks if the test results are ready.
+	 * Checks if the test is still running.
 	 * @return bool
 	 */
-	public function isReady()
+	public function isRunning()
 	{
+		if (!is_resource($this->stdout)) {
+			return FALSE;
+		}
+
 		$this->output .= stream_get_contents($this->stdout);
 		$status = proc_get_status($this->proc);
-		if ($status['exitcode'] !== self::CODE_NONE) {
-			$this->exitCode = $status['exitcode'];
+		if ($status['running']) {
+			return TRUE;
 		}
-		return !$status['running'];
-	}
 
-
-	/**
-	 * Collect results.
-	 * @return void
-	 */
-	public function collect()
-	{
 		fclose($this->stdout);
 		$code = proc_close($this->proc);
-		if ($code !== self::CODE_NONE) {
-			$this->exitCode = $code;
-		}
+		$this->exitCode = $code === self::CODE_NONE ? $status['exitcode'] : $code;
 
 		if ($this->php->isCgi() && count($tmp = explode("\r\n\r\n", $this->output, 2)) >= 2) {
 			list($headers, $this->output) = $tmp;
@@ -131,6 +124,7 @@ class Job
 				}
 			}
 		}
+		return FALSE;
 	}
 
 
