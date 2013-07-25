@@ -16,6 +16,7 @@ $runner = new Tester\Runner\Runner($php);
 $runner->paths[] = $fixtures = __DIR__ . DIRECTORY_SEPARATOR . 'fixtures' . DIRECTORY_SEPARATOR;
 
 $tests = Assert::with($runner, function() {
+	$this->results = array($this::SKIPPED => 0);
 	return $this->findTests();
 });
 

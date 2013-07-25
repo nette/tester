@@ -29,23 +29,14 @@ class Runner
 	/** waiting time between runs in microseconds */
 	const RUN_USLEEP = 10000;
 
-	/** count of lines to print */
-	const PRINT_LINES = 15;
-
 	/** @var array  paths to test files/directories */
 	public $paths = array();
-
-	/** @var bool  generate Test Anything Protocol? */
-	public $displayTap = FALSE;
-
-	/** @var bool  display skipped tests information? */
-	public $displaySkipped = FALSE;
 
 	/** @var int  run jobs in parallel */
 	public $jobs = 1;
 
-	/** @var resource */
-	private $logFile;
+	/** @var OutputHandler[] */
+	public $outputHandlers = array();
 
 	/** @var PhpExecutable */
 	private $php;
@@ -54,13 +45,9 @@ class Runner
 	private $results;
 
 
-	public function __construct(PhpExecutable $php, $logFile = NULL)
+	public function __construct(PhpExecutable $php)
 	{
 		$this->php = $php;
-		if ($logFile) {
-			$this->printAndLog("Log: $logFile");
-			$this->logFile = fopen($logFile, 'w');
-		}
 	}
 
 
@@ -70,42 +57,17 @@ class Runner
 	 */
 	public function run()
 	{
-		$this->printAndLog($this->displayTap ? 'TAP version 13' : ('PHP ' . $this->php->getVersion() . ' | ' . $this->php->getCommandLine() . " | $this->jobs threads\n"));
-
-		$time = -microtime(TRUE);
-		$this->results = array(self::PASSED => NULL, self::SKIPPED => NULL, self::FAILED => NULL);
-		$tests = $this->findTests();
-		$count = count($tests) + count($this->results, 1) - count($this->results);
-		if (!$count) {
-			$this->printAndLog('No tests found');
-			return;
+		foreach ($this->outputHandlers as $hander) {
+			$hander->begin();
 		}
 
-		$this->runTests($tests);
-		$time += microtime(TRUE);
+		$this->results = array(self::PASSED => 0, self::SKIPPED => 0, self::FAILED => 0);
+		$this->runTests($this->findTests());
 
-		if ($this->displayTap) {
-			$this->printAndLog("1..$count");
-			return;
+		foreach ($this->outputHandlers as $hander) {
+			$hander->end();
 		}
-
-		$this->printAndLog("\n\n", FALSE);
-		if ($this->displaySkipped && $this->results[self::SKIPPED]) {
-			$this->printAndLog(implode("\n", $this->results[self::SKIPPED]), FALSE);
-		}
-
-		if ($this->results[self::FAILED]) {
-			$this->printAndLog(implode("\n", $this->results[self::FAILED]), FALSE);
-			$this->printAndLog("\nFAILURES! ($count tests, "
-				. count($this->results[self::FAILED]) . ' failures, '
-				. count($this->results[self::SKIPPED]) . ' skipped, ' . sprintf('%0.1f', $time) . ' seconds)');
-			return FALSE;
-
-		} else {
-			$this->printAndLog("OK ($count tests, "
-				. count($this->results[self::SKIPPED]) . ' skipped, ' . sprintf('%0.1f', $time) . ' seconds)');
-			return TRUE;
-		}
+		return !$this->results[self::FAILED];
 	}
 
 
@@ -166,14 +128,14 @@ class Runner
 		$range = array(NULL);
 
 		if (isset($options['skip'])) {
-			return $this->printAndLogResult($name, self::SKIPPED, $options['skip']);
+			return $this->writeResult($name, self::SKIPPED, $options['skip']);
 
 		} elseif (isset($options['phpversion'])) {
 			foreach ((array) $options['phpversion'] as $phpVersion) {
 				if (preg_match('#^(<=|<|==|=|!=|<>|>=|>)?\s*(.+)#', $phpVersion, $matches)
 					&& version_compare($matches[2], $this->php->getVersion(), $matches[1] ?: '>='))
 				{
-					return $this->printAndLogResult($name, self::SKIPPED, "Requires PHP $phpVersion.");
+					return $this->writeResult($name, self::SKIPPED, "Requires PHP $phpVersion.");
 				}
 			}
 		}
@@ -186,7 +148,7 @@ class Runner
 			try {
 				$range = array_keys(Tester\DataProvider::load(dirname($file) . '/' . $dataFile, $query));
 			} catch (\Exception $e) {
-				return $this->printAndLogResult($name, isset($options['dataprovider?']) ? self::SKIPPED : self::FAILED, $e->getMessage());
+				return $this->writeResult($name, isset($options['dataprovider?']) ? self::SKIPPED : self::FAILED, $e->getMessage());
 			}
 
 		} elseif (isset($options['multiple'])) {
@@ -223,12 +185,12 @@ class Runner
 
 		if ($job->getExitCode() === Job::CODE_SKIP) {
 			$lines = explode("\n", trim($job->getOutput()));
-			return $this->printAndLogResult($name, self::SKIPPED, end($lines));
+			return $this->writeResult($name, self::SKIPPED, end($lines));
 		}
 
 		$expected = isset($options['exitcode']) ? (int) $options['exitcode'] : Job::CODE_OK;
 		if ($job->getExitCode() !== $expected) {
-			return $this->printAndLogResult($name, self::FAILED, ($job->getExitCode() !== Job::CODE_FAIL ? "Exited with error code {$job->getExitCode()} (expected $expected)\n" : '') . $job->getOutput());
+			return $this->writeResult($name, self::FAILED, ($job->getExitCode() !== Job::CODE_FAIL ? "Exited with error code {$job->getExitCode()} (expected $expected)\n" : '') . $job->getOutput());
 		}
 
 		if ($this->php->isCgi()) {
@@ -236,14 +198,14 @@ class Runner
 			$code = isset($headers['Status']) ? (int) $headers['Status'] : 200;
 			$expected = isset($options['httpcode']) ? (int) $options['httpcode'] : (isset($options['assertcode']) ? (int) $options['assertcode'] : $code);
 			if ($expected && $code !== $expected) {
-				return $this->printAndLogResult($name, self::FAILED, "Exited with HTTP code $code (expected $expected})");
+				return $this->writeResult($name, self::FAILED, "Exited with HTTP code $code (expected $expected})");
 			}
 		}
 
 		if (isset($options['outputmatchfile'])) {
 			$file = dirname($job->getFile()) . '/' . $options['outputmatchfile'];
 			if (!is_file($file)) {
-				return $this->printAndLogResult($name, self::FAILED, "Missing matching file '$file'.");
+				return $this->writeResult($name, self::FAILED, "Missing matching file '$file'.");
 			}
 			$options['outputmatch'] = file_get_contents($file);
 		} elseif (isset($options['outputmatch']) && !is_string($options['outputmatch'])) {
@@ -253,67 +215,41 @@ class Runner
 		if (isset($options['outputmatch']) && !Tester\Assert::isMatching($options['outputmatch'], $job->getOutput())) {
 			Tester\Helpers::dumpOutput($job->getFile(), $job->getOutput(), '.actual');
 			Tester\Helpers::dumpOutput($job->getFile(), $options['outputmatch'], '.expected');
-			return $this->printAndLogResult($name, self::FAILED, 'Failed: output should match ' . Tester\Dumper::toLine($options['outputmatch']));
+			return $this->writeResult($name, self::FAILED, 'Failed: output should match ' . Tester\Dumper::toLine($options['outputmatch']));
 		}
 
-		return $this->printAndLogResult($name, self::PASSED);
+		return $this->writeResult($name, self::PASSED);
 	}
 
 
 	/**
-	 * Prints and writes to log.
+	 * Writes to output handlers.
 	 * @return void
 	 */
-	private function printAndLog($s, $log = TRUE)
+	private function writeResult($testName, $result, $message = NULL)
 	{
-		if (strlen($s) > 1) {
-			$s .= "\n";
-		}
-
-		if (Tester\Environment::$useColors) {
-			$repl = array(
-				'#^OK .*#m' => "\033[1;42;1;37m\\0\033[0m",
-				'#^FAILURES! .*#m' => "\033[1;41;37m\\0\033[0m",
-				'#^F\z#' => "\033[1;41;37m\\0\033[0m",
-				'#^-- FAILED: .*#m' => "\033[1;31m\\0\033[0m",
-			);
-			$s = preg_replace(array_keys($repl), $repl, $s);
-		}
-		echo $s;
-
-		if ($this->logFile && $log) {
-			fputs($this->logFile, Tester\Dumper::removeColors($s));
+		$this->results[$result]++;
+		foreach ($this->outputHandlers as $hander) {
+			$hander->result($testName, $result, $message);
 		}
 	}
 
 
 	/**
-	 * @return void
+	 * @return PhpExecutable
 	 */
-	private function printAndLogResult($name, $result, $message = NULL)
+	public function getPhp()
 	{
-		$outputs = $this->displayTap ? array(
-			self::PASSED => "ok $name",
-			self::SKIPPED => "ok $name #skip $message",
-			self::FAILED => "not ok $name" . str_replace("\n", "\n# ", "\n" . trim($message)),
-		) : array(
-			self::PASSED => '.',
-			self::SKIPPED => 's',
-			self::FAILED => 'F',
-		);
-		$this->printAndLog($outputs[$result], FALSE);
+		return $this->php;
+	}
 
-		$outputs = array(
-			self::PASSED => "-- OK: $name",
-			self::SKIPPED => "-- Skipped: $name\n   $message",
-			self::FAILED => "-- FAILED: $name" . str_replace("\n", "\n   ", "\n" . trim($message)),
-		);
-		if ($this->logFile) {
-			fputs($this->logFile, Tester\Dumper::removeColors($outputs[$result]) . "\n\n");
-		}
-		$lines = explode("\n", $outputs[$result], self::PRINT_LINES + 1);
-		$lines[self::PRINT_LINES] = isset($lines[self::PRINT_LINES]) ? "\n   ..." : '';
-		$this->results[$result][] = implode("\n", $lines);
+
+	/**
+	 * @return array
+	 */
+	public function getResults()
+	{
+		return $this->results;
 	}
 
 }

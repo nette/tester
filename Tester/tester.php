@@ -14,6 +14,10 @@ require __DIR__ . '/Runner/PhpExecutable.php';
 require __DIR__ . '/Runner/Runner.php';
 require __DIR__ . '/Runner/Job.php';
 require __DIR__ . '/Runner/CommandLine.php';
+require __DIR__ . '/Runner/OutputHandler.php';
+require __DIR__ . '/Runner/Output/Logger.php';
+require __DIR__ . '/Runner/Output/TapPrinter.php';
+require __DIR__ . '/Runner/Output/ConsolePrinter.php';
 require __DIR__ . '/Framework/Helpers.php';
 require __DIR__ . '/Framework/Environment.php';
 require __DIR__ . '/Framework/Assert.php';
@@ -72,11 +76,19 @@ foreach ($options['-d'] as $item) {
 	$phpArgs .= ' -d ' . escapeshellarg($item);
 }
 
-$runner = new Tester\Runner\Runner(new Tester\Runner\PhpExecutable($options['-p'], $phpArgs), $options['-log']);
+$runner = new Tester\Runner\Runner(new Tester\Runner\PhpExecutable($options['-p'], $phpArgs));
 $runner->paths = $options['paths'];
-$runner->displaySkipped = $options['-s'];
-$runner->displayTap = $options['--tap'];
 $runner->jobs = max(1, (int) $options['-j']);
+
+$runner->outputHandlers[] = $options['--tap']
+	? new Tester\Runner\Output\TapPrinter($runner)
+	: new Tester\Runner\Output\ConsolePrinter($runner, $options['-s']);
+
+if ($options['-log']) {
+	echo "Log: {$options['-log']}\n";
+	$runner->outputHandlers[] = new Tester\Runner\Output\Logger($runner, $options['-log']);
+}
+
 
 
 
