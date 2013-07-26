@@ -34,9 +34,6 @@ class Job
 	/** @var string  test arguments */
 	private $args;
 
-	/** @var array  */
-	public $options;
-
 	/** @var string  test output */
 	private $output;
 
