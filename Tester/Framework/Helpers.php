@@ -54,14 +54,14 @@ class Helpers
 		if (preg_match('#^[ \t\*]*+([^\s@].*)#mi', $content[1], $matches)) {
 			$options[0] = trim($matches[1]);
 		}
-		preg_match_all('#^[ \t\*]*@(\S+)([ \t]+\S.*)?#mi', $content[1], $matches, PREG_SET_ORDER);
+		preg_match_all('#^[ \t\*]*@(\w+)([^\w\r\n].*)?#mi', $content[1], $matches, PREG_SET_ORDER);
 		foreach ($matches as $match) {
 			$ref = & $options[strtolower($match[1])];
 			if (isset($ref)) {
 				$ref = (array) $ref;
 				$ref = & $ref[];
 			}
-			$ref = isset($match[2]) ? trim($match[2]) : TRUE;
+			$ref = isset($match[2]) ? trim($match[2]) : '';
 		}
 		return $options;
 	}

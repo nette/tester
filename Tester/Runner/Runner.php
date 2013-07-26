@@ -133,15 +133,11 @@ class Runner
 			}
 		}
 
-		if (isset($options['dataprovider?'])) {
-			$options['dataprovider'] = $options['dataprovider?'];
-		}
-		if (isset($options['dataprovider'])) {
-			list($dataFile, $query) = preg_split('#\s*,?\s+#', $options['dataprovider'], 2) + array('', '');
+		if (isset($options['dataprovider']) && preg_match('#^(\??)\s*([^,]+)\s*,?\s*(\S.*)?()#', $options['dataprovider'], $matches)) {
 			try {
-				$range = array_keys(Tester\DataProvider::load(dirname($file) . '/' . $dataFile, $query));
+				$range = array_keys(Tester\DataProvider::load(dirname($file) . '/' . $matches[2], $matches[3]));
 			} catch (\Exception $e) {
-				return $this->writeResult($name, isset($options['dataprovider?']) ? self::SKIPPED : self::FAILED, $e->getMessage());
+				return $this->writeResult($name, $matches[1] ? self::SKIPPED : self::FAILED, $e->getMessage());
 			}
 
 		} elseif (isset($options['multiple'])) {

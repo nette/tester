@@ -36,7 +36,7 @@ class TestCase
 			$data = array();
 			$info = Helpers::parseDocComment($method->getDocComment()) + array('dataprovider' => NULL, 'throws' => NULL);
 
-			if ($info['throws'] === TRUE) {
+			if ($info['throws'] === '') {
 				throw new TestCaseException("Missing class name in @throws annotation for {$method->getName()}().");
 			} elseif (is_array($info['throws'])) {
 				throw new TestCaseException("Annotation @throws for {$method->getName()}() can be specified only once.");
