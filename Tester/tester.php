@@ -14,6 +14,7 @@ require __DIR__ . '/Runner/PhpExecutable.php';
 require __DIR__ . '/Runner/Runner.php';
 require __DIR__ . '/Runner/Job.php';
 require __DIR__ . '/Runner/CommandLine.php';
+require __DIR__ . '/Runner/TestHandler.php';
 require __DIR__ . '/Runner/OutputHandler.php';
 require __DIR__ . '/Runner/Output/Logger.php';
 require __DIR__ . '/Runner/Output/TapPrinter.php';

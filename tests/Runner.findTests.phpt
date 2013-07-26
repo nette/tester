@@ -7,6 +7,7 @@
 use Tester\Assert;
 
 require __DIR__ . '/bootstrap.php';
+require __DIR__ . '/../Tester/Runner/TestHandler.php';
 require __DIR__ . '/../Tester/Runner/PhpExecutable.php';
 require __DIR__ . '/../Tester/Runner/Runner.php';
 

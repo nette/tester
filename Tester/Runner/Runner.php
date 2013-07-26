@@ -35,6 +35,9 @@ class Runner
 	/** @var int  run jobs in parallel */
 	public $jobCount = 1;
 
+	/** @var TestHandler */
+	public $testHandler;
+
 	/** @var OutputHandler[] */
 	public $outputHandlers = array();
 
@@ -51,6 +54,7 @@ class Runner
 	public function __construct(PhpExecutable $php)
 	{
 		$this->php = $php;
+		$this->testHandler = new TestHandler($this);
 	}
 
 
@@ -79,7 +83,7 @@ class Runner
 
 			foreach ($running as $key => $job) {
 				if (!$job->isRunning()) {
-					$this->processResult($job);
+					$this->testHandler->assess($job);
 					unset($running[$key]);
 				}
 			}
@@ -101,113 +105,11 @@ class Runner
 			$path = realpath($path);
 			$files = is_file($path) ? array($path) : new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($path));
 			foreach ($files as $file) {
-				$file = (string) $file;
 				if (pathinfo($file, PATHINFO_EXTENSION) === 'phpt') {
-					$this->processFile($file);
+					$this->testHandler->initiate((string) $file);
 				}
 			}
 		}
-	}
-
-
-	/**
-	 * @return void
-	 */
-	private function processFile($file)
-	{
-		$options = Tester\Helpers::parseDocComment(file_get_contents($file));
-		$options['name'] = $name = (isset($options[0]) ? preg_replace('#^TEST:\s*#i', '', $options[0]) . ' | ' : '')
-			. implode(DIRECTORY_SEPARATOR, array_slice(explode(DIRECTORY_SEPARATOR, $file), -3));
-		$range = array(NULL);
-
-		if (isset($options['skip'])) {
-			return $this->writeResult($name, self::SKIPPED, $options['skip']);
-
-		} elseif (isset($options['phpversion'])) {
-			foreach ((array) $options['phpversion'] as $phpVersion) {
-				if (preg_match('#^(<=|<|==|=|!=|<>|>=|>)?\s*(.+)#', $phpVersion, $matches)
-					&& version_compare($matches[2], $this->php->getVersion(), $matches[1] ?: '>='))
-				{
-					return $this->writeResult($name, self::SKIPPED, "Requires PHP $phpVersion.");
-				}
-			}
-		}
-
-		if (isset($options['dataprovider']) && preg_match('#^(\??)\s*([^,]+)\s*,?\s*(\S.*)?()#', $options['dataprovider'], $matches)) {
-			try {
-				$range = array_keys(Tester\DataProvider::load(dirname($file) . '/' . $matches[2], $matches[3]));
-			} catch (\Exception $e) {
-				return $this->writeResult($name, $matches[1] ? self::SKIPPED : self::FAILED, $e->getMessage());
-			}
-
-		} elseif (isset($options['multiple'])) {
-			$range = range(0, $options['multiple'] - 1);
-
-		} elseif (isset($options['testcase']) && preg_match_all('#\sfunction\s+(test\w+)\(#', file_get_contents($file), $matches)) {
-			$range = $matches[1];
-		}
-
-		$php = clone $this->php;
-		if (isset($options['phpini'])) {
-			foreach ((array) $options['phpini'] as $item) {
-				$php->arguments .= ' -d ' . escapeshellarg(trim($item));
-			}
-		}
-
-		foreach ($range as $item) {
-			$this->addJob($job = new Job($file, $php, $item === NULL ? NULL : escapeshellarg($item)));
-			$job->options = $options;
-			$job->options['name'] .= $item ? " [$item]" : '';
-		}
-	}
-
-
-
-	/**
-	 * Checks test results.
-	 * @return void
-	 */
-	private function processResult(Job $job)
-	{
-		$options = $job->options;
-		$name = $options['name'];
-
-		if ($job->getExitCode() === Job::CODE_SKIP) {
-			$lines = explode("\n", trim($job->getOutput()));
-			return $this->writeResult($name, self::SKIPPED, end($lines));
-		}
-
-		$expected = isset($options['exitcode']) ? (int) $options['exitcode'] : Job::CODE_OK;
-		if ($job->getExitCode() !== $expected) {
-			return $this->writeResult($name, self::FAILED, ($job->getExitCode() !== Job::CODE_FAIL ? "Exited with error code {$job->getExitCode()} (expected $expected)\n" : '') . $job->getOutput());
-		}
-
-		if ($this->php->isCgi()) {
-			$headers = $job->getHeaders();
-			$code = isset($headers['Status']) ? (int) $headers['Status'] : 200;
-			$expected = isset($options['httpcode']) ? (int) $options['httpcode'] : (isset($options['assertcode']) ? (int) $options['assertcode'] : $code);
-			if ($expected && $code !== $expected) {
-				return $this->writeResult($name, self::FAILED, "Exited with HTTP code $code (expected $expected})");
-			}
-		}
-
-		if (isset($options['outputmatchfile'])) {
-			$file = dirname($job->getFile()) . '/' . $options['outputmatchfile'];
-			if (!is_file($file)) {
-				return $this->writeResult($name, self::FAILED, "Missing matching file '$file'.");
-			}
-			$options['outputmatch'] = file_get_contents($file);
-		} elseif (isset($options['outputmatch']) && !is_string($options['outputmatch'])) {
-			$options['outputmatch'] = '';
-		}
-
-		if (isset($options['outputmatch']) && !Tester\Assert::isMatching($options['outputmatch'], $job->getOutput())) {
-			Tester\Helpers::dumpOutput($job->getFile(), $job->getOutput(), '.actual');
-			Tester\Helpers::dumpOutput($job->getFile(), $options['outputmatch'], '.expected');
-			return $this->writeResult($name, self::FAILED, 'Failed: output should match ' . Tester\Dumper::toLine($options['outputmatch']));
-		}
-
-		return $this->writeResult($name, self::PASSED);
 	}
 
 
@@ -225,7 +127,7 @@ class Runner
 	 * Writes to output handlers.
 	 * @return void
 	 */
-	private function writeResult($testName, $result, $message = NULL)
+	public function writeResult($testName, $result, $message = NULL)
 	{
 		$this->results[$result]++;
 		foreach ($this->outputHandlers as $hander) {
