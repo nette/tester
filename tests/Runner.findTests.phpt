@@ -14,11 +14,11 @@ require __DIR__ . '/../Tester/Runner/Runner.php';
 
 $php = new Tester\Runner\PhpExecutable(PHP_BINARY);
 $runner = new Tester\Runner\Runner($php);
-$runner->paths[] = $fixtures = __DIR__ . DIRECTORY_SEPARATOR . 'fixtures' . DIRECTORY_SEPARATOR;
+$fixtures = __DIR__ . DIRECTORY_SEPARATOR . 'fixtures' . DIRECTORY_SEPARATOR;
 
-$tests = Assert::with($runner, function() {
+$tests = Assert::with($runner, function() use ($fixtures) {
 	$this->results = array($this::SKIPPED => 0);
-	$this->findTests();
+	$this->findTests($fixtures);
 	return $this->jobs;
 });
 

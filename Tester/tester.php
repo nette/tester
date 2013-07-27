@@ -52,7 +52,7 @@ Options:
 ", array(
 	'-c' => array(Cmd::REALPATH => TRUE),
 	'--watch' => array(Cmd::REALPATH => TRUE),
-	'paths' => array(Cmd::REALPATH => TRUE, Cmd::REPEATABLE => TRUE, Cmd::VALUE => getcwd()),
+	'paths' => array(Cmd::REPEATABLE => TRUE, Cmd::VALUE => getcwd()),
 	'--debug' => array(),
 ));
 

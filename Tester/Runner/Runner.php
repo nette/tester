@@ -70,7 +70,10 @@ class Runner
 
 		$this->results = array(self::PASSED => 0, self::SKIPPED => 0, self::FAILED => 0);
 		$this->jobs = $running = array();
-		$this->findTests();
+		foreach ($this->paths as $path) {
+			$this->findTests($path);
+		}
+
 		while ($this->jobs || $running) {
 			for ($i = count($running); $this->jobs && $i < $this->jobCount; $i++) {
 				$running[] = $job = array_shift($this->jobs);
@@ -99,15 +102,17 @@ class Runner
 	/**
 	 * @return void
 	 */
-	private function findTests()
+	private function findTests($path)
 	{
-		foreach ($this->paths as $path) {
-			$path = realpath($path);
-			$files = is_file($path) ? array($path) : new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($path));
-			foreach ($files as $file) {
-				if (pathinfo($file, PATHINFO_EXTENSION) === 'phpt') {
-					$this->testHandler->initiate((string) $file);
-				}
+		if (is_dir($path)) {
+			foreach (glob("$path/*", GLOB_ONLYDIR) as $dir) {
+				$this->findTests($dir);
+			}
+			$path .= '/*.phpt';
+		}
+		foreach (glob($path) as $file) {
+			if (is_file($file)) {
+				$this->testHandler->initiate(realpath($file));
 			}
 		}
 	}
