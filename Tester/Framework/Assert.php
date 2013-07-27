@@ -389,10 +389,10 @@ class Assert
 			if (isset($item['file']) && substr($item['file'], -5) === '.phpt') {
 				$args = isset($_SERVER['argv'][1]) ? '.[' . preg_replace('#[^a-z0-9-. ]+#i', '_', $_SERVER['argv'][1]) . ']' : '';
 				if (is_object($e->expected) || is_array($e->expected) || (is_string($e->expected) && strlen($e->expected) > 80)) {
-					Helpers::dumpOutput($item['file'], $e->expected, $args . '.expected');
+					Dumper::saveOutput($item['file'], $e->expected, $args . '.expected');
 				}
 				if (is_object($e->actual) || is_array($e->actual) || (is_string($e->actual) && strlen($e->actual) > 80)) {
-					Helpers::dumpOutput($item['file'], $e->actual, $args . '.actual');
+					Dumper::saveOutput($item['file'], $e->actual, $args . '.actual');
 				}
 				break;
 			}

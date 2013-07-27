@@ -67,19 +67,6 @@ class Helpers
 	}
 
 
-	/**
-	 * Dumps data to folder 'output'.
-	 * @return void
-	 * @internal
-	 */
-	public static function dumpOutput($testFile, $content, $suffix = '')
-	{
-		$path = dirname($testFile) . '/output/' . basename($testFile, '.phpt') . $suffix;
-		@mkdir(dirname($path)); // @ - directory may already exist
-		file_put_contents($path, is_string($content) ? $content : Dumper::toPhp($content));
-	}
-
-
 	/** @deprecated */
 	public static function skip($message = '')
 	{

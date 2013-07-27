@@ -12,7 +12,7 @@
 namespace Tester\Runner;
 
 use Tester,
-	Tester\Helpers;
+	Tester\Dumper;
 
 
 /**
@@ -190,16 +190,16 @@ class TestHandler
 	private function assessOutputMatch(Job $job, $content)
 	{
 		if (!Tester\Assert::isMatching($content, $job->getOutput())) {
-			Helpers::dumpOutput($job->getFile(), $job->getOutput(), '.actual');
-			Helpers::dumpOutput($job->getFile(), $content, '.expected');
-			return array(Runner::FAILED, 'Failed: output should match ' . Tester\Dumper::toLine(rtrim($content)));
+			Dumper::saveOutput($job->getFile(), $job->getOutput(), '.actual');
+			Dumper::saveOutput($job->getFile(), $content, '.expected');
+			return array(Runner::FAILED, 'Failed: output should match ' . Dumper::toLine(rtrim($content)));
 		}
 	}
 
 
 	private function getAnnotations($file)
 	{
-		$options = Helpers::parseDocComment(file_get_contents($file));
+		$options = Tester\Helpers::parseDocComment(file_get_contents($file));
 		$testName = (isset($options[0]) ? preg_replace('#^TEST:\s*#i', '', $options[0]) . ' | ' : '')
 			. implode(DIRECTORY_SEPARATOR, array_slice(explode(DIRECTORY_SEPARATOR, $file), -3));
 		return array($options, $testName);

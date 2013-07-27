@@ -249,6 +249,19 @@ class Dumper
 	}
 
 
+	/**
+	 * Dumps data to folder 'output'.
+	 * @return void
+	 * @internal
+	 */
+	public static function saveOutput($testFile, $content, $suffix = '')
+	{
+		$path = dirname($testFile) . '/output/' . basename($testFile, '.phpt') . $suffix;
+		@mkdir(dirname($path)); // @ - directory may already exist
+		file_put_contents($path, is_string($content) ? $content : self::toPhp($content));
+	}
+
+
 	public static function removeColors($s)
 	{
 		return preg_replace('#\033\[[\d;]+m#', '', $s);
