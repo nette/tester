@@ -1,0 +1,8 @@
+<?php
+
+/**
+ * @outputMatchFile missing.txt
+ */
+
+?>
+! Hello !

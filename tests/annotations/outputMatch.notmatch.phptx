@@ -1,0 +1,8 @@
+<?php
+
+/**
+ * @outputMatch %a%Hello%a%
+ */
+
+?>
+! World !

@@ -1,0 +1,8 @@
+<?php
+
+/**
+ * @outputMatchFile ../Assert.matchFile.txt
+ */
+
+?>
+! World !

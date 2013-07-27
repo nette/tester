@@ -9,10 +9,12 @@ class MyTest
 
 	public function testFoo()
 	{
+		exit(1);
 	}
 
 	function testBar()
 	{
+		exit(2);
 	}
 
 }
