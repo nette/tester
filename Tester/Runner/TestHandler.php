@@ -119,7 +119,7 @@ class TestHandler
 			return array(Runner::FAILED, 'Invalid @dataprovider value.');
 		}
 		try {
-			foreach (array_keys(Tester\DataProvider::load(dirname($file) . '/' . $matches[2], $matches[3])) as $item) {
+			foreach (array_keys(Tester\DataProvider::load(dirname($file) . DIRECTORY_SEPARATOR . $matches[2], $matches[3])) as $item) {
 				$this->runner->addJob(new Job($file, $php, escapeshellarg($item)));
 			}
 		} catch (\Exception $e) {
@@ -157,8 +157,8 @@ class TestHandler
 			return array(Runner::SKIPPED, end($lines));
 
 		} elseif ($job->getExitCode() !== $code) {
-			$message = $job->getExitCode() !== Job::CODE_FAIL ? "Exited with error code {$job->getExitCode()} (expected $code)\n" : '';
-			return array(Runner::FAILED, $message . $job->getOutput());
+			$message = $job->getExitCode() !== Job::CODE_FAIL ? "Exited with error code {$job->getExitCode()} (expected $code)" : '';
+			return array(Runner::FAILED, trim($message . "\n" . $job->getOutput()));
 		}
 	}
 
@@ -179,7 +179,7 @@ class TestHandler
 
 	private function assessOutputMatchFile(Job $job, $file)
 	{
-		$file = dirname($job->getFile()) . '/' . $file;
+		$file = dirname($job->getFile()) . DIRECTORY_SEPARATOR . $file;
 		if (!is_file($file)) {
 			return array(Runner::FAILED, "Missing matching file '$file'.");
 		}
