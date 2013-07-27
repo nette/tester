@@ -19,7 +19,7 @@ namespace Tester;
  */
 class Dumper
 {
-	const MAX_LENGTH = 80;
+	const MAX_LENGTH = 70;
 	const MAX_DEPTH = 50;
 
 	/**
@@ -157,7 +157,7 @@ class Dumper
 				}
 				unset($var[$marker]);
 			}
-			return 'array(' . (strpos($out, "\n") === FALSE && strlen($out) < 40 ? $out : $outAlt) . ')';
+			return 'array(' . (strpos($out, "\n") === FALSE && strlen($out) < self::MAX_LENGTH ? $out : $outAlt) . ')';
 
 		} elseif (is_object($var)) {
 			$arr = (array) $var;
