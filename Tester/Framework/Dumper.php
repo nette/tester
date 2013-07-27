@@ -203,6 +203,20 @@ class Dumper
 		$last = & $trace[count($trace) - 1]['file'];
 
 		if ($e instanceof AssertException) {
+			// logs big variables to files in 'output' subdir; in case of shutdown handler, we want to skip inner-code blocks and debugging calls
+			foreach (array_reverse($e->getTrace()) as $item) {
+				if (isset($item['file']) && substr($item['file'], -5) === '.phpt') {
+					$args = isset($_SERVER['argv'][1]) ? '.[' . preg_replace('#[^a-z0-9-. ]+#i', '_', $_SERVER['argv'][1]) . ']' : '';
+					if (is_object($e->expected) || is_array($e->expected) || (is_string($e->expected) && strlen($e->expected) > 80)) {
+						self::saveOutput($item['file'], $e->expected, $args . '.expected');
+					}
+					if (is_object($e->actual) || is_array($e->actual) || (is_string($e->actual) && strlen($e->actual) > 80)) {
+						self::saveOutput($item['file'], $e->actual, $args . '.actual');
+					}
+					break;
+				}
+			}
+
 			if ((is_string($e->actual) && is_string($e->expected))) {
 				for ($i = 0; $i < strlen($e->actual) && isset($e->expected[$i]) && $e->actual[$i] === $e->expected[$i]; $i++);
 				$i = max(0, min($i, max(strlen($e->actual), strlen($e->expected)) - self::MAX_LENGTH + 3));

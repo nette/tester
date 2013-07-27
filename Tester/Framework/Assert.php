@@ -379,24 +379,10 @@ class Assert
 
 
 	/**
-	 * Logs big variables to file and throws exception.
 	 * @return void
 	 */
 	private static function assertionFailed(AssertException $e)
 	{
-		foreach (array_reverse($e->getTrace()) as $item) {
-			// in case of shutdown handler, we want to skip inner-code blocks and debugging calls
-			if (isset($item['file']) && substr($item['file'], -5) === '.phpt') {
-				$args = isset($_SERVER['argv'][1]) ? '.[' . preg_replace('#[^a-z0-9-. ]+#i', '_', $_SERVER['argv'][1]) . ']' : '';
-				if (is_object($e->expected) || is_array($e->expected) || (is_string($e->expected) && strlen($e->expected) > 80)) {
-					Dumper::saveOutput($item['file'], $e->expected, $args . '.expected');
-				}
-				if (is_object($e->actual) || is_array($e->actual) || (is_string($e->actual) && strlen($e->actual) > 80)) {
-					Dumper::saveOutput($item['file'], $e->actual, $args . '.actual');
-				}
-				break;
-			}
-		}
 		throw $e;
 	}
 
