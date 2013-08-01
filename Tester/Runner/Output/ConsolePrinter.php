@@ -86,6 +86,7 @@ class ConsolePrinter implements Tester\Runner\OutputHandler
 			. "\n";
 
 		echo Tester\Environment::$useColors ? $s : Tester\Dumper::removeColors($s);
+		$this->buffer = NULL;
 	}
 
 }
