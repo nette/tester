@@ -82,7 +82,8 @@ class ConsolePrinter implements Tester\Runner\OutputHandler
 			. ' (' . array_sum($results) . ' tests, '
 			. ($results[Runner::FAILED] ? $results[Runner::FAILED] . ' failures, ' : '')
 			. ($results[Runner::SKIPPED] ? $results[Runner::SKIPPED] . ' skipped, ' : '')
-			. sprintf('%0.1f', $this->time + microtime(TRUE)) . " seconds)\033[0m";
+			. sprintf('%0.1f', $this->time + microtime(TRUE)) . " seconds)\033[0m"
+			. "\n";
 
 		echo Tester\Environment::$useColors ? $s : Tester\Dumper::removeColors($s);
 	}
