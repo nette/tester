@@ -85,6 +85,7 @@ class Job
 			NULL,
 			array('bypass_shell' => TRUE)
 		);
+		putenv('NETTE_TESTER_COLORS');
 		list($stdin, $this->stdout, $stderr) = $pipes;
 		fclose($stdin);
 		stream_set_blocking($this->stdout, $blocking ? 1 : 0);
