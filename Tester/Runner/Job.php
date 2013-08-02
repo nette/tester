@@ -72,6 +72,7 @@ class Job
 	 */
 	public function run($blocking = TRUE)
 	{
+		putenv('NETTE_TESTER_RUNNER=1');
 		putenv('NETTE_TESTER_COLORS=' . (int) Tester\Environment::$useColors);
 		$this->proc = proc_open(
 			$this->php->getCommandLine() . ' ' . escapeshellarg($this->file) . ' ' . $this->args,
