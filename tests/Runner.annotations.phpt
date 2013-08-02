@@ -18,7 +18,7 @@ class Logger implements Tester\Runner\OutputHandler
 {
 	public $results = array();
 
-	function result($testName, $result, $message)
+	function result($testName, $result, $message, \Exception $exception = NULL)
 	{
 		$this->results[] = array($testName, $result, $message);
 	}

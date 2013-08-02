@@ -40,6 +40,9 @@ class Job
 	/** @var string  output headers in raw format */
 	private $headers;
 
+	/** @var \Exception  exception thrown in test */
+	private $resultException;
+
 	/** @var PhpExecutable */
 	private $php;
 
@@ -115,6 +118,11 @@ class Job
 		$code = proc_close($this->proc);
 		$this->exitCode = $code === self::CODE_NONE ? $status['exitcode'] : $code;
 
+		$exception = & $this->resultException;
+		$this->output = preg_replace_callback('#\n{exception}(.+?){/exception}\n#', function($m) use (& $exception) {
+			$exception = unserialize(base64_decode($m[1]));
+		}, $this->output);
+
 		if ($this->php->isCgi() && count($tmp = explode("\r\n\r\n", $this->output, 2)) >= 2) {
 			list($headers, $this->output) = $tmp;
 			foreach (explode("\r\n", $headers) as $header) {
@@ -175,6 +183,16 @@ class Job
 	public function getHeaders()
 	{
 		return $this->headers;
+	}
+
+
+	/**
+	 * Returns result exception.
+	 * @return NULL|\Exception
+	 */
+	public function getResultException()
+	{
+		return $this->resultException;
 	}
 
 }

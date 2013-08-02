@@ -44,7 +44,7 @@ class Logger implements Tester\Runner\OutputHandler
 	}
 
 
-	public function result($testName, $result, $message)
+	public function result($testName, $result, $message, \Exception $exception = NULL)
 	{
 		$message = Tester\Dumper::removeColors(trim($message));
 		$outputs = array(
