@@ -109,7 +109,6 @@ while (TRUE) {
 	if ($state !== $prev) {
 		$prev = $state;
 		$runner->run();
-		echo "\n";
 	}
 	echo "Watching {$options['--watch']} " . str_repeat('.', ++$counter % 5) . "    \r";
 	sleep(2);
