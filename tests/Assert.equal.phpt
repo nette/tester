@@ -5,6 +5,14 @@ use Tester\Assert;
 require __DIR__ . '/bootstrap.php';
 
 
+$obj1 = new stdClass;
+$obj1->{'0'} = 'a';
+$obj1->{'1'} = 'b';
+
+$obj2 = new stdClass;
+$obj2->{'1'} = 'b';
+$obj2->{'0'} = 'a';
+
 $equals = array(
 	array(1, 1),
 	array('1', '1'),
@@ -14,6 +22,7 @@ $equals = array(
 	array(new stdClass, new stdClass),
 	array(array(new stdClass), array(new stdClass)),
 	array(1/3, 1 - 2/3),
+	array($obj1, $obj2),
 );
 
 $notEquals = array(

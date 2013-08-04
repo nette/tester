@@ -442,18 +442,17 @@ class Assert
 		}
 
 		if (is_array($expected) && is_array($actual)) {
-			$arr1 = array_keys($expected);
-			sort($arr1);
-			$arr2 = array_keys($actual);
-			sort($arr2);
-			if ($arr1 !== $arr2) {
+			ksort($expected);
+			ksort($actual);
+			if (array_keys($expected) !== array_keys($actual)) {
 				return FALSE;
 			}
 
-			foreach ($expected as $key => $value) {
-				if (!self::isEqual($value, $actual[$key], $level + 1)) {
+			foreach ($expected as $value) {
+				if (!self::isEqual($value, current($actual), $level + 1)) {
 					return FALSE;
 				}
+				next($actual);
 			}
 			return TRUE;
 		}
