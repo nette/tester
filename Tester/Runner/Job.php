@@ -40,6 +40,9 @@ class Job
 	/** @var string  output headers in raw format */
 	private $headers;
 
+	/** @var \Exception  exception thrown in test */
+	private $resultException;
+
 	/** @var PhpExecutable */
 	private $php;
 
@@ -72,6 +75,7 @@ class Job
 	 */
 	public function run($blocking = TRUE)
 	{
+		putenv('NETTE_TESTER=1');
 		putenv('NETTE_TESTER_COLORS=' . (int) Tester\Environment::$useColors);
 		$this->proc = proc_open(
 			$this->php->getCommandLine() . ' ' . escapeshellarg($this->file) . ' ' . $this->args,
@@ -85,6 +89,8 @@ class Job
 			NULL,
 			array('bypass_shell' => TRUE)
 		);
+		putenv('NETTE_TESTER');
+		putenv('NETTE_TESTER_COLORS');
 		list($stdin, $this->stdout, $stderr) = $pipes;
 		fclose($stdin);
 		stream_set_blocking($this->stdout, $blocking ? 1 : 0);
@@ -111,6 +117,11 @@ class Job
 		fclose($this->stdout);
 		$code = proc_close($this->proc);
 		$this->exitCode = $code === self::CODE_NONE ? $status['exitcode'] : $code;
+
+		$exception = & $this->resultException;
+		$this->output = preg_replace_callback('#\n{exception}(.+?){/exception}\n#', function($m) use (& $exception) {
+			$exception = unserialize(base64_decode($m[1]));
+		}, $this->output);
 
 		if ($this->php->isCgi() && count($tmp = explode("\r\n\r\n", $this->output, 2)) >= 2) {
 			list($headers, $this->output) = $tmp;
@@ -172,6 +183,16 @@ class Job
 	public function getHeaders()
 	{
 		return $this->headers;
+	}
+
+
+	/**
+	 * Returns result exception.
+	 * @return NULL|\Exception
+	 */
+	public function getResultException()
+	{
+		return $this->resultException;
 	}
 
 }

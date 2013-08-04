@@ -65,6 +65,9 @@ class Environment
 	{
 		$s = self::$debugMode ? Dumper::dumpException($e) : "\nError: {$e->getMessage()}\n";
 		echo self::$useColors ? $s : Dumper::removeColors($s);
+		if (getenv('NETTE_TESTER')) {
+			echo "\n{exception}" . base64_encode(serialize($e)) . "{/exception}\n";
+		}
 		exit($e instanceof AssertException ? Runner\Job::CODE_FAIL : Runner\Job::CODE_ERROR);
 	}
 

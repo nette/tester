@@ -12,6 +12,7 @@
 namespace Tester\Runner\Output;
 
 use Tester,
+	Tester\AssertException,
 	Tester\Runner\Runner;
 
 
@@ -38,20 +39,41 @@ class TapPrinter implements Tester\Runner\OutputHandler
 	}
 
 
-	public function result($testName, $result, $message)
+	public function result($testName, $result, $message, \Exception $exception = NULL)
 	{
-		$outputs = array(
-			Runner::PASSED => "ok $testName",
-			Runner::SKIPPED => "ok $testName #skip $message",
-			Runner::FAILED => "not ok $testName" . str_replace("\n", "\n# ", "\n" . trim($message)),
-		);
-		echo $outputs[$result] . "\n";
+		switch ($result) {
+			case Runner::PASSED:
+				echo "ok $testName";
+				break;
+
+			case Runner::SKIPPED:
+				echo "ok $testName #skip $message";
+				break;
+
+			default:
+				echo "not ok $testName";
+				if ($exception instanceof AssertException) {
+					echo "\n## message: " . self::toLine($exception->getMessage());
+					echo "\n## actual: " . self::toLine(var_export($exception->actual, TRUE));
+					echo "\n## expected: " . self::toLine(var_export($exception->expected, TRUE));
+				}
+				echo str_replace("\n", "\n# ", "\n" . trim($message));
+		}
+		echo "\n";
 	}
 
 
 	public function end()
 	{
 		echo '1..' . array_sum($this->runner->getResults());
+	}
+
+
+	private static function toLine($s)
+	{
+		return preg_replace_callback('#[\x00-\x08\x0a-\x1f\x7f-\xff\\\\]#', function($m) {
+			return sprintf('\x%02x', ord($m[0]));
+		}, $s);
 	}
 
 }
