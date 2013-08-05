@@ -44,7 +44,7 @@ class Assert
 	);
 
 	/** @var callable  function(AssertException $exception) */
-	public static $onFailure = array(__CLASS__, 'assertionFailed');
+	public static $onFailure;
 
 
 	/**
@@ -365,7 +365,11 @@ class Assert
 		$e = new AssertException($message);
 		$e->actual = $actual;
 		$e->expected = $expected;
-		call_user_func(self::$onFailure, $e);
+		if (self::$onFailure) {
+			call_user_func(self::$onFailure, $e);
+		} else {
+			throw $e;
+		}
 	}
 
 
@@ -376,15 +380,6 @@ class Assert
 
 
 	/********************* helpers ****************d*g**/
-
-
-	/**
-	 * @return void
-	 */
-	private static function assertionFailed(AssertException $e)
-	{
-		throw $e;
-	}
 
 
 	/**
