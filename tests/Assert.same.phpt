@@ -15,6 +15,8 @@ $same = array(
 $notSame = array(
 	array(1, 1.0),
 	array(array('a' => TRUE, 'b' => FALSE), array('b' => FALSE, 'a' => TRUE)),
+	array(array('a', 'b'), array('b', 'a')),
+	array(array('a', 'b'), array(1 => 'b', 0 => 'a')),
 	array(new stdClass, new stdClass),
 	array(array(new stdClass), array(new stdClass)),
 );

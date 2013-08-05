@@ -1,0 +1,7 @@
+<?php
+
+register_shutdown_function(function() {
+	die(0); // due to bug #65275 error code will be 231 in CLI
+});
+
+die(231);
