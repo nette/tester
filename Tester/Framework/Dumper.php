@@ -21,6 +21,7 @@ class Dumper
 {
 	const MAX_LENGTH = 70;
 	const MAX_DEPTH = 50;
+	const DUMP_DIR = 'output';
 
 	/**
 	 * Dumps information about a variable in readable format.
@@ -214,8 +215,8 @@ class Dumper
 				|| is_object($e->actual) || is_array($e->actual) || (is_string($e->actual) && strlen($e->actual) > self::MAX_LENGTH)
 			) {
 				$args = isset($_SERVER['argv'][1]) ? '.[' . preg_replace('#[^a-z0-9-. ]+#i', '_', $_SERVER['argv'][1]) . ']' : '';
-				self::saveOutput($testFile, $e->expected, $args . '.expected');
-				self::saveOutput($testFile, $e->actual, $args . '.actual');
+				$stored[] = self::saveOutput($testFile, $e->expected, $args . '.expected');
+				$stored[] = self::saveOutput($testFile, $e->actual, $args . '.actual');
 			}
 
 			if ((is_string($e->actual) && is_string($e->expected))) {
@@ -245,7 +246,8 @@ class Dumper
 			$message = get_class($e) . ": {$e->getMessage()}";
 		}
 
-		$s = "\033[1;37m$message\033[0m\n\n";
+		$s = "\033[1;37m$message\033[0m\n\n"
+			. (isset($stored) ? "diff " . escapeshellarg($stored[0]) . " " . escapeshellarg($stored[1]) . "\n\n" : '');
 
 		foreach ($trace as $item) {
 			$item += array('file' => NULL);
@@ -266,14 +268,15 @@ class Dumper
 
 	/**
 	 * Dumps data to folder 'output'.
-	 * @return void
+	 * @return string
 	 * @internal
 	 */
 	public static function saveOutput($testFile, $content, $suffix = '')
 	{
-		$path = dirname($testFile) . '/output/' . basename($testFile, '.phpt') . $suffix;
+		$path = dirname($testFile) . DIRECTORY_SEPARATOR . self::DUMP_DIR . DIRECTORY_SEPARATOR . basename($testFile, '.phpt') . $suffix;
 		@mkdir(dirname($path)); // @ - directory may already exist
 		file_put_contents($path, is_string($content) ? $content : self::toPhp($content));
+		return $path;
 	}
 
 
