@@ -200,21 +200,22 @@ class Dumper
 	{
 		$trace = $e->getTrace();
 		array_splice($trace, 0, $e instanceof \ErrorException ? 1 : 0, array(array('file' => $e->getFile(), 'line' => $e->getLine())));
-		$last = & $trace[count($trace) - 1]['file'];
+
+		$testFile = NULL;
+		foreach (array_reverse($trace) as $item) {
+			if (isset($item['file'])) { // in case of shutdown handler, we want to skip inner-code blocks and debugging calls
+				$testFile = $item['file'];
+				break;
+			}
+		}
 
 		if ($e instanceof AssertException) {
-			// logs big variables to files in 'output' subdir; in case of shutdown handler, we want to skip inner-code blocks and debugging calls
-			foreach (array_reverse($e->getTrace()) as $item) {
-				if (isset($item['file']) && substr($item['file'], -5) === '.phpt') {
-					$args = isset($_SERVER['argv'][1]) ? '.[' . preg_replace('#[^a-z0-9-. ]+#i', '_', $_SERVER['argv'][1]) . ']' : '';
-					if (is_object($e->expected) || is_array($e->expected) || (is_string($e->expected) && strlen($e->expected) > 80)) {
-						self::saveOutput($item['file'], $e->expected, $args . '.expected');
-					}
-					if (is_object($e->actual) || is_array($e->actual) || (is_string($e->actual) && strlen($e->actual) > 80)) {
-						self::saveOutput($item['file'], $e->actual, $args . '.actual');
-					}
-					break;
-				}
+			if (is_object($e->expected) || is_array($e->expected) || (is_string($e->expected) && strlen($e->expected) > self::MAX_LENGTH)
+				|| is_object($e->actual) || is_array($e->actual) || (is_string($e->actual) && strlen($e->actual) > self::MAX_LENGTH)
+			) {
+				$args = isset($_SERVER['argv'][1]) ? '.[' . preg_replace('#[^a-z0-9-. ]+#i', '_', $_SERVER['argv'][1]) . ']' : '';
+				self::saveOutput($testFile, $e->expected, $args . '.expected');
+				self::saveOutput($testFile, $e->actual, $args . '.actual');
 			}
 
 			if ((is_string($e->actual) && is_string($e->expected))) {
@@ -248,7 +249,7 @@ class Dumper
 
 		foreach ($trace as $item) {
 			$item += array('file' => NULL);
-			$s .= 'in ' . ($item['file'] === $last ? "\033[1;37m" : '')
+			$s .= 'in ' . ($item['file'] === $testFile ? "\033[1;37m" : '')
 				. ($item['file'] ? implode(DIRECTORY_SEPARATOR, array_slice(explode(DIRECTORY_SEPARATOR, $item['file']), -3)) . "($item[line])" : '[internal function]')
 				. "\033[1;30m "
 				. (isset($item['class']) ? $item['class'] . $item['type'] : '')
