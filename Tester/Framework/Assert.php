@@ -449,6 +449,10 @@ class Assert
 			if ($arr1 !== $arr2) {
 				return FALSE;
 			}
+			ksort($expected);
+			$expected = array_values($expected);
+			ksort($actual);
+			$actual = array_values($actual);
 
 			foreach ($expected as $key => $value) {
 				if (!self::isEqual($value, $actual[$key], $level + 1)) {

@@ -5,6 +5,23 @@ use Tester\Assert;
 require __DIR__ . '/bootstrap.php';
 
 
+$collectionItemOne = new stdClass;
+$collectionItemOne->name = "item one";
+
+$collectionItemTwo = new stdClass;
+$collectionItemTwo->name = "item two";
+
+$zero = 0;
+$one = 1;
+
+$collectionOne = new stdClass();
+$collectionOne->{$zero} = $collectionItemOne;
+$collectionOne->{$one} = $collectionItemTwo;
+
+$collectionTwo = new stdClass();
+$collectionTwo->{$one} = $collectionItemTwo;
+$collectionTwo->{$zero} = $collectionItemOne;
+
 $equals = array(
 	array(1, 1),
 	array('1', '1'),
@@ -14,6 +31,7 @@ $equals = array(
 	array(new stdClass, new stdClass),
 	array(array(new stdClass), array(new stdClass)),
 	array(1/3, 1 - 2/3),
+	array($collectionOne, $collectionTwo),
 );
 
 $notEquals = array(
