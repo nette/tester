@@ -40,3 +40,6 @@ $bug65275 = $cli && PHP_VERSION_ID >= 50300; // bug still exists
 Assert::same($bug65275 ? array(Runner::FAILED, 'Exited with error code 231 (expected 0)') : array(Runner::PASSED, NULL), $logger->results['shutdown.exitCode.b.phptx']);
 
 Assert::same(array(Runner::SKIPPED, 'just skipping'), $logger->results['skip.phptx']);
+
+Assert::same($bug62725 ? Runner::PASSED : Runner::FAILED, $logger->results['shutdown.assert.phptx'][0]);
+Assert::match($bug62725 ? '' : "Failed: 'b' should be%A%", Tester\Dumper::removeColors($logger->results['shutdown.assert.phptx'][1]));
