@@ -43,7 +43,7 @@ if ($cmd->isEmpty()) {
 }
 
 try {
-	$generator = new ReportGenerator($options['-c'], $options['-s'], $options['-t']);
+	$generator = new Tester\CodeCoverage\ReportGenerator($options['-c'], $options['-s'], $options['-t']);
 	if ($options['-o'] === '-') {
 		$generator->render();
 	} else {
