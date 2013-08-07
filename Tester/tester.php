@@ -32,7 +32,7 @@ Tester\Environment::setup();
 
 
 $cmd = new Cmd("
-Nette Tester (v0.9.2)
+Nette Tester (v0.9.3)
 ---------------------
 Usage:
 	tester.php [options] [<test file> | <directory>]...
