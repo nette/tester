@@ -75,7 +75,7 @@ class TestHandler
 		$testName .= ($job->getArguments() ? " [{$job->getArguments()}]" : '');
 		$options += array(
 			'exitcode' => Job::CODE_OK,
-			'httpcode' => isset($options['assertcode']) ? $options['assertcode'] : self::HTTP_OK,
+			'httpcode' => self::HTTP_OK,
 		);
 
 		foreach (array_intersect_key($this->assessments, $options) as $name => $method) {

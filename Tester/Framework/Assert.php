@@ -39,7 +39,6 @@ class Assert
 		'%f%' => '[+-]?\.?\d+\.?\d*(?:[Ee][+-]?\d+)?', // floating point number
 		'%h%' => '[0-9a-fA-F]+',// one or more HEX digits
 		'%ds%'=> '[\\\\/]', // directory separator
-		'%ns%'=> '(?:[_0-9a-zA-Z\\\\]+\\\\|N)?', // Nette 2.0.x namespace
 		'%(\[.*\].*)%'=> '$1',  // range
 	);
 
