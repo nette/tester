@@ -1,21 +1,8 @@
 Licenses
 ========
 
-Good news! You may use Nette Framework under the terms of either
+Good news! You may use Nette Tester under the terms of either
 the New BSD License or the GNU General Public License (GPL) version 2 or 3.
-
-The BSD License is recommended for most projects. It is easy to understand and it
-places almost no restrictions on what you can do with the framework. If the GPL
-fits better to your project, you can use the framework under this license.
-
-You don't have to notify anyone which license you are using. You can freely
-use Nette Framework in commercial projects as long as the copyright header
-remains intact.
-
-Please be advised that the name "Nette Framework" is a protected trademark and its
-usage has some limitations. So please do not use word "Nette" in the name of your
-project or top-level domain, and choose a name that stands on its own merits.
-If your stuff is good, it will not take long to establish a reputation for yourselves.
 
 
 
@@ -35,7 +22,7 @@ are permitted provided that the following conditions are met:
 	this list of conditions and the following disclaimer in the documentation
 	and/or other materials provided with the distribution.
 
-	* Neither the name of "Nette Framework" nor the names of its contributors
+	* Neither the name of "Nette Tester" nor the names of its contributors
 	may be used to endorse or promote products derived from this software
 	without specific prior written permission.
 
