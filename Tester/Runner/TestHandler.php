@@ -115,7 +115,7 @@ class TestHandler
 
 	private function initiateDataProvider($provider, PhpExecutable $php, $file)
 	{
-		if (!preg_match('#^(\??)\s*([^,]+)\s*,?\s*(\S.*)?()#', $provider, $matches)) {
+		if (!preg_match('#^(\??)\s*([^,\s]+)\s*,?\s*(\S.*)?()#', $provider, $matches)) {
 			return array(Runner::FAILED, 'Invalid @dataprovider value.');
 		}
 		try {
