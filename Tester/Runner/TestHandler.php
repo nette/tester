@@ -80,10 +80,10 @@ class TestHandler
 
 		foreach (array_intersect_key($this->assessments, $options) as $name => $method) {
 			if ($res = $this->$method($job, $options[$name])) {
-				return $this->runner->writeResult($testName, $res[0], $res[1]);
+				return $this->runner->writeResult($testName, $res[0], $res[1], $job->getRunTime());
 			}
 		}
-		$this->runner->writeResult($testName, Runner::PASSED);
+		$this->runner->writeResult($testName, Runner::PASSED, NULL, $job->getRunTime());
 	}
 
 
