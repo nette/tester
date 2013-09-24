@@ -20,7 +20,7 @@ class Logger implements Tester\Runner\OutputHandler
 
 	function result($testName, $result, $message, $runTime)
 	{
-		$this->results[basename($testName)] = array($result, $message, $runTime);
+		$this->results[basename($testName)] = array($result, $message, NULL);
 	}
 
 	function begin() {}
@@ -34,12 +34,12 @@ $runner->run();
 
 $cli = PHP_SAPI === 'cli';
 $bug62725 = $cli && PHP_VERSION_ID >= 50400 && PHP_VERSION_ID <= 50406;
-Assert::same($bug62725 ? array(Runner::PASSED, NULL) : array(Runner::FAILED, 'Exited with error code 231 (expected 0)'), $logger->results['shutdown.exitCode.a.phptx']);
+Assert::same($bug62725 ? array(Runner::PASSED, NULL, NULL) : array(Runner::FAILED, 'Exited with error code 231 (expected 0)', NULL), $logger->results['shutdown.exitCode.a.phptx']);
 
 $bug65275 = $cli && PHP_VERSION_ID >= 50300; // bug still exists
-Assert::same($bug65275 ? array(Runner::FAILED, 'Exited with error code 231 (expected 0)') : array(Runner::PASSED, NULL), $logger->results['shutdown.exitCode.b.phptx']);
+Assert::same($bug65275 ? array(Runner::FAILED, 'Exited with error code 231 (expected 0)', NULL) : array(Runner::PASSED, NULL, NULL), $logger->results['shutdown.exitCode.b.phptx']);
 
-Assert::same(array(Runner::SKIPPED, 'just skipping'), $logger->results['skip.phptx']);
+Assert::same(array(Runner::SKIPPED, 'just skipping', NULL), $logger->results['skip.phptx']);
 
 Assert::same($bug62725 ? Runner::PASSED : Runner::FAILED, $logger->results['shutdown.assert.phptx'][0]);
 Assert::match($bug62725 ? '' : "Failed: 'b' should be%A%", Tester\Dumper::removeColors($logger->results['shutdown.assert.phptx'][1]));
