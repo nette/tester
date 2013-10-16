@@ -70,8 +70,9 @@ if ($cmd->isEmpty() || $options['--help']) {
 	exit;
 }
 
-$phpArgs = $options['-c'] ? '-c ' . escapeshellarg($options['-c']) : '-n';
-foreach ($options['-d'] as $item) {
+$phpArgs = '-n'; // strip all default ini files
+$phpArgs .= $options['-c'] ? ' -c ' . escapeshellarg($options['-c']) : ''; // use custom ini file
+foreach ($options['-d'] as $item) { // set ini value
 	$phpArgs .= ' -d ' . escapeshellarg($item);
 }
 
