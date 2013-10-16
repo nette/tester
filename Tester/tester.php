@@ -70,7 +70,7 @@ if ($cmd->isEmpty() || $options['--help']) {
 	exit;
 }
 
-$phpArgs = $options['-c'] ? '-c ' . escapeshellarg($options['-c']) : '-n';
+$phpArgs = $options['-c'] ? '-n -c ' . escapeshellarg($options['-c']) : '-n';
 foreach ($options['-d'] as $item) {
 	$phpArgs .= ' -d ' . escapeshellarg($item);
 }
