@@ -51,7 +51,7 @@ Options:
 
 ", array(
 	'-c' => array(Cmd::REALPATH => TRUE),
-	'--watch' => array(Cmd::REALPATH => TRUE),
+	'--watch' => array(Cmd::REPEATABLE => TRUE, Cmd::REALPATH => TRUE),
 	'paths' => array(Cmd::REPEATABLE => TRUE, Cmd::VALUE => getcwd()),
 	'--debug' => array(),
 ));
@@ -101,15 +101,17 @@ $prev = array();
 $counter = 0;
 while (TRUE) {
 	$state = array();
-	foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($options['--watch'])) as $file) {
-		if (substr($file->getExtension(), 0, 3) === 'php') {
-			$state[(string) $file] = md5_file((string) $file);
+	foreach ($options['--watch'] as $directory) {
+		foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($directory)) as $file) {
+			if (substr($file->getExtension(), 0, 3) === 'php') {
+				$state[(string) $file] = md5_file((string) $file);
+			}
 		}
 	}
 	if ($state !== $prev) {
 		$prev = $state;
 		$runner->run();
 	}
-	echo "Watching {$options['--watch']} " . str_repeat('.', ++$counter % 5) . "    \r";
+	echo "Watching " . implode(', ', $options['--watch']) . " " . str_repeat('.', ++$counter % 5) . "    \r";
 	sleep(2);
 }
