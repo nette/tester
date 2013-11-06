@@ -64,8 +64,8 @@ class Runner
 	 */
 	public function run()
 	{
-		foreach ($this->outputHandlers as $hander) {
-			$hander->begin();
+		foreach ($this->outputHandlers as $handler) {
+			$handler->begin();
 		}
 
 		$this->results = array(self::PASSED => 0, self::SKIPPED => 0, self::FAILED => 0);
@@ -92,8 +92,8 @@ class Runner
 			}
 		}
 
-		foreach ($this->outputHandlers as $hander) {
-			$hander->end();
+		foreach ($this->outputHandlers as $handler) {
+			$handler->end();
 		}
 		return !$this->results[self::FAILED];
 	}
@@ -132,11 +132,11 @@ class Runner
 	 * Writes to output handlers.
 	 * @return void
 	 */
-	public function writeResult($testName, $result, $message = NULL)
+	public function writeResult($testName, $result, $message = NULL, $runTime = NULL)
 	{
 		$this->results[$result]++;
 		foreach ($this->outputHandlers as $hander) {
-			$hander->result($testName, $result, $message);
+			$hander->result($testName, $result, $message, $runTime);
 		}
 	}
 
