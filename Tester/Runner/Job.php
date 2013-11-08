@@ -52,6 +52,12 @@ class Job
 	/** @var int */
 	private $exitCode = self::CODE_NONE;
 
+	/** @var float */
+	private $startTime;
+
+	/** @var float */
+	private $runTime;
+
 
 	/**
 	 * @param  string  test file name
@@ -72,6 +78,8 @@ class Job
 	 */
 	public function run($blocking = TRUE)
 	{
+		$this->startTime = microtime(TRUE);
+
 		putenv('NETTE_TESTER_RUNNER=1');
 		putenv('NETTE_TESTER_COLORS=' . (int) Tester\Environment::$useColors);
 		$this->proc = proc_open(
@@ -108,6 +116,8 @@ class Job
 		if ($status['running']) {
 			return TRUE;
 		}
+
+		$this->runTime = microtime(TRUE) - $this->startTime;
 
 		fclose($this->stdout);
 		$code = proc_close($this->proc);
@@ -173,6 +183,16 @@ class Job
 	public function getHeaders()
 	{
 		return $this->headers;
+	}
+
+
+	/**
+	 * Returns run time.
+	 * @return float
+	 */
+	public function getRunTime()
+	{
+		return $this->runTime;
 	}
 
 }

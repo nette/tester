@@ -38,7 +38,7 @@ class TapPrinter implements Tester\Runner\OutputHandler
 	}
 
 
-	public function result($testName, $result, $message)
+	public function result($testName, $result, $message, $runTime)
 	{
 		$message = Tester\Dumper::removeColors(trim($message));
 		$outputs = array(
