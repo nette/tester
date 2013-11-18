@@ -58,7 +58,7 @@ class TestCase
 				$data[] = array();
 			}
 
-			foreach ($data as $key => $args) {
+			foreach ($data as $args) {
 				try {
 					if ($info['throws']) {
 						$tmp = $this;

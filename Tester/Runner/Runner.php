@@ -60,7 +60,7 @@ class Runner
 
 	/**
 	 * Runs all tests.
-	 * @return void
+	 * @return bool
 	 */
 	public function run()
 	{

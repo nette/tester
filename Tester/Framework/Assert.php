@@ -267,7 +267,7 @@ class Assert
 	 * @param  callable
 	 * @param  int|string
 	 * @param  string message
-	 * @return void
+	 * @return null|Exception
 	 */
 	public static function error($function, $expectedType, $expectedMessage = NULL)
 	{
