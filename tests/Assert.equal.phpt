@@ -23,6 +23,7 @@ $equals = array(
 	array(array(new stdClass), array(new stdClass)),
 	array(1/3, 1 - 2/3),
 	array($obj1, $obj2),
+	array(array(0 => 'a', 'str' => 'b'), array('str' => 'b', 0 => 'a')),
 );
 
 $notEquals = array(
