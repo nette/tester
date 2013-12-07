@@ -37,6 +37,9 @@ class Environment
 				|| getenv('ConEmuANSI') === 'ON' || getenv('ANSICON') !== FALSE));
 
 		class_exists('Tester\Runner\Job');
+		class_exists('Tester\Dumper');
+		class_exists('Tester\Assert');
+
 		error_reporting(E_ALL | E_STRICT);
 		ini_set('display_errors', TRUE);
 		ini_set('html_errors', FALSE);
