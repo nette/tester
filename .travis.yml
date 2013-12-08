@@ -4,4 +4,4 @@ php:
     - 5.4
     - 5.5
 
-script: "Tester/tester tests/"
+script: Tester/tester tests/ || (E=$?; for i in $(find . -name \*.actual); do echo "--- $i"; cat $i; echo; echo; done; exit $E)
