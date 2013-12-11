@@ -43,3 +43,6 @@ Assert::same(array(Runner::SKIPPED, 'just skipping'), $logger->results['skip.php
 
 Assert::same($bug62725 ? Runner::PASSED : Runner::FAILED, $logger->results['shutdown.assert.phptx'][0]);
 Assert::match($bug62725 ? '' : "Failed: 'b' should be%A%", Tester\Dumper::removeColors($logger->results['shutdown.assert.phptx'][1]));
+
+Assert::same(Runner::FAILED, $logger->results['compileWarning.phptx'][0]);
+Assert::matchFile(__DIR__ . '/edge/compileWarning.expect', $logger->results['compileWarning.phptx'][1]);

@@ -1,0 +1,18 @@
+<?php
+
+use Tester\Assert;
+
+$root = realpath(__DIR__ . '/../..');
+spl_autoload_register(function($class) use ($root) {
+	$class = str_replace('\\', DIRECTORY_SEPARATOR, $class);
+	if (!is_file("$root/$class.php")) {
+		$class = preg_replace('#^Tester#', 'Tester/Framework', $class);
+	}
+
+	require "$root/$class.php";
+});
+
+Tester\Environment::setup();
+Tester\Environment::$useColors = FALSE;
+
+require __DIR__ . '/compileWarning.inc.php';

@@ -1,0 +1,5 @@
+Exited with error code 255 (expected 0)
+ErrorException: The use statement with non-compound name 'A' has no effect
+
+in tests%ds%edge%ds%compileWarning.inc.php(3)
+in tests%ds%edge%ds%compileWarning.phptx(18) require()
