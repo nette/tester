@@ -19,9 +19,9 @@ namespace Tester;
  */
 class Dumper
 {
-	const MAX_LENGTH = 70;
-	const MAX_DEPTH = 50;
-	const DUMP_DIR = 'output';
+	public static $maxLength = 70;
+	public static $maxDepth = 50;
+	public static $dumpDir = 'output';
 
 	/**
 	 * Dumps information about a variable in readable format.
@@ -55,10 +55,10 @@ class Dumper
 			return strpos($var, '.') === FALSE ? $var . '.0' : $var;
 
 		} elseif (is_string($var)) {
-			if ($cut = @iconv_strlen($var, 'UTF-8') > self::MAX_LENGTH) {
-				$var = iconv_substr($var, 0, self::MAX_LENGTH, 'UTF-8') . '...';
-			} elseif ($cut = strlen($var) > self::MAX_LENGTH) {
-				$var = substr($var, 0, self::MAX_LENGTH) . '...';
+			if ($cut = @iconv_strlen($var, 'UTF-8') > self::$maxLength) {
+				$var = iconv_substr($var, 0, self::$maxLength, 'UTF-8') . '...';
+			} elseif ($cut = strlen($var) > self::$maxLength) {
+				$var = substr($var, 0, self::$maxLength) . '...';
 			}
 			return (preg_match('#[^\x09\x0A\x0D\x20-\x7E\xA0-\x{10FFFF}]#u', $var) || preg_last_error() ? '"' . strtr($var, $table) . '"' : "'$var'");
 
@@ -67,7 +67,7 @@ class Dumper
 			$counter = 0;
 			foreach ($var as $k => & $v) {
 				$out .= ($out === '' ? '' : ', ');
-				if (strlen($out) > self::MAX_LENGTH) {
+				if (strlen($out) > self::$maxLength) {
 					$out .= '...';
 					break;
 				}
@@ -140,7 +140,7 @@ class Dumper
 			if (empty($var)) {
 				$out = '';
 
-			} elseif ($level > self::MAX_DEPTH || isset($var[$marker])) {
+			} elseif ($level > self::$maxDepth || isset($var[$marker])) {
 				return '/* Nesting level too deep or recursive dependency */';
 
 			} else {
@@ -158,7 +158,7 @@ class Dumper
 				}
 				unset($var[$marker]);
 			}
-			return 'array(' . (strpos($out, "\n") === FALSE && strlen($out) < self::MAX_LENGTH ? $out : $outAlt) . ')';
+			return 'array(' . (strpos($out, "\n") === FALSE && strlen($out) < self::$maxLength ? $out : $outAlt) . ')';
 
 		} elseif (is_object($var)) {
 			$arr = (array) $var;
@@ -168,7 +168,7 @@ class Dumper
 			if (empty($arr)) {
 				$out = '';
 
-			} elseif ($level > self::MAX_DEPTH || in_array($var, $list, TRUE)) {
+			} elseif ($level > self::$maxDepth || in_array($var, $list, TRUE)) {
 				return '/* Nesting level too deep or recursive dependency */';
 
 			} else {
@@ -211,8 +211,8 @@ class Dumper
 		}
 
 		if ($e instanceof AssertException) {
-			if (is_object($e->expected) || is_array($e->expected) || (is_string($e->expected) && strlen($e->expected) > self::MAX_LENGTH)
-				|| is_object($e->actual) || is_array($e->actual) || (is_string($e->actual) && strlen($e->actual) > self::MAX_LENGTH)
+			if (is_object($e->expected) || is_array($e->expected) || (is_string($e->expected) && strlen($e->expected) > self::$maxLength)
+				|| is_object($e->actual) || is_array($e->actual) || (is_string($e->actual) && strlen($e->actual) > self::$maxLength)
 			) {
 				$args = isset($_SERVER['argv'][1]) ? '.[' . preg_replace('#[^a-z0-9-. ]+#i', '_', $_SERVER['argv'][1]) . ']' : '';
 				$stored[] = self::saveOutput($testFile, $e->expected, $args . '.expected');
@@ -221,7 +221,7 @@ class Dumper
 
 			if ((is_string($e->actual) && is_string($e->expected))) {
 				for ($i = 0; $i < strlen($e->actual) && isset($e->expected[$i]) && $e->actual[$i] === $e->expected[$i]; $i++);
-				$i = max(0, min($i, max(strlen($e->actual), strlen($e->expected)) - self::MAX_LENGTH + 3));
+				$i = max(0, min($i, max(strlen($e->actual), strlen($e->expected)) - self::$maxLength + 3));
 				for (; $i && $i < count($e->actual) && $e->actual[$i-1] >= "\x80" && $e->actual[$i] >= "\x80" && $e->actual[$i] < "\xC0"; $i--);
 				if ($i) {
 					$e->expected = substr_replace($e->expected, '...', 0, $i);
@@ -273,7 +273,7 @@ class Dumper
 	 */
 	public static function saveOutput($testFile, $content, $suffix = '')
 	{
-		$path = dirname($testFile) . DIRECTORY_SEPARATOR . self::DUMP_DIR . DIRECTORY_SEPARATOR . basename($testFile, '.phpt') . $suffix;
+		$path = dirname($testFile) . DIRECTORY_SEPARATOR . self::$dumpDir . DIRECTORY_SEPARATOR . basename($testFile, '.phpt') . $suffix;
 		@mkdir(dirname($path)); // @ - directory may already exist
 		file_put_contents($path, is_string($content) ? $content : self::toPhp($content));
 		return $path;
