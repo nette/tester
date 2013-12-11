@@ -273,7 +273,10 @@ class Dumper
 	 */
 	public static function saveOutput($testFile, $content, $suffix = '')
 	{
-		$path = dirname($testFile) . DIRECTORY_SEPARATOR . self::$dumpDir . DIRECTORY_SEPARATOR . basename($testFile, '.phpt') . $suffix;
+		$path = self::$dumpDir . DIRECTORY_SEPARATOR . basename($testFile, '.phpt') . $suffix;
+		if (!preg_match('#/|\w:#A', self::$dumpDir)) {
+			$path = dirname($testFile) . DIRECTORY_SEPARATOR . $path;
+		}
 		@mkdir(dirname($path)); // @ - directory may already exist
 		file_put_contents($path, is_string($content) ? $content : self::toPhp($content));
 		return $path;
