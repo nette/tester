@@ -441,8 +441,8 @@ class Assert
 		}
 
 		if (is_array($expected) && is_array($actual)) {
-			ksort($expected);
-			ksort($actual);
+			ksort($expected, SORT_STRING);
+			ksort($actual, SORT_STRING);
 			if (array_keys($expected) !== array_keys($actual)) {
 				return FALSE;
 			}
