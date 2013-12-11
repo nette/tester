@@ -91,9 +91,15 @@ class TestCase
 			call_user_func_array(array($this, $name), $args);
 		} catch (\Exception $e) {
 		}
-		$this->tearDown();
+		try {
+		  $this->tearDown();
+		} catch (\Exception $tearDownEx) {
+		}
 		if (isset($e)) {
 			throw $e;
+		}
+		if (isset($tearDownEx)) {
+			throw $tearDownEx;
 		}
 	}
 
