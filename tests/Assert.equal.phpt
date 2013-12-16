@@ -13,6 +13,9 @@ $obj2 = new stdClass;
 $obj2->{'1'} = 'b';
 $obj2->{'0'} = 'a';
 
+$deep1 = $deep2 = new stdClass;
+$deep1->x = $deep2->x = $deep1;
+
 $equals = array(
 	array(1, 1),
 	array('1', '1'),
@@ -24,6 +27,7 @@ $equals = array(
 	array(1/3, 1 - 2/3),
 	array($obj1, $obj2),
 	array(array(0 => 'a', 'str' => 'b'), array('str' => 'b', 0 => 'a')),
+	array($deep1, $deep2),
 );
 
 $notEquals = array(

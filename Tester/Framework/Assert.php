@@ -436,6 +436,9 @@ class Assert
 		}
 
 		if (is_object($expected) && is_object($actual) && get_class($expected) === get_class($actual)) {
+			if ($expected === $actual) {
+				return TRUE;
+			}
 			$expected = (array) $expected;
 			$actual = (array) $actual;
 		}
@@ -455,6 +458,7 @@ class Assert
 			}
 			return TRUE;
 		}
+
 		return $expected === $actual;
 	}
 
