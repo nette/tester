@@ -243,7 +243,8 @@ class Dumper
 				'%2' => "\033[1;33m" . Dumper::toLine($e->expected) . "\033[1;37m",
 			));
 		} else {
-			$message = get_class($e) . ": {$e->getMessage()}";
+			$message = ($e instanceof \ErrorException ? Helpers::errorTypeToString($e->getSeverity()) : get_class($e))
+				. ": {$e->getMessage()}";
 		}
 
 		$s = "\033[1;37m$message\033[0m\n\n"

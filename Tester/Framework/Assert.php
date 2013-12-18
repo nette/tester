@@ -272,7 +272,7 @@ class Assert
 	public static function error($function, $expectedType, $expectedMessage = NULL)
 	{
 		if (is_int($expectedType)) {
-			$expectedTypeStr = self::errorTypeToString($expectedType);
+			$expectedTypeStr = Helpers::errorTypeToString($expectedType);
 
 		} elseif (!is_string($expectedType)) {
 			throw new \Exception('Error type must be E_* constant or Exception class name.');
@@ -285,7 +285,7 @@ class Assert
 
 		$catched = FALSE;
 		set_error_handler(function($severity, $message, $file, $line) use (& $catched, $expectedType, $expectedMessage, $expectedTypeStr) {
-			$errorStr = Assert::errorTypeToString($severity) . ($message ? " ($message)" : '');
+			$errorStr = Helpers::errorTypeToString($severity) . ($message ? " ($message)" : '');
 			if (($severity & error_reporting()) !== $severity) {
 				return;
 
@@ -462,21 +462,7 @@ class Assert
 		return $expected === $actual;
 	}
 
-
-	/**
-	 * @internal
-	 */
-	/*private*/ static function errorTypeToString($type)
-	{
-		$consts = get_defined_constants(TRUE);
-		foreach ($consts['Core'] as $name => $val) {
-			if ($type === $val && substr($name, 0, 2) === 'E_') {
-				return $name;
 			}
-		}
-	}
-
-}
 
 
 /**

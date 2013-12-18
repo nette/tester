@@ -87,4 +87,18 @@ class Helpers
 		Environment::setup();
 	}
 
+
+	/**
+	 * @internal
+	 */
+	public static function errorTypeToString($type)
+	{
+		$consts = get_defined_constants(TRUE);
+		foreach ($consts['Core'] as $name => $val) {
+			if ($type === $val && substr($name, 0, 2) === 'E_') {
+				return $name;
+			}
+		}
+	}
+
 }
