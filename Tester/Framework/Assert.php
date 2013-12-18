@@ -265,45 +265,55 @@ class Assert
 	/**
 	 * Checks if the function generates PHP error or throws exception.
 	 * @param  callable
-	 * @param  int|string
+	 * @param  int|string|array
 	 * @param  string message
 	 * @return null|Exception
 	 */
 	public static function error($function, $expectedType, $expectedMessage = NULL)
 	{
-		if (is_int($expectedType)) {
-			$expectedTypeStr = Helpers::errorTypeToString($expectedType);
-
-		} elseif (!is_string($expectedType)) {
-			throw new \Exception('Error type must be E_* constant or Exception class name.');
-
-		} elseif (preg_match('#^E_[A-Z_]+\z#', $expectedType)) {
-			$expectedType = constant($expectedTypeStr = $expectedType);
-		} else {
+		if (is_string($expectedType) && !preg_match('#^E_[A-Z_]+\z#', $expectedType)) {
 			return static::exception($function, $expectedType, $expectedMessage);
 		}
 
-		$catched = FALSE;
-		set_error_handler(function($severity, $message, $file, $line) use (& $catched, $expectedType, $expectedMessage, $expectedTypeStr) {
-			$errorStr = Helpers::errorTypeToString($severity) . ($message ? " ($message)" : '');
+		$expected = is_array($expectedType) ? $expectedType : array(array($expectedType, $expectedMessage));
+		foreach ($expected as & $item) {
+			list($expectedType, $expectedMessage) = $item;
+			if (is_int($expectedType)) {
+				$item[2] = Helpers::errorTypeToString($expectedType);
+			} elseif (is_string($expectedType)) {
+				$item[0] = constant($item[2] = $expectedType);
+			} else {
+				throw new \Exception('Error type must be E_* constant.');
+			}
+		}
+
+		set_error_handler(function($severity, $message, $file, $line) use (& $expected) {
 			if (($severity & error_reporting()) !== $severity) {
 				return;
+			}
 
-			} elseif ($catched) {
-				Assert::fail("Expected one $expectedTypeStr, but another $errorStr was generated in file $file on line $line");
+			$errorStr = Helpers::errorTypeToString($severity) . ($message ? " ($message)" : '');
+			list($expectedType, $expectedMessage, $expectedTypeStr) = array_shift($expected);
+			if ($expectedType === NULL) {
+				restore_error_handler();
+				Assert::fail("Generated more errors than expected: $errorStr was generated in file $file on line $line");
 
 			} elseif ($severity !== $expectedType) {
+				restore_error_handler();
 				Assert::fail("$expectedTypeStr was expected, but $errorStr was generated in file $file on line $line");
 
 			} elseif ($expectedMessage && !Assert::isMatching($expectedMessage, $message)) {
+				restore_error_handler();
 				Assert::fail("$expectedTypeStr with a message matching %2 was expected but got %1", $message, $expectedMessage);
 			}
-			$catched = TRUE;
 		});
+
+		reset($expected);
 		call_user_func($function);
 		restore_error_handler();
-		if (!$catched) {
-			self::fail("$expectedTypeStr was expected, but none was generated");
+
+		if ($expected) {
+			self::fail('Error was expected, but was not generated');
 		}
 	}
 
