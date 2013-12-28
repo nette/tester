@@ -46,11 +46,15 @@ class Runner
 	/** @var array */
 	private $results;
 
+	/** @var bool */
+	private $handleInterrupt;
+
 
 	public function __construct(PhpExecutable $php)
 	{
 		$this->php = $php;
 		$this->testHandler = new TestHandler($this);
+		$this->handleInterrupt = extension_loaded('pcntl');
 	}
 
 
@@ -70,7 +74,16 @@ class Runner
 			$this->findTests($path);
 		}
 
-		while ($this->jobs || $running) {
+		$interrupted = FALSE;
+		if ($this->handleInterrupt) {
+			pcntl_signal(SIGINT, function() use (& $interrupted) {
+				pcntl_signal(SIGINT, SIG_DFL);
+				$interrupted = TRUE;
+			});
+		}
+
+		$this->dispatchSignal();
+		while (!$interrupted && ($this->jobs || $running)) {
 			for ($i = count($running); $this->jobs && $i < $this->jobCount; $i++) {
 				$running[] = $job = array_shift($this->jobs);
 				$job->run($this->jobCount <= 1 || (count($running) + count($this->jobs) <= 1));
@@ -81,11 +94,21 @@ class Runner
 			}
 
 			foreach ($running as $key => $job) {
+				$this->dispatchSignal();
+				if ($interrupted) {
+					break 2;
+				}
 				if (!$job->isRunning()) {
 					$this->testHandler->assess($job);
 					unset($running[$key]);
 				}
 			}
+
+			$this->dispatchSignal();
+		}
+
+		if ($this->handleInterrupt) {
+			pcntl_signal(SIGINT, SIG_DFL);
 		}
 
 		foreach ($this->outputHandlers as $handler) {
@@ -110,6 +133,17 @@ class Runner
 			if (is_file($file)) {
 				$this->testHandler->initiate(realpath($file));
 			}
+		}
+	}
+
+
+	/**
+	 * @return void
+	 */
+	private function dispatchSignal()
+	{
+		if ($this->handleInterrupt) {
+			pcntl_signal_dispatch();
 		}
 	}
 
