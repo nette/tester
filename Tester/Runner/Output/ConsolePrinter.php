@@ -77,13 +77,14 @@ class ConsolePrinter implements Tester\Runner\OutputHandler
 	public function end()
 	{
 		$results = $this->runner->getResults();
-		$s = "\n\n" . $this->buffer . "\n"
+		$count = array_sum($results);
+		$s = !$count ? "No tests found\n" :
+			"\n\n" . $this->buffer . "\n"
 			. ($results[Runner::FAILED] ? "\033[1;41;37mFAILURES!" : "\033[1;42;37mOK")
-			. ' (' . array_sum($results) . ' tests, '
+			. " ($count tests, "
 			. ($results[Runner::FAILED] ? $results[Runner::FAILED] . ' failures, ' : '')
 			. ($results[Runner::SKIPPED] ? $results[Runner::SKIPPED] . ' skipped, ' : '')
-			. sprintf('%0.1f', $this->time + microtime(TRUE)) . " seconds)\033[0m"
-			. "\n";
+			. sprintf('%0.1f', $this->time + microtime(TRUE)) . " seconds)\033[0m\n";
 
 		echo Tester\Environment::$useColors ? $s : Tester\Dumper::removeColors($s);
 		$this->buffer = NULL;
