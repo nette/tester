@@ -438,7 +438,7 @@ class Assert
 		}
 
 		if (is_float($expected) && is_float($actual)) {
-			return abs($expected - $actual) < self::EPSILON;
+			return ($expected === $actual) || (abs($expected - $actual) / max(abs($expected), abs($actual)) < self::EPSILON);
 		}
 
 		if (is_object($expected) && is_object($actual) && get_class($expected) === get_class($actual)) {
