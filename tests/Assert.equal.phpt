@@ -25,6 +25,8 @@ $equals = array(
 	array(new stdClass, new stdClass),
 	array(array(new stdClass), array(new stdClass)),
 	array(1/3, 1 - 2/3),
+	array(1/3*1e9, (1 - 2/3)*1e9),
+	array(0.0, 0.0),
 	array($obj1, $obj2),
 	array(array(0 => 'a', 'str' => 'b'), array('str' => 'b', 0 => 'a')),
 	array($deep1, $deep2),
