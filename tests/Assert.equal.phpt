@@ -16,6 +16,9 @@ $obj2->{'0'} = 'a';
 $deep1 = $deep2 = new stdClass;
 $deep1->x = $deep2->x = $deep1;
 
+$float1 = 1 / 3;
+$float2 = 1 - 2 / 3;
+
 $equals = array(
 	array(1, 1),
 	array('1', '1'),
@@ -24,8 +27,10 @@ $equals = array(
 	array(array('a' => TRUE, 'b' => FALSE), array('b' => FALSE, 'a' => TRUE)),
 	array(new stdClass, new stdClass),
 	array(array(new stdClass), array(new stdClass)),
-	array(1/3, 1 - 2/3),
-	array(1/3*1e9, (1 - 2/3)*1e9),
+	array($float1, $float2),
+	array($float1 * 1e9, $float2 * 1e9),
+	array($float1 - $float2, 0.0),
+	array($float1 - $float2, $float2 - $float1),
 	array(0.0, 0.0),
 	array($obj1, $obj2),
 	array(array(0 => 'a', 'str' => 'b'), array('str' => 'b', 0 => 'a')),
