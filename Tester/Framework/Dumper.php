@@ -47,6 +47,9 @@ class Dumper
 			return "$var";
 
 		} elseif (is_float($var)) {
+			if (!is_finite($var)) {
+				return var_export($var, TRUE);
+			}
 			$var = json_encode($var);
 			return strpos($var, '.') === FALSE ? $var . '.0' : $var;
 
