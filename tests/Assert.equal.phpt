@@ -32,6 +32,7 @@ $equals = array(
 	array($float1 - $float2, 0.0),
 	array($float1 - $float2, $float2 - $float1),
 	array(0.0, 0.0),
+	array(INF, INF),
 	array($obj1, $obj2),
 	array(array(0 => 'a', 'str' => 'b'), array('str' => 'b', 0 => 'a')),
 	array($deep1, $deep2),
@@ -39,6 +40,8 @@ $equals = array(
 
 $notEquals = array(
 	array(1, 1.0),
+	array(INF, -INF),
+	array(NAN, NAN),
 	array(array('a', 'b'), array('b', 'a')),
 );
 
