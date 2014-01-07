@@ -29,16 +29,6 @@ class MyTest extends Tester\TestCase
 		self::$order[] = __METHOD__;
 	}
 
-	protected function testProtected()
-	{
-		self::$order[] = __METHOD__;
-	}
-
-	private function testPrivate()
-	{
-		self::$order[] = __METHOD__;
-	}
-
 }
 
 

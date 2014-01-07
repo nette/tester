@@ -22,10 +22,14 @@ class TestCase
 	public function run($method = NULL)
 	{
 		$rc = new \ReflectionClass($this);
-		$methods = $method ? array($rc->getMethod($method)) : $rc->getMethods(\ReflectionMethod::IS_PUBLIC);
+		$methods = $method ? array($rc->getMethod($method)) : $rc->getMethods();
 		foreach ($methods as $method) {
 			if (!preg_match('#^test[A-Z0-9_]#', $method->getName())) {
 				continue;
+			}
+
+			if (!$method->isPublic()) {
+				throw new TestCaseException("Method {$method->getName()} is not public. Make it public or rename it.");
 			}
 
 			$data = array();
