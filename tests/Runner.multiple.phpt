@@ -32,6 +32,8 @@ Assert::same(array(
 	array('dataProvider.query.phptx', escapeshellarg('foo 3 xxx')),
 	array('multiple.phptx', '0'),
 	array('multiple.phptx', '1'),
+	array('testcase.phptx', escapeshellarg('test1')),
 	array('testcase.phptx', escapeshellarg('testBar')),
 	array('testcase.phptx', escapeshellarg('testFoo')),
+	array('testcase.phptx', escapeshellarg('test_foo')),
 ), $tests);

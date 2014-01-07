@@ -17,4 +17,24 @@ class MyTest
 		exit(2);
 	}
 
+	public function test_foo()
+	{
+		exit(3);
+	}
+
+	public function test1()
+	{
+		exit(4);
+	}
+
+	protected function testProtected()
+	{
+		exit(5);
+	}
+
+	protected function testPrivate()
+	{
+		exit(6);
+	}
+
 }

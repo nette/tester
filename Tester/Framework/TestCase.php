@@ -15,7 +15,6 @@ namespace Tester;
  */
 class TestCase
 {
-
 	/**
 	 * Runs the test case.
 	 * @return void
@@ -25,7 +24,7 @@ class TestCase
 		$rc = new \ReflectionClass($this);
 		$methods = $method ? array($rc->getMethod($method)) : $rc->getMethods(\ReflectionMethod::IS_PUBLIC);
 		foreach ($methods as $method) {
-			if (!preg_match('#^test[A-Z]#', $method->getName())) {
+			if (!preg_match('#^test[A-Z0-9_]#', $method->getName())) {
 				continue;
 			}
 
