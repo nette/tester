@@ -4,7 +4,12 @@
  * @testcase
  */
 
-class MyTest
+use Tester\TestCase;
+
+require __DIR__ . '/../bootstrap.php';
+
+
+class MyTest extends TestCase
 {
 
 	public function testFoo()
@@ -38,3 +43,6 @@ class MyTest
 	}
 
 }
+
+$testCase = new MyTest;
+$testCase->run(isset($_SERVER['argv'][1]) ? $_SERVER['argv'][1] : NULL);

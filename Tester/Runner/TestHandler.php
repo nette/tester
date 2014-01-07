@@ -138,12 +138,40 @@ class TestHandler
 
 	private function initiateTestCase($foo, PhpExecutable $php, $file)
 	{
-		if (preg_match_all('#\sfunction\s+(test\w+)\(#', file_get_contents($file), $matches)) {
-			foreach ($matches[1] as $item) {
-				$this->runner->addJob(new Job($file, $php, escapeshellarg($item)));
-			}
-			return TRUE;
+		$proc = proc_open(
+			$php->getCommandLine()
+				. ' '
+				. escapeshellarg($file)
+				. ' '
+				. escapeshellarg(Tester\TestCase::LIST_METHODS),
+			array(
+				array('pipe', 'r'),
+				array('pipe', 'w'),
+				array('pipe', 'w'),
+			),
+			$pipes,
+			dirname($file),
+			NULL,
+			array('bypass_shell' => TRUE)
+		);
+
+		$stdout = stream_get_contents($pipes[1]);
+		array_map('fclose', $pipes);
+
+		$mark = Tester\TestCase::LIST_METHODS;
+		if (!preg_match('#\n'.$mark.'-begin\n(.*?)\n'.$mark.'-end\n#s', $stdout, $match)) {
+			return array(Runner::FAILED, "Cannot list TestCase methods in file '$file'. Do you call TestCase::run() in it?");
 		}
+
+		$methods = json_decode($match[1]);
+		if (!count($methods)) {
+			return array(Runner::SKIPPED, "TestCase in file '$file' does not contain test methods.");
+		}
+
+		foreach ($methods as $method) {
+			$this->runner->addJob(new Job($file, $php, escapeshellarg($method)));
+		}
+		return TRUE;
 	}
 
 
