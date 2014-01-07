@@ -437,8 +437,9 @@ class Assert
 			throw new \Exception('Nesting level too deep or recursive dependency.');
 		}
 
-		if (is_float($expected) && is_float($actual)) {
-			return ($expected === $actual) || (abs($expected - $actual) / max(abs($expected), abs($actual)) < self::EPSILON);
+		if (is_float($expected) && is_float($actual) && is_finite($expected) && is_finite($actual)) {
+			$diff = abs($expected - $actual);
+			return ($diff < self::EPSILON) || ($diff / max(abs($expected), abs($actual)) < self::EPSILON);
 		}
 
 		if (is_object($expected) && is_object($actual) && get_class($expected) === get_class($actual)) {
