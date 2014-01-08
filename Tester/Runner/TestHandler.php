@@ -140,7 +140,7 @@ class TestHandler
 	{
 		$proc = proc_open(
 			$php->getCommandLine()
-				. ' '
+				. ' -d register_argc_argv=On '
 				. escapeshellarg($file)
 				. ' '
 				. escapeshellarg(Tester\TestCase::LIST_METHODS),
@@ -168,6 +168,7 @@ class TestHandler
 			return array(Runner::SKIPPED, "TestCase in file '$file' does not contain test methods.");
 		}
 
+		$php->arguments .= ' -d register_argc_argv=On';
 		foreach ($methods as $method) {
 			$this->runner->addJob(new Job($file, $php, escapeshellarg($method)));
 		}
