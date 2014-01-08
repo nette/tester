@@ -15,11 +15,19 @@ namespace Tester;
  */
 class Environment
 {
+	/** Should Tester use console colors? */
+	const COLORS = 'NETTE_TESTER_COLORS';
+
+	/** Test is runned by Runner */
+	const RUNNER = 'NETTE_TESTER_RUNNER';
+
+
 	/** @var bool  used for debugging Tester itself */
 	public static $debugMode = TRUE;
 
 	/** @var bool */
 	public static $useColors;
+
 
 	/**
 	 * Configures PHP environment.
@@ -27,8 +35,8 @@ class Environment
 	 */
 	public static function setup()
 	{
-		self::$useColors = getenv('NETTE_TESTER_COLORS') !== FALSE
-			? (bool) getenv('NETTE_TESTER_COLORS')
+		self::$useColors = getenv(self::COLORS) !== FALSE
+			? (bool) getenv(self::COLORS)
 			: (PHP_SAPI === 'cli' && ((function_exists('posix_isatty') && posix_isatty(STDOUT))
 				|| getenv('ConEmuANSI') === 'ON' || getenv('ANSICON') !== FALSE));
 
