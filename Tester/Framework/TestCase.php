@@ -15,6 +15,9 @@ namespace Tester;
  */
 class TestCase
 {
+	/** @internal */
+	const LIST_METHODS = 'nette-tester-list-methods';
+
 
 	/**
 	 * Runs the test case.
@@ -22,11 +25,30 @@ class TestCase
 	 */
 	public function run($method = NULL)
 	{
+		$pattern = '#^test[A-Z0-9_]#';
 		$rc = new \ReflectionClass($this);
-		$methods = $method ? array($rc->getMethod($method)) : $rc->getMethods(\ReflectionMethod::IS_PUBLIC);
+
+		if ($method === self::LIST_METHODS) {
+			$tmp = array();
+			foreach ($rc->getMethods() as $method) {
+				if (preg_match($pattern, $method->getName())) {
+					$tmp[] = $method->getName();
+				}
+			}
+
+			$mark = self::LIST_METHODS;
+			echo "\n$mark-begin\n" . json_encode($tmp) . "\n$mark-end\n";
+			exit(1);
+		}
+
+		$methods = $method ? array($rc->getMethod($method)) : $rc->getMethods();
 		foreach ($methods as $method) {
-			if (!preg_match('#^test[A-Z]#', $method->getName())) {
+			if (!preg_match($pattern, $method->getName())) {
 				continue;
+			}
+
+			if (!$method->isPublic()) {
+				throw new TestCaseException("Method {$method->getName()} is not public. Make it public or rename it.");
 			}
 
 			$data = array();

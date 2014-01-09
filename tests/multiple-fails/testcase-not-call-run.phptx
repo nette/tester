@@ -1,0 +1,19 @@
+<?php
+
+/**
+ * @testcase
+ */
+
+use Tester\TestCase;
+
+require __DIR__ . '/../bootstrap.php';
+
+
+class MyTest extends TestCase
+{
+
+	public function testFoo()
+	{
+		exit(1);
+	}
+}
