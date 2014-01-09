@@ -35,10 +35,8 @@ class TestCase
 					$tmp[] = $method->getName();
 				}
 			}
-
-			$mark = self::LIST_METHODS;
-			echo "\n$mark-begin\n" . json_encode($tmp) . "\n$mark-end\n";
-			exit(1);
+			echo json_encode($tmp);
+			return;
 		}
 
 		$methods = $method ? array($rc->getMethod($method)) : $rc->getMethods();
