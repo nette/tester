@@ -155,16 +155,12 @@ class TestHandler
 			array('bypass_shell' => TRUE)
 		);
 
-		$stdout = stream_get_contents($pipes[1]);
+		$methods = json_decode(strrchr(stream_get_contents($pipes[1]), '['));
 		array_map('fclose', $pipes);
 
-		$mark = Tester\TestCase::LIST_METHODS;
-		if (!preg_match('#\n'.$mark.'-begin\n(.*?)\n'.$mark.'-end\n#s', $stdout, $match)) {
+		if (!is_array($methods)) {
 			return array(Runner::FAILED, "Cannot list TestCase methods in file '$file'. Do you call TestCase::run() in it?");
-		}
-
-		$methods = json_decode($match[1]);
-		if (!count($methods)) {
+		} elseif (!$methods) {
 			return array(Runner::SKIPPED, "TestCase in file '$file' does not contain test methods.");
 		}
 
