@@ -28,15 +28,18 @@ class TestCase
 		$pattern = '#^test[A-Z0-9_]#';
 		$rc = new \ReflectionClass($this);
 
-		if ($method === self::LIST_METHODS) {
-			$tmp = array();
-			foreach ($rc->getMethods() as $method) {
-				if (preg_match($pattern, $method->getName())) {
-					$tmp[] = $method->getName();
+		if ($method === NULL && isset($_SERVER['argv'][1])) {
+			if ($_SERVER['argv'][1] === self::LIST_METHODS) {
+				$tmp = array();
+				foreach ($rc->getMethods() as $method) {
+					if (preg_match($pattern, $method->getName())) {
+						$tmp[] = $method->getName();
+					}
 				}
+				echo json_encode($tmp);
+				return;
 			}
-			echo json_encode($tmp);
-			return;
+			$method = $_SERVER['argv'][1];
 		}
 
 		$methods = $method ? array($rc->getMethod($method)) : $rc->getMethods();
