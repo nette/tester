@@ -54,12 +54,15 @@ class Logger implements Tester\Runner\OutputHandler
 
 	public function end()
 	{
+		$jobCount = $this->runner->getJobCount();
 		$results = $this->runner->getResults();
+		$count = array_sum($results);
 		fputs($this->file,
 			($results[Runner::FAILED] ? 'FAILURES!' : 'OK')
-			. ' (' . array_sum($results) . ' tests'
+			. " ($jobCount tests"
 			. ($results[Runner::FAILED] ? ", {$results[Runner::FAILED]} failures" : '')
 			. ($results[Runner::SKIPPED] ? ", {$results[Runner::SKIPPED]} skipped" : '')
+			. ($jobCount !== $count ? ', ' . ($jobCount - $count) . ' not runned' : '')
 			. ')'
 		);
 	}

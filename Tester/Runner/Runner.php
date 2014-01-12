@@ -43,6 +43,9 @@ class Runner
 	/** @var Job[] */
 	private $jobs;
 
+	/** @var int */
+	private $jobCount;
+
 	/** @var array */
 	private $results;
 
@@ -72,6 +75,7 @@ class Runner
 		foreach ($this->paths as $path) {
 			$this->findTests($path);
 		}
+		$this->jobCount = count($this->jobs) + array_sum($this->results);
 
 		$this->installInterruptHandler();
 		while (($this->jobs || $running) && !$this->isInterrupted()) {
@@ -130,6 +134,16 @@ class Runner
 	public function addJob(Job $job)
 	{
 		$this->jobs[] = $job;
+	}
+
+
+	/**
+	 * Get count of jobs.
+	 * @return int
+	 */
+	public function getJobCount()
+	{
+		return $this->jobCount;
 	}
 
 
