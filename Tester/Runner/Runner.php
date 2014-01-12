@@ -47,14 +47,13 @@ class Runner
 	private $results;
 
 	/** @var bool */
-	private $handleInterrupt;
+	private $interrupted;
 
 
 	public function __construct(PhpExecutable $php)
 	{
 		$this->php = $php;
 		$this->testHandler = new TestHandler($this);
-		$this->handleInterrupt = extension_loaded('pcntl');
 	}
 
 
@@ -74,16 +73,8 @@ class Runner
 			$this->findTests($path);
 		}
 
-		$interrupted = FALSE;
-		if ($this->handleInterrupt) {
-			pcntl_signal(SIGINT, function() use (& $interrupted) {
-				pcntl_signal(SIGINT, SIG_DFL);
-				$interrupted = TRUE;
-			});
-		}
-
-		$this->dispatchSignal();
-		while (!$interrupted && ($this->jobs || $running)) {
+		$this->installInterruptHandler();
+		while (($this->jobs || $running) && !$this->isInterrupted()) {
 			for ($i = count($running); $this->jobs && $i < $this->jobCount; $i++) {
 				$running[] = $job = array_shift($this->jobs);
 				$job->run($this->jobCount <= 1 || (count($running) + count($this->jobs) <= 1));
@@ -94,22 +85,17 @@ class Runner
 			}
 
 			foreach ($running as $key => $job) {
-				$this->dispatchSignal();
-				if ($interrupted) {
-					break 2;
-				}
-				if (!$job->isRunning()) {
+				if (!$job->isRunning() && !$this->isInterrupted()) {
 					$this->testHandler->assess($job);
 					unset($running[$key]);
 				}
+
+				if ($this->isInterrupted()) {
+					break 2;
+				}
 			}
-
-			$this->dispatchSignal();
 		}
-
-		if ($this->handleInterrupt) {
-			pcntl_signal(SIGINT, SIG_DFL);
-		}
+		$this->removeInterruptHandler();
 
 		foreach ($this->outputHandlers as $handler) {
 			$handler->end();
@@ -133,17 +119,6 @@ class Runner
 			if (is_file($file)) {
 				$this->testHandler->initiate(realpath($file));
 			}
-		}
-	}
-
-
-	/**
-	 * @return void
-	 */
-	private function dispatchSignal()
-	{
-		if ($this->handleInterrupt) {
-			pcntl_signal_dispatch();
 		}
 	}
 
@@ -186,6 +161,47 @@ class Runner
 	public function getResults()
 	{
 		return $this->results;
+	}
+
+
+	/**
+	 * @return void
+	 */
+	private function installInterruptHandler()
+	{
+		$this->interrupted = FALSE;
+
+		if (extension_loaded('pcntl')) {
+			$interrupted = & $this->interrupted;
+			pcntl_signal(SIGINT, function() use (& $interrupted) {
+				pcntl_signal(SIGINT, SIG_DFL);
+				$interrupted = TRUE;
+			});
+		}
+	}
+
+
+	/**
+	 * @return void
+	 */
+	private function removeInterruptHandler()
+	{
+		if (extension_loaded('pcntl')) {
+			pcntl_signal(SIGINT, SIG_DFL);
+		}
+	}
+
+
+	/**
+	 * @return bool
+	 */
+	private function isInterrupted()
+	{
+		if (extension_loaded('pcntl')) {
+			pcntl_signal_dispatch();
+		}
+
+		return $this->interrupted;
 	}
 
 }
