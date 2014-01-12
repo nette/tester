@@ -36,7 +36,7 @@ class Logger implements Tester\Runner\OutputHandler
 	{
 		fputs($this->file, 'PHP ' . $this->runner->getPhp()->getVersion()
 			. ' | ' . $this->runner->getPhp()->getCommandLine()
-			. " | {$this->runner->jobCount} threads\n\n");
+			. " | {$this->runner->threadCount} threads\n\n");
 	}
 
 

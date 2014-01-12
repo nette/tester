@@ -28,8 +28,8 @@ class Runner
 	/** @var array  paths to test files/directories */
 	public $paths = array();
 
-	/** @var int  run jobs in parallel */
-	public $jobCount = 1;
+	/** @var int  run in parallel threads */
+	public $threadCount = 1;
 
 	/** @var TestHandler */
 	public $testHandler;
@@ -75,9 +75,9 @@ class Runner
 
 		$this->installInterruptHandler();
 		while (($this->jobs || $running) && !$this->isInterrupted()) {
-			for ($i = count($running); $this->jobs && $i < $this->jobCount; $i++) {
+			for ($i = count($running); $this->jobs && $i < $this->threadCount; $i++) {
 				$running[] = $job = array_shift($this->jobs);
-				$job->run($this->jobCount <= 1 || (count($running) + count($this->jobs) <= 1));
+				$job->run($this->threadCount <= 1 || (count($running) + count($this->jobs) <= 1));
 			}
 
 			if (count($running) > 1) {
