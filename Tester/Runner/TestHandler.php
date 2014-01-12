@@ -69,7 +69,7 @@ class TestHandler
 	public function assess(Job $job)
 	{
 		list($options, $testName) = $this->getAnnotations($job->getFile(), 'access');
-		$testName .= ($job->getArguments() ? " [{$job->getArguments()}]" : '');
+		$testName .= (strlen($job->getArguments()) ? " [{$job->getArguments()}]" : '');
 		$options += array(
 			'exitcode' => Job::CODE_OK,
 			'httpcode' => self::HTTP_OK,
