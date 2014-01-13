@@ -62,7 +62,7 @@ class Logger implements Tester\Runner\OutputHandler
 			. " ($jobCount tests"
 			. ($results[Runner::FAILED] ? ", {$results[Runner::FAILED]} failures" : '')
 			. ($results[Runner::SKIPPED] ? ", {$results[Runner::SKIPPED]} skipped" : '')
-			. ($jobCount !== $count ? ', ' . ($jobCount - $count) . ' not runned' : '')
+			. ($jobCount !== $count ? ', ' . ($jobCount - $count) . ' not run' : '')
 			. ')'
 		);
 	}
