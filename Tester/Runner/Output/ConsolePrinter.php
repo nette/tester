@@ -81,7 +81,7 @@ class ConsolePrinter implements Tester\Runner\OutputHandler
 			. " ($jobCount tests, "
 			. ($results[Runner::FAILED] ? $results[Runner::FAILED] . ' failures, ' : '')
 			. ($results[Runner::SKIPPED] ? $results[Runner::SKIPPED] . ' skipped, ' : '')
-			. ($jobCount !== $count ? ($jobCount - $count) . ' not runned, ' : '')
+			. ($jobCount !== $count ? ($jobCount - $count) . ' not run, ' : '')
 			. sprintf('%0.1f', $this->time + microtime(TRUE)) . " seconds)\033[0m\n";
 
 		echo Tester\Environment::$useColors ? $s : Tester\Dumper::removeColors($s);
