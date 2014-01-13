@@ -84,8 +84,12 @@ class Job
 		);
 		list($stdin, $this->stdout, $stderr) = $pipes;
 		fclose($stdin);
-		stream_set_blocking($this->stdout, $blocking ? 1 : 0);
 		fclose($stderr);
+		if ($blocking) {
+			$this->isRunning();
+		} else {
+			stream_set_blocking($this->stdout, 0);
+		}
 	}
 
 
