@@ -229,8 +229,9 @@ class Dumper
 			}
 
 			$message = 'Failed: ' . $e->getMessage();
-			if ((is_string($e->actual) && is_string($e->expected)) || (is_array($e->actual) && is_array($e->expected))) {
-				preg_match('#^(.*)(%\d)(.*)(%\d.*)\z#', $message, $m);
+			if (((is_string($e->actual) && is_string($e->expected)) || (is_array($e->actual) && is_array($e->expected)))
+				&& preg_match('#^(.*)(%\d)(.*)(%\d.*)\z#s', $message, $m)
+			) {
 				if (($delta = strlen($m[1]) - strlen($m[3])) >= 3) {
 					$message = "$m[1]$m[2]\n" . str_repeat(' ', $delta - 3) . "...$m[3]$m[4]";
 				} else {
