@@ -26,7 +26,7 @@ class TestCase
 	 */
 	public function run($method = NULL)
 	{
-		if ($method === NULL && isset($_SERVER['argv'][1])) {
+		if (($method === NULL || $method === self::LIST_METHODS) && isset($_SERVER['argv'][1])) {
 			if ($_SERVER['argv'][1] === self::LIST_METHODS) {
 				echo json_encode(preg_grep(self::METHOD_PATTERN, get_class_methods($this)));
 				return;
