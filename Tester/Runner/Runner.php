@@ -22,9 +22,6 @@ class Runner
 		SKIPPED = 2,
 		FAILED = 3;
 
-	/** waiting time between runs in microseconds */
-	const RUN_USLEEP = 10000;
-
 	/** @var array  paths to test files/directories */
 	public $paths = array();
 
@@ -85,17 +82,17 @@ class Runner
 			}
 
 			if (count($running) > 1) {
-				usleep(self::RUN_USLEEP); // stream_select() doesn't work with proc_open()
+				usleep(Job::RUN_USLEEP); // stream_select() doesn't work with proc_open()
 			}
 
 			foreach ($running as $key => $job) {
-				if (!$job->isRunning() && !$this->isInterrupted()) {
-					$this->testHandler->assess($job);
-					unset($running[$key]);
-				}
-
 				if ($this->isInterrupted()) {
 					break 2;
+				}
+
+				if (!$job->isRunning()) {
+					$this->testHandler->assess($job);
+					unset($running[$key]);
 				}
 			}
 		}

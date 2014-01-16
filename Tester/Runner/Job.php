@@ -24,6 +24,9 @@ class Job
 		CODE_FAIL = 178,
 		CODE_ERROR = 255;
 
+	/** waiting time between process activity check in microseconds */
+	const RUN_USLEEP = 10000;
+
 	/** @var string  test file */
 	private $file;
 
@@ -63,7 +66,7 @@ class Job
 
 	/**
 	 * Runs single test.
-	 * @param  bool
+	 * @param  bool  wait till process ends
 	 * @return void
 	 */
 	public function run($blocking = TRUE)
@@ -86,7 +89,9 @@ class Job
 		fclose($stdin);
 		fclose($stderr);
 		if ($blocking) {
-			$this->isRunning();
+			while ($this->isRunning()) {
+				usleep(self::RUN_USLEEP); // stream_select() doesn't work with proc_open()
+			}
 		} else {
 			stream_set_blocking($this->stdout, 0);
 		}
