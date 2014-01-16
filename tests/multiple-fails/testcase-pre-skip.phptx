@@ -1,0 +1,9 @@
+<?php
+
+/**
+ * @testcase
+ */
+
+require __DIR__ . '/../bootstrap.php';
+
+Tester\Environment::skip('pre-skip');

@@ -1,0 +1,8 @@
+<?php
+
+/**
+ * @testcase
+ */
+
+// syntax error
+{
