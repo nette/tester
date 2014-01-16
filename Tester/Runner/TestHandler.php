@@ -138,33 +138,22 @@ class TestHandler
 
 	private function initiateTestCase($foo, PhpExecutable $php, $file)
 	{
-		$proc = proc_open(
-			$php->getCommandLine()
-				. ' -d register_argc_argv=On '
-				. escapeshellarg($file)
-				. ' '
-				. escapeshellarg(Tester\TestCase::LIST_METHODS),
-			array(
-				array('pipe', 'r'),
-				array('pipe', 'w'),
-				array('pipe', 'w'),
-			),
-			$pipes,
-			dirname($file),
-			NULL,
-			array('bypass_shell' => TRUE)
-		);
+		$php->arguments .= ' -d register_argc_argv=On';
 
-		$methods = json_decode(strrchr(stream_get_contents($pipes[1]), '['));
-		array_map('fclose', $pipes);
+		$job = new Job($file, $php, escapeshellarg(Tester\TestCase::LIST_METHODS));
+		$job->run();
 
+		if (in_array($job->getExitCode(), array(Job::CODE_ERROR, Job::CODE_FAIL, Job::CODE_SKIP))) {
+			return array($job->getExitCode() === Job::CODE_SKIP ? Runner::SKIPPED : Runner::FAILED, $job->getOutput());
+		}
+
+		$methods = json_decode(strrchr($job->getOutput(), '['));
 		if (!is_array($methods)) {
 			return array(Runner::FAILED, "Cannot list TestCase methods in file '$file'. Do you call TestCase::run() in it?");
 		} elseif (!$methods) {
 			return array(Runner::SKIPPED, "TestCase in file '$file' does not contain test methods.");
 		}
 
-		$php->arguments .= ' -d register_argc_argv=On';
 		foreach ($methods as $method) {
 			$this->runner->addJob(new Job($file, $php, escapeshellarg($method)));
 		}
