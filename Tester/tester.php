@@ -43,12 +43,14 @@ Options:
 	--tap                Generate Test Anything Protocol.
 	-j <num>             Run <num> jobs in parallel.
 	-w | --watch <path>  Watch directory.
+	--setup <path>       Script for runner setup.
 	--colors [1|0]       Enable or disable colors.
 	-h | --help          This help.
 
 ", array(
 	'-c' => array(Cmd::REALPATH => TRUE),
 	'--watch' => array(Cmd::REPEATABLE => TRUE, Cmd::REALPATH => TRUE),
+	'--setup' => array(Cmd::REALPATH => TRUE),
 	'paths' => array(Cmd::REPEATABLE => TRUE, Cmd::VALUE => getcwd()),
 	'--debug' => array(),
 ));
@@ -85,6 +87,11 @@ if ($options['-log']) {
 	$runner->outputHandlers[] = new Tester\Runner\Output\Logger($runner, $options['-log']);
 }
 
+if ($options['--setup']) {
+	call_user_func(function() use ($runner) {
+		require func_get_arg(0);
+	}, $options['--setup']);
+}
 
 
 
