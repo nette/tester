@@ -1,3 +1,5 @@
+Nette Tester (v0.9.5)
+---------------------
 <?php
 
 /**
@@ -29,8 +31,6 @@ Tester\Environment::setup();
 
 
 $cmd = new Cmd("
-Nette Tester (v0.9.5)
----------------------
 Usage:
 	tester.php [options] [<test file> | <directory>]...
 
