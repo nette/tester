@@ -1,5 +1,7 @@
-Nette Tester (v0.9.5)
----------------------
+ _____ ___  ___ _____ ___  ___
+|_   _/ __)( __/_   _/ __)| _ )
+  |_| \___ /___) |_| \___ |_|_\  v0.9.5
+
 <?php
 
 /**
@@ -30,8 +32,7 @@ use Tester\Runner\CommandLine as Cmd;
 Tester\Environment::setup();
 
 
-$cmd = new Cmd("
-Usage:
+$cmd = new Cmd("Usage:
 	tester.php [options] [<test file> | <directory>]...
 
 Options:
