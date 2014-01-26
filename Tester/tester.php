@@ -63,6 +63,8 @@ Tester\Environment::$debugMode = (bool) $options['--debug'];
 
 if (isset($options['--colors'])) {
 	Tester\Environment::$useColors = (bool) $options['--colors'];
+} elseif ($options['--tap']) {
+	Tester\Environment::$useColors = FALSE;
 }
 
 if ($cmd->isEmpty() || $options['--help']) {
