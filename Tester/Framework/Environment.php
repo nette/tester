@@ -56,6 +56,7 @@ class Environment
 			}
 			return FALSE;
 		});
+
 		register_shutdown_function(function() {
 			Assert::$onFailure = array(__CLASS__, 'handleException'); // note that Runner is unable to catch this errors in CLI & PHP 5.4.0 - 5.4.6 due PHP bug #62725
 
@@ -66,14 +67,17 @@ class Environment
 				});
 			}
 		});
+
+		ob_start(function($s) {
+			return Environment::$useColors ? $s : Dumper::removeColors($s);
+		}, PHP_VERSION_ID < 50400 ? 2 : 1);
 	}
 
 
 	/** @internal */
 	public static function handleException($e)
 	{
-		$s = self::$debugMode ? Dumper::dumpException($e) : "\nError: {$e->getMessage()}\n";
-		echo self::$useColors ? $s : Dumper::removeColors($s);
+		echo self::$debugMode ? Dumper::dumpException($e) : "\nError: {$e->getMessage()}\n";
 		exit($e instanceof AssertException ? Runner\Job::CODE_FAIL : Runner\Job::CODE_ERROR);
 	}
 

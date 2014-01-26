@@ -55,7 +55,7 @@ class ConsolePrinter implements Tester\Runner\OutputHandler
 		$outputs = array(
 			Runner::PASSED => '.',
 			Runner::SKIPPED => 's',
-			Runner::FAILED => Tester\Environment::$useColors ? "\033[1;41;37mF\033[0m" : 'F',
+			Runner::FAILED => "\033[1;41;37mF\033[0m",
 		);
 		echo $outputs[$result];
 
@@ -75,7 +75,7 @@ class ConsolePrinter implements Tester\Runner\OutputHandler
 		$jobCount = $this->runner->getJobCount();
 		$results = $this->runner->getResults();
 		$count = array_sum($results);
-		$s = !$jobCount ? "No tests found\n" :
+		echo !$jobCount ? "No tests found\n" :
 			"\n\n" . $this->buffer . "\n"
 			. ($results[Runner::FAILED] ? "\033[1;41;37mFAILURES!" : "\033[1;42;37mOK")
 			. " ($jobCount tests, "
@@ -84,7 +84,6 @@ class ConsolePrinter implements Tester\Runner\OutputHandler
 			. ($jobCount !== $count ? ($jobCount - $count) . ' not run, ' : '')
 			. sprintf('%0.1f', $this->time + microtime(TRUE)) . " seconds)\033[0m\n";
 
-		echo Tester\Environment::$useColors ? $s : Tester\Dumper::removeColors($s);
 		$this->buffer = NULL;
 	}
 
