@@ -44,12 +44,14 @@ class TestHandler
 			if (!preg_match('#^initiate(.+)#', strtolower($method), $m) || !isset($annotations[$m[1]])) {
 				continue;
 			}
-			$res = $this->$method($annotations[$m[1]], $php, $file);
-			if ($res === TRUE) {
-				$job = TRUE;
-			} elseif ($res) {
-				$this->runner->writeResult($testName, $res[0], $res[1]);
-				return;
+			foreach ((array) $annotations[$m[1]] as $arg) {
+				$res = $this->$method($arg, $php, $file);
+				if ($res === TRUE) {
+					$job = TRUE;
+				} elseif ($res) {
+					$this->runner->writeResult($testName, $res[0], $res[1]);
+					return;
+				}
 			}
 		}
 
@@ -75,9 +77,11 @@ class TestHandler
 			if (!preg_match('#^assess(.+)#', strtolower($method), $m) || !isset($annotations[$m[1]])) {
 				continue;
 			}
-			if ($res = $this->$method($job, $annotations[$m[1]])) {
-				$this->runner->writeResult($testName, $res[0], $res[1]);
-				return;
+			foreach ((array) $annotations[$m[1]] as $arg) {
+				if ($res = $this->$method($job, $arg)) {
+					$this->runner->writeResult($testName, $res[0], $res[1]);
+					return;
+				}
 			}
 		}
 		$this->runner->writeResult($testName, Runner::PASSED);
@@ -90,23 +94,19 @@ class TestHandler
 	}
 
 
-	private function initiatePhpVersion($versions, PhpExecutable $php)
+	private function initiatePhpVersion($version, PhpExecutable $php)
 	{
-		foreach ((array) $versions as $version) {
-			if (preg_match('#^(<=|<|==|=|!=|<>|>=|>)?\s*(.+)#', $version, $matches)
-				&& version_compare($matches[2], $php->getVersion(), $matches[1] ?: '>='))
-			{
-				return array(Runner::SKIPPED, "Requires PHP $version.");
-			}
+		if (preg_match('#^(<=|<|==|=|!=|<>|>=|>)?\s*(.+)#', $version, $matches)
+			&& version_compare($matches[2], $php->getVersion(), $matches[1] ?: '>='))
+		{
+			return array(Runner::SKIPPED, "Requires PHP $version.");
 		}
 	}
 
 
-	private function initiatePhpIni($values, PhpExecutable $php)
+	private function initiatePhpIni($value, PhpExecutable $php)
 	{
-		foreach ((array) $values as $item) {
-			$php->arguments .= ' -d ' . Helpers::escapeArg(trim($item));
-		}
+		$php->arguments .= ' -d ' . Helpers::escapeArg($value);
 	}
 
 
