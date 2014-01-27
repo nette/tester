@@ -126,9 +126,9 @@ class TestCase
 	protected function getData($provider)
 	{
 		if (strpos($provider, '.')) {
-			list($file, $query) = preg_split('#\s*,?\s+#', "$provider ", 2);
 			$rc = new \ReflectionClass($this);
-			return DataProvider::load(dirname($rc->getFileName()) . DIRECTORY_SEPARATOR . $file, $query);
+			list($file, $query) = DataProvider::parseAnnotation($provider, $rc->getFileName());
+			return DataProvider::load($file, $query);
 		} else {
 			return $this->$provider();
 		}

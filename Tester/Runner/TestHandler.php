@@ -112,15 +112,15 @@ class TestHandler
 
 	private function initiateDataProvider($provider, PhpExecutable $php, $file)
 	{
-		if (!preg_match('#^(\??)\s*([^,\s]+)\s*,?\s*(\S.*)?()#', $provider, $matches)) {
-			return array(Runner::FAILED, 'Invalid @dataprovider value.');
-		}
 		try {
-			foreach (array_keys(Tester\DataProvider::load(dirname($file) . DIRECTORY_SEPARATOR . $matches[2], $matches[3])) as $item) {
-				$this->runner->addJob(new Job($file, $php, Helpers::escapeArg($item)));
-			}
+			list($dataFile, $query, $optional) = Tester\DataProvider::parseAnnotation($provider, $file);
+			$data = Tester\DataProvider::load($dataFile, $query);
 		} catch (\Exception $e) {
-			return array($matches[1] ? Runner::SKIPPED : Runner::FAILED, $e->getMessage());
+			return array(empty($optional) ? Runner::FAILED : Runner::SKIPPED, $e->getMessage());
+		}
+
+		foreach (array_keys($data) as $item) {
+			$this->runner->addJob(new Job($file, $php, Helpers::escapeArg($item)));
 		}
 		return TRUE;
 	}

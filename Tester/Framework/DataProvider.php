@@ -85,4 +85,17 @@ class DataProvider
 		throw new \InvalidArgumentException("Unknown operator $operator.");
 	}
 
+
+	/**
+	 * @return [file, query, optional]
+	 * @internal
+	*/
+	public static function parseAnnotation($annotation, $file)
+	{
+		if (!preg_match('#^(\??)\s*([^,\s]+)\s*,?\s*(\S.*)?()#', $annotation, $m)) {
+			throw new \Exception("Invalid @dataProvider value '$annotation'.");
+		}
+		return array(dirname($file) . DIRECTORY_SEPARATOR . $m[2], $m[3], (bool) $m[1]);
+	}
+
 }
