@@ -72,7 +72,13 @@ if ($cmd->isEmpty() || $options['--help']) {
 	exit;
 }
 
-$phpArgs = $options['-c'] ? '-n -c ' . escapeshellarg($options['-c']) : '-n';
+$phpArgs = '-n';
+if ($options['-c']) {
+	$phpArgs .= ' -c ' . escapeshellarg($options['-c']);
+} else {
+	echo "Warning: No php.ini is used.\n";
+}
+
 foreach ($options['-d'] as $item) {
 	$phpArgs .= ' -d ' . escapeshellarg($item);
 }
