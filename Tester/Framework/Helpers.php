@@ -97,4 +97,16 @@ class Helpers
 		}
 	}
 
+
+	/**
+	 * Escape a string to be used as a shell argument.
+	 * @return string
+	 */
+	public static function escapeArg($s)
+	{
+		return DIRECTORY_SEPARATOR === '\\' // Windows?
+			? '"' . str_replace('"', '""', $s) . '"'
+			: escapeshellarg($s);
+	}
+
 }

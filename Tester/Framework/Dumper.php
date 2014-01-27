@@ -248,7 +248,7 @@ class Dumper
 		}
 
 		$s = "\033[1;37m$message\033[0m\n\n"
-			. (isset($stored) ? "diff " . escapeshellarg($stored[0]) . " " . escapeshellarg($stored[1]) . "\n\n" : '');
+			. (isset($stored) ? 'diff ' . Helpers::escapeArg($stored[0]) . ' ' . Helpers::escapeArg($stored[1]) . "\n\n" : '');
 
 		foreach ($trace as $item) {
 			$item += array('file' => NULL);

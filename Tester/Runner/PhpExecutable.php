@@ -30,8 +30,9 @@ class PhpExecutable
 
 	public function __construct($path, $args = NULL)
 	{
+		$this->path = \Tester\Helpers::escapeArg($path);
 		$descriptors = array(array('pipe', 'r'), array('pipe', 'w'), array('pipe', 'w'));
-		$proc = @proc_open(escapeshellarg($path) . ' -n -v', $descriptors, $pipes);
+		$proc = @proc_open("$this->path -n -v", $descriptors, $pipes);
 		$output = stream_get_contents($pipes[1]);
 		$error = stream_get_contents($pipes[2]);
 		if (proc_close($proc)) {
@@ -42,7 +43,6 @@ class PhpExecutable
 
 		$this->version = $matches[1];
 		$this->cgi = strcasecmp($matches[2], 'g') === 0;
-		$this->path = escapeshellarg($path);
 		$this->arguments = $args;
 	}
 

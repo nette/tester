@@ -8,7 +8,8 @@
 namespace Tester\Runner;
 
 use Tester,
-	Tester\Dumper;
+	Tester\Dumper,
+	Tester\Helpers;
 
 
 /**
@@ -106,7 +107,7 @@ class TestHandler
 	private function initiatePhpIni($values, PhpExecutable $php)
 	{
 		foreach ((array) $values as $item) {
-			$php->arguments .= ' -d ' . escapeshellarg(trim($item));
+			$php->arguments .= ' -d ' . Helpers::escapeArg(trim($item));
 		}
 	}
 
@@ -118,7 +119,7 @@ class TestHandler
 		}
 		try {
 			foreach (array_keys(Tester\DataProvider::load(dirname($file) . DIRECTORY_SEPARATOR . $matches[2], $matches[3])) as $item) {
-				$this->runner->addJob(new Job($file, $php, escapeshellarg($item)));
+				$this->runner->addJob(new Job($file, $php, Helpers::escapeArg($item)));
 			}
 		} catch (\Exception $e) {
 			return array($matches[1] ? Runner::SKIPPED : Runner::FAILED, $e->getMessage());
@@ -140,7 +141,7 @@ class TestHandler
 	{
 		$php->arguments .= ' -d register_argc_argv=On';
 
-		$job = new Job($file, $php, escapeshellarg(Tester\TestCase::LIST_METHODS));
+		$job = new Job($file, $php, Helpers::escapeArg(Tester\TestCase::LIST_METHODS));
 		$job->run();
 
 		if (in_array($job->getExitCode(), array(Job::CODE_ERROR, Job::CODE_FAIL, Job::CODE_SKIP))) {
@@ -155,7 +156,7 @@ class TestHandler
 		}
 
 		foreach ($methods as $method) {
-			$this->runner->addJob(new Job($file, $php, escapeshellarg($method)));
+			$this->runner->addJob(new Job($file, $php, Helpers::escapeArg($method)));
 		}
 		return TRUE;
 	}
@@ -211,7 +212,7 @@ class TestHandler
 
 	private function getAnnotations($file)
 	{
-		$options = Tester\Helpers::parseDocComment(file_get_contents($file));
+		$options = Helpers::parseDocComment(file_get_contents($file));
 		$testName = (isset($options[0]) ? preg_replace('#^TEST:\s*#i', '', $options[0]) . ' | ' : '')
 			. implode(DIRECTORY_SEPARATOR, array_slice(explode(DIRECTORY_SEPARATOR, $file), -3));
 		return array($options, $testName);

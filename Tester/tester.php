@@ -74,13 +74,13 @@ if ($cmd->isEmpty() || $options['--help']) {
 
 $phpArgs = '-n';
 if ($options['-c']) {
-	$phpArgs .= ' -c ' . escapeshellarg($options['-c']);
+	$phpArgs .= ' -c ' . Tester\Helpers::escapeArg($options['-c']);
 } else {
 	echo "Warning: No php.ini is used.\n";
 }
 
 foreach ($options['-d'] as $item) {
-	$phpArgs .= ' -d ' . escapeshellarg($item);
+	$phpArgs .= ' -d ' . Tester\Helpers::escapeArg($item);
 }
 
 $runner = new Tester\Runner\Runner(new Tester\Runner\PhpExecutable($options['-p'], $phpArgs));
