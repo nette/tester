@@ -24,18 +24,10 @@ class TestHandler
 	/** @var Runner */
 	private $runner;
 
-	/** @var string[] */
-	private $initiators, $assessments;
-
 
 	public function __construct(Runner $runner)
 	{
 		$this->runner = $runner;
-		foreach (get_class_methods($this) as $method) {
-			if (preg_match('#^(assess|initiate)(.+)#', $method, $m)) {
-				$this->{$m[1][0] === 'a' ? 'assessments' : 'initiators'}[strtolower($m[2])] = $method;
-			}
-		}
 	}
 
 
@@ -48,8 +40,11 @@ class TestHandler
 		$php = clone $this->runner->getPhp();
 		$job = FALSE;
 
-		foreach (array_intersect_key($this->initiators, $annotations) as $name => $method) {
-			$res = $this->$method($annotations[$name], $php, $file);
+		foreach (get_class_methods($this) as $method) {
+			if (!preg_match('#^initiate(.+)#', strtolower($method), $m) || !isset($annotations[$m[1]])) {
+				continue;
+			}
+			$res = $this->$method($annotations[$m[1]], $php, $file);
 			if ($res === TRUE) {
 				$job = TRUE;
 			} elseif ($res) {
@@ -76,8 +71,11 @@ class TestHandler
 			'httpcode' => self::HTTP_OK,
 		);
 
-		foreach (array_intersect_key($this->assessments, $annotations) as $name => $method) {
-			if ($res = $this->$method($job, $annotations[$name])) {
+		foreach (get_class_methods($this) as $method) {
+			if (!preg_match('#^assess(.+)#', strtolower($method), $m) || !isset($annotations[$m[1]])) {
+				continue;
+			}
+			if ($res = $this->$method($job, $annotations[$m[1]])) {
 				$this->runner->writeResult($testName, $res[0], $res[1]);
 				return;
 			}
