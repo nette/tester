@@ -1,5 +1,5 @@
  _____ ___  ___ _____ ___  ___
-|_   _/ __)( __/_   _/ __)| _ )
+|Nette/ __)( __/_   _/ __)| _ )
   |_| \___ /___) |_| \___ |_|_\  v0.9.5
 
 <?php
@@ -33,20 +33,20 @@ Tester\Environment::setup();
 
 
 $cmd = new Cmd("Usage:
-	tester.php [options] [<test file> | <directory>]...
+    tester.php [options] [<test file> | <directory>]...
 
 Options:
-	-p <path>            Specify PHP executable to run (default: php-cgi).
-	-c <path>            Look for php.ini in directory <path> or use <path> as php.ini.
-	-log <path>          Write log to file <path>.
-	-d <key=value>...    Define INI entry 'key' with value 'val'.
-	-s                   Show information about skipped tests.
-	--tap                Generate Test Anything Protocol.
-	-j <num>             Run <num> jobs in parallel.
-	-w | --watch <path>  Watch directory.
-	--setup <path>       Script for runner setup.
-	--colors [1|0]       Enable or disable colors.
-	-h | --help          This help.
+    -p <path>            specify PHP executable to run (default: php-cgi)
+    -c <path>            look for php.ini file (or look in directory) <path>
+    -log <path>          write log to file <path>
+    -d <key=value>...    define INI entry 'key' with value 'val'
+    -s                   show information about skipped tests
+    --tap                generate Test Anything Protocol
+    -j <num>             run <num> jobs in parallel
+    -w | --watch <path>  watch directory
+    --setup <path>       script for runner setup
+    --colors [1|0]       enable or disable colors
+    -h | --help          this help
 
 ", array(
 	'-c' => array(Cmd::REALPATH => TRUE),
