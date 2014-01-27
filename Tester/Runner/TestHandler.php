@@ -44,12 +44,12 @@ class TestHandler
 	 */
 	public function initiate($file)
 	{
-		list($options, $testName) = $this->getAnnotations($file);
+		list($annotations, $testName) = $this->getAnnotations($file);
 		$php = clone $this->runner->getPhp();
 		$job = FALSE;
 
-		foreach (array_intersect_key($this->initiators, $options) as $name => $method) {
-			$res = $this->$method($options[$name], $php, $file);
+		foreach (array_intersect_key($this->initiators, $annotations) as $name => $method) {
+			$res = $this->$method($annotations[$name], $php, $file);
 			if ($res === TRUE) {
 				$job = TRUE;
 			} elseif ($res) {
@@ -69,15 +69,15 @@ class TestHandler
 	 */
 	public function assess(Job $job)
 	{
-		list($options, $testName) = $this->getAnnotations($job->getFile(), 'access');
+		list($annotations, $testName) = $this->getAnnotations($job->getFile(), 'access');
 		$testName .= (strlen($job->getArguments()) ? " [{$job->getArguments()}]" : '');
-		$options += array(
+		$annotations += array(
 			'exitcode' => Job::CODE_OK,
 			'httpcode' => self::HTTP_OK,
 		);
 
-		foreach (array_intersect_key($this->assessments, $options) as $name => $method) {
-			if ($res = $this->$method($job, $options[$name])) {
+		foreach (array_intersect_key($this->assessments, $annotations) as $name => $method) {
+			if ($res = $this->$method($job, $annotations[$name])) {
 				$this->runner->writeResult($testName, $res[0], $res[1]);
 				return;
 			}
@@ -212,10 +212,10 @@ class TestHandler
 
 	private function getAnnotations($file)
 	{
-		$options = Helpers::parseDocComment(file_get_contents($file));
-		$testName = (isset($options[0]) ? preg_replace('#^TEST:\s*#i', '', $options[0]) . ' | ' : '')
+		$annotations = Helpers::parseDocComment(file_get_contents($file));
+		$testName = (isset($annotations[0]) ? preg_replace('#^TEST:\s*#i', '', $annotations[0]) . ' | ' : '')
 			. implode(DIRECTORY_SEPARATOR, array_slice(explode(DIRECTORY_SEPARATOR, $file), -3));
-		return array($options, $testName);
+		return array($annotations, $testName);
 	}
 
 }
