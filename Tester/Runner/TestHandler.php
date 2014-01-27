@@ -120,7 +120,7 @@ class TestHandler
 		}
 
 		foreach (array_keys($data) as $item) {
-			$this->runner->addJob(new Job($file, $php, Helpers::escapeArg($item)));
+			$this->runner->addJob(new Job($file, $php, Helpers::escapeArg($item) . ' ' . Helpers::escapeArg($dataFile)));
 		}
 		return TRUE;
 	}

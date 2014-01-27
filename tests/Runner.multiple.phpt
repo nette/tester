@@ -26,11 +26,13 @@ foreach ($tests as $i => $job) {
 }
 sort($tests);
 
+$path = __DIR__ . DIRECTORY_SEPARATOR . 'multiple' . DIRECTORY_SEPARATOR;
+
 Assert::same(array(
-	array('dataProvider.phptx', Helpers::escapeArg('bar')),
-	array('dataProvider.phptx', Helpers::escapeArg('foo')),
-	array('dataProvider.query.phptx', Helpers::escapeArg('foo 2.2.3')),
-	array('dataProvider.query.phptx', Helpers::escapeArg('foo 3 xxx')),
+	array('dataProvider.phptx', Helpers::escapeArg('bar') . ' ' . Helpers::escapeArg("$path../fixtures/dataprovider.ini")),
+	array('dataProvider.phptx', Helpers::escapeArg('foo') . ' ' . Helpers::escapeArg("$path../fixtures/dataprovider.ini")),
+	array('dataProvider.query.phptx', Helpers::escapeArg('foo 2.2.3') . ' ' . Helpers::escapeArg("$path../fixtures/dataprovider.query.ini")),
+	array('dataProvider.query.phptx', Helpers::escapeArg('foo 3 xxx') . ' ' . Helpers::escapeArg("$path../fixtures/dataprovider.query.ini")),
 	array('multiple.phptx', '0'),
 	array('multiple.phptx', '1'),
 	array('testcase.phptx', Helpers::escapeArg('test1')),
