@@ -104,7 +104,7 @@ class Helpers
 	 */
 	public static function escapeArg($s)
 	{
-		return DIRECTORY_SEPARATOR === '\\' // Windows?
+		return defined('PHP_WINDOWS_VERSION_BUILD')
 			? '"' . str_replace('"', '""', $s) . '"'
 			: escapeshellarg($s);
 	}

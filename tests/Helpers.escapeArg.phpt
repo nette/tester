@@ -6,7 +6,7 @@ use Tester\Assert,
 require __DIR__ . '/bootstrap.php';
 
 
-$win = DIRECTORY_SEPARATOR === '\\';
+$win = defined('PHP_WINDOWS_VERSION_BUILD');
 
 Assert::same( $win ? '""' : "''", Helpers::escapeArg('') );
 Assert::same( $win ? '""' : "''", Helpers::escapeArg(NULL) );
