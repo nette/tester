@@ -44,6 +44,7 @@ Options:
     --tap                Generate Test Anything Protocol.
     -j <num>             Run <num> jobs in parallel.
     -w | --watch <path>  Watch directory.
+    -i | --info          Show tests environment info and exit.
     --setup <path>       Script for runner setup.
     --colors [1|0]       Enable or disable colors.
     -h | --help          This help.
@@ -75,7 +76,7 @@ if ($cmd->isEmpty() || $options['--help']) {
 $phpArgs = '-n';
 if ($options['-c']) {
 	$phpArgs .= ' -c ' . Tester\Helpers::escapeArg($options['-c']);
-} else {
+} elseif (!$options['--info']) {
 	echo "Warning: No php.ini is used.\n";
 }
 
@@ -83,7 +84,16 @@ foreach ($options['-d'] as $item) {
 	$phpArgs .= ' -d ' . Tester\Helpers::escapeArg($item);
 }
 
-$runner = new Tester\Runner\Runner(new Tester\Runner\PhpExecutable($options['-p'], $phpArgs));
+$php = new Tester\Runner\PhpExecutable($options['-p'], $phpArgs);
+
+if ($options['--info']) {
+	$job = new Tester\Runner\Job(__DIR__ . '/Runner/info.php', $php);
+	$job->run();
+	echo $job->getOutput();
+	exit;
+}
+
+$runner = new Tester\Runner\Runner($php);
 $runner->paths = $options['paths'];
 $runner->threadCount = max(1, (int) $options['-j']);
 
