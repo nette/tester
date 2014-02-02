@@ -1,7 +1,3 @@
- _____ ___  ___ _____ ___  ___
-|_   _/ __)( __/_   _/ __)| _ )
-  |_| \___ /___) |_| \___ |_|_\  v0.9.5
-
 <?php
 
 /**
@@ -31,8 +27,17 @@ use Tester\Runner\CommandLine as Cmd;
 
 Tester\Environment::setup();
 
+ob_start();
+echo <<<XX
+ _____ ___  ___ _____ ___  ___
+|_   _/ __)( __/_   _/ __)| _ )
+  |_| \___ /___) |_| \___ |_|_\  v0.9.5
 
-$cmd = new Cmd("Usage:
+
+XX;
+
+$cmd = new Cmd(<<<XX
+Usage:
     tester.php [options] [<test file> | <directory>]...
 
 Options:
@@ -49,7 +54,8 @@ Options:
     --colors [1|0]       Enable or disable colors.
     -h | --help          This help.
 
-", array(
+XX
+, array(
 	'-c' => array(Cmd::REALPATH => TRUE),
 	'--watch' => array(Cmd::REPEATABLE => TRUE, Cmd::REALPATH => TRUE),
 	'--setup' => array(Cmd::REALPATH => TRUE),
@@ -113,6 +119,11 @@ if ($options['--setup']) {
 }
 
 
+if ($options['--tap']) {
+	ob_end_clean();
+} else {
+	ob_end_flush();
+}
 
 @unlink(__DIR__ . '/coverage.dat'); // @ - file may not exist
 
