@@ -56,9 +56,9 @@ Now we run tests from command-line using the `tester` command:
 
 ```
 > tester
-
-Nette Tester (v0.9.5)
----------------------
+ _____ ___  ___ _____ ___  ___
+|_   _/ __)( __/_   _/ __)| _ )
+  |_| \___ /___) |_| \___ |_|_\  v0.9.5
 
 PHP 5.3.16 | "php-cgi" -n | 1 threads
 .
@@ -81,13 +81,16 @@ This table shows all assertions (class `Assert` means `Tester\Assert`):
 - `Assert::contains($needle, string $haystack)` - Reports an error if $needle is not a substring of $haystack.
 - `Assert::notContains($needle, array $haystack)` - Reports an error if $needle is an element of $haystack.
 - `Assert::notContains($needle, string $haystack)` - Reports an error if $needle is a substring of $haystack.
-- `Assert::true($actual)` - Reports an error if $actual is not TRUE.
-- `Assert::false($actual)` - Reports an error if $actual is not FALSE.
-- `Assert::null($actual)` - Reports an error if $actual is not NULL.
-- `Assert::type($type, $actual)` -  Reports an error if the variable $actual is not of type $type.
+- `Assert::true($value)` - Reports an error if $actual is not TRUE.
+- `Assert::false($value)` - Reports an error if $actual is not FALSE.
+- `Assert::truthy($value)` - Reports an error if $actual is not truthy.
+- `Assert::falsey($value)` - Reports an error if $actual is not falsey.
+- `Assert::null($value)` - Reports an error if $actual is not NULL.
+- `Assert::type($type, $value)` -  Reports an error if the variable $actual is not of PHP or class type $type.
 - `Assert::exception($closure, $class, $message = NULL)` -  Checks if the function throws exception.
 - `Assert::error($closure, $level, $message = NULL)` -  Checks if the function $closure throws PHP warning/notice/error.
-- `Assert::match($expected, $actual)` - Compares variables $expected and $actual using mask.
+- `Assert::match($pattern, $value)` - Compares result using regular expression or mask.
+- `Assert::matchFile($file, $value)` - Compares result using regular expression or mask sorted in file.
 
 Testing exceptions:
 
@@ -174,19 +177,21 @@ at the command-line options:
 > tester
 
 Usage:
-	tester.php [options] [<test file> | <directory>]...
+    tester.php [options] [<test file> | <directory>]...
 
 Options:
-	-p <path>            Specify PHP executable to run (default: php-cgi).
-	-c <path>            Look for php.ini in directory <path> or use <path> as php.ini.
-	-log <path>          Write log to file <path>.
-	-d <key=value>...    Define INI entry 'key' with value 'val'.
-	-s                   Show information about skipped tests.
-	--tap                Generate Test Anything Protocol.
-	-j <num>             Run <num> jobs in parallel.
-	-w | --watch <path>  Watch directory.
-	--colors [1|0]       Enable or disable colors.
-	-h | --help          This help.
+    -p <path>            Specify PHP executable to run (default: php-cgi).
+    -c <path>            Look for php.ini file (or look in directory) <path>.
+    -log <path>          Write log to file <path>.
+    -d <key=value>...    Define INI entry 'key' with value 'val'.
+    -s                   Show information about skipped tests.
+    --tap                Generate Test Anything Protocol.
+    -j <num>             Run <num> jobs in parallel.
+    -w | --watch <path>  Watch directory.
+    -i | --info          Show tests environment info and exit.
+    --setup <path>       Script for runner setup.
+    --colors [1|0]       Enable or disable colors.
+    -h | --help          This help.
 ```
 
 -----
