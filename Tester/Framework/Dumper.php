@@ -18,6 +18,7 @@ class Dumper
 	public static $maxLength = 70;
 	public static $maxDepth = 50;
 	public static $dumpDir = 'output';
+	public static $maxPathSegments = 3;
 
 	/**
 	 * Dumps information about a variable in readable format.
@@ -251,10 +252,15 @@ class Dumper
 			. (isset($stored) ? 'diff ' . Helpers::escapeArg($stored[0]) . ' ' . Helpers::escapeArg($stored[1]) . "\n\n" : '');
 
 		foreach ($trace as $item) {
-			$item += array('file' => NULL);
-			$s .= 'in ' . ($item['file'] === $testFile ? "\033[1;37m" : '')
-				. ($item['file'] ? implode(DIRECTORY_SEPARATOR, array_slice(explode(DIRECTORY_SEPARATOR, $item['file']), -3)) . "($item[line])" : '[internal function]')
-				. "\033[1;30m "
+			$s .= 'in '
+				. (isset($item['file'])
+					? (
+						($item['file'] === $testFile ? "\033[1;37m" : '')
+						. implode(DIRECTORY_SEPARATOR, array_slice(explode(DIRECTORY_SEPARATOR, $item['file']), -self::$maxPathSegments))
+						. "($item[line])\033[1;30m "
+					)
+					: '[internal function]'
+				)
 				. (isset($item['class']) ? $item['class'] . $item['type'] : '')
 				. (isset($item['function']) ? $item['function'] . '()' : '')
 				. "\033[0m\n";
