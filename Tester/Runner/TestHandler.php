@@ -137,8 +137,6 @@ class TestHandler
 
 	private function initiateTestCase($foo, PhpExecutable $php, $file)
 	{
-		$php->arguments .= ' -d register_argc_argv=On';
-
 		$job = new Job($file, $php, Helpers::escapeArg(Tester\TestCase::LIST_METHODS));
 		$job->run();
 
