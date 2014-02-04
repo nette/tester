@@ -112,7 +112,7 @@ class DataProvider
 	/**
 	 * @return [file, query, optional]
 	 * @internal
-	*/
+	 */
 	public static function parseAnnotation($annotation, $file)
 	{
 		if (!preg_match('#^(\??)\s*([^,\s]+)\s*,?\s*(\S.*)?()#', $annotation, $m)) {

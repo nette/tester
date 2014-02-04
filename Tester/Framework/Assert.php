@@ -469,7 +469,7 @@ class Assert
 		return $expected === $actual;
 	}
 
-			}
+}
 
 
 /**

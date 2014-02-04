@@ -66,7 +66,7 @@ class TestHandler
 	 */
 	public function assess(Job $job)
 	{
-		list($annotations, $testName) = $this->getAnnotations($job->getFile(), 'access');
+		list($annotations, $testName) = $this->getAnnotations($job->getFile());
 		$testName .= (strlen($job->getArguments()) ? " [{$job->getArguments()}]" : '');
 		$annotations += array(
 			'exitcode' => Job::CODE_OK,
