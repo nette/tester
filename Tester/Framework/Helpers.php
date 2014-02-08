@@ -63,27 +63,6 @@ class Helpers
 	}
 
 
-	/** @deprecated */
-	public static function skip($message = '')
-	{
-		Environment::skip($message);
-	}
-
-
-	/** @deprecated */
-	public static function lock($name = '', $path = '')
-	{
-		Environment::lock($name, $path);
-	}
-
-
-	/** @deprecated */
-	public static function setup()
-	{
-		Environment::setup();
-	}
-
-
 	/**
 	 * @internal
 	 */
