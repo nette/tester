@@ -83,7 +83,7 @@ $phpArgs = '-n';
 if ($options['-c']) {
 	$phpArgs .= ' -c ' . Tester\Helpers::escapeArg($options['-c']);
 } elseif (!$options['--info']) {
-	echo "Warning: No php.ini is used.\n";
+	echo "Note: No php.ini is used.\n";
 }
 
 foreach ($options['-d'] as $item) {
