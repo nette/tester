@@ -149,7 +149,7 @@ it is important to setup Nette Tester environment:
 ```php
 require 'vendor/autoload.php';
 
-Tester\Helpers::setup();
+Tester\Environment::setup();
 ```
 
 We can also test HTML pages. Let the [template engine](http://latte.nette.org) generate
