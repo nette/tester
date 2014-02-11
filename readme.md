@@ -1,7 +1,7 @@
-[Nette Tester](http://tester.nette.org) - Testing framework
-===========================================================
+[Nette Tester](http://tester.nette.org): enjoyable unit testing
+===============================================================
 
-Nette Tester is a powerful, easy-to-use unit testing framework. It's used by
+Nette Tester is a productive and enjoyable unit testing framework. It's used by
 the [Nette Framework](http://nette.org) and is capable of testing any PHP code.
 
 
