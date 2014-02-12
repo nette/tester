@@ -1,6 +1,7 @@
 <?php
 
-use Tester\Assert;
+use Tester\Assert,
+	Tester\Helpers;
 
 require __DIR__ . '/bootstrap.php';
 require __DIR__ . '/../Tester/Runner/TestHandler.php';
@@ -25,13 +26,19 @@ foreach ($tests as $i => $job) {
 }
 sort($tests);
 
+$path = __DIR__ . DIRECTORY_SEPARATOR . 'multiple' . DIRECTORY_SEPARATOR;
+
 Assert::same(array(
-	array('dataProvider.phptx', escapeshellarg('bar')),
-	array('dataProvider.phptx', escapeshellarg('foo')),
-	array('dataProvider.query.phptx', escapeshellarg('foo 2.2.3')),
-	array('dataProvider.query.phptx', escapeshellarg('foo 3 xxx')),
+	array('dataProvider.phptx', Helpers::escapeArg('bar') . ' ' . Helpers::escapeArg("$path../fixtures/dataprovider.ini")),
+	array('dataProvider.phptx', Helpers::escapeArg('foo') . ' ' . Helpers::escapeArg("$path../fixtures/dataprovider.ini")),
+	array('dataProvider.query.phptx', Helpers::escapeArg('foo 2.2.3') . ' ' . Helpers::escapeArg("$path../fixtures/dataprovider.query.ini")),
+	array('dataProvider.query.phptx', Helpers::escapeArg('foo 3 xxx') . ' ' . Helpers::escapeArg("$path../fixtures/dataprovider.query.ini")),
 	array('multiple.phptx', '0'),
 	array('multiple.phptx', '1'),
-	array('testcase.phptx', escapeshellarg('testBar')),
-	array('testcase.phptx', escapeshellarg('testFoo')),
+	array('testcase.phptx', Helpers::escapeArg('test1')),
+	array('testcase.phptx', Helpers::escapeArg('testBar')),
+	array('testcase.phptx', Helpers::escapeArg('testFoo')),
+	array('testcase.phptx', Helpers::escapeArg('testPrivate')),
+	array('testcase.phptx', Helpers::escapeArg('testProtected')),
+	array('testcase.phptx', Helpers::escapeArg('test_foo')),
 ), $tests);

@@ -2,11 +2,7 @@
 
 /**
  * This file is part of the Nette Tester.
- *
  * Copyright (c) 2009 David Grudl (http://davidgrudl.com)
- *
- * For the full copyright and license information, please view
- * the file license.txt that was distributed with this source code.
  */
 
 namespace Tester;
@@ -19,11 +15,19 @@ namespace Tester;
  */
 class Environment
 {
+	/** Should Tester use console colors? */
+	const COLORS = 'NETTE_TESTER_COLORS';
+
+	/** Test is runned by Runner */
+	const RUNNER = 'NETTE_TESTER_RUNNER';
+
+
 	/** @var bool  used for debugging Tester itself */
 	public static $debugMode = TRUE;
 
 	/** @var bool */
 	public static $useColors;
+
 
 	/**
 	 * Configures PHP environment.
@@ -31,12 +35,15 @@ class Environment
 	 */
 	public static function setup()
 	{
-		self::$useColors = getenv('NETTE_TESTER_COLORS') !== FALSE
-			? (bool) getenv('NETTE_TESTER_COLORS')
+		self::$useColors = getenv(self::COLORS) !== FALSE
+			? (bool) getenv(self::COLORS)
 			: (PHP_SAPI === 'cli' && ((function_exists('posix_isatty') && posix_isatty(STDOUT))
 				|| getenv('ConEmuANSI') === 'ON' || getenv('ANSICON') !== FALSE));
 
 		class_exists('Tester\Runner\Job');
+		class_exists('Tester\Dumper');
+		class_exists('Tester\Assert');
+
 		error_reporting(E_ALL | E_STRICT);
 		ini_set('display_errors', TRUE);
 		ini_set('html_errors', FALSE);
@@ -49,6 +56,7 @@ class Environment
 			}
 			return FALSE;
 		});
+
 		register_shutdown_function(function() {
 			Assert::$onFailure = array(__CLASS__, 'handleException'); // note that Runner is unable to catch this errors in CLI & PHP 5.4.0 - 5.4.6 due PHP bug #62725
 
@@ -59,14 +67,17 @@ class Environment
 				});
 			}
 		});
+
+		ob_start(function($s) {
+			return Environment::$useColors ? $s : Dumper::removeColors($s);
+		}, PHP_VERSION_ID < 50400 ? 2 : 1);
 	}
 
 
 	/** @internal */
 	public static function handleException($e)
 	{
-		$s = self::$debugMode ? Dumper::dumpException($e) : "\nError: {$e->getMessage()}\n";
-		echo self::$useColors ? $s : Dumper::removeColors($s);
+		echo self::$debugMode ? Dumper::dumpException($e) : "\nError: {$e->getMessage()}\n";
 		exit($e instanceof AssertException ? Runner\Job::CODE_FAIL : Runner\Job::CODE_ERROR);
 	}
 

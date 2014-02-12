@@ -20,5 +20,5 @@
 	"autoload": {
 		"classmap": ["Tester/"]
 	},
-	"bin": ["Tester/tester"]
+	"bin": ["Tester/tester", "Tester/coverage-report"]
 }

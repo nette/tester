@@ -2,11 +2,7 @@
 
 /**
  * This file is part of the Nette Tester.
- *
  * Copyright (c) 2009 David Grudl (http://davidgrudl.com)
- *
- * For the full copyright and license information, please view
- * the file license.txt that was distributed with this source code.
  */
 
 namespace Tester;
@@ -67,24 +63,29 @@ class Helpers
 	}
 
 
-	/** @deprecated */
-	public static function skip($message = '')
+	/**
+	 * @internal
+	 */
+	public static function errorTypeToString($type)
 	{
-		Environment::skip($message);
+		$consts = get_defined_constants(TRUE);
+		foreach ($consts['Core'] as $name => $val) {
+			if ($type === $val && substr($name, 0, 2) === 'E_') {
+				return $name;
+			}
+		}
 	}
 
 
-	/** @deprecated */
-	public static function lock($name = '', $path = '')
+	/**
+	 * Escape a string to be used as a shell argument.
+	 * @return string
+	 */
+	public static function escapeArg($s)
 	{
-		Environment::lock($name, $path);
-	}
-
-
-	/** @deprecated */
-	public static function setup()
-	{
-		Environment::setup();
+		return defined('PHP_WINDOWS_VERSION_BUILD')
+			? '"' . str_replace('"', '""', $s) . '"'
+			: escapeshellarg($s);
 	}
 
 }

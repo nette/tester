@@ -2,11 +2,7 @@
 
 /**
  * This file is part of the Nette Tester.
- *
  * Copyright (c) 2009 David Grudl (http://davidgrudl.com)
- *
- * For the full copyright and license information, please view
- * the file license.txt that was distributed with this source code.
  */
 
 namespace Tester\Runner\Output;
@@ -40,7 +36,7 @@ class Logger implements Tester\Runner\OutputHandler
 	{
 		fputs($this->file, 'PHP ' . $this->runner->getPhp()->getVersion()
 			. ' | ' . $this->runner->getPhp()->getCommandLine()
-			. " | {$this->runner->jobCount} threads\n\n");
+			. " | {$this->runner->threadCount} threads\n\n");
 	}
 
 
@@ -58,12 +54,15 @@ class Logger implements Tester\Runner\OutputHandler
 
 	public function end()
 	{
+		$jobCount = $this->runner->getJobCount();
 		$results = $this->runner->getResults();
+		$count = array_sum($results);
 		fputs($this->file,
 			($results[Runner::FAILED] ? 'FAILURES!' : 'OK')
-			. ' (' . array_sum($results) . ' tests'
+			. " ($jobCount tests"
 			. ($results[Runner::FAILED] ? ", {$results[Runner::FAILED]} failures" : '')
 			. ($results[Runner::SKIPPED] ? ", {$results[Runner::SKIPPED]} skipped" : '')
+			. ($jobCount !== $count ? ', ' . ($jobCount - $count) . ' not run' : '')
 			. ')'
 		);
 	}

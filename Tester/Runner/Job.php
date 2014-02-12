@@ -2,16 +2,12 @@
 
 /**
  * This file is part of the Nette Tester.
- *
  * Copyright (c) 2009 David Grudl (http://davidgrudl.com)
- *
- * For the full copyright and license information, please view
- * the file license.txt that was distributed with this source code.
  */
 
 namespace Tester\Runner;
 
-use Tester;
+use Tester\Environment;
 
 
 /**
@@ -27,6 +23,9 @@ class Job
 		CODE_SKIP = 177,
 		CODE_FAIL = 178,
 		CODE_ERROR = 255;
+
+	/** waiting time between process activity check in microseconds */
+	const RUN_USLEEP = 10000;
 
 	/** @var string  test file */
 	private $file;
@@ -67,15 +66,15 @@ class Job
 
 	/**
 	 * Runs single test.
-	 * @param  bool
+	 * @param  bool  wait till process ends
 	 * @return void
 	 */
 	public function run($blocking = TRUE)
 	{
-		putenv('NETTE_TESTER_RUNNER=1');
-		putenv('NETTE_TESTER_COLORS=' . (int) Tester\Environment::$useColors);
+		putenv(Environment::RUNNER . '=1');
+		putenv(Environment::COLORS . '=' . (int) Environment::$useColors);
 		$this->proc = proc_open(
-			$this->php->getCommandLine() . ' ' . escapeshellarg($this->file) . ' ' . $this->args,
+			$this->php->getCommandLine() . ' -d register_argc_argv=on ' . \Tester\Helpers::escapeArg($this->file) . ' ' . $this->args,
 			array(
 				array('pipe', 'r'),
 				array('pipe', 'w'),
@@ -88,8 +87,14 @@ class Job
 		);
 		list($stdin, $this->stdout, $stderr) = $pipes;
 		fclose($stdin);
-		stream_set_blocking($this->stdout, $blocking ? 1 : 0);
 		fclose($stderr);
+		if ($blocking) {
+			while ($this->isRunning()) {
+				usleep(self::RUN_USLEEP); // stream_select() doesn't work with proc_open()
+			}
+		} else {
+			stream_set_blocking($this->stdout, 0);
+		}
 	}
 
 

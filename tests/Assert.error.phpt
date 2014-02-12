@@ -17,10 +17,19 @@ Assert::error(function() {
 	$a++;
 }, E_NOTICE, 'Undefined variable: %a%');
 
+Assert::error(function() {
+	$a++;
+	@$x++;
+	$b++;
+}, array(
+	array(E_NOTICE, 'Undefined variable: a'),
+	array(E_NOTICE, 'Undefined variable: b'),
+));
+
 Assert::exception(function() {
 	Assert::error(function() {
 	}, E_NOTICE);
-}, 'Tester\AssertException', 'E_NOTICE was expected, but none was generated');
+}, 'Tester\AssertException', 'Error was expected, but was not generated');
 
 Assert::exception(function() {
 	Assert::error(function() {
@@ -39,7 +48,16 @@ Assert::exception(function() {
 		$a++;
 		$b++;
 	}, E_NOTICE, 'Undefined variable: a');
-}, 'Tester\AssertException', 'Expected one E_NOTICE, but another E_NOTICE (Undefined variable: b) was generated in file %a% on line %d%');
+}, 'Tester\AssertException', 'Generated more errors than expected: E_NOTICE (Undefined variable: b) was generated in file %a% on line %d%');
+
+Assert::exception(function() {
+	Assert::error(function() {
+		$a++;
+	}, array(
+		array(E_NOTICE, 'Undefined variable: a'),
+		array(E_NOTICE, 'Undefined variable: b'),
+	));
+}, 'Tester\AssertException', 'Error was expected, but was not generated');
 
 
 
@@ -56,4 +74,4 @@ Assert::error(function() {
 
 Assert::exception(function() {
 	Assert::error(function() {}, NULL);
-}, 'Exception', 'Error type must be E_* constant or Exception class name.');
+}, 'Exception', 'Error type must be E_* constant.');

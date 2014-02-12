@@ -2,11 +2,7 @@
 
 /**
  * This file is part of the Nette Tester.
- *
  * Copyright (c) 2009 David Grudl (http://davidgrudl.com)
- *
- * For the full copyright and license information, please view
- * the file license.txt that was distributed with this source code.
  */
 
 namespace Tester;
@@ -265,45 +261,55 @@ class Assert
 	/**
 	 * Checks if the function generates PHP error or throws exception.
 	 * @param  callable
-	 * @param  int|string
+	 * @param  int|string|array
 	 * @param  string message
-	 * @return void
+	 * @return null|Exception
 	 */
 	public static function error($function, $expectedType, $expectedMessage = NULL)
 	{
-		if (is_int($expectedType)) {
-			$expectedTypeStr = self::errorTypeToString($expectedType);
-
-		} elseif (!is_string($expectedType)) {
-			throw new \Exception('Error type must be E_* constant or Exception class name.');
-
-		} elseif (preg_match('#^E_[A-Z_]+\z#', $expectedType)) {
-			$expectedType = constant($expectedTypeStr = $expectedType);
-		} else {
+		if (is_string($expectedType) && !preg_match('#^E_[A-Z_]+\z#', $expectedType)) {
 			return static::exception($function, $expectedType, $expectedMessage);
 		}
 
-		$catched = FALSE;
-		set_error_handler(function($severity, $message, $file, $line) use (& $catched, $expectedType, $expectedMessage, $expectedTypeStr) {
-			$errorStr = Assert::errorTypeToString($severity) . ($message ? " ($message)" : '');
+		$expected = is_array($expectedType) ? $expectedType : array(array($expectedType, $expectedMessage));
+		foreach ($expected as & $item) {
+			list($expectedType, $expectedMessage) = $item;
+			if (is_int($expectedType)) {
+				$item[2] = Helpers::errorTypeToString($expectedType);
+			} elseif (is_string($expectedType)) {
+				$item[0] = constant($item[2] = $expectedType);
+			} else {
+				throw new \Exception('Error type must be E_* constant.');
+			}
+		}
+
+		set_error_handler(function($severity, $message, $file, $line) use (& $expected) {
 			if (($severity & error_reporting()) !== $severity) {
 				return;
+			}
 
-			} elseif ($catched) {
-				Assert::fail("Expected one $expectedTypeStr, but another $errorStr was generated in file $file on line $line");
+			$errorStr = Helpers::errorTypeToString($severity) . ($message ? " ($message)" : '');
+			list($expectedType, $expectedMessage, $expectedTypeStr) = array_shift($expected);
+			if ($expectedType === NULL) {
+				restore_error_handler();
+				Assert::fail("Generated more errors than expected: $errorStr was generated in file $file on line $line");
 
 			} elseif ($severity !== $expectedType) {
+				restore_error_handler();
 				Assert::fail("$expectedTypeStr was expected, but $errorStr was generated in file $file on line $line");
 
 			} elseif ($expectedMessage && !Assert::isMatching($expectedMessage, $message)) {
+				restore_error_handler();
 				Assert::fail("$expectedTypeStr with a message matching %2 was expected but got %1", $message, $expectedMessage);
 			}
-			$catched = TRUE;
 		});
+
+		reset($expected);
 		call_user_func($function);
 		restore_error_handler();
-		if (!$catched) {
-			self::fail("$expectedTypeStr was expected, but none was generated");
+
+		if ($expected) {
+			self::fail('Error was expected, but was not generated');
 		}
 	}
 
@@ -431,18 +437,22 @@ class Assert
 			throw new \Exception('Nesting level too deep or recursive dependency.');
 		}
 
-		if (is_float($expected) && is_float($actual)) {
-			return abs($expected - $actual) < self::EPSILON;
+		if (is_float($expected) && is_float($actual) && is_finite($expected) && is_finite($actual)) {
+			$diff = abs($expected - $actual);
+			return ($diff < self::EPSILON) || ($diff / max(abs($expected), abs($actual)) < self::EPSILON);
 		}
 
 		if (is_object($expected) && is_object($actual) && get_class($expected) === get_class($actual)) {
+			if ($expected === $actual) {
+				return TRUE;
+			}
 			$expected = (array) $expected;
 			$actual = (array) $actual;
 		}
 
 		if (is_array($expected) && is_array($actual)) {
-			ksort($expected);
-			ksort($actual);
+			ksort($expected, SORT_STRING);
+			ksort($actual, SORT_STRING);
 			if (array_keys($expected) !== array_keys($actual)) {
 				return FALSE;
 			}
@@ -455,21 +465,8 @@ class Assert
 			}
 			return TRUE;
 		}
+
 		return $expected === $actual;
-	}
-
-
-	/**
-	 * @internal
-	 */
-	/*private*/ static function errorTypeToString($type)
-	{
-		$consts = get_defined_constants(TRUE);
-		foreach ($consts['Core'] as $name => $val) {
-			if ($type === $val && substr($name, 0, 2) === 'E_') {
-				return $name;
-			}
-		}
 	}
 
 }

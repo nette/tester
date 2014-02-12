@@ -2,17 +2,14 @@
 
 /**
  * This file is part of the Nette Tester.
- *
  * Copyright (c) 2009 David Grudl (http://davidgrudl.com)
- *
- * For the full copyright and license information, please view
- * the file license.txt that was distributed with this source code.
  */
 
 namespace Tester\Runner;
 
 use Tester,
-	Tester\Dumper;
+	Tester\Dumper,
+	Tester\Helpers;
 
 
 /**
@@ -27,18 +24,10 @@ class TestHandler
 	/** @var Runner */
 	private $runner;
 
-	/** @var string[] */
-	private $initiators, $assessments;
-
 
 	public function __construct(Runner $runner)
 	{
 		$this->runner = $runner;
-		foreach (get_class_methods($this) as $method) {
-			if (preg_match('#^(assess|initiate)(.+)#', $method, $m)) {
-				$this->{$m[1][0] === 'a' ? 'assessments' : 'initiators'}[strtolower($m[2])] = $method;
-			}
-		}
 	}
 
 
@@ -47,16 +36,22 @@ class TestHandler
 	 */
 	public function initiate($file)
 	{
-		list($options, $testName) = $this->getAnnotations($file);
+		list($annotations, $testName) = $this->getAnnotations($file);
 		$php = clone $this->runner->getPhp();
 		$job = FALSE;
 
-		foreach (array_intersect_key($this->initiators, $options) as $name => $method) {
-			$res = $this->$method($options[$name], $php, $file);
-			if ($res === TRUE) {
-				$job = TRUE;
-			} elseif ($res) {
-				return $this->runner->writeResult($testName, $res[0], $res[1]);
+		foreach (get_class_methods($this) as $method) {
+			if (!preg_match('#^initiate(.+)#', strtolower($method), $m) || !isset($annotations[$m[1]])) {
+				continue;
+			}
+			foreach ((array) $annotations[$m[1]] as $arg) {
+				$res = $this->$method($arg, $php, $file);
+				if ($res === TRUE) {
+					$job = TRUE;
+				} elseif ($res) {
+					$this->runner->writeResult($testName, $res[0], $res[1]);
+					return;
+				}
 			}
 		}
 
@@ -71,16 +66,22 @@ class TestHandler
 	 */
 	public function assess(Job $job)
 	{
-		list($options, $testName) = $this->getAnnotations($job->getFile(), 'access');
-		$testName .= ($job->getArguments() ? " [{$job->getArguments()}]" : '');
-		$options += array(
+		list($annotations, $testName) = $this->getAnnotations($job->getFile());
+		$testName .= (strlen($job->getArguments()) ? " [{$job->getArguments()}]" : '');
+		$annotations += array(
 			'exitcode' => Job::CODE_OK,
 			'httpcode' => self::HTTP_OK,
 		);
 
-		foreach (array_intersect_key($this->assessments, $options) as $name => $method) {
-			if ($res = $this->$method($job, $options[$name])) {
-				return $this->runner->writeResult($testName, $res[0], $res[1]);
+		foreach (get_class_methods($this) as $method) {
+			if (!preg_match('#^assess(.+)#', strtolower($method), $m) || !isset($annotations[$m[1]])) {
+				continue;
+			}
+			foreach ((array) $annotations[$m[1]] as $arg) {
+				if ($res = $this->$method($job, $arg)) {
+					$this->runner->writeResult($testName, $res[0], $res[1]);
+					return;
+				}
 			}
 		}
 		$this->runner->writeResult($testName, Runner::PASSED);
@@ -93,37 +94,33 @@ class TestHandler
 	}
 
 
-	private function initiatePhpVersion($versions, PhpExecutable $php)
+	private function initiatePhpVersion($version, PhpExecutable $php)
 	{
-		foreach ((array) $versions as $version) {
-			if (preg_match('#^(<=|<|==|=|!=|<>|>=|>)?\s*(.+)#', $version, $matches)
-				&& version_compare($matches[2], $php->getVersion(), $matches[1] ?: '>='))
-			{
-				return array(Runner::SKIPPED, "Requires PHP $version.");
-			}
+		if (preg_match('#^(<=|<|==|=|!=|<>|>=|>)?\s*(.+)#', $version, $matches)
+			&& version_compare($matches[2], $php->getVersion(), $matches[1] ?: '>='))
+		{
+			return array(Runner::SKIPPED, "Requires PHP $version.");
 		}
 	}
 
 
-	private function initiatePhpIni($values, PhpExecutable $php)
+	private function initiatePhpIni($value, PhpExecutable $php)
 	{
-		foreach ((array) $values as $item) {
-			$php->arguments .= ' -d ' . escapeshellarg(trim($item));
-		}
+		$php->arguments .= ' -d ' . Helpers::escapeArg($value);
 	}
 
 
 	private function initiateDataProvider($provider, PhpExecutable $php, $file)
 	{
-		if (!preg_match('#^(\??)\s*([^,\s]+)\s*,?\s*(\S.*)?()#', $provider, $matches)) {
-			return array(Runner::FAILED, 'Invalid @dataprovider value.');
-		}
 		try {
-			foreach (array_keys(Tester\DataProvider::load(dirname($file) . DIRECTORY_SEPARATOR . $matches[2], $matches[3])) as $item) {
-				$this->runner->addJob(new Job($file, $php, escapeshellarg($item)));
-			}
+			list($dataFile, $query, $optional) = Tester\DataProvider::parseAnnotation($provider, $file);
+			$data = Tester\DataProvider::load($dataFile, $query);
 		} catch (\Exception $e) {
-			return array($matches[1] ? Runner::SKIPPED : Runner::FAILED, $e->getMessage());
+			return array(empty($optional) ? Runner::FAILED : Runner::SKIPPED, $e->getMessage());
+		}
+
+		foreach (array_keys($data) as $item) {
+			$this->runner->addJob(new Job($file, $php, Helpers::escapeArg($item) . ' ' . Helpers::escapeArg($dataFile)));
 		}
 		return TRUE;
 	}
@@ -140,12 +137,24 @@ class TestHandler
 
 	private function initiateTestCase($foo, PhpExecutable $php, $file)
 	{
-		if (preg_match_all('#\sfunction\s+(test\w+)\(#', file_get_contents($file), $matches)) {
-			foreach ($matches[1] as $item) {
-				$this->runner->addJob(new Job($file, $php, escapeshellarg($item)));
-			}
-			return TRUE;
+		$job = new Job($file, $php, Helpers::escapeArg(Tester\TestCase::LIST_METHODS));
+		$job->run();
+
+		if (in_array($job->getExitCode(), array(Job::CODE_ERROR, Job::CODE_FAIL, Job::CODE_SKIP))) {
+			return array($job->getExitCode() === Job::CODE_SKIP ? Runner::SKIPPED : Runner::FAILED, $job->getOutput());
 		}
+
+		$methods = json_decode(strrchr($job->getOutput(), '['));
+		if (!is_array($methods)) {
+			return array(Runner::FAILED, "Cannot list TestCase methods in file '$file'. Do you call TestCase::run() in it?");
+		} elseif (!$methods) {
+			return array(Runner::SKIPPED, "TestCase in file '$file' does not contain test methods.");
+		}
+
+		foreach ($methods as $method) {
+			$this->runner->addJob(new Job($file, $php, Helpers::escapeArg($method)));
+		}
+		return TRUE;
 	}
 
 
@@ -199,10 +208,10 @@ class TestHandler
 
 	private function getAnnotations($file)
 	{
-		$options = Tester\Helpers::parseDocComment(file_get_contents($file));
-		$testName = (isset($options[0]) ? preg_replace('#^TEST:\s*#i', '', $options[0]) . ' | ' : '')
+		$annotations = Helpers::parseDocComment(file_get_contents($file));
+		$testName = (isset($annotations[0]) ? preg_replace('#^TEST:\s*#i', '', $annotations[0]) . ' | ' : '')
 			. implode(DIRECTORY_SEPARATOR, array_slice(explode(DIRECTORY_SEPARATOR, $file), -3));
-		return array($options, $testName);
+		return array($annotations, $testName);
 	}
 
 }

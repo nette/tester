@@ -2,11 +2,7 @@
 
 /**
  * This file is part of the Nette Tester.
- *
  * Copyright (c) 2009 David Grudl (http://davidgrudl.com)
- *
- * For the full copyright and license information, please view
- * the file license.txt that was distributed with this source code.
  */
 
 namespace Tester\Runner;
@@ -26,14 +22,11 @@ class Runner
 		SKIPPED = 2,
 		FAILED = 3;
 
-	/** waiting time between runs in microseconds */
-	const RUN_USLEEP = 10000;
-
 	/** @var array  paths to test files/directories */
 	public $paths = array();
 
-	/** @var int  run jobs in parallel */
-	public $jobCount = 1;
+	/** @var int  run in parallel threads */
+	public $threadCount = 1;
 
 	/** @var TestHandler */
 	public $testHandler;
@@ -47,8 +40,14 @@ class Runner
 	/** @var Job[] */
 	private $jobs;
 
+	/** @var int */
+	private $jobCount;
+
 	/** @var array */
 	private $results;
+
+	/** @var bool */
+	private $interrupted;
 
 
 	public function __construct(PhpExecutable $php)
@@ -60,12 +59,12 @@ class Runner
 
 	/**
 	 * Runs all tests.
-	 * @return void
+	 * @return bool
 	 */
 	public function run()
 	{
-		foreach ($this->outputHandlers as $hander) {
-			$hander->begin();
+		foreach ($this->outputHandlers as $handler) {
+			$handler->begin();
 		}
 
 		$this->results = array(self::PASSED => 0, self::SKIPPED => 0, self::FAILED => 0);
@@ -73,27 +72,34 @@ class Runner
 		foreach ($this->paths as $path) {
 			$this->findTests($path);
 		}
+		$this->jobCount = count($this->jobs) + array_sum($this->results);
 
-		while ($this->jobs || $running) {
-			for ($i = count($running); $this->jobs && $i < $this->jobCount; $i++) {
+		$this->installInterruptHandler();
+		while (($this->jobs || $running) && !$this->isInterrupted()) {
+			for ($i = count($running); $this->jobs && $i < $this->threadCount; $i++) {
 				$running[] = $job = array_shift($this->jobs);
-				$job->run($this->jobCount <= 1 || (count($running) + count($this->jobs) <= 1));
+				$job->run($this->threadCount <= 1 || (count($running) + count($this->jobs) <= 1));
 			}
 
 			if (count($running) > 1) {
-				usleep(self::RUN_USLEEP); // stream_select() doesn't work with proc_open()
+				usleep(Job::RUN_USLEEP); // stream_select() doesn't work with proc_open()
 			}
 
 			foreach ($running as $key => $job) {
+				if ($this->isInterrupted()) {
+					break 2;
+				}
+
 				if (!$job->isRunning()) {
 					$this->testHandler->assess($job);
 					unset($running[$key]);
 				}
 			}
 		}
+		$this->removeInterruptHandler();
 
-		foreach ($this->outputHandlers as $hander) {
-			$hander->end();
+		foreach ($this->outputHandlers as $handler) {
+			$handler->end();
 		}
 		return !$this->results[self::FAILED];
 	}
@@ -129,14 +135,24 @@ class Runner
 
 
 	/**
+	 * Get count of jobs.
+	 * @return int
+	 */
+	public function getJobCount()
+	{
+		return $this->jobCount;
+	}
+
+
+	/**
 	 * Writes to output handlers.
 	 * @return void
 	 */
 	public function writeResult($testName, $result, $message = NULL)
 	{
 		$this->results[$result]++;
-		foreach ($this->outputHandlers as $hander) {
-			$hander->result($testName, $result, $message);
+		foreach ($this->outputHandlers as $handler) {
+			$handler->result($testName, $result, $message);
 		}
 	}
 
@@ -156,6 +172,47 @@ class Runner
 	public function getResults()
 	{
 		return $this->results;
+	}
+
+
+	/**
+	 * @return void
+	 */
+	private function installInterruptHandler()
+	{
+		$this->interrupted = FALSE;
+
+		if (extension_loaded('pcntl')) {
+			$interrupted = & $this->interrupted;
+			pcntl_signal(SIGINT, function() use (& $interrupted) {
+				pcntl_signal(SIGINT, SIG_DFL);
+				$interrupted = TRUE;
+			});
+		}
+	}
+
+
+	/**
+	 * @return void
+	 */
+	private function removeInterruptHandler()
+	{
+		if (extension_loaded('pcntl')) {
+			pcntl_signal(SIGINT, SIG_DFL);
+		}
+	}
+
+
+	/**
+	 * @return bool
+	 */
+	private function isInterrupted()
+	{
+		if (extension_loaded('pcntl')) {
+			pcntl_signal_dispatch();
+		}
+
+		return $this->interrupted;
 	}
 
 }
