@@ -81,7 +81,7 @@ class Dumper
 			return 'Exception ' . get_class($var) . ': ' . ($var->getCode() ? '#' . $var->getCode() . ' ' : '') . $var->getMessage();
 
 		} elseif (is_object($var)) {
-			return get_class($var) . '(#' . substr(md5(spl_object_hash($var)), 0, 4) . ')';
+			return self::objectToLine($var);
 
 		} elseif (is_resource($var)) {
 			return 'resource(' . get_resource_type($var) . ')';
@@ -89,6 +89,22 @@ class Dumper
 		} else {
 			return 'unknown type';
 		}
+	}
+
+
+	/**
+	 * Formats object to line.
+	 * @param  object
+	 * @return string
+	 */
+	private static function objectToLine($object)
+	{
+		$line = get_class($object);
+		if ($object instanceof \DateTime || $object instanceof \DateTimeInterface) {
+			$line .= '(' . $object->format('Y-m-d H:i:s O') . ')';
+		}
+
+		return $line . '(#' . substr(md5(spl_object_hash($object)), 0, 4) . ')';
 	}
 
 
