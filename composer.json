@@ -20,5 +20,8 @@
 	"autoload": {
 		"classmap": ["Tester/"]
 	},
-	"bin": ["Tester/tester", "Tester/coverage-report"]
+	"bin": ["Tester/tester", "Tester/coverage-report"],
+	"extra": {
+		"branch-alias": { "dev-master": "1.1-dev" }
+	}
 }
