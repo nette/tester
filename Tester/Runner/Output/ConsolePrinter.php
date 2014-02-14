@@ -78,8 +78,8 @@ class ConsolePrinter implements Tester\Runner\OutputHandler
 		echo !$jobCount ? "No tests found\n" :
 			"\n\n" . $this->buffer . "\n"
 			. ($results[Runner::FAILED] ? "\033[1;41;37mFAILURES!" : "\033[1;42;37mOK")
-			. " ($jobCount tests, "
-			. ($results[Runner::FAILED] ? $results[Runner::FAILED] . ' failures, ' : '')
+			. " ($jobCount test" . ($jobCount > 1 ? 's' : '') . ", "
+			. ($results[Runner::FAILED] ? $results[Runner::FAILED] . ' failure' . ($results[Runner::FAILED] > 1 ? 's' : '') . ', ' : '')
 			. ($results[Runner::SKIPPED] ? $results[Runner::SKIPPED] . ' skipped, ' : '')
 			. ($jobCount !== $count ? ($jobCount - $count) . ' not run, ' : '')
 			. sprintf('%0.1f', $this->time + microtime(TRUE)) . " seconds)\033[0m\n";
