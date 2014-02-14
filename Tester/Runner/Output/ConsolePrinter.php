@@ -46,7 +46,7 @@ class ConsolePrinter implements Tester\Runner\OutputHandler
 		$this->time = -microtime(TRUE);
 		echo 'PHP ' . $this->runner->getPhp()->getVersion()
 			. ' | ' . $this->runner->getPhp()->getCommandLine()
-			. " | {$this->runner->threadCount} threads\n\n";
+			. " | {$this->runner->threadCount} thread" . ($this->runner->threadCount > 1 ? 's' : '') . "\n\n";
 	}
 
 
