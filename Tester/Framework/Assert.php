@@ -431,8 +431,10 @@ class Assert
 	 * @return bool
 	 * @internal
 	 */
-	public static function isEqual($expected, $actual, $level = 0)
+	public static function isEqual($expected, $actual, $levels = array())
 	{
+		$levels += array(0 => array(), 1 => array()); // left and right sides of structure
+		$level = count($levels[0]);
 		if ($level > 10) {
 			throw new \Exception('Nesting level too deep or recursive dependency.');
 		}
@@ -446,6 +448,16 @@ class Assert
 			if ($expected === $actual) {
 				return TRUE;
 			}
+
+			foreach (array_reverse($levels[0], TRUE) as $l => $oldExpected) {
+				if ($oldExpected === $expected && $levels[1][$l] === $actual) {
+					return TRUE; // recursive objects
+				}
+			}
+
+			$levels[0][$level] = $expected;
+			$levels[1][$level] = $actual;
+
 			$expected = (array) $expected;
 			$actual = (array) $actual;
 		}
@@ -457,8 +469,13 @@ class Assert
 				return FALSE;
 			}
 
+			$tmp = array(
+				0 => $levels[0] + array($level => $expected),
+				1 => $levels[1] + array($level => $actual),
+			);
+
 			foreach ($expected as $value) {
-				if (!self::isEqual($value, current($actual), $level + 1)) {
+				if (!self::isEqual($value, current($actual), $tmp)) {
 					return FALSE;
 				}
 				next($actual);

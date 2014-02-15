@@ -70,3 +70,17 @@ Assert::exception(function() {
 	$rec[] = & $rec;
 	Assert::equal($rec, $rec);
 }, 'Exception', 'Nesting level too deep or recursive dependency.');
+
+$rec1 = new stdClass();
+$rec1->foo = 'foo';
+$rec1->b = new stdClass();
+$rec1->b->bar = 'bar';
+$rec1->b->c = $rec1;
+
+$rec2 = new stdClass();
+$rec2->foo = 'foo';
+$rec2->b = new stdClass();
+$rec2->b->bar = 'bar';
+$rec2->b->c = $rec2;
+
+Assert::equal($rec1, $rec2);
