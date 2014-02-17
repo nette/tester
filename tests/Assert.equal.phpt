@@ -84,3 +84,25 @@ $rec2->b->bar = 'bar';
 $rec2->b->c = $rec2;
 
 Assert::equal($rec1, $rec2);
+
+$r1 = new stdClass;
+$r1->a = new stdClass;
+$r1->a->a = $r1;
+
+$r2 = new stdClass;
+$r2->a = new stdClass;
+$r2->a->a = $r2->a;
+
+Assert::equal($r1, $r2);
+
+$r1 = new stdClass;
+$r1->b = 'b';
+$r1->a = new stdClass;
+$r1->a->a = $r1;
+
+$r2 = new stdClass;
+$r2->b = 'b';
+$r2->a = new stdClass;
+$r2->a->a = $r2->a;
+
+Assert::notEqual($r1, $r2);
