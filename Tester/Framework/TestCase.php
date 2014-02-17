@@ -28,13 +28,13 @@ class TestCase
 	{
 		if (($method === NULL || $method === self::LIST_METHODS) && isset($_SERVER['argv'][1])) {
 			if ($_SERVER['argv'][1] === self::LIST_METHODS) {
-				echo json_encode(array_values(preg_grep(self::METHOD_PATTERN, get_class_methods($this))));
+				echo json_encode(array_values(preg_grep(self::METHOD_PATTERN, $this->getMethods())));
 				return;
 			}
 			$method = $_SERVER['argv'][1];
 		}
 
-		$methods = preg_grep(self::METHOD_PATTERN, $method ? array($method) : get_class_methods($this));
+		$methods = preg_grep(self::METHOD_PATTERN, $method ? array($method) : $this->getMethods());
 		foreach ($methods as $method) {
 			$this->runMethod($method);
 		}
@@ -95,6 +95,19 @@ class TestCase
 				throw $e;
 			}
 		}
+	}
+
+
+	/**
+	 * Returns all self's public, protected, private methods.
+	 * @return  string[]
+	 */
+	private function getMethods()
+	{
+		$r = new \ReflectionObject($this);
+		return array_map(function(\ReflectionMethod $rm) {
+			return $rm->getName();
+		}, $r->getMethods());
 	}
 
 

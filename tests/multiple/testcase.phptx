@@ -37,7 +37,7 @@ class MyTest extends TestCase
 		exit(5);
 	}
 
-	protected function testPrivate()
+	private function testPrivate()
 	{
 		exit(6);
 	}
