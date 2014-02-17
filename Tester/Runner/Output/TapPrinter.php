@@ -36,11 +36,11 @@ class TapPrinter implements Tester\Runner\OutputHandler
 
 	public function result($testName, $result, $message)
 	{
-		$message = trim($message);
+		$message = str_replace("\n", "\n# ", trim($message));
 		$outputs = array(
 			Runner::PASSED => "ok $testName",
 			Runner::SKIPPED => "ok $testName #skip $message",
-			Runner::FAILED => "not ok $testName" . str_replace("\n", "\n# ", "\n" . $message),
+			Runner::FAILED => "not ok $testName\n# $message",
 		);
 		echo $outputs[$result] . "\n";
 	}
