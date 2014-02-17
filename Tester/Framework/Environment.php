@@ -88,7 +88,7 @@ class Environment
 	 */
 	public static function skip($message = '')
 	{
-		echo "\nSkipped:\n$message\n";
+    echo "\nSkipped:\n" . strtr($message, "\r\n", "  ") . "\n";
 		die(Runner\Job::CODE_SKIP);
 	}
 
