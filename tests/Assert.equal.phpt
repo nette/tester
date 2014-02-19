@@ -64,7 +64,7 @@ foreach ($equals as $case) {
 
 	Assert::exception(function() use ($expected, $value) {
 		Assert::notEqual($expected, $value);
-	}, 'Tester\AssertException', '%1 should not be equal to %2');
+	}, 'Tester\AssertException', '%a% should not be equal to %a%');
 }
 
 foreach ($notEquals as $case) {
@@ -74,7 +74,7 @@ foreach ($notEquals as $case) {
 
 	Assert::exception(function() use ($expected, $value) {
 		Assert::equal($expected, $value);
-	}, 'Tester\AssertException', '%1 should be equal to %2');
+	}, 'Tester\AssertException', '%a% should be equal to %a%');
 }
 
 Assert::exception(function() {

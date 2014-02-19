@@ -12,5 +12,5 @@ $notNull = array(FALSE, 0, ''. 'NULL');
 foreach ($notNull as $value) {
 	Assert::exception(function() use ($value) {
 		Assert::null($value);
-	}, 'Tester\AssertException', '%1 should be NULL');
+	}, 'Tester\AssertException', '%a% should be NULL');
 }

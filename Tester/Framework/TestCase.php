@@ -103,8 +103,7 @@ class TestCase
 					$this->runTest($method->getName(), $args);
 				}
 			} catch (AssertException $e) {
-				$e->message .= " in {$method->getName()}" . (substr(Dumper::toLine($args), 5));
-				throw $e;
+				throw $e->setMessage("$e->origMessage in {$method->getName()}" . (substr(Dumper::toLine($args), 5)));
 			}
 		}
 	}

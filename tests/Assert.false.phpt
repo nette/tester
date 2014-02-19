@@ -12,5 +12,5 @@ $notFalse = array(TRUE, 0, 1, NULL, 'FALSE');
 foreach ($notFalse as $value) {
 	Assert::exception(function() use ($value) {
 		Assert::false($value);
-	}, 'Tester\AssertException', '%1 should be FALSE');
+	}, 'Tester\AssertException', '%a% should be FALSE');
 }

@@ -63,7 +63,7 @@ foreach ($notMatches as $case) {
 	list($expected, $value) = $case;
 	Assert::exception(function() use ($expected, $value) {
 		Assert::match($expected, $value);
-	}, 'Tester\AssertException', "%1 should match %2");
+	}, 'Tester\AssertException', "%A% should match %A%");
 }
 
 Assert::exception(function() {

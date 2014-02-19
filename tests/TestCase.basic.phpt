@@ -25,7 +25,7 @@ class TestCaseTearDownException extends TestCaseTest
 Assert::exception(function() {
 	$test = new TestCaseTest;
 	$test->run('testAssertion');
-}, 'Tester\AssertException', '%1 should be TRUE in testAssertion()');
+}, 'Tester\AssertException', 'FALSE should be TRUE in testAssertion()');
 
 
 $test = new TestCaseTearDownException;
@@ -35,4 +35,4 @@ Assert::exception(function() use ($test) {
 
 Assert::exception(function() use ($test) {
 	$test->run('testAssertion');
-}, 'Tester\AssertException', '%1 should be TRUE in testAssertion()');
+}, 'Tester\AssertException', 'FALSE should be TRUE in testAssertion()');

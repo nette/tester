@@ -404,9 +404,7 @@ class Assert
 	 */
 	public static function fail($message, $actual = NULL, $expected = NULL)
 	{
-		$e = new AssertException($message);
-		$e->actual = $actual;
-		$e->expected = $expected;
+		$e = new AssertException($message, $expected, $actual);
 		if (self::$onFailure) {
 			call_user_func(self::$onFailure, $e);
 		} else {
@@ -521,10 +519,30 @@ class Assert
  */
 class AssertException extends \Exception
 {
-	public $message;
+	public $origMessage;
 
 	public $actual;
 
 	public $expected;
+
+
+	public function __construct($message, $expected, $actual)
+	{
+		parent::__construct();
+		$this->expected = $expected;
+		$this->actual = $actual;
+		$this->setMessage($message);
+	}
+
+
+	public function setMessage($message)
+	{
+		$this->origMessage = $message;
+		$this->message = strtr($message, array(
+			'%1' => Dumper::toLine($this->actual),
+			'%2' => Dumper::toLine($this->expected),
+		));
+		return $this;
+	}
 
 }
