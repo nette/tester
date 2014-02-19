@@ -30,7 +30,7 @@ Assert::exception(function() {
 	Assert::exception(function() {
 		throw new Exception('Text');
 	}, 'Exception', 'Abc');
-}, 'Tester\AssertException', 'Exception with a message matching %2 was expected but got %1');
+}, 'Tester\AssertException', "Exception with a message matching 'Abc' was expected but got 'Text'");
 
 Assert::exception(function() {
 	throw new Exception('Text', 42);
@@ -40,4 +40,4 @@ Assert::exception(function() {
 	Assert::exception(function() {
 		throw new Exception('Text', 1);
 	}, 'Exception', NULL, 42);
-}, 'Tester\AssertException', 'Exception with a code %2 was expected but got %1');
+}, 'Tester\AssertException', 'Exception with a code 42 was expected but got 1');

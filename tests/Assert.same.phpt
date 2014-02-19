@@ -28,7 +28,7 @@ foreach ($same as $case) {
 
 	Assert::exception(function() use ($expected, $value) {
 		Assert::notSame($expected, $value);
-	}, 'Tester\AssertException', '%1 should not be %2');
+	}, 'Tester\AssertException', '%a% should not be %a%');
 }
 
 foreach ($notSame as $case) {
@@ -38,7 +38,7 @@ foreach ($notSame as $case) {
 
 	Assert::exception(function() use ($expected, $value) {
 		Assert::same($expected, $value);
-	}, 'Tester\AssertException', '%1 should be %2');
+	}, 'Tester\AssertException', '%a% should be %a%');
 }
 
 

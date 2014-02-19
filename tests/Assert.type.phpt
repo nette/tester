@@ -8,9 +8,9 @@ require __DIR__ . '/bootstrap.php';
 $cases = array(
 	array('\stdClass', new stdClass),
 	array('STDCLASS', new stdClass),
-	array('x', new stdClass, '%1 should be instance of x'),
-	array('Int', new stdClass, '%1 should be instance of Int'),
-	array('int', new stdClass, '%1 should be int'),
+	array('x', new stdClass, 'stdClass(#%a%) should be instance of x'),
+	array('Int', new stdClass, 'stdClass(#%a%) should be instance of Int'),
+	array('int', new stdClass, 'stdClass(#%a%) should be int'),
 	array('array', array()),
 	array('bool', TRUE),
 	array('callable', function() {}),
@@ -22,10 +22,10 @@ $cases = array(
 	array('resource', fopen(__FILE__, 'r')),
 	array('scalar', 'x'),
 	array('string', 'x'),
-	array('list', NULL, '%1 should be list'),
+	array('list', NULL, 'NULL should be list'),
 	array('list', array()),
 	array('list', array(1)),
-	array('list', array(4 => 1), '%1 should be list'),
+	array('list', array(4 => 1), 'array(4 => 1) should be list'),
 );
 
 foreach ($cases as $case) {

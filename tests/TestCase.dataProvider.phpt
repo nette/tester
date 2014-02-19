@@ -79,4 +79,4 @@ Assert::same(array(
 Assert::exception(function() {
 	$test = new MyTest;
 	$test->run('testAssertion');
-}, 'Tester\AssertException', '%1 should be TRUE in testAssertion(1, 2)');
+}, 'Tester\AssertException', 'FALSE should be TRUE in testAssertion(1, 2)');

@@ -13,7 +13,7 @@ foreach ($truthy as $value) {
 
 	Assert::exception(function() use ($value) {
 		Assert::falsey($value);
-	}, 'Tester\AssertException', '%1 should be falsey');
+	}, 'Tester\AssertException', '%a% should be falsey');
 }
 
 foreach ($notTruthy as $value) {
@@ -21,5 +21,5 @@ foreach ($notTruthy as $value) {
 
 	Assert::exception(function() use ($value) {
 		Assert::truthy($value);
-	}, 'Tester\AssertException', '%1 should be truthy');
+	}, 'Tester\AssertException', '%a% should be truthy');
 }

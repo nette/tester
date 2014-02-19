@@ -15,7 +15,7 @@ Assert::error(function() {
 
 Assert::error(function() {
 	$a++;
-}, E_NOTICE, 'Undefined variable: %a%');
+}, E_NOTICE, 'Undefined variable: a');
 
 Assert::error(function() {
 	$a++;
@@ -41,7 +41,7 @@ Assert::exception(function() {
 	Assert::error(function() {
 		$a++;
 	}, E_NOTICE, 'Abc');
-}, 'Tester\AssertException', "E_NOTICE with a message matching %2 was expected but got %1");
+}, 'Tester\AssertException', "E_NOTICE with a message matching 'Abc' was expected but got 'Undefined variable: a'");
 
 Assert::exception(function() {
 	Assert::error(function() {
