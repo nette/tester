@@ -13,6 +13,13 @@ $obj2 = new stdClass;
 $obj2->{'1'} = 'b';
 $obj2->{'0'} = 'a';
 
+$obj3 = new stdClass;
+$obj3->x = $obj3->y = new stdClass;
+
+$obj4 = new stdClass;
+$obj4->x = new stdClass;
+$obj4->y = new stdClass;
+
 $deep1 = $deep2 = new stdClass;
 $deep1->x = $deep2->x = $deep1;
 
@@ -34,6 +41,7 @@ $equals = array(
 	array(0.0, 0.0),
 	array(INF, INF),
 	array($obj1, $obj2),
+	array($obj3, $obj4),
 	array(array(0 => 'a', 'str' => 'b'), array('str' => 'b', 0 => 'a')),
 	array($deep1, $deep2),
 );

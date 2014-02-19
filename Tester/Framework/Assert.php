@@ -431,7 +431,7 @@ class Assert
 	 * @return bool
 	 * @internal
 	 */
-	public static function isEqual($expected, $actual, $level = 0)
+	public static function isEqual($expected, $actual, $level = 0, $objects = NULL)
 	{
 		if ($level > 10) {
 			throw new \Exception('Nesting level too deep or recursive dependency.');
@@ -443,9 +443,14 @@ class Assert
 		}
 
 		if (is_object($expected) && is_object($actual) && get_class($expected) === get_class($actual)) {
-			if ($expected === $actual) {
+			$objects = $objects ? clone $objects : new \SplObjectStorage;
+			if (isset($objects[$expected])) {
+				return $objects[$expected] === $actual;
+			} elseif ($expected === $actual) {
 				return TRUE;
 			}
+			$objects[$expected] = $actual;
+			$objects[$actual] = $expected;
 			$expected = (array) $expected;
 			$actual = (array) $actual;
 		}
@@ -458,7 +463,7 @@ class Assert
 			}
 
 			foreach ($expected as $value) {
-				if (!self::isEqual($value, current($actual), $level + 1)) {
+				if (!self::isEqual($value, current($actual), $level + 1, $objects)) {
 					return FALSE;
 				}
 				next($actual);
