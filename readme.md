@@ -182,7 +182,7 @@ Usage:
 Options:
     -p <path>            Specify PHP executable to run (default: php-cgi).
     -c <path>            Look for php.ini file (or look in directory) <path>.
-    -log <path>          Write log to file <path>.
+    -l | --log <path>    Write log to file <path>.
     -d <key=value>...    Define INI entry 'key' with value 'val'.
     -s                   Show information about skipped tests.
     --tap                Generate Test Anything Protocol.

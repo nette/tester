@@ -227,26 +227,29 @@ class Dumper
 		}
 
 		if ($e instanceof AssertException) {
-			if (is_object($e->expected) || is_array($e->expected) || (is_string($e->expected) && strlen($e->expected) > self::$maxLength)
-				|| is_object($e->actual) || is_array($e->actual) || (is_string($e->actual) && strlen($e->actual) > self::$maxLength)
+			$expected = $e->expected;
+			$actual = $e->actual;
+
+			if (is_object($expected) || is_array($expected) || (is_string($expected) && strlen($expected) > self::$maxLength)
+				|| is_object($actual) || is_array($actual) || (is_string($actual) && strlen($actual) > self::$maxLength)
 			) {
 				$args = isset($_SERVER['argv'][1]) ? '.[' . preg_replace('#[^a-z0-9-. ]+#i', '_', $_SERVER['argv'][1]) . ']' : '';
-				$stored[] = self::saveOutput($testFile, $e->expected, $args . '.expected');
-				$stored[] = self::saveOutput($testFile, $e->actual, $args . '.actual');
+				$stored[] = self::saveOutput($testFile, $expected, $args . '.expected');
+				$stored[] = self::saveOutput($testFile, $actual, $args . '.actual');
 			}
 
-			if ((is_string($e->actual) && is_string($e->expected))) {
-				for ($i = 0; $i < strlen($e->actual) && isset($e->expected[$i]) && $e->actual[$i] === $e->expected[$i]; $i++);
-				$i = max(0, min($i, max(strlen($e->actual), strlen($e->expected)) - self::$maxLength + 3));
-				for (; $i && $i < count($e->actual) && $e->actual[$i-1] >= "\x80" && $e->actual[$i] >= "\x80" && $e->actual[$i] < "\xC0"; $i--);
+			if ((is_string($actual) && is_string($expected))) {
+				for ($i = 0; $i < strlen($actual) && isset($expected[$i]) && $actual[$i] === $expected[$i]; $i++);
+				$i = max(0, min($i, max(strlen($actual), strlen($expected)) - self::$maxLength + 3));
+				for (; $i && $i < count($actual) && $actual[$i-1] >= "\x80" && $actual[$i] >= "\x80" && $actual[$i] < "\xC0"; $i--);
 				if ($i) {
-					$e->expected = substr_replace($e->expected, '...', 0, $i);
-					$e->actual = substr_replace($e->actual, '...', 0, $i);
+					$expected = substr_replace($expected, '...', 0, $i);
+					$actual = substr_replace($actual, '...', 0, $i);
 				}
 			}
 
 			$message = 'Failed: ' . $e->getMessage();
-			if (((is_string($e->actual) && is_string($e->expected)) || (is_array($e->actual) && is_array($e->expected)))
+			if (((is_string($actual) && is_string($expected)) || (is_array($actual) && is_array($expected)))
 				&& preg_match('#^(.*)(%\d)(.*)(%\d.*)\z#s', $message, $m)
 			) {
 				if (($delta = strlen($m[1]) - strlen($m[3])) >= 3) {
@@ -256,8 +259,8 @@ class Dumper
 				}
 			}
 			$message = strtr($message, array(
-				'%1' => "\033[1;33m" . Dumper::toLine($e->actual) . "\033[1;37m",
-				'%2' => "\033[1;33m" . Dumper::toLine($e->expected) . "\033[1;37m",
+				'%1' => "\033[1;33m" . Dumper::toLine($actual) . "\033[1;37m",
+				'%2' => "\033[1;33m" . Dumper::toLine($expected) . "\033[1;37m",
 			));
 		} else {
 			$message = ($e instanceof \ErrorException ? Helpers::errorTypeToString($e->getSeverity()) : get_class($e))

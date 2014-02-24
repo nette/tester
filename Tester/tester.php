@@ -43,7 +43,7 @@ Usage:
 Options:
     -p <path>            Specify PHP executable to run (default: php-cgi).
     -c <path>            Look for php.ini file (or look in directory) <path>.
-    -log <path>          Write log to file <path>.
+    -l | --log <path>    Write log to file <path>.
     -d <key=value>...    Define INI entry 'key' with value 'val'.
     -s                   Show information about skipped tests.
     --tap                Generate Test Anything Protocol.
@@ -63,6 +63,10 @@ XX
 	'--debug' => array(),
 ));
 
+
+if (isset($_SERVER['argv']) && ($tmp = array_search('-log', $_SERVER['argv']))) {
+	$_SERVER['argv'][$tmp] = '--log';
+}
 
 $options = $cmd->parse();
 
@@ -107,9 +111,9 @@ $runner->outputHandlers[] = $options['--tap']
 	? new Tester\Runner\Output\TapPrinter($runner)
 	: new Tester\Runner\Output\ConsolePrinter($runner, $options['-s']);
 
-if ($options['-log']) {
-	echo "Log: {$options['-log']}\n";
-	$runner->outputHandlers[] = new Tester\Runner\Output\Logger($runner, $options['-log']);
+if ($options['--log']) {
+	echo "Log: {$options['--log']}\n";
+	$runner->outputHandlers[] = new Tester\Runner\Output\Logger($runner, $options['--log']);
 }
 
 if ($options['--setup']) {

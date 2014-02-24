@@ -59,8 +59,10 @@ class ConsolePrinter implements Tester\Runner\OutputHandler
 		);
 		echo $outputs[$result];
 
-		$lines = explode("\n", trim($message), self::PRINT_LINES + 1);
-		$lines[self::PRINT_LINES] = isset($lines[self::PRINT_LINES]) ? '...' : '';
+		$lines = explode("\n", trim($message));
+		if (count($lines) > self::PRINT_LINES) {
+			$lines = array_merge(array('...'), array_slice($lines, -self::PRINT_LINES));
+		}
 		$message = '   ' . implode("\n   ", $lines) . "\n";
 
 		if ($result === Runner::FAILED) {
