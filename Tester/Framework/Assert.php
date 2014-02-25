@@ -227,9 +227,10 @@ class Assert
 	 * @param  callable
 	 * @param  string class
 	 * @param  string message
+	 * @param  integer code
 	 * @return Exception
 	 */
-	public static function exception($function, $class, $message = NULL)
+	public static function exception($function, $class, $message = NULL, $code = NULL)
 	{
 		try {
 			call_user_func($function);
@@ -243,6 +244,9 @@ class Assert
 
 		} elseif ($message && !self::isMatching($message, $e->getMessage())) {
 			self::fail("$class with a message matching %2 was expected but got %1", $e->getMessage(), $message);
+
+		} elseif ($code !== NULL && $e->getCode() !== $code) {
+			self::fail("$class with a code %2 was expected but got %1", $e->getCode(), $code);
 		}
 		return $e;
 	}
