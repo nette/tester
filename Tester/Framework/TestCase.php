@@ -26,17 +26,27 @@ class TestCase
 	 */
 	public function run($method = NULL)
 	{
+		$r = new \ReflectionObject($this);
+		$methods = array_values(preg_grep(self::METHOD_PATTERN, array_map(function(\ReflectionMethod $rm) {
+			return $rm->getName();
+		}, $r->getMethods())));
+
 		if (($method === NULL || $method === self::LIST_METHODS) && isset($_SERVER['argv'][1])) {
 			if ($_SERVER['argv'][1] === self::LIST_METHODS) {
-				echo json_encode(array_values(preg_grep(self::METHOD_PATTERN, get_class_methods($this))));
+				echo json_encode($methods);
 				return;
 			}
 			$method = $_SERVER['argv'][1];
 		}
 
-		$methods = preg_grep(self::METHOD_PATTERN, $method ? array($method) : get_class_methods($this));
-		foreach ($methods as $method) {
+		if ($method === NULL) {
+			foreach ($methods as $method) {
+				$this->runMethod($method);
+			}
+		} elseif (in_array($method, $methods)) {
 			$this->runMethod($method);
+		} else {
+			throw new TestCaseException("Method '$method' does not exist or it is not a testing method.");
 		}
 	}
 

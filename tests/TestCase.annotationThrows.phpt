@@ -122,7 +122,7 @@ Assert::exception(function() use ($test) {
 
 Assert::exception(function() use ($test) {
 	$test->run('testUndefinedMethod');
-}, 'ReflectionException', 'Method MyTest::testUndefinedMethod() does not exist');
+}, 'Tester\TestCaseException', "Method 'testUndefinedMethod' does not exist or it is not a testing method.");
 
 $test->run('testNotice');
 $test->run('testNoticeMessage');
