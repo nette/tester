@@ -11,7 +11,11 @@ require __DIR__ . '/../Tester/Runner/IExecutable.php';
 require __DIR__ . '/../Tester/Runner/PhpExecutable.php';
 
 
-$php = new Tester\Runner\PhpExecutable(PHP_BINARY);
+if (defined('HHVM_VERSION')) {
+	Tester\Environment::skip('Not supported under HHVM.');
+}
+
+$php = createExecutable(PHP_BINARY);
 
 Assert::contains(PHP_BINARY, $php->getCommandLine());
 Assert::same(PHP_VERSION, $php->getVersion());

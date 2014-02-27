@@ -14,3 +14,11 @@ function test(\Closure $function)
 {
 	$function();
 }
+
+
+function createExecutable($path, array $args = NULL)
+{
+	return defined('HHVM_VERSION')
+		? new Tester\Runner\HhvmExecutable($path, $args)
+		: new Tester\Runner\PhpExecutable($path, $args);
+}

@@ -7,6 +7,7 @@ require __DIR__ . '/bootstrap.php';
 require __DIR__ . '/../Tester/Runner/TestHandler.php';
 require __DIR__ . '/../Tester/Runner/IExecutable.php';
 require __DIR__ . '/../Tester/Runner/PhpExecutable.php';
+require __DIR__ . '/../Tester/Runner/HhvmExecutable.php';
 require __DIR__ . '/../Tester/Runner/Runner.php';
 
 if (PHP_VERSION_ID < 50400) {
@@ -14,7 +15,7 @@ if (PHP_VERSION_ID < 50400) {
 }
 
 
-$runner = new Tester\Runner\Runner(new Tester\Runner\PhpExecutable(PHP_BINARY));
+$runner = new Tester\Runner\Runner(createExecutable(PHP_BINARY));
 
 $tests = Assert::with($runner, function() {
 	$this->results = array(self::PASSED => 0, self::SKIPPED => 0, self::FAILED => 0);
