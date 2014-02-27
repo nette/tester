@@ -86,7 +86,9 @@ if ($cmd->isEmpty() || $options['--help']) {
 	exit;
 }
 
-$phpArgs = !$options['--hhvm'] ? '-n ' : '';
+$isHhvmRun = $options['--hhvm'] || getenv('TESTER_HHVM') === 'true';
+
+$phpArgs = $isHhvmRun ? '' : '-n ';
 if ($options['-c']) {
 	$phpArgs .= ' -c ' . Tester\Helpers::escapeArg($options['-c']);
 } elseif (!$options['--info']) {
@@ -97,7 +99,7 @@ foreach ($options['-d'] as $item) {
 	$phpArgs .= ' -d ' . Tester\Helpers::escapeArg($item);
 }
 
-if ($options['--hhvm']) {
+if ($isHhvmRun) {
 	$php = new Tester\Runner\HhvmExecutable($options['-p'], $phpArgs);
 } else {
 	$php = new Tester\Runner\PhpExecutable($options['-p'], $phpArgs);
