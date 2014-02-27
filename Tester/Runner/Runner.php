@@ -34,7 +34,7 @@ class Runner
 	/** @var OutputHandler[] */
 	public $outputHandlers = array();
 
-	/** @var IExecutable */
+	/** @var IPhpInterpreter */
 	private $php;
 
 	/** @var Job[] */
@@ -50,7 +50,7 @@ class Runner
 	private $interrupted;
 
 
-	public function __construct(IExecutable $php)
+	public function __construct(IPhpInterpreter $php)
 	{
 		$this->php = $php;
 		$this->testHandler = new TestHandler($this);
@@ -158,7 +158,7 @@ class Runner
 
 
 	/**
-	 * @return IExecutable
+	 * @return IPhpInterpreter
 	 */
 	public function getPhp()
 	{

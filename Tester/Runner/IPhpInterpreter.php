@@ -16,7 +16,7 @@ namespace Tester\Runner;
  *
  * @author Michael Moravec
  */
-interface IExecutable
+interface IPhpInterpreter
 {
 
 	/**

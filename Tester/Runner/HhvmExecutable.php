@@ -18,7 +18,7 @@ use Tester\Helpers;
  *
  * @author     Michael Moravec
  */
-class HhvmExecutable implements IExecutable
+class HhvmExecutable implements IPhpInterpreter
 {
 	/** @var string  PHP arguments */
 	public $arguments;

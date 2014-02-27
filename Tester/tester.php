@@ -6,8 +6,8 @@
  */
 
 
-require __DIR__ . '/Runner/IExecutable.php';
-require __DIR__ . '/Runner/PhpExecutable.php';
+require __DIR__ . '/Runner/IPhpInterpreter.php';
+require __DIR__ . '/Runner/ZendPhpExecutable.php';
 require __DIR__ . '/Runner/HhvmExecutable.php';
 require __DIR__ . '/Runner/Runner.php';
 require __DIR__ . '/Runner/Job.php';
@@ -102,7 +102,7 @@ foreach ($options['-d'] as $item) {
 if ($isHhvmRun) {
 	$php = new Tester\Runner\HhvmExecutable($options['-p'], $phpArgs);
 } else {
-	$php = new Tester\Runner\PhpExecutable($options['-p'], $phpArgs);
+	$php = new Tester\Runner\ZendPhpExecutable($options['-p'], $phpArgs);
 }
 
 if ($options['--info']) {

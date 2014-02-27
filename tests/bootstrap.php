@@ -20,5 +20,5 @@ function createExecutable($path, array $args = NULL)
 {
 	return defined('HHVM_VERSION')
 		? new Tester\Runner\HhvmExecutable($path, $args)
-		: new Tester\Runner\PhpExecutable($path, $args);
+		: new Tester\Runner\ZendPhpExecutable($path, $args);
 }

@@ -13,7 +13,7 @@ namespace Tester\Runner;
  *
  * @author     David Grudl
  */
-class PhpExecutable implements IExecutable
+class ZendPhpExecutable implements IPhpInterpreter
 {
 	/** @var string  PHP arguments */
 	public $arguments;

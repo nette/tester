@@ -7,7 +7,7 @@
 use Tester\Assert;
 
 require __DIR__ . '/bootstrap.php';
-require __DIR__ . '/../Tester/Runner/IExecutable.php';
+require __DIR__ . '/../Tester/Runner/IPhpInterpreter.php';
 require __DIR__ . '/../Tester/Runner/HhvmExecutable.php';
 
 if (!defined('HHVM_VERSION')) {
