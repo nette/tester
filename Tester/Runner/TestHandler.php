@@ -94,7 +94,7 @@ class TestHandler
 	}
 
 
-	private function initiatePhpVersion($version, PhpExecutable $php)
+	private function initiatePhpVersion($version, IExecutable $php)
 	{
 		if (preg_match('#^(<=|<|==|=|!=|<>|>=|>)?\s*(.+)#', $version, $matches)
 			&& version_compare($matches[2], $php->getVersion(), $matches[1] ?: '>='))
@@ -104,13 +104,13 @@ class TestHandler
 	}
 
 
-	private function initiatePhpIni($value, PhpExecutable $php)
+	private function initiatePhpIni($value, IExecutable $php)
 	{
-		$php->arguments .= ' -d ' . Helpers::escapeArg($value);
+		$php->arguments .= ($php instanceof HhvmExecutable ? ' -v ' : ' -d ') . Helpers::escapeArg($value);
 	}
 
 
-	private function initiateDataProvider($provider, PhpExecutable $php, $file)
+	private function initiateDataProvider($provider, IExecutable $php, $file)
 	{
 		try {
 			list($dataFile, $query, $optional) = Tester\DataProvider::parseAnnotation($provider, $file);
@@ -126,7 +126,7 @@ class TestHandler
 	}
 
 
-	private function initiateMultiple($count, PhpExecutable $php, $file)
+	private function initiateMultiple($count, IExecutable $php, $file)
 	{
 		foreach (range(0, (int) $count - 1) as $arg) {
 			$this->runner->addJob(new Job($file, $php, (string) $arg));
@@ -135,7 +135,7 @@ class TestHandler
 	}
 
 
-	private function initiateTestCase($foo, PhpExecutable $php, $file)
+	private function initiateTestCase($foo, IExecutable $php, $file)
 	{
 		$job = new Job($file, $php, Helpers::escapeArg(Tester\TestCase::LIST_METHODS));
 		$job->run();

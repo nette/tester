@@ -6,7 +6,9 @@
  */
 
 
+require __DIR__ . '/Runner/IExecutable.php';
 require __DIR__ . '/Runner/PhpExecutable.php';
+require __DIR__ . '/Runner/HhvmExecutable.php';
 require __DIR__ . '/Runner/Runner.php';
 require __DIR__ . '/Runner/Job.php';
 require __DIR__ . '/Runner/CommandLine.php';
@@ -53,6 +55,7 @@ Options:
     --setup <path>       Script for runner setup.
     --colors [1|0]       Enable or disable colors.
     -h | --help          This help.
+    --hhvm               Running under HipHop VM, needs special treatment.
 
 XX
 , array(
@@ -83,7 +86,7 @@ if ($cmd->isEmpty() || $options['--help']) {
 	exit;
 }
 
-$phpArgs = '-n';
+$phpArgs = !$options['--hhvm'] ? '-n ' : '';
 if ($options['-c']) {
 	$phpArgs .= ' -c ' . Tester\Helpers::escapeArg($options['-c']);
 } elseif (!$options['--info']) {
@@ -94,7 +97,11 @@ foreach ($options['-d'] as $item) {
 	$phpArgs .= ' -d ' . Tester\Helpers::escapeArg($item);
 }
 
-$php = new Tester\Runner\PhpExecutable($options['-p'], $phpArgs);
+if ($options['--hhvm']) {
+	$php = new Tester\Runner\HhvmExecutable($options['-p'], $phpArgs);
+} else {
+	$php = new Tester\Runner\PhpExecutable($options['-p'], $phpArgs);
+}
 
 if ($options['--info']) {
 	$job = new Tester\Runner\Job(__DIR__ . '/Runner/info.php', $php);

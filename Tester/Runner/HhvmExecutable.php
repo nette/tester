@@ -2,18 +2,23 @@
 
 /**
  * This file is part of the Nette Tester.
+ *
  * Copyright (c) 2009 David Grudl (http://davidgrudl.com)
+ *
+ * For the full copyright and license information, please view
+ * the file license.txt that was distributed with this source code.
  */
 
 namespace Tester\Runner;
 
+use Tester\Helpers;
 
 /**
- * PHP executable command-line.
+ * HHVM executable command-line.
  *
- * @author     David Grudl
+ * @author     Michael Moravec
  */
-class PhpExecutable implements IExecutable
+class HhvmExecutable implements IExecutable
 {
 	/** @var string  PHP arguments */
 	public $arguments;
@@ -24,25 +29,19 @@ class PhpExecutable implements IExecutable
 	/** @var string  PHP version */
 	private $version;
 
-	/** @var bool is CGI? */
-	private $cgi;
-
 
 	public function __construct($path, $args = NULL)
 	{
-		$this->path = \Tester\Helpers::escapeArg($path);
 		$descriptors = array(array('pipe', 'r'), array('pipe', 'w'), array('pipe', 'w'));
-		$proc = @proc_open("$this->path -n -v", $descriptors, $pipes);
+		$proc = @proc_open(Helpers::escapeArg($path) . ' --php -r "echo PHP_VERSION;"', $descriptors, $pipes);
 		$output = stream_get_contents($pipes[1]);
 		$error = stream_get_contents($pipes[2]);
 		if (proc_close($proc)) {
 			throw new \Exception("Unable to run '$path': " . preg_replace('#[\r\n ]+#', ' ', $error));
-		} elseif (!preg_match('#^PHP (\S+).*c(g|l)i#i', $output, $matches)) {
-			throw new \Exception("Unable to detect PHP version (output: $output).");
 		}
 
-		$this->version = $matches[1];
-		$this->cgi = strcasecmp($matches[2], 'g') === 0;
+		$this->version = $output;
+		$this->path = Helpers::escapeArg($path);
 		$this->arguments = $args;
 	}
 
@@ -70,7 +69,7 @@ class PhpExecutable implements IExecutable
 	 */
 	public function isCgi()
 	{
-		return $this->cgi;
+		return FALSE;
 	}
 
 }
