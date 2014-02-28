@@ -256,9 +256,9 @@ class Assert
 	 * Checks if the function throws exception, alias for exception().
 	 * @return Exception
 	 */
-	public static function throws($function, $class, $message = NULL)
+	public static function throws($function, $class, $message = NULL, $code = NULL)
 	{
-		return self::exception($function, $class, $message);
+		return self::exception($function, $class, $message, $code);
 	}
 
 
