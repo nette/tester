@@ -6,7 +6,10 @@
  */
 
 
-require __DIR__ . '/Runner/PhpExecutable.php';
+require __DIR__ . '/Runner/InterpreterFactory.php';
+require __DIR__ . '/Runner/IPhpInterpreter.php';
+require __DIR__ . '/Runner/ZendPhpExecutable.php';
+require __DIR__ . '/Runner/HhvmExecutable.php';
 require __DIR__ . '/Runner/Runner.php';
 require __DIR__ . '/Runner/Job.php';
 require __DIR__ . '/Runner/CommandLine.php';
@@ -83,18 +86,21 @@ if ($cmd->isEmpty() || $options['--help']) {
 	exit;
 }
 
-$phpArgs = '-n';
+
+$interpreterFactory = new Tester\Runner\InterpreterFactory();
+$php = $interpreterFactory->create($options['-p']);
+
+$php->addArgument('-n');
 if ($options['-c']) {
-	$phpArgs .= ' -c ' . Tester\Helpers::escapeArg($options['-c']);
+	$php->addArgument('-c', $options['-c']);
 } elseif (!$options['--info']) {
 	echo "Note: No php.ini is used.\n";
 }
 
 foreach ($options['-d'] as $item) {
-	$phpArgs .= ' -d ' . Tester\Helpers::escapeArg($item);
+	$php->addArgument('-d', $item);
 }
 
-$php = new Tester\Runner\PhpExecutable($options['-p'], $phpArgs);
 
 if ($options['--info']) {
 	$job = new Tester\Runner\Job(__DIR__ . '/Runner/info.php', $php);

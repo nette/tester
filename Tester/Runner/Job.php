@@ -39,7 +39,7 @@ class Job
 	/** @var string  output headers in raw format */
 	private $headers;
 
-	/** @var PhpExecutable */
+	/** @var IPhpInterpreter */
 	private $php;
 
 	/** @var resource */
@@ -56,7 +56,7 @@ class Job
 	 * @param  string  test file name
 	 * @return void
 	 */
-	public function __construct($testFile, PhpExecutable $php, $args = NULL)
+	public function __construct($testFile, IPhpInterpreter $php, $args = NULL)
 	{
 		$this->file = (string) $testFile;
 		$this->php = $php;
@@ -74,7 +74,11 @@ class Job
 		putenv(Environment::RUNNER . '=1');
 		putenv(Environment::COLORS . '=' . (int) Environment::$useColors);
 		$this->proc = proc_open(
-			$this->php->getCommandLine() . ' -d register_argc_argv=on ' . \Tester\Helpers::escapeArg($this->file) . ' ' . $this->args,
+			$this->php->getCommandLine()
+			. ($this->php instanceof ZendPhpExecutable ? ' -d register_argc_argv=on ' : '')
+			. \Tester\Helpers::escapeArg($this->file)
+			. ' '
+			. $this->args,
 			array(
 				array('pipe', 'r'),
 				array('pipe', 'w'),

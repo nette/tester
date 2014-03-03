@@ -7,7 +7,9 @@ use Tester\Assert,
 require __DIR__ . '/bootstrap.php';
 require __DIR__ . '/../Tester/Runner/OutputHandler.php';
 require __DIR__ . '/../Tester/Runner/TestHandler.php';
-require __DIR__ . '/../Tester/Runner/PhpExecutable.php';
+require __DIR__ . '/../Tester/Runner/IPhpInterpreter.php';
+require __DIR__ . '/../Tester/Runner/ZendPhpExecutable.php';
+require __DIR__ . '/../Tester/Runner/HhvmExecutable.php';
 require __DIR__ . '/../Tester/Runner/Runner.php';
 
 if (PHP_VERSION_ID < 50400) {
@@ -28,8 +30,9 @@ class Logger implements Tester\Runner\OutputHandler
 	function end() {}
 }
 
-$php = new Tester\Runner\PhpExecutable(PHP_BINARY);
-$php->arguments .= ' -d display_errors=On -d html_errors=Off';
+$php = createExecutable(PHP_BINARY);
+$php->addArgument('-d', 'display_errors=On');
+$php->addArgument('-d', 'html_errors=Off');
 
 $runner = new Runner($php);
 $runner->paths[] = __DIR__ . '/multiple-fails/*.phptx';
