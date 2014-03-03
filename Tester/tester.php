@@ -6,6 +6,7 @@
  */
 
 
+require __DIR__ . '/Runner/InterpreterFactory.php';
 require __DIR__ . '/Runner/IPhpInterpreter.php';
 require __DIR__ . '/Runner/ZendPhpExecutable.php';
 require __DIR__ . '/Runner/HhvmExecutable.php';
@@ -55,7 +56,6 @@ Options:
     --setup <path>       Script for runner setup.
     --colors [1|0]       Enable or disable colors.
     -h | --help          This help.
-    --hhvm               Running under HipHop VM, needs special treatment.
 
 XX
 , array(
@@ -86,13 +86,9 @@ if ($cmd->isEmpty() || $options['--help']) {
 	exit;
 }
 
-$isHhvmRun = $options['--hhvm'] || getenv('TESTER_HHVM') === 'true';
 
-if ($isHhvmRun) {
-	$php = new Tester\Runner\HhvmExecutable($options['-p']);
-} else {
-	$php = new Tester\Runner\ZendPhpExecutable($options['-p']);
-}
+$interpreterFactory = new Tester\Runner\InterpreterFactory();
+$php = $interpreterFactory->create($options['-p']);
 
 $php->addArgument('-n');
 if ($options['-c']) {

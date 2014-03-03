@@ -19,6 +19,6 @@ function test(\Closure $function)
 function createExecutable($path, array $args = NULL)
 {
 	return defined('HHVM_VERSION')
-		? new Tester\Runner\HhvmExecutable($path, $args)
-		: new Tester\Runner\ZendPhpExecutable($path, $args);
+		? new Tester\Runner\HhvmExecutable($path, PHP_VERSION, $args)
+		: new Tester\Runner\ZendPhpExecutable($path, PHP_VERSION, substr(PHP_SAPI, 0, 3) === 'cgi', $args);
 }

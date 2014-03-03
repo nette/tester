@@ -13,6 +13,5 @@ matrix:
     include:
         - php: hhvm
           script: "Tester/tester -p php tests/"
-          env: TESTER_HHVM=true
 
 script: "Tester/tester tests/"

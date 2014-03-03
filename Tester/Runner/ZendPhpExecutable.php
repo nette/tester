@@ -29,21 +29,11 @@ class ZendPhpExecutable implements IPhpInterpreter
 	private $cgi;
 
 
-	public function __construct($path, $args = NULL)
+	public function __construct($path, $version, $cgi, $args = NULL)
 	{
-		$this->path = Helpers::escapeArg($path);
-		$descriptors = array(array('pipe', 'r'), array('pipe', 'w'), array('pipe', 'w'));
-		$proc = @proc_open("$this->path -n -v", $descriptors, $pipes);
-		$output = stream_get_contents($pipes[1]);
-		$error = stream_get_contents($pipes[2]);
-		if (proc_close($proc)) {
-			throw new \Exception("Unable to run '$path': " . preg_replace('#[\r\n ]+#', ' ', $error));
-		} elseif (!preg_match('#^PHP (\S+).*c(g|l)i#i', $output, $matches)) {
-			throw new \Exception("Unable to detect PHP version (output: $output).");
-		}
-
-		$this->version = $matches[1];
-		$this->cgi = strcasecmp($matches[2], 'g') === 0;
+		$this->path = $path;
+		$this->version = $version;
+		$this->cgi = (bool) $cgi;
 		$this->arguments = (string) $args;
 	}
 
@@ -53,7 +43,7 @@ class ZendPhpExecutable implements IPhpInterpreter
 	 */
 	public function getCommandLine()
 	{
-		return $this->path . ($this->arguments !== '' ? ' ' . $this->arguments : '');
+		return Helpers::escapeArg($this->path) . ($this->arguments !== '' ? ' ' . $this->arguments : '');
 	}
 
 

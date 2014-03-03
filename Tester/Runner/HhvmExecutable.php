@@ -30,18 +30,10 @@ class HhvmExecutable implements IPhpInterpreter
 	private $version;
 
 
-	public function __construct($path, $args = NULL)
+	public function __construct($path, $version, $args = NULL)
 	{
-		$descriptors = array(array('pipe', 'r'), array('pipe', 'w'), array('pipe', 'w'));
-		$proc = @proc_open(Helpers::escapeArg($path) . ' --php -r "echo PHP_VERSION;"', $descriptors, $pipes);
-		$output = stream_get_contents($pipes[1]);
-		$error = stream_get_contents($pipes[2]);
-		if (proc_close($proc)) {
-			throw new \Exception("Unable to run '$path': " . preg_replace('#[\r\n ]+#', ' ', $error));
-		}
-
-		$this->version = $output;
-		$this->path = Helpers::escapeArg($path);
+		$this->path = $path;
+		$this->version = $version;
 		$this->arguments = (string) $args;
 		$this->addArgument('--php');
 	}
@@ -52,7 +44,7 @@ class HhvmExecutable implements IPhpInterpreter
 	 */
 	public function getCommandLine()
 	{
-		return $this->path . ($this->arguments !== '' ? ' ' . $this->arguments : '');
+		return Helpers::escapeArg($this->path) . ($this->arguments !== '' ? ' ' . $this->arguments : '');
 	}
 
 
