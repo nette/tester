@@ -36,4 +36,17 @@ interface IPhpInterpreter
 	 */
 	public function isCgi();
 
+
+	/**
+	 * @return string
+	 */
+	public function getArguments();
+
+
+	/**
+	 * @param string
+	 * @param mixed
+	 */
+	public function addArgument($name, $value = NULL);
+
 }

@@ -88,22 +88,23 @@ if ($cmd->isEmpty() || $options['--help']) {
 
 $isHhvmRun = $options['--hhvm'] || getenv('TESTER_HHVM') === 'true';
 
-$phpArgs = $isHhvmRun ? '' : '-n ';
+if ($isHhvmRun) {
+	$php = new Tester\Runner\HhvmExecutable($options['-p']);
+} else {
+	$php = new Tester\Runner\ZendPhpExecutable($options['-p']);
+}
+
+$php->addArgument('-n');
 if ($options['-c']) {
-	$phpArgs .= ' -c ' . Tester\Helpers::escapeArg($options['-c']);
+	$php->addArgument('-c', $options['-c']);
 } elseif (!$options['--info']) {
 	echo "Note: No php.ini is used.\n";
 }
 
 foreach ($options['-d'] as $item) {
-	$phpArgs .= ' -d ' . Tester\Helpers::escapeArg($item);
+	$php->addArgument('-d', $item);
 }
 
-if ($isHhvmRun) {
-	$php = new Tester\Runner\HhvmExecutable($options['-p'], $phpArgs);
-} else {
-	$php = new Tester\Runner\ZendPhpExecutable($options['-p'], $phpArgs);
-}
 
 if ($options['--info']) {
 	$job = new Tester\Runner\Job(__DIR__ . '/Runner/info.php', $php);

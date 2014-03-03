@@ -7,6 +7,7 @@
 
 namespace Tester\Runner;
 
+use Tester\Helpers;
 
 /**
  * PHP executable command-line.
@@ -16,7 +17,7 @@ namespace Tester\Runner;
 class ZendPhpExecutable implements IPhpInterpreter
 {
 	/** @var string  PHP arguments */
-	public $arguments;
+	private $arguments = '';
 
 	/** @var string  PHP executable */
 	private $path;
@@ -30,7 +31,7 @@ class ZendPhpExecutable implements IPhpInterpreter
 
 	public function __construct($path, $args = NULL)
 	{
-		$this->path = \Tester\Helpers::escapeArg($path);
+		$this->path = Helpers::escapeArg($path);
 		$descriptors = array(array('pipe', 'r'), array('pipe', 'w'), array('pipe', 'w'));
 		$proc = @proc_open("$this->path -n -v", $descriptors, $pipes);
 		$output = stream_get_contents($pipes[1]);
@@ -43,7 +44,7 @@ class ZendPhpExecutable implements IPhpInterpreter
 
 		$this->version = $matches[1];
 		$this->cgi = strcasecmp($matches[2], 'g') === 0;
-		$this->arguments = $args;
+		$this->arguments = (string) $args;
 	}
 
 
@@ -52,7 +53,7 @@ class ZendPhpExecutable implements IPhpInterpreter
 	 */
 	public function getCommandLine()
 	{
-		return $this->path . ' ' . $this->arguments;
+		return $this->path . ($this->arguments !== '' ? ' ' . $this->arguments : '');
 	}
 
 
@@ -73,4 +74,26 @@ class ZendPhpExecutable implements IPhpInterpreter
 		return $this->cgi;
 	}
 
+	/**
+	 * @return array
+	 */
+	public function getArguments()
+	{
+		return $this->arguments;
+	}
+
+
+	/**
+	 * @param string
+	 * @param mixed
+	 */
+	public function addArgument($name, $value = NULL)
+	{
+		if ($this->arguments !== '') {
+			$this->arguments .= ' ';
+		}
+
+		$this->arguments .= $name;
+		$this->arguments .= ($value !== NULL ? '=' . Helpers::escapeArg($value) : '');
+	}
 }

@@ -21,7 +21,7 @@ use Tester\Helpers;
 class HhvmExecutable implements IPhpInterpreter
 {
 	/** @var string  PHP arguments */
-	public $arguments;
+	private $arguments = '';
 
 	/** @var string  PHP executable */
 	private $path;
@@ -42,7 +42,8 @@ class HhvmExecutable implements IPhpInterpreter
 
 		$this->version = $output;
 		$this->path = Helpers::escapeArg($path);
-		$this->arguments = $args;
+		$this->arguments = (string) $args;
+		$this->addArgument('--php');
 	}
 
 
@@ -51,7 +52,7 @@ class HhvmExecutable implements IPhpInterpreter
 	 */
 	public function getCommandLine()
 	{
-		return $this->path . ' ' . $this->arguments;
+		return $this->path . ($this->arguments !== '' ? ' ' . $this->arguments : '');
 	}
 
 
@@ -72,4 +73,27 @@ class HhvmExecutable implements IPhpInterpreter
 		return FALSE;
 	}
 
+
+	/**
+	 * @return string
+	 */
+	public function getArguments()
+	{
+		return $this->arguments;
+	}
+
+
+	/**
+	 * @param string
+	 * @param mixed
+	 */
+	public function addArgument($name, $value = NULL)
+	{
+		if ($this->arguments !== '') {
+			$this->arguments .= ' ';
+		}
+
+		$this->arguments .= $name;
+		$this->arguments .= ($value !== NULL ? '=' . Helpers::escapeArg($value) : '');
+	}
 }

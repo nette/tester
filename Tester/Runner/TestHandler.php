@@ -106,7 +106,7 @@ class TestHandler
 
 	private function initiatePhpIni($value, IPhpInterpreter $php)
 	{
-		$php->arguments .= ($php instanceof HhvmExecutable ? ' -v ' : ' -d ') . Helpers::escapeArg($value);
+		$php->addArgument('-d', $value);
 	}
 
 

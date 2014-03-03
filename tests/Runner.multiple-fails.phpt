@@ -31,11 +31,8 @@ class Logger implements Tester\Runner\OutputHandler
 }
 
 $php = createExecutable(PHP_BINARY);
-if ($php instanceof Tester\Runner\HhvmExecutable) {
-	$php->arguments .= ' -v display_errors=On -v html_errors=Off';
-} else {
-	$php->arguments .= ' -d display_errors=On -d html_errors=Off';
-}
+$php->addArgument('-d', 'display_errors=On');
+$php->addArgument('-d', 'html_errors=Off');
 
 $runner = new Runner($php);
 $runner->paths[] = __DIR__ . '/multiple-fails/*.phptx';
