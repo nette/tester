@@ -49,9 +49,13 @@ $equals = array(
 $notEquals = array(
 	array(1, 1.0),
 	array(INF, -INF),
-	array(NAN, NAN),
 	array(array('a', 'b'), array('b', 'a')),
 );
+
+if (!defined('PHP_WINDOWS_VERSION_BUILD') || PHP_VERSION_ID < 50301 || PHP_VERSION_ID > 50304) {
+	$notEquals[] = array(NAN, NAN);
+}
+
 
 foreach ($equals as $case) {
 	list($expected, $value) = $case;
