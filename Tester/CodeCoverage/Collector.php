@@ -50,6 +50,9 @@ class Collector
 		$coverage = @unserialize(stream_get_contents(self::$file));
 
 		foreach (xdebug_get_code_coverage() as $filename => $lines) {
+			if (!file_exists($filename)) {
+				continue;
+			}
 			foreach ($lines as $num => $val) {
 				if (empty($coverage[$filename][$num]) || $val > 0) {
 					$coverage[$filename][$num] = $val; // -1 => untested; -2 => dead code
