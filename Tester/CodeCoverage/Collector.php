@@ -7,6 +7,8 @@
 
 namespace Tester\CodeCoverage;
 
+use Tester\Environment;
+
 
 /**
  * Code coverage collector.
@@ -16,7 +18,10 @@ namespace Tester\CodeCoverage;
 class Collector
 {
 	/** @var string */
-	static public $file;
+	public static $file;
+
+	/** @var bool */
+	public static $append;
 
 
 	/**
@@ -24,9 +29,10 @@ class Collector
 	 * @param  string
 	 * @return void
 	 */
-	public static function start($file)
+	public static function start($file, $append = FALSE)
 	{
 		self::$file = $file;
+		self::$append = $append;
 		xdebug_start_code_coverage(XDEBUG_CC_UNUSED | XDEBUG_CC_DEAD_CODE);
 		register_shutdown_function(function() {
 			register_shutdown_function(array(__CLASS__, 'save'));
@@ -46,10 +52,19 @@ class Collector
 		fseek($f, 0);
 		$coverage = @unserialize(stream_get_contents($f));
 
+		$id = getenv(Environment::RUNNER) ?: NULL;
+		if (!isset($coverage['id']) || (!self::$append && $coverage['id'] !== $id)) {
+			$coverage = array(
+				'id' => $id,
+				'files' => array(),
+			);
+		}
+
 		foreach (xdebug_get_code_coverage() as $filename => $lines) {
 			foreach ($lines as $num => $val) {
-				if (empty($coverage[$filename][$num]) || $val > 0) {
-					$coverage[$filename][$num] = $val; // -1 => untested; -2 => dead code
+				if (empty($coverage['files'][$filename]['lines'][$num]) || $val > 0) {
+					$coverage['files'][$filename]['modified'] = filemtime($filename);
+					$coverage['files'][$filename]['lines'][$num] = $val; // -1 => untested; -2 => dead code
 				}
 			}
 		}
