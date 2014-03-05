@@ -62,8 +62,9 @@ class Collector
 
 		foreach (xdebug_get_code_coverage() as $filename => $lines) {
 			foreach ($lines as $num => $val) {
-				if (empty($coverage['files'][$filename][$num]) || $val > 0) {
-					$coverage['files'][$filename][$num] = $val; // -1 => untested; -2 => dead code
+				if (empty($coverage['files'][$filename]['lines'][$num]) || $val > 0) {
+					$coverage['files'][$filename]['modified'] = filemtime($filename);
+					$coverage['files'][$filename]['lines'][$num] = $val; // -1 => untested; -2 => dead code
 				}
 			}
 		}

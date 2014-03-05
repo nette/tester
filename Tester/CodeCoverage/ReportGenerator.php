@@ -131,9 +131,11 @@ class ReportGenerator
 
 			$coverage = $covered = $total = 0;
 			$loaded = isset($this->data[$entry]);
+			$outdated = FALSE;
 			$lines = array();
 			if ($loaded) {
-				$lines = $this->data[$entry];
+				$outdated = $this->data[$entry]['modified'] < filemtime($entry);
+				$lines = $this->data[$entry]['lines'];
 				foreach ($lines as $flag) {
 					if ($flag >= -1) {
 						$total++;
@@ -151,6 +153,7 @@ class ReportGenerator
 			$this->files[] = (object) array(
 				'name' => str_replace($this->sourceDir, '', $entry),
 				'file' => $entry,
+				'outdated' => $outdated,
 				'lines' => $lines,
 				'coverage' => $coverage,
 				'total' => $total,
