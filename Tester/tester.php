@@ -52,6 +52,7 @@ Options:
     -i | --info          Show tests environment info and exit.
     --setup <path>       Script for runner setup.
     --colors [1|0]       Enable or disable colors.
+    --coverage <path>    Generate code coverage report to file.
     -h | --help          This help.
 
 XX
@@ -103,6 +104,17 @@ if ($options['--info']) {
 	exit;
 }
 
+if ($options['--coverage']) {
+	if (!$php->hasXdebug()) {
+		throw new Exception("Code coverage functionality requires Xdebug extension (used {$php->getCommandLine()})");
+	}
+	file_put_contents($options['--coverage'], '');
+	$coverageFile = realpath($options['--coverage']);
+	putenv(Tester\Environment::COVERAGE . '=' . $coverageFile);
+	echo "Code coverage: {$coverageFile}\n";
+}
+
+
 $runner = new Tester\Runner\Runner($php);
 $runner->paths = $options['paths'];
 $runner->threadCount = max(1, (int) $options['-j']);
@@ -128,8 +140,6 @@ if ($options['--tap']) {
 } else {
 	ob_end_flush();
 }
-
-@unlink(__DIR__ . '/coverage.dat'); // @ - file may not exist
 
 if (!$options['--watch']) {
 	die($runner->run() ? 0 : 1);

@@ -21,6 +21,9 @@ class Environment
 	/** Test is runned by Runner */
 	const RUNNER = 'NETTE_TESTER_RUNNER';
 
+	/** Code coverage file */
+	const COVERAGE = 'NETTE_TESTER_COVERAGE';
+
 
 	/** @var bool  used for debugging Tester itself */
 	public static $debugMode = TRUE;
@@ -67,6 +70,10 @@ class Environment
 				});
 			}
 		});
+
+		if (getenv(self::COVERAGE)) {
+			CodeCoverage\Collector::start(getenv(self::COVERAGE));
+		}
 
 		ob_start(function($s) {
 			return Environment::$useColors ? $s : Dumper::removeColors($s);
