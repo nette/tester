@@ -27,12 +27,21 @@ class PhpExecutable
 	/** @var bool is CGI? */
 	private $cgi;
 
+	/** @var bool */
+	private $xdebug;
+
 
 	public function __construct($path, $args = NULL)
 	{
 		$this->path = \Tester\Helpers::escapeArg($path);
-		$descriptors = array(array('pipe', 'r'), array('pipe', 'w'), array('pipe', 'w'));
-		$proc = @proc_open("$this->path -n -v", $descriptors, $pipes);
+		$proc = @proc_open(
+			"$this->path -n $args -v", // -v must be the last
+			array(array('pipe', 'r'), array('pipe', 'w'), array('pipe', 'w')),
+			$pipes,
+			NULL,
+			NULL,
+			array('bypass_shell' => TRUE)
+		);
 		$output = stream_get_contents($pipes[1]);
 		$error = stream_get_contents($pipes[2]);
 		if (proc_close($proc)) {
@@ -43,6 +52,7 @@ class PhpExecutable
 
 		$this->version = $matches[1];
 		$this->cgi = strcasecmp($matches[2], 'g') === 0;
+		$this->xdebug = strpos($output, 'Xdebug') > 0;
 		$this->arguments = $args;
 	}
 
@@ -62,6 +72,15 @@ class PhpExecutable
 	public function getVersion()
 	{
 		return $this->version;
+	}
+
+
+	/**
+	 * @return bool
+	 */
+	public function hasXdebug()
+	{
+		return $this->xdebug;
 	}
 
 
