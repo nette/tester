@@ -7,6 +7,8 @@
 
 namespace Tester\CodeCoverage;
 
+use Tester\Environment;
+
 
 /**
  * Code coverage collector.
@@ -46,10 +48,18 @@ class Collector
 		fseek($f, 0);
 		$coverage = @unserialize(stream_get_contents($f));
 
+		$id = getenv(Environment::RUNNER) ?: NULL;
+		if (!isset($coverage['id']) || $coverage['id'] !== $id) {
+			$coverage = array(
+				'id' => $id,
+				'files' => array(),
+			);
+		}
+
 		foreach (xdebug_get_code_coverage() as $filename => $lines) {
 			foreach ($lines as $num => $val) {
-				if (empty($coverage[$filename][$num]) || $val > 0) {
-					$coverage[$filename][$num] = $val; // -1 => untested; -2 => dead code
+				if (empty($coverage['files'][$filename][$num]) || $val > 0) {
+					$coverage['files'][$filename][$num] = $val; // -1 => untested; -2 => dead code
 				}
 			}
 		}

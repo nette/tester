@@ -56,10 +56,11 @@ class ReportGenerator
 			throw new \Exception("File '$file' is missing.");
 		}
 
-		$this->data = @unserialize(file_get_contents($file));
-		if (!is_array($this->data)) {
+		$tmp = @unserialize(file_get_contents($file));
+		if (!isset($tmp['files'])) {
 			throw new \Exception("Content of file '$file' is invalid.");
 		}
+		$this->data = $tmp['files'];
 
 		if (!$sourceDir) {
 			$sourceDir = key($this->data);
