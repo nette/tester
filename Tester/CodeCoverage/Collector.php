@@ -15,8 +15,8 @@ namespace Tester\CodeCoverage;
  */
 class Collector
 {
-	/** @var string */
-	static public $file;
+	/** @var resource */
+	private static $file;
 
 
 	/**
@@ -26,7 +26,11 @@ class Collector
 	 */
 	public static function start($file)
 	{
-		self::$file = $file;
+		if (!extension_loaded('xdebug')) {
+			throw new \Exception('Code coverage functionality requires Xdebug extension.');
+		}
+
+		self::$file = fopen($file, 'a+');
 		xdebug_start_code_coverage(XDEBUG_CC_UNUSED | XDEBUG_CC_DEAD_CODE);
 		register_shutdown_function(function() {
 			register_shutdown_function(array(__CLASS__, 'save'));
@@ -41,10 +45,9 @@ class Collector
 	 */
 	public static function save()
 	{
-		$f = fopen(self::$file, 'a+');
-		flock($f, LOCK_EX);
-		fseek($f, 0);
-		$coverage = @unserialize(stream_get_contents($f));
+		flock(self::$file, LOCK_EX);
+		fseek(self::$file, 0);
+		$coverage = @unserialize(stream_get_contents(self::$file));
 
 		foreach (xdebug_get_code_coverage() as $filename => $lines) {
 			foreach ($lines as $num => $val) {
@@ -54,9 +57,9 @@ class Collector
 			}
 		}
 
-		ftruncate($f, 0);
-		fwrite($f, serialize($coverage));
-		fclose($f);
+		ftruncate(self::$file, 0);
+		fwrite(self::$file, serialize($coverage));
+		fclose(self::$file);
 	}
 
 }
