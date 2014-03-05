@@ -18,7 +18,10 @@ use Tester\Environment;
 class Collector
 {
 	/** @var string */
-	static public $file;
+	public static $file;
+
+	/** @var bool */
+	public static $append;
 
 
 	/**
@@ -26,9 +29,10 @@ class Collector
 	 * @param  string
 	 * @return void
 	 */
-	public static function start($file)
+	public static function start($file, $append = FALSE)
 	{
 		self::$file = $file;
+		self::$append = $append;
 		xdebug_start_code_coverage(XDEBUG_CC_UNUSED | XDEBUG_CC_DEAD_CODE);
 		register_shutdown_function(function() {
 			register_shutdown_function(array(__CLASS__, 'save'));
@@ -49,7 +53,7 @@ class Collector
 		$coverage = @unserialize(stream_get_contents($f));
 
 		$id = getenv(Environment::RUNNER) ?: NULL;
-		if (!isset($coverage['id']) || $coverage['id'] !== $id) {
+		if (!isset($coverage['id']) || (!self::$append && $coverage['id'] !== $id)) {
 			$coverage = array(
 				'id' => $id,
 				'files' => array(),

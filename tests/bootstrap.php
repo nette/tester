@@ -4,7 +4,7 @@ require __DIR__ . '/../Tester/bootstrap.php';
 
 
 if (extension_loaded('xdebug')) {
-	Tester\CodeCoverage\Collector::start(__DIR__ . '/coverage.dat');
+	Tester\CodeCoverage\Collector::start(__DIR__ . '/coverage.dat', TRUE);
 }
 
 date_default_timezone_set('Europe/Prague');
