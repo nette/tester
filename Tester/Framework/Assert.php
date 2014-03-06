@@ -170,6 +170,19 @@ class Assert
 
 
 	/**
+	 * Checks Not a Number assertion.
+	 * @param  mixed  actual
+	 * @return void
+	 */
+	public static function nan($actual)
+	{
+		if (!is_float($actual) || !is_nan($actual)) {
+			self::fail('%1 should be NAN', $actual);
+		}
+	}
+
+
+	/**
 	 * Checks truthy assertion.
 	 * @param  mixed  actual
 	 * @return void
