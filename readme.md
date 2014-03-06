@@ -86,6 +86,7 @@ This table shows all assertions (class `Assert` means `Tester\Assert`):
 - `Assert::truthy($value)` - Reports an error if $actual is not truthy.
 - `Assert::falsey($value)` - Reports an error if $actual is not falsey.
 - `Assert::null($value)` - Reports an error if $actual is not NULL.
+- `Assert::nan($value)` - Reports an error if $actual is not NAN.
 - `Assert::type($type, $value)` -  Reports an error if the variable $actual is not of PHP or class type $type.
 - `Assert::exception($closure, $class, $message = NULL, $code = NULL)` -  Checks if the function throws exception.
 - `Assert::error($closure, $level, $message = NULL)` -  Checks if the function $closure throws PHP warning/notice/error.
