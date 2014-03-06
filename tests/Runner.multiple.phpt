@@ -13,7 +13,8 @@ if (PHP_VERSION_ID < 50400) {
 }
 
 
-$runner = new Tester\Runner\Runner(new Tester\Runner\PhpExecutable(PHP_BINARY));
+$php = new Tester\Runner\PhpExecutable(PHP_BINARY, '-c ' . Tester\Helpers::escapeArg(php_ini_loaded_file()));
+$runner = new Tester\Runner\Runner($php);
 
 $tests = Assert::with($runner, function() {
 	$this->results = array(self::PASSED => 0, self::SKIPPED => 0, self::FAILED => 0);

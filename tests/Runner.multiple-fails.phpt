@@ -28,7 +28,7 @@ class Logger implements Tester\Runner\OutputHandler
 	function end() {}
 }
 
-$php = new Tester\Runner\PhpExecutable(PHP_BINARY);
+$php = new Tester\Runner\PhpExecutable(PHP_BINARY, '-c ' . Tester\Helpers::escapeArg(php_ini_loaded_file()));
 $php->arguments .= ' -d display_errors=On -d html_errors=Off';
 
 $runner = new Runner($php);
