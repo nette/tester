@@ -10,10 +10,6 @@ require __DIR__ . '/../Tester/Runner/TestHandler.php';
 require __DIR__ . '/../Tester/Runner/PhpExecutable.php';
 require __DIR__ . '/../Tester/Runner/Runner.php';
 
-if (PHP_VERSION_ID < 50400) {
-	Tester\Environment::skip('Requires constant PHP_BINARY available since PHP 5.4.0');
-}
-
 
 class Logger implements Tester\Runner\OutputHandler
 {
@@ -28,7 +24,7 @@ class Logger implements Tester\Runner\OutputHandler
 	function end() {}
 }
 
-$php = new Tester\Runner\PhpExecutable(PHP_BINARY);
+$php = createPhp();
 $php->arguments .= ' -d display_errors=On -d html_errors=Off';
 
 $runner = new Runner($php);
