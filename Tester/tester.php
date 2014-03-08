@@ -21,6 +21,7 @@ require __DIR__ . '/Framework/Assert.php';
 require __DIR__ . '/Framework/Dumper.php';
 require __DIR__ . '/Framework/DataProvider.php';
 require __DIR__ . '/Framework/TestCase.php';
+require __DIR__ . '/CodeCoverage/ReportGenerator.php';
 
 use Tester\Runner\CommandLine as Cmd;
 
@@ -41,18 +42,20 @@ Usage:
     tester.php [options] [<test file> | <directory>]...
 
 Options:
-    -p <path>            Specify PHP executable to run (default: php-cgi).
-    -c <path>            Look for php.ini file (or look in directory) <path>.
-    -l | --log <path>    Write log to file <path>.
-    -d <key=value>...    Define INI entry 'key' with value 'val'.
-    -s                   Show information about skipped tests.
-    --tap                Generate Test Anything Protocol.
-    -j <num>             Run <num> jobs in parallel.
-    -w | --watch <path>  Watch directory.
-    -i | --info          Show tests environment info and exit.
-    --setup <path>       Script for runner setup.
-    --colors [1|0]       Enable or disable colors.
-    -h | --help          This help.
+    -p <path>             Specify PHP executable to run (default: php-cgi).
+    -c <path>             Look for php.ini file (or look in directory) <path>.
+    -l | --log <path>     Write log to file <path>.
+    -d <key=value>...     Define INI entry 'key' with value 'val'.
+    -s                    Show information about skipped tests.
+    --tap                 Generate Test Anything Protocol.
+    -j <num>              Run <num> jobs in parallel.
+    -w | --watch <path>   Watch directory.
+    -i | --info           Show tests environment info and exit.
+    --setup <path>        Script for runner setup.
+    --colors [1|0]        Enable or disable colors.
+    --coverage <path>     Generate code coverage report to file.
+    --coverage-src <dir>  Directory with source code.
+    -h | --help           This help.
 
 XX
 , array(
@@ -61,6 +64,7 @@ XX
 	'--setup' => array(Cmd::REALPATH => TRUE),
 	'paths' => array(Cmd::REPEATABLE => TRUE, Cmd::VALUE => getcwd()),
 	'--debug' => array(),
+	'--coverage-src' => array(Cmd::REALPATH => TRUE),
 ));
 
 
@@ -103,6 +107,17 @@ if ($options['--info']) {
 	exit;
 }
 
+if ($options['--coverage']) {
+	if (!$php->hasXdebug()) {
+		throw new Exception("Code coverage functionality requires Xdebug extension (used {$php->getCommandLine()})");
+	}
+	file_put_contents($options['--coverage'], '');
+	$coverageFile = realpath($options['--coverage']);
+	putenv(Tester\Environment::COVERAGE . '=' . $coverageFile);
+	echo "Code coverage: {$coverageFile}\n";
+}
+
+
 $runner = new Tester\Runner\Runner($php);
 $runner->paths = $options['paths'];
 $runner->threadCount = max(1, (int) $options['-j']);
@@ -129,10 +144,18 @@ if ($options['--tap']) {
 	ob_end_flush();
 }
 
-@unlink(__DIR__ . '/coverage.dat'); // @ - file may not exist
-
 if (!$options['--watch']) {
-	die($runner->run() ? 0 : 1);
+	$result = $runner->run();
+
+	if (preg_match('#\.html?\z#', $options['--coverage'])) {
+		if (!$options['--tap']) {
+			echo "Generating code coverage report\n";
+		}
+		$generator = new Tester\CodeCoverage\ReportGenerator($coverageFile, $options['--coverage-src']);
+		$generator->render($coverageFile);
+	}
+
+	die($result ? 0 : 1);
 }
 
 $prev = array();
