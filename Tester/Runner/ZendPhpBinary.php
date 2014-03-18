@@ -9,11 +9,11 @@ namespace Tester\Runner;
 
 
 /**
- * PHP executable command-line.
+ * Zend PHP executable command-line.
  *
  * @author     David Grudl
  */
-class PhpExecutable
+class ZendPhpBinary implements IPhpInterpreter //PhpExecutable
 {
 	/** @var string  PHP arguments */
 	public $arguments;

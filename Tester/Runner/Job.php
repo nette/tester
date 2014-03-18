@@ -39,7 +39,7 @@ class Job
 	/** @var string  output headers in raw format */
 	private $headers;
 
-	/** @var PhpExecutable */
+	/** @var IPhpInterpreter */
 	private $php;
 
 	/** @var resource */
@@ -56,7 +56,7 @@ class Job
 	 * @param  string  test file name
 	 * @return void
 	 */
-	public function __construct($testFile, PhpExecutable $php, $args = NULL)
+	public function __construct($testFile, IPhpInterpreter $php, $args = NULL)
 	{
 		$this->file = (string) $testFile;
 		$this->php = $php;

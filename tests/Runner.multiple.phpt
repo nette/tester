@@ -5,7 +5,8 @@ use Tester\Assert,
 
 require __DIR__ . '/bootstrap.php';
 require __DIR__ . '/../Tester/Runner/TestHandler.php';
-require __DIR__ . '/../Tester/Runner/PhpExecutable.php';
+require __DIR__ . '/../Tester/Runner/IPhpInterpreter.php';
+require __DIR__ . '/../Tester/Runner/ZendPhpBinary.php';
 require __DIR__ . '/../Tester/Runner/Runner.php';
 
 if (PHP_VERSION_ID < 50400) {
@@ -13,7 +14,7 @@ if (PHP_VERSION_ID < 50400) {
 }
 
 
-$php = new Tester\Runner\PhpExecutable(PHP_BINARY, '-c ' . Tester\Helpers::escapeArg(php_ini_loaded_file()));
+$php = new Tester\Runner\ZendPhpBinary(PHP_BINARY, '-c ' . Tester\Helpers::escapeArg(php_ini_loaded_file()));
 $runner = new Tester\Runner\Runner($php);
 
 $tests = Assert::with($runner, function() {

@@ -6,7 +6,8 @@
  */
 
 
-require __DIR__ . '/Runner/PhpExecutable.php';
+require __DIR__ . '/Runner/IPhpInterpreter.php';
+require __DIR__ . '/Runner/ZendPhpBinary.php';
 require __DIR__ . '/Runner/Runner.php';
 require __DIR__ . '/Runner/Job.php';
 require __DIR__ . '/Runner/CommandLine.php';
@@ -99,7 +100,7 @@ foreach ($options['-d'] as $item) {
 	$phpArgs .= ' -d ' . Tester\Helpers::escapeArg($item);
 }
 
-$php = new Tester\Runner\PhpExecutable($options['-p'], $phpArgs);
+$php = new Tester\Runner\ZendPhpBinary($options['-p'], $phpArgs);
 
 if ($options['--info']) {
 	$job = new Tester\Runner\Job(__DIR__ . '/Runner/info.php', $php);
