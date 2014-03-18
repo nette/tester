@@ -67,7 +67,7 @@ class TestHandler
 	public function assess(Job $job)
 	{
 		list($annotations, $testName) = $this->getAnnotations($job->getFile());
-		$testName .= (strlen($job->getArguments()) ? " [{$job->getArguments()}]" : '');
+		$testName .= (count($job->getArguments()) ? ' [' . implode(' ', $job->getArguments()) . ']' : '');
 		$annotations += array(
 			'exitcode' => Job::CODE_OK,
 			'httpcode' => self::HTTP_OK,
@@ -106,7 +106,8 @@ class TestHandler
 
 	private function initiatePhpIni($value, IPhpInterpreter $php)
 	{
-		$php->arguments .= ' -d ' . Helpers::escapeArg($value);
+		list($name, $value) = explode('=', $value);
+		$php->setIniValue(trim($name), trim($value));
 	}
 
 
@@ -120,7 +121,7 @@ class TestHandler
 		}
 
 		foreach (array_keys($data) as $item) {
-			$this->runner->addJob(new Job($file, $php, Helpers::escapeArg($item) . ' ' . Helpers::escapeArg($dataFile)));
+			$this->runner->addJob(new Job($file, $php, array($item, $dataFile)));
 		}
 		return TRUE;
 	}
@@ -129,7 +130,7 @@ class TestHandler
 	private function initiateMultiple($count, IPhpInterpreter $php, $file)
 	{
 		foreach (range(0, (int) $count - 1) as $arg) {
-			$this->runner->addJob(new Job($file, $php, (string) $arg));
+			$this->runner->addJob(new Job($file, $php, array((string) $arg)));
 		}
 		return TRUE;
 	}
@@ -137,7 +138,7 @@ class TestHandler
 
 	private function initiateTestCase($foo, IPhpInterpreter $php, $file)
 	{
-		$job = new Job($file, $php, Helpers::escapeArg(Tester\TestCase::LIST_METHODS));
+		$job = new Job($file, $php, array(Tester\TestCase::LIST_METHODS));
 		$job->run();
 
 		if (in_array($job->getExitCode(), array(Job::CODE_ERROR, Job::CODE_FAIL, Job::CODE_SKIP))) {
@@ -152,7 +153,7 @@ class TestHandler
 		}
 
 		foreach ($methods as $method) {
-			$this->runner->addJob(new Job($file, $php, Helpers::escapeArg($method)));
+			$this->runner->addJob(new Job($file, $php, array($method)));
 		}
 		return TRUE;
 	}

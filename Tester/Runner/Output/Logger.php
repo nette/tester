@@ -35,7 +35,7 @@ class Logger implements Tester\Runner\OutputHandler
 	public function begin()
 	{
 		fputs($this->file, 'PHP ' . $this->runner->getPhp()->getVersion()
-			. ' | ' . $this->runner->getPhp()->getCommandLine()
+			. ' | ' . $this->runner->getPhp()->getShortInfo()
 			. " | {$this->runner->threadCount} threads\n\n");
 	}
 

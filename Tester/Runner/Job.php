@@ -30,7 +30,7 @@ class Job
 	/** @var string  test file */
 	private $file;
 
-	/** @var string  test arguments */
+	/** @var array  test arguments */
 	private $args;
 
 	/** @var string  test output */
@@ -51,12 +51,15 @@ class Job
 	/** @var int */
 	private $exitCode = self::CODE_NONE;
 
+	/** @var bool */
+	private $finished;
+
 
 	/**
 	 * @param  string  test file name
 	 * @return void
 	 */
-	public function __construct($testFile, IPhpInterpreter $php, $args = NULL)
+	public function __construct($testFile, IPhpInterpreter $php, array $args = array())
 	{
 		$this->file = (string) $testFile;
 		$this->php = $php;
@@ -71,29 +74,22 @@ class Job
 	 */
 	public function run($blocking = TRUE)
 	{
-		putenv(Environment::RUNNER . '=1');
-		putenv(Environment::COLORS . '=' . (int) Environment::$useColors);
-		$this->proc = proc_open(
-			$this->php->getCommandLine() . ' -n -d register_argc_argv=on ' . \Tester\Helpers::escapeArg($this->file) . ' ' . $this->args,
-			array(
-				array('pipe', 'r'),
-				array('pipe', 'w'),
-				array('pipe', 'w'),
-			),
-			$pipes,
-			dirname($this->file),
-			NULL,
-			array('bypass_shell' => TRUE)
+		$iniValues = array(
+			'register_argc_argv' => 'on',
 		);
-		list($stdin, $this->stdout, $stderr) = $pipes;
-		fclose($stdin);
-		fclose($stderr);
+
+		$envVars = array(
+			Environment::RUNNER => 1,
+			Environment::COLORS => (int) Environment::$useColors,
+		);
+
+		$this->finished = FALSE;
+		$this->php->run($this->file, $this->args, $iniValues, $envVars);
+
 		if ($blocking) {
 			while ($this->isRunning()) {
-				usleep(self::RUN_USLEEP); // stream_select() doesn't work with proc_open()
+				usleep(self::RUN_USLEEP);
 			}
-		} else {
-			stream_set_blocking($this->stdout, 0);
 		}
 	}
 
@@ -104,19 +100,15 @@ class Job
 	 */
 	public function isRunning()
 	{
-		if (!is_resource($this->stdout)) {
+		if ($this->finished) {
 			return FALSE;
 		}
 
-		$this->output .= stream_get_contents($this->stdout);
-		$status = proc_get_status($this->proc);
-		if ($status['running']) {
+		if ($this->php->isRunning()) {
 			return TRUE;
 		}
 
-		fclose($this->stdout);
-		$code = proc_close($this->proc);
-		$this->exitCode = $code === self::CODE_NONE ? $status['exitcode'] : $code;
+		list($this->exitCode, $this->output) = $this->php->getResult();
 
 		if ($this->php->isCgi() && count($tmp = explode("\r\n\r\n", $this->output, 2)) >= 2) {
 			list($headers, $this->output) = $tmp;
@@ -127,6 +119,7 @@ class Job
 				}
 			}
 		}
+
 		return FALSE;
 	}
 
@@ -143,7 +136,7 @@ class Job
 
 	/**
 	 * Returns script arguments.
-	 * @return string
+	 * @return array
 	 */
 	public function getArguments()
 	{
@@ -173,7 +166,7 @@ class Job
 
 	/**
 	 * Returns output headers.
-	 * @return string
+	 * @return array
 	 */
 	public function getHeaders()
 	{

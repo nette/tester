@@ -30,7 +30,8 @@ class Logger implements Tester\Runner\OutputHandler
 }
 
 $php = new Tester\Runner\ZendPhpBinary(PHP_BINARY, '-c ' . Tester\Helpers::escapeArg(php_ini_loaded_file()));
-$php->arguments .= ' -d display_errors=On -d html_errors=Off';
+$php->setIniValue('display_errors', 'on');
+$php->setIniValue('html_errors', 'off');
 
 $runner = new Runner($php);
 $runner->paths[] = __DIR__ . '/multiple-fails/*.phptx';

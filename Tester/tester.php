@@ -111,7 +111,7 @@ if ($options['--info']) {
 
 if ($options['--coverage']) {
 	if (!$php->hasXdebug()) {
-		throw new Exception("Code coverage functionality requires Xdebug extension (used {$php->getCommandLine()})");
+		throw new Exception("Code coverage functionality requires Xdebug extension");
 	}
 	file_put_contents($options['--coverage'], '');
 	$coverageFile = realpath($options['--coverage']);
