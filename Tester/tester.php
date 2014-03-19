@@ -8,6 +8,7 @@
 
 require __DIR__ . '/Runner/IPhpInterpreter.php';
 require __DIR__ . '/Runner/ZendPhpBinary.php';
+require __DIR__ . '/Runner/FastCGIPhpSocket.php';
 require __DIR__ . '/Runner/Runner.php';
 require __DIR__ . '/Runner/Job.php';
 require __DIR__ . '/Runner/CommandLine.php';
@@ -100,7 +101,15 @@ foreach ($options['-d'] as $item) {
 	$phpArgs .= ' -d ' . Tester\Helpers::escapeArg($item);
 }
 
-$php = new Tester\Runner\ZendPhpBinary($options['-p'], $phpArgs);
+if (strpos($options['-p'], ':') === FALSE) {
+	$php = new Tester\Runner\ZendPhpBinary($options['-p'], $phpArgs);
+} else {
+	if ($options['-c']) {
+		throw new \Exception("Option -c does not work with FastCGI.");
+	}
+	list($domain, $port) = explode(':', $options['-p']);
+	$php = new Tester\Runner\FastCGIPhpSocket($domain, $port);
+}
 
 if ($options['--info']) {
 	$job = new Tester\Runner\Job(__DIR__ . '/Runner/info.php', $php);
