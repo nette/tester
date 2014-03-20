@@ -226,6 +226,8 @@ class Dumper
 			}
 		}
 
+		$exMessage = preg_replace('#[\x00-\x09\x0B-\x1F]+#', ' ', $e->getMessage());
+
 		if ($e instanceof AssertException) {
 			$expected = $e->expected;
 			$actual = $e->actual;
@@ -248,7 +250,7 @@ class Dumper
 				}
 			}
 
-			$message = 'Failed: ' . $e->getMessage();
+			$message = 'Failed: ' . $exMessage;
 			if (((is_string($actual) && is_string($expected)) || (is_array($actual) && is_array($expected)))
 				&& preg_match('#^(.*)(%\d)(.*)(%\d.*)\z#s', $message, $m)
 			) {
@@ -263,8 +265,7 @@ class Dumper
 				'%2' => "\033[1;33m" . Dumper::toLine($expected) . "\033[1;37m",
 			));
 		} else {
-			$message = ($e instanceof \ErrorException ? Helpers::errorTypeToString($e->getSeverity()) : get_class($e))
-				. ": {$e->getMessage()}";
+			$message = ($e instanceof \ErrorException ? Helpers::errorTypeToString($e->getSeverity()) : get_class($e)) . ": $exMessage";
 		}
 
 		$s = "\033[1;37m$message\033[0m\n\n"
