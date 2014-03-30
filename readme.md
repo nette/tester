@@ -60,7 +60,7 @@ Now we run tests from command-line using the `tester` command:
 |_   _/ __)( __/_   _/ __)| _ )
   |_| \___ /___) |_| \___ |_|_\  v1.0.0
 
-PHP 5.3.16 | "php-cgi" -n | 1 threads
+PHP 5.3.16 | "php-cgi" -n | 33 threads
 .
 OK (1 tests, 0 skipped, 0.0 seconds)
 ```
@@ -122,11 +122,11 @@ with code and automatically re-run tests whenever code is changed:
 tester -w /my/source/codes
 ```
 
-Running tests is very much faster when they are executed in parallel. Let Nette Tester
-to use 40 threads:
+Running tests in parallel is very much faster and Nette Tester uses 33 threads as default.
+If you wish to run the tests in series use:
 
 ```
-tester -j 40
+tester -j 1
 ```
 
 How do you find code that is not yet tested? Use Code-Coverage Analysis. This feature
@@ -187,7 +187,7 @@ Options:
     -d <key=value>...     Define INI entry 'key' with value 'val'.
     -s                    Show information about skipped tests.
     --tap                 Generate Test Anything Protocol.
-    -j <num>              Run <num> jobs in parallel.
+    -j <num>              Run <num> jobs in parallel (default: 33).
     -w | --watch <path>   Watch directory.
     -i | --info           Show tests environment info and exit.
     --setup <path>        Script for runner setup.
