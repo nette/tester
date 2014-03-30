@@ -41,6 +41,9 @@ class Assert
 	/** @var callable  function(AssertException $exception) */
 	public static $onFailure;
 
+	/** @var int  the count of assertions */
+	public static $counter = 0;
+
 
 	/**
 	 * Checks assertion. Values must be exactly the same.
@@ -48,6 +51,7 @@ class Assert
 	 */
 	public static function same($expected, $actual)
 	{
+		self::$counter++;
 		if ($actual !== $expected) {
 			self::fail('%1 should be %2', $actual, $expected);
 		}
@@ -60,6 +64,7 @@ class Assert
 	 */
 	public static function notSame($expected, $actual)
 	{
+		self::$counter++;
 		if ($actual === $expected) {
 			self::fail('%1 should not be %2', $actual, $expected);
 		}
@@ -72,6 +77,7 @@ class Assert
 	 */
 	public static function equal($expected, $actual)
 	{
+		self::$counter++;
 		if (!self::isEqual($expected, $actual)) {
 			self::fail('%1 should be equal to %2', $actual, $expected);
 		}
@@ -84,6 +90,7 @@ class Assert
 	 */
 	public static function notEqual($expected, $actual)
 	{
+		self::$counter++;
 		if (self::isEqual($expected, $actual)) {
 			self::fail('%1 should not be equal to %2', $actual, $expected);
 		}
@@ -96,6 +103,7 @@ class Assert
 	 */
 	public static function contains($needle, $actual)
 	{
+		self::$counter++;
 		if (is_array($actual)) {
 			if (!in_array($needle, $actual, TRUE)) {
 				self::fail('%1 should contain %2', $actual, $needle);
@@ -116,6 +124,7 @@ class Assert
 	 */
 	public static function notContains($needle, $actual)
 	{
+		self::$counter++;
 		if (is_array($actual)) {
 			if (in_array($needle, $actual, TRUE)) {
 				self::fail('%1 should not contain %2', $actual, $needle);
@@ -137,6 +146,7 @@ class Assert
 	 */
 	public static function true($actual)
 	{
+		self::$counter++;
 		if ($actual !== TRUE) {
 			self::fail('%1 should be TRUE', $actual);
 		}
@@ -150,6 +160,7 @@ class Assert
 	 */
 	public static function false($actual)
 	{
+		self::$counter++;
 		if ($actual !== FALSE) {
 			self::fail('%1 should be FALSE', $actual);
 		}
@@ -163,6 +174,7 @@ class Assert
 	 */
 	public static function null($actual)
 	{
+		self::$counter++;
 		if ($actual !== NULL) {
 			self::fail('%1 should be NULL', $actual);
 		}
@@ -176,6 +188,7 @@ class Assert
 	 */
 	public static function nan($actual)
 	{
+		self::$counter++;
 		if (!is_float($actual) || !is_nan($actual)) {
 			self::fail('%1 should be NAN', $actual);
 		}
@@ -189,6 +202,7 @@ class Assert
 	 */
 	public static function truthy($actual)
 	{
+		self::$counter++;
 		if (!$actual) {
 			self::fail('%1 should be truthy', $actual);
 		}
@@ -202,6 +216,7 @@ class Assert
 	 */
 	public static function falsey($actual)
 	{
+		self::$counter++;
 		if ($actual) {
 			self::fail('%1 should be falsey', $actual);
 		}
@@ -214,6 +229,7 @@ class Assert
 	 */
 	public static function type($type, $value)
 	{
+		self::$counter++;
 		if (!is_object($type) && !is_string($type)) {
 			throw new \Exception('Type must be a object or a string.');
 
@@ -245,6 +261,7 @@ class Assert
 	 */
 	public static function exception($function, $class, $message = NULL, $code = NULL)
 	{
+		self::$counter++;
 		try {
 			call_user_func($function);
 		} catch (\Exception $e) {
@@ -288,6 +305,7 @@ class Assert
 			return static::exception($function, $expectedType, $expectedMessage);
 		}
 
+		self::$counter++;
 		$expected = is_array($expectedType) ? $expectedType : array(array($expectedType, $expectedMessage));
 		foreach ($expected as & $item) {
 			list($expectedType, $expectedMessage) = $item;
@@ -353,6 +371,7 @@ class Assert
 	 */
 	public static function match($pattern, $actual)
 	{
+		self::$counter++;
 		if (!is_string($pattern)) {
 			throw new \Exception('Pattern must be a string.');
 
@@ -368,6 +387,7 @@ class Assert
 	 */
 	public static function matchFile($file, $actual)
 	{
+		self::$counter++;
 		$pattern = @file_get_contents($file);
 		if ($pattern === FALSE) {
 			throw new \Exception("Unable to read file '$file'.");

@@ -24,9 +24,11 @@ class Environment
 	/** Code coverage file */
 	const COVERAGE = 'NETTE_TESTER_COVERAGE';
 
-
 	/** @var bool  used for debugging Tester itself */
 	public static $debugMode = TRUE;
+
+	/** @var bool */
+	public static $checkAssertions = TRUE;
 
 	/** @var bool */
 	public static $useColors;
@@ -53,6 +55,7 @@ class Environment
 		ini_set('log_errors', FALSE);
 
 		set_exception_handler(array(__CLASS__, 'handleException'));
+
 		set_error_handler(function($severity, $message, $file, $line) {
 			if (in_array($severity, array(E_RECOVERABLE_ERROR, E_USER_ERROR)) || ($severity & error_reporting()) === $severity) {
 				Environment::handleException(new \ErrorException($message, 0, $severity, $file, $line));
@@ -64,11 +67,16 @@ class Environment
 			Assert::$onFailure = array(__CLASS__, 'handleException'); // note that Runner is unable to catch this errors in CLI & PHP 5.4.0 - 5.4.6 due PHP bug #62725
 
 			$error = error_get_last();
-			if (in_array($error['type'], array(E_ERROR, E_CORE_ERROR, E_COMPILE_ERROR, E_PARSE)) && ($error['type'] & error_reporting()) !== $error['type']) {
-				register_shutdown_function(function() use ($error) {
-					echo "\nFatal error: $error[message] in $error[file] on line $error[line]\n";
-				});
-			}
+			register_shutdown_function(function() use ($error) {
+				if (in_array($error['type'], array(E_ERROR, E_CORE_ERROR, E_COMPILE_ERROR, E_PARSE))) {
+					if (($error['type'] & error_reporting()) !== $error['type']) { // show fatal errors hidden by @shutup
+						echo "\nFatal error: $error[message] in $error[file] on line $error[line]\n";
+					}
+				} elseif (Environment::$checkAssertions && !Assert::$counter) {
+					echo "\nError: This test forgets to execute an assertion.\n";
+					exit(Runner\Job::CODE_FAIL);
+				}
+			});
 		});
 
 		if (getenv(self::COVERAGE)) {
@@ -84,6 +92,7 @@ class Environment
 	/** @internal */
 	public static function handleException($e)
 	{
+		self::$checkAssertions = FALSE;
 		echo self::$debugMode ? Dumper::dumpException($e) : "\nError: {$e->getMessage()}\n";
 		exit($e instanceof AssertException ? Runner\Job::CODE_FAIL : Runner\Job::CODE_ERROR);
 	}
@@ -95,6 +104,7 @@ class Environment
 	 */
 	public static function skip($message = '')
 	{
+		self::$checkAssertions = FALSE;
 		echo "\nSkipped:\n$message\n";
 		die(Runner\Job::CODE_SKIP);
 	}
