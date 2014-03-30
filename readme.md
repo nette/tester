@@ -130,18 +130,11 @@ tester -j 1
 ```
 
 How do you find code that is not yet tested? Use Code-Coverage Analysis. This feature
-requires you have installed [Xdebug](http://xdebug.org/). Add this line to the begin
-of your test file (after Nette Tester is loaded):
-
-```php
-Tester\CodeCoverage\Collector::start(__DIR__ . '/coverage.dat');
-```
-
-And run tests. It will generate `coverage.dat`. Using command-line tool `coverage-report.php`
-we can generate nice HTML report:
+requires you have installed [Xdebug](http://xdebug.org/) in `php.ini`. This will
+generate nice HTML report in `coverage.html`.
 
 ```
-coverage-report.php -c coverage.dat -o coverage.html -s /my/source/codes
+tester . -c php.ini --coverage coverage.html --coverage-src /my/source/codes
 ```
 
 We can load Nette Tester using Composer's autoloader. In this case
