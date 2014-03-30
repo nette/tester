@@ -33,6 +33,7 @@ class TestCase
 
 		if (($method === NULL || $method === self::LIST_METHODS) && isset($_SERVER['argv'][1])) {
 			if ($_SERVER['argv'][1] === self::LIST_METHODS) {
+				Environment::$checkAssertions = FALSE;
 				header('Content-Type: application/json');
 				echo json_encode($methods);
 				return;

@@ -27,6 +27,7 @@ use Tester\Runner\CommandLine as Cmd;
 
 
 Tester\Environment::setup();
+Tester\Environment::$checkAssertions = FALSE;
 
 ob_start();
 echo <<<XX
