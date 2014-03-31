@@ -67,7 +67,7 @@ class Environment
 			Assert::$onFailure = array(__CLASS__, 'handleException'); // note that Runner is unable to catch this errors in CLI & PHP 5.4.0 - 5.4.6 due PHP bug #62725
 
 			register_shutdown_function(function() {
-				if (Environment::$checkAssertions && !Assert::$counter) {
+				if (Environment::$checkAssertions && Assert::noneAssertCalled()) {
 					Environment::handleException(new \Exception('This test forgets to execute an assertion.'));
 				}
 			});
