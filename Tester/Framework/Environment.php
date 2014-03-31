@@ -54,6 +54,11 @@ class Environment
 		ini_set('html_errors', FALSE);
 		ini_set('log_errors', FALSE);
 
+		$annotations = self::getTestAnnotations();
+		if (isset($annotations['outputmatch']) || isset($annotations['outputmatchfile'])) {
+			self::$checkAssertions = FALSE;
+		}
+
 		set_exception_handler(array(__CLASS__, 'handleException'));
 
 		set_error_handler(function($severity, $message, $file, $line) {
