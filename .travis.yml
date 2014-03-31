@@ -3,5 +3,15 @@ php:
     - 5.3.3
     - 5.4
     - 5.5
+    - 5.6
+    - hhvm
 
-script: "Tester/tester tests/"
+matrix:
+    allow_failures:
+        - php: hhvm
+
+script: Tester/tester tests -s
+
+after_failure:
+    # Print *.actual content
+    - for i in $(find tests -name \*.actual); do echo "--- $i"; cat $i; echo; echo; done
