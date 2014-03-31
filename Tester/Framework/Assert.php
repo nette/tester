@@ -42,7 +42,7 @@ class Assert
 	public static $onFailure;
 
 	/** @var int  the count of assertions */
-	public static $counter = 0;
+	private static $counter = 0;
 
 
 	/**
@@ -508,6 +508,17 @@ class Assert
 		}
 
 		return $expected === $actual;
+	}
+
+
+
+	/**
+	 * @return bool
+	 * @internal
+	 */
+	public static function noneAssertCalled()
+	{
+		return self::$counter <= 0;
 	}
 
 }
