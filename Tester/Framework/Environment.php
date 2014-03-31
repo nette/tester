@@ -120,4 +120,16 @@ class Environment
 		flock($lock = fopen($path . '/lock-' . md5($name), 'w'), LOCK_EX);
 	}
 
+
+	/**
+	 * Returns current test annotations.
+	 * @return array
+	 */
+	public static function getTestAnnotations()
+	{
+		$trace = debug_backtrace();
+		$file = $trace[count($trace) - 1]['file'];
+		return Helpers::parseDocComment(file_get_contents($file)) + array('file' => $file);
+	}
+
 }
