@@ -137,4 +137,26 @@ class Environment
 		return Helpers::parseDocComment(file_get_contents($file)) + array('file' => $file);
 	}
 
+
+	/**
+	 * Loads data according to the file annotation or specified by Tester\Runner\TestHandler::initiateDataProvider()
+	 * @return array
+	 */
+	public static function loadData()
+	{
+		if (isset($_SERVER['argv'][2])) {
+			list(, $query, $file) = $_SERVER['argv'];
+
+		} else {
+			$annotations = self::getTestAnnotations();
+			if (!isset($annotations['dataprovider'])) {
+				throw new \Exception('Missing annotation @dataProvider.');
+			}
+			$provider = (array) $annotations['dataprovider'];
+			list($file, $query) = DataProvider::parseAnnotation($provider[0], $annotations['file']);
+		}
+		$data = DataProvider::load($file, $query);
+		return reset($data);
+	}
+
 }
