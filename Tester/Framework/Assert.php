@@ -224,6 +224,24 @@ class Assert
 
 
 	/**
+	 * Checks if subject has expected count.
+	 * @param  int    expected count
+	 * @param  mixed  subject
+	 * @return void
+	 */
+	public static function count($count, $value)
+	{
+		self::$counter++;
+		if (!$value instanceof \Countable && !is_array($value)) {
+			self::fail('%1 should be array or countable object', $value);
+
+		} elseif (count($value) !== $count) {
+			self::fail('Count %1 should be %2', count($value), $count);
+		}
+	}
+
+
+	/**
 	 * Checks assertion.
 	 * @return void
 	 */
