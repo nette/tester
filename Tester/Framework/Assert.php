@@ -260,11 +260,12 @@ class Assert
 			'int', 'integer', 'null', 'object', 'resource', 'scalar', 'string'), TRUE)
 		) {
 			if (!call_user_func("is_$type", $value)) {
-				self::fail("%1 should be $type", $value);
+				self::fail(gettype($value) . " should be $type");
 			}
 
 		} elseif (!$value instanceof $type) {
-			self::fail("%1 should be instance of $type", $value);
+			$actual = is_object($value) ? get_class($value) : gettype($value);
+			self::fail("$actual should be instance of $type");
 		}
 	}
 

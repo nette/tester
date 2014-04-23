@@ -17,8 +17,8 @@ $cases = array(
 	"Failed: SimpleXMLElement(#%a%) should be truthy" => function() { Assert::truthy(new SimpleXMLElement('<xml></xml>')); },
 	"Failed: stdClass(#%a%) should be stdClass(#%a%)" => function() { Assert::same(new stdClass, new stdClass); },
 	"Failed: NULL should not be NULL" => function() { Assert::notSame(NULL, NULL); },
-	"Failed: TRUE should be instance of x" => function() { Assert::type('x', TRUE); },
-	"Failed: resource(stream) should be int" => function() { Assert::type('int', fopen(__FILE__, 'r')); },
+	"Failed: boolean should be instance of x" => function() { Assert::type('x', TRUE); },
+	"Failed: resource should be int" => function() { Assert::type('int', fopen(__FILE__, 'r')); },
 	"Failed: 'Hello\nWorld' should match\n    ... '%a%'" => function() { Assert::match('%a%', "Hello\nWorld"); },
 	"Failed: '...xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx' should be \n    ... '...xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'" => function() { Assert::same(str_repeat('x', 100), str_repeat('x', 120), new stdClass); },
 );
