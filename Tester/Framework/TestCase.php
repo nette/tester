@@ -80,7 +80,7 @@ class TestCase
 			if (!is_array($res)) {
 				throw new TestCaseException("Data provider $provider() doesn't return array.");
 			}
-			$data = array_merge($data, $res);
+			$data = array_merge($data, $this->fillDefaultParameters($res, $method));
 		}
 		if (!$info['dataprovider']) {
 			if ($method->getNumberOfRequiredParameters()) {
@@ -143,6 +143,30 @@ class TestCase
 		} else {
 			return $this->$provider();
 		}
+	}
+
+
+	/**
+	 * Fills unknown parameters by default ones.
+	 * @return array
+	 */
+	protected function fillDefaultParameters($parameters, \ReflectionMethod $method)
+	{
+		if (!count(array_filter(array_keys($parameters), 'is_string'))) {
+			// not associative array of parameters
+			return $parameters;
+		}
+
+		$defaultParametrs = array();
+		foreach ($method->getParameters() as $parameter) {
+			$defaultParametrs[$parameter->getName()] = $parameter->isDefaultValueAvailable() ? $parameter->getDefaultValue() : NULL;
+		}
+
+		array_walk($parameters, function(&$item) use ($defaultParametrs) {
+			$item = array_merge($defaultParametrs, $item);
+		});
+
+		return $parameters;
 	}
 
 
