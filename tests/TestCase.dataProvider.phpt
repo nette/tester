@@ -34,7 +34,7 @@ class MyTest extends Tester\TestCase
 	}
 
 	/** @dataProvider fixtures/dataprovider.query.ini != foo */
-	public function testFileDataProvider($data)
+	public function testFileDataProvider($a = 'a', $b = 'b')
 	{
 		$this->order[] = array(__METHOD__, func_get_args());
 	}
@@ -71,8 +71,8 @@ Assert::same(array(
 $test = new MyTest;
 $test->run('testFileDataProvider');
 Assert::same(array(
-	array('MyTest::testFileDataProvider', array('1')),
-	array('MyTest::testFileDataProvider', array('2')),
+	array('MyTest::testFileDataProvider', array('1', 'b')),
+	array('MyTest::testFileDataProvider', array('a', '2')),
 ), $test->order);
 
 
