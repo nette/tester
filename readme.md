@@ -1,6 +1,9 @@
 [Nette Tester](http://tester.nette.org): enjoyable unit testing
 ===============================================================
 
+[![Downloads this Month](https://img.shields.io/packagist/dm/nette/tester.svg)](https://packagist.org/packages/nette/tester)
+[![Build Status](https://travis-ci.org/nette/tester.svg?branch=master)](https://travis-ci.org/nette/tester)
+
 Nette Tester is a productive and enjoyable unit testing framework. It's used by
 the [Nette Framework](http://nette.org) and is capable of testing any PHP code.
 
@@ -190,7 +193,3 @@ Options:
     --coverage-src <dir>  Directory with source code.
     -h | --help           This help.
 ```
-
------
-
-[![Build Status](https://secure.travis-ci.org/nette/tester.png?branch=master)](http://travis-ci.org/nette/tester)
