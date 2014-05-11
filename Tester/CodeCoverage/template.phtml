@@ -98,7 +98,7 @@
 		<tr<?php echo $info->class ? " class='$info->class'" : '' ?>>
 			<td class="number"><small><?php echo $info->coverage ?> %</small></td>
 			<td><div class="bar"><div style="width: <?php echo $info->coverage ?>%"></div></div></td>
-			<td><a href="#fragment<?php echo $id ?>" onclick="toggle(this)"><span><?php echo $info->name ?></span></a></td>
+			<td><a href="#fragment<?php echo $id ?>" onclick="toggle(this); return false"><span><?php echo $info->name ?></span></a></td>
 		</tr>
 		</table>
 
