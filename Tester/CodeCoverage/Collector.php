@@ -28,6 +28,8 @@ class Collector
 	{
 		if (!extension_loaded('xdebug')) {
 			throw new \Exception('Code coverage functionality requires Xdebug extension.');
+		} elseif (self::$file) {
+			throw new \LogicException('Code coverage collector has been already started.');
 		}
 
 		self::$file = fopen($file, 'a+');
