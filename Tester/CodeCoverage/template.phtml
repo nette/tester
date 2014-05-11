@@ -90,7 +90,7 @@
 </head>
 
 <body>
-	<h1><?php echo $title ? htmlSpecialChars("$title - ") : ''; ?>Code coverage <?php echo round($coveredSum * 100 / $totalSum) ?>&nbsp;%</h1>
+	<h1><?php echo $title ? htmlSpecialChars("$title - ") : ''; ?>Code coverage <?php echo $totalSum ? round($coveredSum * 100 / $totalSum) : 0 ?>&nbsp;%</h1>
 
 	<?php foreach ($files as $id => $info): ?>
 	<div>
