@@ -13,7 +13,6 @@ namespace Tester\CodeCoverage;
  *
  * @author     David Grudl
  * @author     Patrik Votoček
- * @package    Nette\Test
  */
 class ReportGenerator
 {
@@ -24,7 +23,7 @@ class ReportGenerator
 	private $data;
 
 	/** @var string */
-	private $sourceDir;
+	private $source;
 
 	/** @var string */
 	private $title;
@@ -48,9 +47,9 @@ class ReportGenerator
 
 	/**
 	 * @param string  path to coverage.dat file
-	 * @param string  path to source files
+	 * @param string  path to source file/directory
 	 */
-	public function __construct($file, $sourceDir, $title = NULL)
+	public function __construct($file, $source, $title = NULL)
 	{
 		if (!is_file($file)) {
 			throw new \Exception("File '$file' is missing.");
@@ -61,23 +60,23 @@ class ReportGenerator
 			throw new \Exception("Content of file '$file' is invalid.");
 		}
 
-		if (!$sourceDir) {
-			$sourceDir = key($this->data);
-			for ($i = 0; $i < strlen($sourceDir); $i++) {
+		if (!$source) {
+			$source = key($this->data);
+			for ($i = 0; $i < strlen($source); $i++) {
 				foreach ($this->data as $s => $foo) {
-					if (!isset($s[$i]) || $sourceDir[$i] !== $s[$i]) {
-						$sourceDir = substr($sourceDir, 0, $i);
+					if (!isset($s[$i]) || $source[$i] !== $s[$i]) {
+						$source = substr($source, 0, $i);
 						break 2;
 					}
 				}
 			}
-			$sourceDir = dirname($sourceDir . 'x');
+			$source = dirname($source . 'x');
 
-		} elseif (!is_dir($sourceDir)) {
-			throw new \Exception("Directory '$sourceDir' is missing.");
+		} elseif (!file_exists($source)) {
+			throw new \Exception("File or directory '$source' is missing.");
 		}
 
-		$this->sourceDir = realpath($sourceDir) . DIRECTORY_SEPARATOR;
+		$this->source = realpath($source);
 		$this->title = $title;
 	}
 
@@ -119,8 +118,12 @@ class ReportGenerator
 			return;
 		}
 
+		$entries = is_dir($this->source)
+			? new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($this->source))
+			: array(new \SplFileInfo($this->source));
+
 		$this->files = array();
-		foreach (new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($this->sourceDir)) as $entry) {
+		foreach ($entries as $entry) {
 			if (substr($entry->getBasename(), 0, 1) === '.'  // . or .. or .gitignore
 				|| !in_array(pathinfo($entry, PATHINFO_EXTENSION), $this->acceptFiles))
 			{
@@ -148,7 +151,7 @@ class ReportGenerator
 
 			$light = $total ? $total < 5 : count(file($entry)) < 50;
 			$this->files[] = (object) array(
-				'name' => str_replace($this->sourceDir, '', $entry),
+				'name' => str_replace((is_dir($this->source) ? $this->source : dirname($this->source)) . DIRECTORY_SEPARATOR, '', $entry),
 				'file' => $entry,
 				'lines' => $lines,
 				'coverage' => $coverage,
