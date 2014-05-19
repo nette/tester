@@ -157,8 +157,9 @@ class FastCGIPhpSocket implements IPhpInterpreter
 			'REQUEST_METHOD' => 'GET',
 			'SERVER_NAME' => php_uname('n'),
 			'SCRIPT_FILENAME' => $file,
-			'NETTE_TESTER_FCGI_ARGS' => serialize($arguments),  /** @todo */
-			'NETTE_TESTER_FCGI_INI' => serialize(array_merge($this->iniValues, $iniValues)),  /** @todo */
+			Environment::FCGI => '1',
+			Environment::FCGI_ARGS => serialize(array_merge(array(__FILE__), array_values($arguments))),  /** @todo  Merge?*/
+			Environment::FCGI_INI => serialize(array_merge($this->iniValues, $iniValues)),
 		);
 
 		foreach ($envVars as $name => $value) {
@@ -226,7 +227,7 @@ class FastCGIPhpSocket implements IPhpInterpreter
 			try {
 				$padding = $this->socketRead($this->header->paddingLength);
 			} catch (FastCGISocketShortReadException $e) {
-				usleep(10000);
+				usleep(10000); /** @todo Parallel performance. */
 			}
 		}
 
@@ -235,7 +236,7 @@ class FastCGIPhpSocket implements IPhpInterpreter
 			$this->stdout .= $content;
 
 		} elseif ($this->header->type === self::FCGI_STDERR) {
-			# drop stderr
+			throw new \Exception('Unexpected stderr.'); /** @todo Drop silently? */
 
 		} elseif ($this->header->type === self::FCGI_END_REQUEST) {
 			$requestEnd = $this->decodeEndRequestBody($content);
@@ -275,7 +276,11 @@ class FastCGIPhpSocket implements IPhpInterpreter
 	 */
 	function getResult()
 	{
-		return array(0, $this->stdout);  /** @todo exitCode */
+		if (!preg_match('#^(.*)\nNETTE_TESTER_FCGI_EXIT_CODE:(\d+)\n#s', $this->stdout, $match)) {
+			return array(Job::CODE_ERROR, 'Missing exit code in stdout.');
+		}
+
+		return array((int) $match[2], $match[1]);
 	}
 
 

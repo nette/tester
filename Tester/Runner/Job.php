@@ -62,7 +62,7 @@ class Job
 	public function __construct($testFile, IPhpInterpreter $php, array $args = array())
 	{
 		$this->file = (string) $testFile;
-		$this->php = $php;
+		$this->php = clone $php; /** @todo Clone? */
 		$this->args = $args;
 	}
 

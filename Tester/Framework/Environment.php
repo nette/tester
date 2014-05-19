@@ -21,6 +21,15 @@ class Environment
 	/** Test is runned by Runner */
 	const RUNNER = 'NETTE_TESTER_RUNNER';
 
+	/** Test is run by FastCGI */
+	const FCGI = 'NETTE_TESTER_FCGI';
+
+	/** @internal */
+	const FCGI_ARGS = 'NETTE_TESTER_FCGI_ARGS';
+
+	/** @internal */
+	const FCGI_INI = 'NETTE_TESTER_FCGI_INI';
+
 	/** Code coverage file */
 	const COVERAGE = 'NETTE_TESTER_COVERAGE';
 
@@ -33,6 +42,9 @@ class Environment
 	/** @var bool */
 	public static $useColors;
 
+	/** @var bool */
+	private static $asFcgi = FALSE;
+
 
 	/**
 	 * Configures PHP environment.
@@ -44,6 +56,8 @@ class Environment
 			? (bool) getenv(self::COLORS)
 			: (PHP_SAPI === 'cli' && ((function_exists('posix_isatty') && posix_isatty(STDOUT))
 				|| getenv('ConEmuANSI') === 'ON' || getenv('ANSICON') !== FALSE));
+
+		self::$asFcgi = (bool) getenv(self::FCGI);
 
 		class_exists('Tester\Runner\Job');
 		class_exists('Tester\Dumper');
@@ -79,13 +93,24 @@ class Environment
 					}
 				} elseif (Environment::$checkAssertions && !Assert::$counter) {
 					echo "\nError: This test forgets to execute an assertion.\n";
-					exit(Runner\Job::CODE_FAIL);
+					Environment::callExit(Runner\Job::CODE_FAIL);
 				}
 			});
+
+			Environment::callExit(0, FALSE);
 		});
 
 		if (getenv(self::COVERAGE)) {
 			CodeCoverage\Collector::start(getenv(self::COVERAGE));
+		}
+
+		if (self::$asFcgi) {
+			foreach (unserialize(getenv(self::FCGI_INI)) as $name => $value) {
+				ini_set($name, $value);
+			}
+
+			$_SERVER['argv'] = unserialize(getenv(self::FCGI_ARGS));
+			$_SERVER['argc'] = count($_SERVER['argv']);
 		}
 
 		ob_start(function($s) {
@@ -99,7 +124,20 @@ class Environment
 	{
 		self::$checkAssertions = FALSE;
 		echo self::$debugMode ? Dumper::dumpException($e) : "\nError: {$e->getMessage()}\n";
-		exit($e instanceof AssertException ? Runner\Job::CODE_FAIL : Runner\Job::CODE_ERROR);
+		Environment::callExit($e instanceof AssertException ? Runner\Job::CODE_FAIL : Runner\Job::CODE_ERROR);
+	}
+
+
+	/** @internal */
+	final public static function callExit($code, $realExit = TRUE)
+	{
+		if (self::$asFcgi) {
+			echo "\nNETTE_TESTER_FCGI_EXIT_CODE:$code\n";
+		}
+
+		if ($realExit) {
+			exit($code);
+		}
 	}
 
 
@@ -111,7 +149,7 @@ class Environment
 	{
 		self::$checkAssertions = FALSE;
 		echo "\nSkipped:\n$message\n";
-		die(Runner\Job::CODE_SKIP);
+		self::callExit(Runner\Job::CODE_SKIP);
 	}
 
 
