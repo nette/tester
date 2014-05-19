@@ -24,8 +24,23 @@ class DomQuery extends \SimpleXMLElement
 		if (strpos($html, '<') === FALSE) {
 			$html = '<body>' . $html;
 		}
+
+		$html = preg_replace('#<(keygen|source|track|wbr)(?=\s|>)("[^"]*"|\'[^\']*\'|[^"\'>]+)*+(?<!/)>#', '<$1$2 />', $html);
+
 		$dom = new \DOMDocument();
+		$old = libxml_use_internal_errors(TRUE);
+		libxml_clear_errors();
 		$dom->loadHTML($html);
+		$errors = libxml_get_errors();
+		libxml_use_internal_errors($old);
+
+		$re = '#Tag (article|aside|audio|bdi|canvas|data|datalist|figcaption|figure|footer|header|keygen|main|mark'
+			. '|meter|nav|output|progress|rb|rp|rt|rtc|ruby|section|source|template|time|track|video|wbr) invalid#';
+		foreach ($errors as $error) {
+			if (!preg_match($re, $error->message)) {
+				trigger_error(__METHOD__ . ": $error->message on line $error->line.", E_USER_WARNING);
+			}
+		}
 		return simplexml_import_dom($dom, __CLASS__);
 	}
 
