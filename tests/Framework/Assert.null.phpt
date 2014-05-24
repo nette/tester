@@ -14,3 +14,7 @@ foreach ($notNull as $value) {
 		Assert::null($value);
 	}, 'Tester\AssertException', '%a% should be NULL');
 }
+
+Assert::exception(function () {
+	Assert::null(true, 'Custom description');
+}, 'Tester\AssertException', 'Custom description: %a% should be NULL');

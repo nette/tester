@@ -49,3 +49,11 @@ Assert::exception(function () {
 Assert::exception(function () {
 	Assert::notContains('', '1');
 }, 'Tester\AssertException', "'1' should not contain ''");
+
+Assert::exception(function () {
+	Assert::contains('a', '1', 'Custom description');
+}, 'Tester\AssertException', "Custom description: '1' should contain 'a'");
+
+Assert::exception(function () {
+	Assert::notContains('1', '1', 'Custom description');
+}, 'Tester\AssertException', "Custom description: '1' should not contain '1'");

@@ -73,3 +73,11 @@ Assert::exception(function () {
 
 
 Assert::matchFile(__DIR__ . '/Assert.matchFile.txt', '! Hello !');
+
+Assert::exception(function () {
+	Assert::match('a', 'b', 'Custom description');
+}, 'Tester\AssertException', 'Custom description: %A% should match %A%');
+
+Assert::exception(function () {
+	Assert::matchFile(__DIR__ . '/Assert.matchFile.txt', '! Not match !', 'Custom description');
+}, 'Tester\AssertException', 'Custom description: %A% should match %A%');

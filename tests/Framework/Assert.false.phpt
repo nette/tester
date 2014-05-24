@@ -14,3 +14,7 @@ foreach ($notFalse as $value) {
 		Assert::false($value);
 	}, 'Tester\AssertException', '%a% should be FALSE');
 }
+
+Assert::exception(function () {
+	Assert::false(true, 'Custom description');
+}, 'Tester\AssertException', 'Custom description: %a% should be FALSE');
