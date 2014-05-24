@@ -74,7 +74,7 @@ class Job
 		putenv(Environment::RUNNER . '=1');
 		putenv(Environment::COLORS . '=' . (int) Environment::$useColors);
 		$this->proc = proc_open(
-			$this->php->getCommandLine() . ' -n -d register_argc_argv=on ' . \Tester\Helpers::escapeArg($this->file) . ' ' . $this->args,
+			$this->php->getCommandLine() . ' -d register_argc_argv=on ' . \Tester\Helpers::escapeArg($this->file) . ' ' . $this->args . ' 2>&1',
 			array(
 				array('pipe', 'r'),
 				array('pipe', 'w'),
