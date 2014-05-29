@@ -10,8 +10,6 @@ namespace Tester;
 
 /**
  * Assertion test helpers.
- *
- * @author     David Grudl
  */
 class Assert
 {
@@ -533,8 +531,6 @@ class Assert
 
 /**
  * Assertion exception.
- *
- * @author     David Grudl
  */
 class AssertException extends \Exception
 {

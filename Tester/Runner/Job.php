@@ -12,8 +12,6 @@ use Tester\Environment;
 
 /**
  * Single test job.
- *
- * @author     David Grudl
  */
 class Job
 {

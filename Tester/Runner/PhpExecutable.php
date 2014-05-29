@@ -10,8 +10,6 @@ namespace Tester\Runner;
 
 /**
  * PHP executable command-line.
- *
- * @author     David Grudl
  */
 class PhpExecutable
 {

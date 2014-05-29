@@ -10,8 +10,6 @@ namespace Tester;
 
 /**
  * DomQuery simplifies querying (X)HTML documents.
- *
- * @author     David Grudl
  */
 class DomQuery extends \SimpleXMLElement
 {

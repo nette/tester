@@ -10,8 +10,6 @@ namespace Tester;
 
 /**
  * Data provider helpers.
- *
- * @author     David Grudl
  */
 class DataProvider
 {

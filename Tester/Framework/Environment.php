@@ -10,8 +10,6 @@ namespace Tester;
 
 /**
  * Testing environment.
- *
- * @author     David Grudl
  */
 class Environment
 {

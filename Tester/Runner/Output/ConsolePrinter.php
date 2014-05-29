@@ -13,8 +13,6 @@ use Tester,
 
 /**
  * Console printer.
- *
- * @author     David Grudl
  */
 class ConsolePrinter implements Tester\Runner\OutputHandler
 {

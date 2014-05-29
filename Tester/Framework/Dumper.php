@@ -10,8 +10,6 @@ namespace Tester;
 
 /**
  * Dumps PHP variables.
- *
- * @author     David Grudl
  */
 class Dumper
 {

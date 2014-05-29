@@ -14,8 +14,6 @@ use Tester,
 
 /**
  * Default test behavior.
- *
- * @author     David Grudl
  */
 class TestHandler
 {

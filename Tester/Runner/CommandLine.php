@@ -10,8 +10,6 @@ namespace Tester\Runner;
 
 /**
  * Stupid command line arguments parser.
- *
- * @author     David Grudl
  */
 class CommandLine
 {

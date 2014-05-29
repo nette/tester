@@ -10,8 +10,6 @@ namespace Tester;
 
 /**
  * Single test case.
- *
- * @author     David Grudl
  */
 class TestCase
 {

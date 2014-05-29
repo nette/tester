@@ -12,8 +12,6 @@ use Tester;
 
 /**
  * Runner output.
- *
- * @author     David Grudl
  */
 interface OutputHandler
 {

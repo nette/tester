@@ -13,8 +13,6 @@ use Tester,
 
 /**
  * File logger.
- *
- * @author     David Grudl
  */
 class Logger implements Tester\Runner\OutputHandler
 {

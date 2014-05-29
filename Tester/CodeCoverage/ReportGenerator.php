@@ -10,9 +10,6 @@ namespace Tester\CodeCoverage;
 
 /**
  * Code coverage report generator.
- *
- * @author     David Grudl
- * @author     Patrik Votoček
  */
 class ReportGenerator
 {

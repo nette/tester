@@ -12,8 +12,6 @@ use Tester;
 
 /**
  * Test runner.
- *
- * @author     David Grudl
  */
 class Runner
 {

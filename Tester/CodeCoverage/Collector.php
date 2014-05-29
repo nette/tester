@@ -10,8 +10,6 @@ namespace Tester\CodeCoverage;
 
 /**
  * Code coverage collector.
- *
- * @author     David Grudl
  */
 class Collector
 {

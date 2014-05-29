@@ -2,8 +2,6 @@
 
 /**
  * Test environment initialization.
- *
- * @author     David Grudl
  */
 
 require __DIR__ . '/Framework/Helpers.php';

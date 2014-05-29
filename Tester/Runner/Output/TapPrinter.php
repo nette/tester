@@ -13,8 +13,6 @@ use Tester,
 
 /**
  * Test Anything Protocol, http://testanything.org
- *
- * @author     David Grudl
  */
 class TapPrinter implements Tester\Runner\OutputHandler
 {

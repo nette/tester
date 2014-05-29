@@ -10,8 +10,6 @@ namespace Tester;
 
 /**
  * Test helpers.
- *
- * @author     David Grudl
  */
 class Helpers
 {
