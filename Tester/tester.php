@@ -130,7 +130,10 @@ $runner->outputHandlers[] = $options['--tap']
 
 if ($options['--log']) {
 	echo "Log: {$options['--log']}\n";
-	$runner->outputHandlers[] = new Tester\Runner\Output\Logger($runner, $options['--log']);
+	$runner->outputHandlers[] = new Tester\Runner\Output\FileOutput(
+		new Tester\Runner\Output\Logger($runner),
+		$options['--log']
+	);
 }
 
 if ($options['--setup']) {
