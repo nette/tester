@@ -102,4 +102,13 @@ test(function() { // 404
 });
 
 
+test(function() { // session
+	$client = HttpClient::load('http://localhost:8000/cookie.php');
+	Assert::match( '1', $client->getBody() );
+	
+	$client->execute('http://localhost:8000/cookie.php');
+	Assert::match( '2', $client->getBody() );
+});
+
+
 proc_terminate($server);

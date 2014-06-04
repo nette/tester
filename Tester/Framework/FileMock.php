@@ -28,7 +28,7 @@ class FileMock
 	/**
 	 * @return string  file name
 	 */
-	public static function create($content, $extension = NULL)
+	public static function create($content = '', $extension = NULL)
 	{
 		if (!self::$files) {
 			stream_wrapper_register(self::PROTOCOL, __CLASS__);

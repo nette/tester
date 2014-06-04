@@ -55,6 +55,7 @@ class HttpClient
 			CURLOPT_TIMEOUT => 20,
 			CURLOPT_FOLLOWLOCATION => FALSE,
 			CURLOPT_RETURNTRANSFER => TRUE,
+			CURLOPT_COOKIEJAR => FileMock::create(''),
 		));
 	}
 
