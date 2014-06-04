@@ -17,6 +17,9 @@
 	"require": {
 		"php": ">=5.3.0"
 	},
+	"suggest": {
+		"ext-curl": "to use Tester\\HttpClient"
+	},
 	"autoload": {
 		"classmap": ["Tester/"]
 	},
