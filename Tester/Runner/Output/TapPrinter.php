@@ -19,16 +19,20 @@ class TapPrinter implements Tester\Runner\OutputHandler
 	/** @var Runner */
 	private $runner;
 
+	/** @var resource */
+	private $file;
 
-	public function __construct(Runner $runner)
+
+	public function __construct(Runner $runner, $file = 'php://output')
 	{
 		$this->runner = $runner;
+		$this->file = fopen($file, 'w');
 	}
 
 
 	public function begin()
 	{
-		echo "TAP version 13\n";
+		fwrite($this->file, "TAP version 13\n");
 	}
 
 
@@ -40,13 +44,13 @@ class TapPrinter implements Tester\Runner\OutputHandler
 			Runner::SKIPPED => "ok $testName #skip $message",
 			Runner::FAILED => "not ok $testName\n# $message",
 		);
-		echo $outputs[$result] . "\n";
+		fwrite($this->file, $outputs[$result] . "\n");
 	}
 
 
 	public function end()
 	{
-		echo '1..' . array_sum($this->runner->getResults());
+		fwrite($this->file, '1..' . array_sum($this->runner->getResults()));
 	}
 
 }

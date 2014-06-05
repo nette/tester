@@ -12,7 +12,7 @@ use Tester,
 
 
 /**
- * File logger.
+ * Verbose logger.
  */
 class Logger implements Tester\Runner\OutputHandler
 {
@@ -23,7 +23,7 @@ class Logger implements Tester\Runner\OutputHandler
 	private $file;
 
 
-	public function __construct(Runner $runner, $file)
+	public function __construct(Runner $runner, $file = 'php://output')
 	{
 		$this->runner = $runner;
 		$this->file = fopen($file, 'w');
@@ -32,7 +32,7 @@ class Logger implements Tester\Runner\OutputHandler
 
 	public function begin()
 	{
-		fputs($this->file, 'PHP ' . $this->runner->getPhp()->getVersion()
+		fwrite($this->file, 'PHP ' . $this->runner->getPhp()->getVersion()
 			. ' | ' . $this->runner->getPhp()->getCommandLine()
 			. " | {$this->runner->threadCount} threads\n\n");
 	}
@@ -46,7 +46,7 @@ class Logger implements Tester\Runner\OutputHandler
 			Runner::SKIPPED => "-- Skipped: $testName\n$message",
 			Runner::FAILED => "-- FAILED: $testName\n$message",
 		);
-		fputs($this->file, $outputs[$result] . "\n\n");
+		fwrite($this->file, $outputs[$result] . "\n\n");
 	}
 
 
@@ -55,7 +55,7 @@ class Logger implements Tester\Runner\OutputHandler
 		$jobCount = $this->runner->getJobCount();
 		$results = $this->runner->getResults();
 		$count = array_sum($results);
-		fputs($this->file,
+		fwrite($this->file,
 			($results[Runner::FAILED] ? 'FAILURES!' : 'OK')
 			. " ($jobCount tests"
 			. ($results[Runner::FAILED] ? ", {$results[Runner::FAILED]} failures" : '')
