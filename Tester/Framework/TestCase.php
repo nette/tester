@@ -29,14 +29,14 @@ class TestCase
 			return $rm->getName();
 		}, $r->getMethods())));
 
-		if (($method === NULL || $method === self::LIST_METHODS) && isset($_SERVER['argv'][1])) {
-			if ($_SERVER['argv'][1] === self::LIST_METHODS) {
+		if (($method === NULL || $method === self::LIST_METHODS) && ($tmp = preg_filter('#--method=(.*)#Ai', '$1', $_SERVER['argv']))) {
+			$method = reset($tmp);
+			if ($method === self::LIST_METHODS) {
 				Environment::$checkAssertions = FALSE;
 				header('Content-Type: application/json');
 				echo json_encode($methods);
 				return;
 			}
-			$method = $_SERVER['argv'][1];
 		}
 
 		if ($method === NULL) {

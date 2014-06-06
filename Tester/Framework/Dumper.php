@@ -231,7 +231,9 @@ class Dumper
 			if (is_object($expected) || is_array($expected) || (is_string($expected) && strlen($expected) > self::$maxLength)
 				|| is_object($actual) || is_array($actual) || (is_string($actual) && strlen($actual) > self::$maxLength)
 			) {
-				$args = isset($_SERVER['argv'][1]) ? '.[' . preg_replace('#[^a-z0-9-. ]+#i', '_', $_SERVER['argv'][1]) . ']' : '';
+				$args = isset($_SERVER['argv'][1])
+					? '.[' . implode(' ', preg_replace(array('#^-*(.{1,20}).*#i', '#[^=a-z0-9. -]+#i'), array('$1', '-'), array_slice($_SERVER['argv'], 1))) . ']'
+					: '';
 				$stored[] = self::saveOutput($testFile, $expected, $args . '.expected');
 				$stored[] = self::saveOutput($testFile, $actual, $args . '.actual');
 			}
