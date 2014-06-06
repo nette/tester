@@ -29,7 +29,11 @@ class TestCase
 			return $rm->getName();
 		}, $r->getMethods())));
 
-		if (($method === NULL || $method === self::LIST_METHODS) && ($tmp = preg_filter('#--method=(.*)#Ai', '$1', $_SERVER['argv']))) {
+		if (substr($method, 0, 2) === '--') { // back compatibility
+			$method = NULL;
+		}
+
+		if ($method === NULL && ($tmp = preg_filter('#(--method=)?([\w-]+)$#Ai', '$2', $_SERVER['argv']))) {
 			$method = reset($tmp);
 			if ($method === self::LIST_METHODS) {
 				Environment::$checkAssertions = FALSE;
