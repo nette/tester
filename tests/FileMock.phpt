@@ -52,5 +52,12 @@ test(function() {
 
 
 test(function() {
+    $f = fopen($name = Tester\FileMock::create('A'), 'a');
+    fwrite($f, 'B');
+    Assert::same('AB', file_get_contents($name));
+});
+
+
+test(function() {
 	Assert::same(123, require FileMock::create('<?php return 123;'));
 });
