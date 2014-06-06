@@ -23,6 +23,6 @@
 	},
 	"bin": ["Tester/tester"],
 	"extra": {
-		"branch-alias": { "dev-master": "1.1-dev" }
+		"branch-alias": { "dev-master": "1.2-dev" }
 	}
 }
