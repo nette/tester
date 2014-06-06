@@ -1,0 +1,5 @@
+<?php
+
+// This test intentionally fails. It is tested via Travies.
+
+die(231);
