@@ -10,7 +10,9 @@ matrix:
     allow_failures:
         - php: hhvm
 
-script: Tester/tester tests -s
+script:
+    - Tester/tester tests -s
+    - Tester/tester tests/fail.phptx > /dev/null; if [ $? -eq 0 ]; then echo "tests/fail.phptx SHOULD FAIL"; exit 1; else echo "fail checked"; fi;
 
 after_failure:
     # Print *.actual content
