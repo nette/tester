@@ -42,7 +42,7 @@ class FileMock
 	public function stream_open($path, $mode, $options, &$opened_path)
 	{
 		$this->content = & self::$files[$path];
-		$this->pos = 0;
+		$this->pos = strpos($mode, 'a') === FALSE ? 0 : strlen($this->content);
 		return TRUE;
 	}
 
