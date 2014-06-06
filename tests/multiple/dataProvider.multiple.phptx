@@ -1,0 +1,6 @@
+<?php
+
+/**
+ * @dataProvider  ../fixtures/dataprovider.ini
+ * @multiple  2
+ */

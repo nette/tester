@@ -36,25 +36,32 @@ class TestHandler
 	{
 		list($annotations, $testName) = $this->getAnnotations($file);
 		$php = clone $this->runner->getPhp();
-		$job = FALSE;
+		$jobsArgs = array(array());
 
 		foreach (get_class_methods($this) as $method) {
 			if (!preg_match('#^initiate(.+)#', strtolower($method), $m) || !isset($annotations[$m[1]])) {
 				continue;
 			}
-			foreach ((array) $annotations[$m[1]] as $arg) {
-				$res = $this->$method($arg, $php, $file);
-				if ($res === TRUE) {
-					$job = TRUE;
-				} elseif ($res) {
+			foreach ((array) $annotations[$m[1]] as $value) {
+				$res = $this->$method($value, $php, $file);
+				if ($res && is_int($res[0])) { // [Runner::*, message]
 					$this->runner->writeResult($testName, $res[0], $res[1]);
 					return;
+				} elseif ($res && $res[1]) { // [param name, values]
+					$tmp = array();
+					foreach ($res[1] as $val) {
+						foreach ($jobsArgs as $args) {
+							$args[] = Helpers::escapeArg("--$res[0]=$val");
+							$tmp[] = $args;
+						}
+					}
+					$jobsArgs = $tmp;
 				}
 			}
 		}
 
-		if (!$job) {
-			$this->runner->addJob(new Job($file, $php));
+		foreach ($jobsArgs as $args) {
+			$this->runner->addJob(new Job($file, $php, $args));
 		}
 	}
 
@@ -119,25 +126,23 @@ class TestHandler
 			return array(empty($optional) ? Runner::FAILED : Runner::SKIPPED, $e->getMessage());
 		}
 
+		$res = array();
 		foreach (array_keys($data) as $item) {
-			$this->runner->addJob(new Job($file, $php, array(Helpers::escapeArg($item), Helpers::escapeArg($dataFile))));
+			$res[] = "$item|$dataFile";
 		}
-		return TRUE;
+		return array('dataprovider', $res);
 	}
 
 
 	private function initiateMultiple($count, PhpExecutable $php, $file)
 	{
-		foreach (range(0, (int) $count - 1) as $arg) {
-			$this->runner->addJob(new Job($file, $php, array((string) $arg)));
-		}
-		return TRUE;
+		return array('multiple', range(0, (int) $count - 1));
 	}
 
 
 	private function initiateTestCase($foo, PhpExecutable $php, $file)
 	{
-		$job = new Job($file, $php, array(Helpers::escapeArg(Tester\TestCase::LIST_METHODS)));
+		$job = new Job($file, $php, array(Helpers::escapeArg('--method=' . Tester\TestCase::LIST_METHODS)));
 		$job->run();
 
 		if (in_array($job->getExitCode(), array(Job::CODE_ERROR, Job::CODE_FAIL, Job::CODE_SKIP))) {
@@ -151,10 +156,7 @@ class TestHandler
 			return array(Runner::SKIPPED, "TestCase in file '$file' does not contain test methods.");
 		}
 
-		foreach ($methods as $method) {
-			$this->runner->addJob(new Job($file, $php, array(Helpers::escapeArg($method))));
-		}
-		return TRUE;
+		return array('method', $methods);
 	}
 
 
