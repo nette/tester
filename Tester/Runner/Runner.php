@@ -108,6 +108,10 @@ class Runner
 	 */
 	private function findTests($path)
 	{
+		if (strpbrk($path, '*?[') === FALSE && !file_exists($path)) {
+			throw new \InvalidArgumentException("File or directory '$path' not found.");
+		}
+
 		if (is_dir($path)) {
 			foreach (glob("$path/*", GLOB_ONLYDIR) ?: array() as $dir) {
 				$this->findTests($dir);
