@@ -271,8 +271,13 @@ class Dumper
 			. (isset($stored) ? 'diff ' . Helpers::escapeArg($stored[0]) . ' ' . Helpers::escapeArg($stored[1]) . "\n\n" : '');
 
 		foreach ($trace as $item) {
+			$item += array('file' => NULL, 'class' => NULL, 'type' => NULL, 'function' => NULL);
+			if ($e instanceof AssertException && $item['file'] === __DIR__ . DIRECTORY_SEPARATOR . 'Assert.php') {
+				continue;
+			}
+
 			$s .= 'in '
-				. (isset($item['file'])
+				. ($item['file']
 					? (
 						($item['file'] === $testFile ? "\033[1;37m" : '')
 						. implode(DIRECTORY_SEPARATOR, array_slice(explode(DIRECTORY_SEPARATOR, $item['file']), -self::$maxPathSegments))
@@ -280,7 +285,7 @@ class Dumper
 					)
 					: '[internal function]'
 				)
-				. (isset($item['class']) ? $item['class'] . $item['type'] : '')
+				. $item['class'] . $item['type']
 				. (isset($item['function']) ? $item['function'] . '()' : '')
 				. "\033[0m\n";
 		}
