@@ -65,7 +65,9 @@ class TestHandler
 	public function assess(Job $job)
 	{
 		list($annotations, $testName) = $this->getAnnotations($job->getFile());
-		$testName .= $job->getArguments() ? ' [' . implode(' ', $job->getArguments()) . ']' : '';
+		$testName .= $job->getArguments()
+			? ' [' . implode(' ', preg_replace(array('#["\'-]*(.+?)["\']?$#A', '#(.{30}).+#A'), array('$1', '$1...'), $job->getArguments())) . ']'
+			: '';
 		$annotations += array(
 			'exitcode' => Job::CODE_OK,
 			'httpcode' => self::HTTP_OK,
