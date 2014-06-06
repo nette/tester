@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * @phpversion 5.4  Requires constant PHP_BINARY available since PHP 5.4.0
+ */
+
 use Tester\Assert,
 	Tester\Dumper,
 	Tester\Runner\Runner;
@@ -10,18 +14,14 @@ require __DIR__ . '/../Tester/Runner/TestHandler.php';
 require __DIR__ . '/../Tester/Runner/PhpExecutable.php';
 require __DIR__ . '/../Tester/Runner/Runner.php';
 
-if (PHP_VERSION_ID < 50400) {
-	Tester\Environment::skip('Requires constant PHP_BINARY available since PHP 5.4.0');
-}
-
 
 class Logger implements Tester\Runner\OutputHandler
 {
-	public $results = array();
+	public $results = [];
 
 	function result($testName, $result, $message)
 	{
-		$this->results[basename($testName)] = array($result, $message);
+		$this->results[basename($testName)] = [$result, $message];
 	}
 
 	function begin() {}
