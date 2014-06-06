@@ -65,7 +65,7 @@ class TestHandler
 	public function assess(Job $job)
 	{
 		list($annotations, $testName) = $this->getAnnotations($job->getFile());
-		$testName .= (strlen($job->getArguments()) ? " [{$job->getArguments()}]" : '');
+		$testName .= $job->getArguments() ? ' [' . implode(' ', $job->getArguments()) . ']' : '';
 		$annotations += array(
 			'exitcode' => Job::CODE_OK,
 			'httpcode' => self::HTTP_OK,
@@ -118,7 +118,7 @@ class TestHandler
 		}
 
 		foreach (array_keys($data) as $item) {
-			$this->runner->addJob(new Job($file, $php, Helpers::escapeArg($item) . ' ' . Helpers::escapeArg($dataFile)));
+			$this->runner->addJob(new Job($file, $php, array(Helpers::escapeArg($item), Helpers::escapeArg($dataFile))));
 		}
 		return TRUE;
 	}
@@ -127,7 +127,7 @@ class TestHandler
 	private function initiateMultiple($count, PhpExecutable $php, $file)
 	{
 		foreach (range(0, (int) $count - 1) as $arg) {
-			$this->runner->addJob(new Job($file, $php, (string) $arg));
+			$this->runner->addJob(new Job($file, $php, array((string) $arg)));
 		}
 		return TRUE;
 	}
@@ -135,7 +135,7 @@ class TestHandler
 
 	private function initiateTestCase($foo, PhpExecutable $php, $file)
 	{
-		$job = new Job($file, $php, Helpers::escapeArg(Tester\TestCase::LIST_METHODS));
+		$job = new Job($file, $php, array(Helpers::escapeArg(Tester\TestCase::LIST_METHODS)));
 		$job->run();
 
 		if (in_array($job->getExitCode(), array(Job::CODE_ERROR, Job::CODE_FAIL, Job::CODE_SKIP))) {
@@ -150,7 +150,7 @@ class TestHandler
 		}
 
 		foreach ($methods as $method) {
-			$this->runner->addJob(new Job($file, $php, Helpers::escapeArg($method)));
+			$this->runner->addJob(new Job($file, $php, array(Helpers::escapeArg($method))));
 		}
 		return TRUE;
 	}

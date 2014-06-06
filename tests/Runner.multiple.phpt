@@ -30,16 +30,16 @@ sort($tests);
 $path = __DIR__ . DIRECTORY_SEPARATOR . 'multiple' . DIRECTORY_SEPARATOR;
 
 Assert::same(array(
-	array('dataProvider.phptx', Helpers::escapeArg('bar') . ' ' . Helpers::escapeArg("$path../fixtures/dataprovider.ini")),
-	array('dataProvider.phptx', Helpers::escapeArg('foo') . ' ' . Helpers::escapeArg("$path../fixtures/dataprovider.ini")),
-	array('dataProvider.query.phptx', Helpers::escapeArg('foo 2.2.3') . ' ' . Helpers::escapeArg("$path../fixtures/dataprovider.query.ini")),
-	array('dataProvider.query.phptx', Helpers::escapeArg('foo 3 xxx') . ' ' . Helpers::escapeArg("$path../fixtures/dataprovider.query.ini")),
-	array('multiple.phptx', '0'),
-	array('multiple.phptx', '1'),
-	array('testcase.phptx', Helpers::escapeArg('test1')),
-	array('testcase.phptx', Helpers::escapeArg('testBar')),
-	array('testcase.phptx', Helpers::escapeArg('testFoo')),
-	array('testcase.phptx', Helpers::escapeArg('testPrivate')),
-	array('testcase.phptx', Helpers::escapeArg('testProtected')),
-	array('testcase.phptx', Helpers::escapeArg('test_foo')),
+	array('dataProvider.phptx', array(Helpers::escapeArg('bar'), Helpers::escapeArg("$path../fixtures/dataprovider.ini"))),
+	array('dataProvider.phptx', array(Helpers::escapeArg('foo'), Helpers::escapeArg("$path../fixtures/dataprovider.ini"))),
+	array('dataProvider.query.phptx', array(Helpers::escapeArg('foo 2.2.3'), Helpers::escapeArg("$path../fixtures/dataprovider.query.ini"))),
+	array('dataProvider.query.phptx', array(Helpers::escapeArg('foo 3 xxx'), Helpers::escapeArg("$path../fixtures/dataprovider.query.ini"))),
+	array('multiple.phptx', array('0')),
+	array('multiple.phptx', array('1')),
+	array('testcase.phptx', array(Helpers::escapeArg('test1'))),
+	array('testcase.phptx', array(Helpers::escapeArg('testBar'))),
+	array('testcase.phptx', array(Helpers::escapeArg('testFoo'))),
+	array('testcase.phptx', array(Helpers::escapeArg('testPrivate'))),
+	array('testcase.phptx', array(Helpers::escapeArg('testProtected'))),
+	array('testcase.phptx', array(Helpers::escapeArg('test_foo'))),
 ), $tests);

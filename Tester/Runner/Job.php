@@ -28,13 +28,13 @@ class Job
 	/** @var string  test file */
 	private $file;
 
-	/** @var string  test arguments */
+	/** @var string[]  test arguments */
 	private $args;
 
 	/** @var string  test output */
 	private $output;
 
-	/** @var string  output headers in raw format */
+	/** @var string[]  output headers */
 	private $headers;
 
 	/** @var PhpExecutable */
@@ -54,11 +54,11 @@ class Job
 	 * @param  string  test file name
 	 * @return void
 	 */
-	public function __construct($testFile, PhpExecutable $php, $args = NULL)
+	public function __construct($testFile, PhpExecutable $php, array $args = NULL)
 	{
 		$this->file = (string) $testFile;
 		$this->php = $php;
-		$this->args = $args;
+		$this->args = (array) $args;
 	}
 
 
@@ -72,7 +72,7 @@ class Job
 		putenv(Environment::RUNNER . '=1');
 		putenv(Environment::COLORS . '=' . (int) Environment::$useColors);
 		$this->proc = proc_open(
-			$this->php->getCommandLine() . ' -n -d register_argc_argv=on ' . \Tester\Helpers::escapeArg($this->file) . ' ' . $this->args,
+			$this->php->getCommandLine() . ' -n -d register_argc_argv=on ' . \Tester\Helpers::escapeArg($this->file) . ' ' . implode(' ', $this->args),
 			array(
 				array('pipe', 'r'),
 				array('pipe', 'w'),
@@ -141,7 +141,7 @@ class Job
 
 	/**
 	 * Returns script arguments.
-	 * @return string
+	 * @return string[]
 	 */
 	public function getArguments()
 	{
@@ -171,7 +171,7 @@ class Job
 
 	/**
 	 * Returns output headers.
-	 * @return string
+	 * @return string[]
 	 */
 	public function getHeaders()
 	{
