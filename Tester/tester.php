@@ -48,6 +48,7 @@ Options:
     -l | --log <path>      Write log to file <path>.
     -d <key=value>...      Define INI entry 'key' with value 'val'.
     -s                     Show information about skipped tests.
+    --stop-on-error        Stop execution upon first error.
     --tap                  Generate Test Anything Protocol.
     -j <num>               Run <num> jobs in parallel (default: 33).
     -w | --watch <path>    Watch directory.
@@ -122,6 +123,7 @@ if ($options['--coverage']) {
 $runner = new Tester\Runner\Runner($php);
 $runner->paths = $options['paths'];
 $runner->threadCount = max(1, (int) $options['-j']);
+$runner->stopOnError = $options['--stop-on-error'];
 
 $runner->outputHandlers[] = $options['--tap']
 	? new Tester\Runner\Output\TapPrinter($runner)

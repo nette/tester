@@ -32,6 +32,9 @@ class Runner
 	/** @var OutputHandler[] */
 	public $outputHandlers = array();
 
+	/** @var bool */
+	public $stopOnError = FALSE;
+
 	/** @var PhpExecutable */
 	private $php;
 
@@ -155,6 +158,10 @@ class Runner
 		$this->results[$result]++;
 		foreach ($this->outputHandlers as $handler) {
 			$handler->result($testName, $result, $message);
+		}
+
+		if ($this->stopOnError && $result === self::FAILED) {
+			$this->interrupted = TRUE;
 		}
 	}
 
