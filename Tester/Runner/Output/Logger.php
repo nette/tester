@@ -12,29 +12,25 @@ use Tester,
 
 
 /**
- * File logger.
+ * Verbose logger.
  */
 class Logger implements Tester\Runner\OutputHandler
 {
 	/** @var Runner */
 	private $runner;
 
-	/** @var resource */
-	private $file;
 
-
-	public function __construct(Runner $runner, $file)
+	public function __construct(Runner $runner)
 	{
 		$this->runner = $runner;
-		$this->file = fopen($file, 'w');
 	}
 
 
 	public function begin()
 	{
-		fputs($this->file, 'PHP ' . $this->runner->getPhp()->getVersion()
+		echo 'PHP ' . $this->runner->getPhp()->getVersion()
 			. ' | ' . $this->runner->getPhp()->getCommandLine()
-			. " | {$this->runner->threadCount} threads\n\n");
+			. " | {$this->runner->threadCount} threads\n\n";
 	}
 
 
@@ -46,7 +42,7 @@ class Logger implements Tester\Runner\OutputHandler
 			Runner::SKIPPED => "-- Skipped: $testName\n$message",
 			Runner::FAILED => "-- FAILED: $testName\n$message",
 		);
-		fputs($this->file, $outputs[$result] . "\n\n");
+		echo $outputs[$result] . "\n\n";
 	}
 
 
@@ -55,14 +51,12 @@ class Logger implements Tester\Runner\OutputHandler
 		$jobCount = $this->runner->getJobCount();
 		$results = $this->runner->getResults();
 		$count = array_sum($results);
-		fputs($this->file,
-			($results[Runner::FAILED] ? 'FAILURES!' : 'OK')
+		echo ($results[Runner::FAILED] ? 'FAILURES!' : 'OK')
 			. " ($jobCount tests"
 			. ($results[Runner::FAILED] ? ", {$results[Runner::FAILED]} failures" : '')
 			. ($results[Runner::SKIPPED] ? ", {$results[Runner::SKIPPED]} skipped" : '')
 			. ($jobCount !== $count ? ', ' . ($jobCount - $count) . ' not run' : '')
-			. ')'
-		);
+			. ')';
 	}
 
 }

@@ -12,9 +12,10 @@ require __DIR__ . '/Runner/Job.php';
 require __DIR__ . '/Runner/CommandLine.php';
 require __DIR__ . '/Runner/TestHandler.php';
 require __DIR__ . '/Runner/OutputHandler.php';
+require __DIR__ . '/Runner/Output/ConsolePrinter.php';
+require __DIR__ . '/Runner/Output/FileOutput.php';
 require __DIR__ . '/Runner/Output/Logger.php';
 require __DIR__ . '/Runner/Output/TapPrinter.php';
-require __DIR__ . '/Runner/Output/ConsolePrinter.php';
 require __DIR__ . '/Framework/Helpers.php';
 require __DIR__ . '/Framework/Environment.php';
 require __DIR__ . '/Framework/Assert.php';
@@ -129,7 +130,10 @@ $runner->outputHandlers[] = $options['--tap']
 
 if ($options['--log']) {
 	echo "Log: {$options['--log']}\n";
-	$runner->outputHandlers[] = new Tester\Runner\Output\Logger($runner, $options['--log']);
+	$runner->outputHandlers[] = new Tester\Runner\Output\FileOutput(
+		new Tester\Runner\Output\Logger($runner),
+		$options['--log']
+	);
 }
 
 if ($options['--setup']) {
