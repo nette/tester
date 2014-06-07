@@ -33,7 +33,7 @@ class Runner
 	public $outputHandlers = array();
 
 	/** @var bool */
-	public $stopOnError = FALSE;
+	public $stopOnFail = FALSE;
 
 	/** @var PhpExecutable */
 	private $php;
@@ -160,7 +160,7 @@ class Runner
 			$handler->result($testName, $result, $message);
 		}
 
-		if ($this->stopOnError && $result === self::FAILED) {
+		if ($this->stopOnFail && $result === self::FAILED) {
 			$this->interrupted = TRUE;
 		}
 	}
