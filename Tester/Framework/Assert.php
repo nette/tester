@@ -107,7 +107,7 @@ class Assert
 				self::fail('%1 should contain %2', $actual, $needle);
 			}
 		} elseif (is_string($actual)) {
-			if (strpos($actual, $needle) === FALSE) {
+			if ($needle !== '' && strpos($actual, $needle) === FALSE) {
 				self::fail('%1 should contain %2', $actual, $needle);
 			}
 		} else {
@@ -128,7 +128,7 @@ class Assert
 				self::fail('%1 should not contain %2', $actual, $needle);
 			}
 		} elseif (is_string($actual)) {
-			if (strpos($actual, $needle) !== FALSE) {
+			if ($needle === '' || strpos($actual, $needle) !== FALSE) {
 				self::fail('%1 should not contain %2', $actual, $needle);
 			}
 		} else {

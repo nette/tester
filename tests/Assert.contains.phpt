@@ -9,6 +9,7 @@ $contains = array(
 	array('1', '1'),
 	array('1', 'a1'),
 	array('1', array('1')),
+	array('', '1'),
 );
 
 $notContains = array(
@@ -44,3 +45,7 @@ Assert::exception(function() {
 Assert::exception(function() {
 	Assert::notContains(1, 1);
 }, 'Tester\AssertException', '1 should be string or array');
+
+Assert::exception(function() {
+	Assert::notContains('', '1');
+}, 'Tester\AssertException', "'1' should not contain ''");
