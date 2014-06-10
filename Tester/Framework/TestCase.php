@@ -33,7 +33,7 @@ class TestCase
 			$method = NULL;
 		}
 
-		if ($method === NULL && ($tmp = preg_filter('#(--method=)?([\w-]+)$#Ai', '$2', $_SERVER['argv']))) {
+		if ($method === NULL && isset($_SERVER['argv']) && ($tmp = preg_filter('#(--method=)?([\w-]+)$#Ai', '$2', $_SERVER['argv']))) {
 			$method = reset($tmp);
 			if ($method === self::LIST_METHODS) {
 				Environment::$checkAssertions = FALSE;
