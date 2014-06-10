@@ -142,7 +142,7 @@ class Environment
 	 */
 	public static function loadData()
 	{
-		if ($tmp = preg_filter('#--dataprovider=(.*)#Ai', '$1', $_SERVER['argv'])) {
+		if ($tmp = preg_filter('#--dataprovider=(.*)#Ai', '$1', isset($_SERVER['argv']) ? $_SERVER['argv'] : array())) {
 			list($query, $file) = explode('|', reset($tmp), 2);
 
 		} else {
