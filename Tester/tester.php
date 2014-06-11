@@ -5,6 +5,9 @@
  * Copyright (c) 2009 David Grudl (http://davidgrudl.com)
  */
 
+namespace Tester;
+
+use Tester\Runner\CommandLine as Cmd;
 
 require __DIR__ . '/Runner/PhpExecutable.php';
 require __DIR__ . '/Runner/Runner.php';
@@ -23,14 +26,81 @@ require __DIR__ . '/Framework/DataProvider.php';
 require __DIR__ . '/Framework/TestCase.php';
 require __DIR__ . '/CodeCoverage/ReportGenerator.php';
 
-use Tester\Runner\CommandLine as Cmd;
+
+$tester = new Tester;
+die($tester->run());
 
 
-Tester\Environment::setupColors();
-Tester\Environment::setupErrors();
+/** @internal */
+class Tester
+{
+	/** @var array */
+	private $options;
 
-ob_start();
-echo <<<XX
+	/** @var Runner\PhpExecutable */
+	private $php;
+
+
+	/** @return int|NULL */
+	public function run()
+	{
+		Environment::setupColors();
+		Environment::setupErrors();
+
+		ob_start();
+		$cmd = $this->loadOptions();
+
+		Environment::$debugMode = (bool) $this->options['--debug'];
+		if (isset($this->options['--colors'])) {
+			Environment::$useColors = (bool) $this->options['--colors'];
+		} elseif ($this->options['--tap']) {
+			Environment::$useColors = FALSE;
+		}
+
+		if ($cmd->isEmpty() || $this->options['--help']) {
+			$cmd->help();
+			return;
+		}
+
+		$this->createPhpExecutable();
+
+		if ($this->options['--info']) {
+			$job = new Runner\Job(__DIR__ . '/Runner/info.php', $this->php);
+			$job->run();
+			echo $job->getOutput();
+			return;
+		}
+
+		if ($this->options['--coverage']) {
+			$coverageFile = $this->prepareCodeCoverage();
+		}
+
+		$runner = $this->createRunner();
+
+		if ($this->options['--tap']) {
+			ob_clean();
+		}
+		ob_end_flush();
+
+		if ($this->options['--watch']) {
+			$this->watch($runner);
+			return;
+		}
+
+		$result = $runner->run();
+
+		if (isset($coverageFile)) {
+			$this->finishCodeCoverage($coverageFile);
+		}
+
+		return $result ? 0 : 1;
+	}
+
+
+	/** @return Tester\Runner\CommandLine */
+	private function loadOptions()
+	{
+		echo <<<XX
  _____ ___  ___ _____ ___  ___
 |_   _/ __)( __/_   _/ __)| _ )
   |_| \___ /___) |_| \___ |_|_\  v1.2.0
@@ -38,7 +108,7 @@ echo <<<XX
 
 XX;
 
-$cmd = new Cmd(<<<XX
+		$cmd = new Cmd(<<<XX
 Usage:
     tester.php [options] [<test file> | <directory>]...
 
@@ -60,122 +130,117 @@ Options:
     -h | --help            This help.
 
 XX
-, array(
-	'-c' => array(Cmd::REALPATH => TRUE),
-	'--watch' => array(Cmd::REPEATABLE => TRUE, Cmd::REALPATH => TRUE),
-	'--setup' => array(Cmd::REALPATH => TRUE),
-	'paths' => array(Cmd::REPEATABLE => TRUE, Cmd::VALUE => getcwd()),
-	'--debug' => array(),
-	'--coverage-src' => array(Cmd::REALPATH => TRUE),
-));
+		, array(
+			'-c' => array(Cmd::REALPATH => TRUE),
+			'--watch' => array(Cmd::REPEATABLE => TRUE, Cmd::REALPATH => TRUE),
+			'--setup' => array(Cmd::REALPATH => TRUE),
+			'paths' => array(Cmd::REPEATABLE => TRUE, Cmd::VALUE => getcwd()),
+			'--debug' => array(),
+			'--coverage-src' => array(Cmd::REALPATH => TRUE),
+		));
 
 
-if (isset($_SERVER['argv']) && ($tmp = array_search('-log', $_SERVER['argv']))) {
-	$_SERVER['argv'][$tmp] = '--log';
-}
+		if (isset($_SERVER['argv']) && ($tmp = array_search('-log', $_SERVER['argv']))) {
+			$_SERVER['argv'][$tmp] = '--log';
+		}
 
-$options = $cmd->parse();
-
-Tester\Environment::$debugMode = (bool) $options['--debug'];
-
-if (isset($options['--colors'])) {
-	Tester\Environment::$useColors = (bool) $options['--colors'];
-} elseif ($options['--tap']) {
-	Tester\Environment::$useColors = FALSE;
-}
-
-if ($cmd->isEmpty() || $options['--help']) {
-	$cmd->help();
-	exit;
-}
-
-$phpArgs = '';
-if ($options['-c']) {
-	$phpArgs .= ' -c ' . Tester\Helpers::escapeArg($options['-c']);
-} elseif (!$options['--info']) {
-	echo "Note: No php.ini is used.\n";
-}
-
-foreach ($options['-d'] as $item) {
-	$phpArgs .= ' -d ' . Tester\Helpers::escapeArg($item);
-}
-
-$php = new Tester\Runner\PhpExecutable($options['-p'], $phpArgs);
-
-if ($options['--info']) {
-	$job = new Tester\Runner\Job(__DIR__ . '/Runner/info.php', $php);
-	$job->run();
-	echo $job->getOutput();
-	exit;
-}
-
-if ($options['--coverage']) {
-	if (!$php->hasXdebug()) {
-		throw new Exception("Code coverage functionality requires Xdebug extension (used {$php->getCommandLine()})");
+		$this->options = $cmd->parse();
+		return $cmd;
 	}
-	file_put_contents($options['--coverage'], '');
-	$coverageFile = realpath($options['--coverage']);
-	putenv(Tester\Environment::COVERAGE . '=' . $coverageFile);
-	echo "Code coverage: {$coverageFile}\n";
-}
 
 
-$runner = new Tester\Runner\Runner($php);
-$runner->paths = $options['paths'];
-$runner->threadCount = max(1, (int) $options['-j']);
-$runner->stopOnFail = $options['--stop-on-fail'];
+	/** @return void */
+	private function createPhpExecutable()
+	{
+		$phpArgs = '';
+		if ($this->options['-c']) {
+			$phpArgs .= ' -c ' . Helpers::escapeArg($this->options['-c']);
+		} elseif (!$this->options['--info']) {
+			echo "Note: No php.ini is used.\n";
+		}
 
-$runner->outputHandlers[] = $options['--tap']
-	? new Tester\Runner\Output\TapPrinter($runner)
-	: new Tester\Runner\Output\ConsolePrinter($runner, $options['-s']);
+		foreach ($this->options['-d'] as $item) {
+			$phpArgs .= ' -d ' . Helpers::escapeArg($item);
+		}
 
-if ($options['--log']) {
-	echo "Log: {$options['--log']}\n";
-	$runner->outputHandlers[] = new Tester\Runner\Output\Logger($runner, $options['--log']);
-}
-
-if ($options['--setup']) {
-	call_user_func(function() use ($runner) {
-		require func_get_arg(0);
-	}, $options['--setup']);
-}
+		$this->php = new Runner\PhpExecutable($this->options['-p'], $phpArgs);
+	}
 
 
-if ($options['--tap']) {
-	ob_end_clean();
-} else {
-	ob_end_flush();
-}
+	/** @return Runner\Runner */
+	private function createRunner()
+	{
+		$runner = new Runner\Runner($this->php);
+		$runner->paths = $this->options['paths'];
+		$runner->threadCount = max(1, (int) $this->options['-j']);
+		$runner->stopOnFail = $this->options['--stop-on-fail'];
 
-if (!$options['--watch']) {
-	$result = $runner->run();
+		$runner->outputHandlers[] = $this->options['--tap']
+			? new Runner\Output\TapPrinter($runner)
+			: new Runner\Output\ConsolePrinter($runner, $this->options['-s']);
 
-	if (preg_match('#\.html?\z#', $options['--coverage'])) {
-		if (!$options['--tap']) {
+		if ($this->options['--log']) {
+			echo "Log: {$this->options['--log']}\n";
+			$runner->outputHandlers[] = new Runner\Output\Logger($runner, $this->options['--log']);
+		}
+
+		if ($this->options['--setup']) {
+			call_user_func(function() use ($runner) {
+				require func_get_arg(0);
+			}, $this->options['--setup']);
+		}
+		return $runner;
+	}
+
+
+	/** @return string */
+	private function prepareCodeCoverage()
+	{
+		if (!$this->php->hasXdebug()) {
+			throw new \Exception("Code coverage functionality requires Xdebug extension (used {$this->php->getCommandLine()})");
+		}
+		file_put_contents($this->options['--coverage'], '');
+		$file = realpath($this->options['--coverage']);
+		putenv(Environment::COVERAGE . '=' . $file);
+		echo "Code coverage: {$file}\n";
+		if (preg_match('#\.html?\z#', $file)) {
+			return $file;
+		}
+	}
+
+
+	/** @return void */
+	private function finishCodeCoverage($file)
+	{
+		if (!$this->options['--tap']) {
 			echo "Generating code coverage report\n";
 		}
-		$generator = new Tester\CodeCoverage\ReportGenerator($coverageFile, $options['--coverage-src']);
-		$generator->render($coverageFile);
+		$generator = new CodeCoverage\ReportGenerator($file, $this->options['--coverage-src']);
+		$generator->render($file);
 	}
 
-	die($result ? 0 : 1);
-}
 
-$prev = array();
-$counter = 0;
-while (TRUE) {
-	$state = array();
-	foreach ($options['--watch'] as $directory) {
-		foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($directory)) as $file) {
-			if (substr($file->getExtension(), 0, 3) === 'php') {
-				$state[(string) $file] = md5_file((string) $file);
+	/** @return void */
+	private function watch($runner)
+	{
+		$prev = array();
+		$counter = 0;
+		while (TRUE) {
+			$state = array();
+			foreach ($this->options['--watch'] as $directory) {
+				foreach (new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($directory)) as $file) {
+					if (substr($file->getExtension(), 0, 3) === 'php') {
+						$state[(string) $file] = md5_file((string) $file);
+					}
+				}
 			}
+			if ($state !== $prev) {
+				$prev = $state;
+				$runner->run();
+			}
+			echo "Watching " . implode(', ', $this->options['--watch']) . " " . str_repeat('.', ++$counter % 5) . "    \r";
+			sleep(2);
 		}
 	}
-	if ($state !== $prev) {
-		$prev = $state;
-		$runner->run();
-	}
-	echo "Watching " . implode(', ', $options['--watch']) . " " . str_repeat('.', ++$counter % 5) . "    \r";
-	sleep(2);
+
 }
