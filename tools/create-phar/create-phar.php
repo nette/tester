@@ -6,11 +6,21 @@ if (!class_exists('Phar') || ini_get('phar.readonly')) {
 	die(1);
 }
 
-@unlink('tester.phar'); // @ - file may not exist
 
+$build = @exec('git describe --tags 2>&1');
+echo "Build: $build\n";
+
+@unlink('tester.phar'); // @ - file may not exist
 $phar = new Phar('tester.phar');
-$phar->setStub("<?php
-require 'phar://' . __FILE__ . '/tester.php';
+$phar->setStub(
+"<?php
+// Nette Tester $build
+
+if (debug_backtrace()) {
+	require 'phar://' . __FILE__ . '/bootstrap.php';
+} else {
+	require 'phar://' . __FILE__ . '/tester.php';
+}
 __HALT_COMPILER();
 ");
 
