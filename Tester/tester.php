@@ -26,8 +26,8 @@ require __DIR__ . '/CodeCoverage/ReportGenerator.php';
 use Tester\Runner\CommandLine as Cmd;
 
 
-Tester\Environment::setup();
-Tester\Environment::$checkAssertions = FALSE;
+Tester\Environment::setupColors();
+Tester\Environment::setupErrors();
 
 ob_start();
 echo <<<XX
