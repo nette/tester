@@ -22,7 +22,7 @@ class Runner
 
 	const TEST_FILE_EXTENSION = 'phpt';
 
-	/** @var array  paths to test files/directories */
+	/** @var string[]  paths to test files/directories */
 	public $paths = array();
 
 	/** @var int  run in parallel threads */
@@ -113,17 +113,17 @@ class Runner
 	 */
 	private function findTests($path)
 	{
-		if (strpbrk($path, '*?[') === FALSE && !file_exists($path)) {
+		if (strpbrk($path, '*?') === FALSE && !file_exists($path)) {
 			throw new \InvalidArgumentException("File or directory '$path' not found.");
 		}
 
 		if (is_dir($path)) {
-			foreach (glob("$path/*", GLOB_ONLYDIR) ?: array() as $dir) {
+			foreach (glob(str_replace('[', '[[]', $path) . '/*', GLOB_ONLYDIR) ?: array() as $dir) {
 				$this->findTests($dir);
 			}
 			$path .= '/*.' . self::TEST_FILE_EXTENSION;
 		}
-		foreach (glob($path) ?: array() as $file) {
+		foreach (glob(str_replace('[', '[[]', $path)) ?: array() as $file) {
 			if (is_file($file)) {
 				$this->testHandler->initiate(realpath($file));
 			}
