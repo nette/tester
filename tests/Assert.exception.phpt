@@ -41,3 +41,9 @@ Assert::exception(function() {
 		throw new Exception('Text', 1);
 	}, 'Exception', NULL, 42);
 }, 'Tester\AssertException', 'Exception with a code 42 was expected but got 1');
+
+$old = Assert::$onFailure;
+Assert::$onFailure = function() {};
+$e = Assert::exception(function() {}, 'Exception');
+Assert::$onFailure = $old;
+Assert::null($e);
