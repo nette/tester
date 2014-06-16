@@ -145,7 +145,7 @@ class TestHandler
 		$job = new Job($file, $php, array(Helpers::escapeArg('--method=' . Tester\TestCase::LIST_METHODS)));
 		$job->run();
 
-		if (in_array($job->getExitCode(), array(Job::CODE_ERROR, Job::CODE_FAIL, Job::CODE_SKIP))) {
+		if (in_array($job->getExitCode(), array(Job::CODE_ERROR, Job::CODE_FAIL, Job::CODE_SKIP), TRUE)) {
 			return array($job->getExitCode() === Job::CODE_SKIP ? Runner::SKIPPED : Runner::FAILED, $job->getOutput());
 		}
 

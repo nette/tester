@@ -60,7 +60,7 @@ class Environment
 		set_exception_handler(array(__CLASS__, 'handleException'));
 
 		set_error_handler(function($severity, $message, $file, $line) {
-			if (in_array($severity, array(E_RECOVERABLE_ERROR, E_USER_ERROR)) || ($severity & error_reporting()) === $severity) {
+			if (in_array($severity, array(E_RECOVERABLE_ERROR, E_USER_ERROR), TRUE) || ($severity & error_reporting()) === $severity) {
 				Environment::handleException(new \ErrorException($message, 0, $severity, $file, $line));
 			}
 			return FALSE;
@@ -71,7 +71,7 @@ class Environment
 
 			$error = error_get_last();
 			register_shutdown_function(function() use ($error) {
-				if (in_array($error['type'], array(E_ERROR, E_CORE_ERROR, E_COMPILE_ERROR, E_PARSE))) {
+				if (in_array($error['type'], array(E_ERROR, E_CORE_ERROR, E_COMPILE_ERROR, E_PARSE), TRUE)) {
 					if (($error['type'] & error_reporting()) !== $error['type']) { // show fatal errors hidden by @shutup
 						echo "\nFatal error: $error[message] in $error[file] on line $error[line]\n";
 					}

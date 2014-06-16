@@ -47,7 +47,7 @@ class TestCase
 			foreach ($methods as $method) {
 				$this->runMethod($method);
 			}
-		} elseif (in_array($method, $methods)) {
+		} elseif (in_array($method, $methods, TRUE)) {
 			$this->runMethod($method);
 		} else {
 			throw new TestCaseException("Method '$method' does not exist or it is not a testing method.");

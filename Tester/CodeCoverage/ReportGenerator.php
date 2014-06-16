@@ -122,7 +122,7 @@ class ReportGenerator
 		$this->files = array();
 		foreach ($entries as $entry) {
 			if (substr($entry->getBasename(), 0, 1) === '.'  // . or .. or .gitignore
-				|| !in_array(pathinfo($entry, PATHINFO_EXTENSION), $this->acceptFiles))
+				|| !in_array(pathinfo($entry, PATHINFO_EXTENSION), $this->acceptFiles, TRUE))
 			{
 				continue;
 			}
