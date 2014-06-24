@@ -26,36 +26,61 @@ class Environment
 	public static $debugMode = TRUE;
 
 	/** @var bool */
-	public static $checkAssertions = TRUE;
+	public static $checkAssertions = FALSE;
 
 	/** @var bool */
 	public static $useColors;
 
 
 	/**
-	 * Configures PHP environment.
+	 * Configures testing environment.
 	 * @return void
 	 */
 	public static function setup()
+	{
+		self::setupErrors();
+		self::setupColors();
+
+		class_exists('Tester\Runner\Job');
+		class_exists('Tester\Dumper');
+		class_exists('Tester\Assert');
+
+		$annotations = self::getTestAnnotations();
+		self::$checkAssertions = !isset($annotations['outputmatch']) && !isset($annotations['outputmatchfile']);
+
+		if (getenv(self::COVERAGE)) {
+			CodeCoverage\Collector::start(getenv(self::COVERAGE));
+		}
+	}
+
+
+	/**
+	 * Configures colored output.
+	 * @return void
+	 */
+	public static function setupColors()
 	{
 		self::$useColors = getenv(self::COLORS) !== FALSE
 			? (bool) getenv(self::COLORS)
 			: (PHP_SAPI === 'cli' && ((function_exists('posix_isatty') && posix_isatty(STDOUT))
 				|| getenv('ConEmuANSI') === 'ON' || getenv('ANSICON') !== FALSE));
 
-		class_exists('Tester\Runner\Job');
-		class_exists('Tester\Dumper');
-		class_exists('Tester\Assert');
+		ob_start(function($s) {
+			return Environment::$useColors ? $s : Dumper::removeColors($s);
+		}, PHP_VERSION_ID < 50400 ? 2 : 1);
+	}
 
+
+	/**
+	 * Configures PHP error handling.
+	 * @return void
+	 */
+	public static function setupErrors()
+	{
 		error_reporting(E_ALL | E_STRICT);
 		ini_set('display_errors', TRUE);
 		ini_set('html_errors', FALSE);
 		ini_set('log_errors', FALSE);
-
-		$annotations = self::getTestAnnotations();
-		if (isset($annotations['outputmatch']) || isset($annotations['outputmatchfile'])) {
-			self::$checkAssertions = FALSE;
-		}
 
 		set_exception_handler(array(__CLASS__, 'handleException'));
 
@@ -81,14 +106,6 @@ class Environment
 				}
 			});
 		});
-
-		if (getenv(self::COVERAGE)) {
-			CodeCoverage\Collector::start(getenv(self::COVERAGE));
-		}
-
-		ob_start(function($s) {
-			return Environment::$useColors ? $s : Dumper::removeColors($s);
-		}, PHP_VERSION_ID < 50400 ? 2 : 1);
 	}
 
 
