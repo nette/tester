@@ -11,6 +11,10 @@ test(function() {
 
 	Assert::match('%a%.txt', $name);
 	Assert::true(is_file($name));
+	Assert::true(file_exists($name));
+	Assert::false(is_dir($name));
+	Assert::true(is_readable($name));
+	Assert::true(is_writable($name));
 	Assert::false(is_file($name . 'unknown'));
 	Assert::same(0, filesize($name));
 	Assert::true(feof($f));
