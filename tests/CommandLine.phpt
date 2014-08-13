@@ -149,6 +149,35 @@ test(function() { // repeatable argument
 
 
 
+test(function() { // enumerates
+	$cmd = new Cmd('
+		-p <a|b|c>
+	');
+
+	Assert::same( array('-p' => NULL), $cmd->parse(array()) );
+	Assert::exception(function() use ($cmd) {
+		$cmd->parse(array('-p'));
+	}, 'Exception', "Option -p requires argument.");
+	Assert::same( array('-p' => 'a'), $cmd->parse(explode(' ', '-p a')) );
+	Assert::exception(function() use ($cmd) {
+		$cmd->parse(explode(' ', '-p foo'));
+	}, 'Exception', 'Value of option -p must be a, or b, or c.');
+
+
+	$cmd = new Cmd('
+		-p [a|b|c]
+	');
+
+	Assert::same( array('-p' => NULL), $cmd->parse(array()) );
+	Assert::same( array('-p' => TRUE), $cmd->parse(array('-p')) );
+	Assert::same( array('-p' => 'a'), $cmd->parse(explode(' ', '-p a')) );
+	Assert::exception(function() use ($cmd) {
+		$cmd->parse(explode(' ', '-p foo'));
+	}, 'Exception', 'Value of option -p must be a, or b, or c.');
+});
+
+
+
 test(function() { // realpath
 	$cmd = new Cmd('
 		-p <path>
