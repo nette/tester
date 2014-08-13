@@ -17,6 +17,7 @@ class CommandLine
 		ARGUMENT = 'argument',
 		OPTIONAL = 'optional',
 		REPEATABLE = 'repeatable',
+		ENUM = 'enum',
 		REALPATH = 'realpath',
 		VALUE = 'default';
 
@@ -51,6 +52,7 @@ class CommandLine
 				self::ARGUMENT => (bool) end($m[2]),
 				self::OPTIONAL => isset($line[2]) || (substr(end($m[2]), 0, 1) === '[') || isset($opts[self::VALUE]),
 				self::REPEATABLE => (bool) end($m[3]),
+				self::ENUM => count($enums = explode('|', trim(end($m[2]), '<[]>'))) > 1 ? $enums : NULL,
 				self::VALUE => isset($line[2]) ? $line[2] : NULL,
 			);
 			if ($name !== $m[1][0]) {
@@ -111,6 +113,10 @@ class CommandLine
 				} elseif (empty($opt[self::OPTIONAL])) {
 					throw new \Exception("Option $name requires argument.");
 				}
+			}
+
+			if (!empty($opt[self::ENUM]) && !in_array($arg, $opt[self::ENUM], TRUE) && !($opt[self::OPTIONAL] && $arg === TRUE)) {
+				throw new \Exception("Value of option $name must be " . implode(', or ', $opt[self::ENUM]) . ".");
 			}
 			$this->checkArg($opt, $arg);
 
