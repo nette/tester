@@ -53,7 +53,7 @@ class Tester
 		Environment::$debugMode = (bool) $this->options['--debug'];
 		if (isset($this->options['--colors'])) {
 			Environment::$useColors = (bool) $this->options['--colors'];
-		} elseif ($this->options['--tap']) {
+		} elseif ($this->options['-o'] === 'tap') {
 			Environment::$useColors = FALSE;
 		}
 
@@ -77,7 +77,7 @@ class Tester
 
 		$runner = $this->createRunner();
 
-		if ($this->options['--tap']) {
+		if ($this->options['-o'] !== NULL) {
 			ob_clean();
 		}
 		ob_end_flush();
@@ -97,7 +97,7 @@ class Tester
 	}
 
 
-	/** @return Tester\Runner\CommandLine */
+	/** @return Runner\CommandLine */
 	private function loadOptions()
 	{
 		echo <<<XX
@@ -119,8 +119,8 @@ Options:
     -d <key=value>...      Define INI entry 'key' with value 'val'.
     -s                     Show information about skipped tests.
     --stop-on-fail         Stop execution upon the first failure.
-    --tap                  Generate Test Anything Protocol.
     -j <num>               Run <num> jobs in parallel (default: 33).
+    -o <console|tap|none>  Specify output format.
     -w | --watch <path>    Watch directory.
     -i | --info            Show tests environment info and exit.
     --setup <path>         Script for runner setup.
@@ -139,9 +139,15 @@ XX
 			'--coverage-src' => array(Cmd::REALPATH => TRUE),
 		));
 
+		if (isset($_SERVER['argv'])) {
+			if ($tmp = array_search('-log', $_SERVER['argv'])) {
+				$_SERVER['argv'][$tmp] = '--log';
+			}
 
-		if (isset($_SERVER['argv']) && ($tmp = array_search('-log', $_SERVER['argv']))) {
-			$_SERVER['argv'][$tmp] = '--log';
+			if ($tmp = array_search('--tap', $_SERVER['argv'])) {
+				unset($_SERVER['argv'][$tmp]);
+				$_SERVER['argv'] = array_merge($_SERVER['argv'], array('-o', 'tap'));
+			}
 		}
 
 		$this->options = $cmd->parse();
@@ -175,9 +181,11 @@ XX
 		$runner->threadCount = max(1, (int) $this->options['-j']);
 		$runner->stopOnFail = $this->options['--stop-on-fail'];
 
-		$runner->outputHandlers[] = $this->options['--tap']
-			? new Runner\Output\TapPrinter($runner)
-			: new Runner\Output\ConsolePrinter($runner, $this->options['-s']);
+		if ($this->options['-o'] !== 'none') {
+			$runner->outputHandlers[] = $this->options['-o'] === 'tap'
+				? new Runner\Output\TapPrinter($runner)
+				: new Runner\Output\ConsolePrinter($runner, $this->options['-s']);
+		}
 
 		if ($this->options['--log']) {
 			echo "Log: {$this->options['--log']}\n";
@@ -212,7 +220,7 @@ XX
 	/** @return void */
 	private function finishCodeCoverage($file)
 	{
-		if (!$this->options['--tap']) {
+		if ($this->options['-o'] !== 'none' && $this->options['-o'] !== 'tap') {
 			echo "Generating code coverage report\n";
 		}
 		$generator = new CodeCoverage\ReportGenerator($file, $this->options['--coverage-src']);

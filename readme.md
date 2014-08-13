@@ -184,8 +184,8 @@ Options:
     -d <key=value>...      Define INI entry 'key' with value 'val'.
     -s                     Show information about skipped tests.
     --stop-on-fail         Stop execution upon the first failure.
-    --tap                  Generate Test Anything Protocol.
     -j <num>               Run <num> jobs in parallel (default: 33).
+    -o <console|tap|none>  Specify output format.
     -w | --watch <path>    Watch directory.
     -i | --info            Show tests environment info and exit.
     --setup <path>         Script for runner setup.
