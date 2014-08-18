@@ -11,7 +11,7 @@ namespace Tester\Runner;
 /**
  * PHP executable command-line.
  */
-class PhpExecutable
+class PhpExecutable implements PhpInterpreter
 {
 	/** @var string  PHP arguments */
 	public $arguments;
