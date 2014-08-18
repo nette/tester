@@ -7,7 +7,6 @@ namespace Tester\Runner;
  */
 interface PhpInterpreter
 {
-
 	/**
 	 * @return string
 	 */
