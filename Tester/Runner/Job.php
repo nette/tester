@@ -37,8 +37,8 @@ class Job
 	/** @var string[]  output headers */
 	private $headers;
 
-	/** @var PhpExecutable */
-	private $php;
+	/** @var PhpInterpreter */
+	private $interpreter;
 
 	/** @var resource */
 	private $proc;
@@ -54,10 +54,10 @@ class Job
 	 * @param  string  test file name
 	 * @return void
 	 */
-	public function __construct($testFile, PhpExecutable $php, array $args = NULL)
+	public function __construct($testFile, PhpInterpreter $interpreter, array $args = NULL)
 	{
 		$this->file = (string) $testFile;
-		$this->php = $php;
+		$this->interpreter = $interpreter;
 		$this->args = (array) $args;
 	}
 
@@ -72,7 +72,7 @@ class Job
 		putenv(Environment::RUNNER . '=1');
 		putenv(Environment::COLORS . '=' . (int) Environment::$useColors);
 		$this->proc = proc_open(
-			$this->php->getCommandLine() . ' -n -d register_argc_argv=on ' . \Tester\Helpers::escapeArg($this->file) . ' ' . implode(' ', $this->args),
+			$this->interpreter->getCommandLine() . ' -n -d register_argc_argv=on ' . \Tester\Helpers::escapeArg($this->file) . ' ' . implode(' ', $this->args),
 			array(
 				array('pipe', 'r'),
 				array('pipe', 'w'),
@@ -116,7 +116,7 @@ class Job
 		$code = proc_close($this->proc);
 		$this->exitCode = $code === self::CODE_NONE ? $status['exitcode'] : $code;
 
-		if ($this->php->isCgi() && count($tmp = explode("\r\n\r\n", $this->output, 2)) >= 2) {
+		if ($this->interpreter->isCgi() && count($tmp = explode("\r\n\r\n", $this->output, 2)) >= 2) {
 			list($headers, $this->output) = $tmp;
 			foreach (explode("\r\n", $headers) as $header) {
 				$a = strpos($header, ':');

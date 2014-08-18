@@ -37,8 +37,8 @@ class Runner
 	/** @var bool */
 	public $stopOnFail = FALSE;
 
-	/** @var PhpExecutable */
-	private $php;
+	/** @var PhpInterpreter */
+	private $interpreter;
 
 	/** @var Job[] */
 	private $jobs;
@@ -53,9 +53,9 @@ class Runner
 	private $interrupted;
 
 
-	public function __construct(PhpExecutable $php)
+	public function __construct(PhpInterpreter $interpreter)
 	{
-		$this->php = $php;
+		$this->interpreter = $interpreter;
 		$this->testHandler = new TestHandler($this);
 	}
 
@@ -169,11 +169,11 @@ class Runner
 
 
 	/**
-	 * @return PhpExecutable
+	 * @return PhpInterpreter
 	 */
-	public function getPhp()
+	public function getInterpreter()
 	{
-		return $this->php;
+		return $this->interpreter;
 	}
 
 
