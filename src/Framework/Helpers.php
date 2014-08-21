@@ -90,4 +90,10 @@ class Helpers
 			: escapeshellarg($s);
 	}
 
+
+	public static function with($obj, \Closure $closure)
+	{
+		return $closure->bindTo($obj, $obj)->__invoke();
+	}
+
 }

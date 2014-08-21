@@ -32,7 +32,7 @@ if (defined('HHVM_VERSION') && version_compare(HHVM_VERSION, '3.4.0-dev', '<')) 
 	});
 
 } else {
-	$tests = Assert::with($runner, function () {
+	$tests = Helpers::with($runner, function () {
 		$this->results = [self::PASSED => 0, self::SKIPPED => 0, self::FAILED => 0];
 		$this->findTests(__DIR__ . '/multiple/*.phptx');
 		return $this->jobs;

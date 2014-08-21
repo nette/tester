@@ -457,9 +457,10 @@ class Assert
 	}
 
 
+	/** @deprecated */
 	public static function with($obj, \Closure $closure)
 	{
-		return $closure->bindTo($obj, $obj)->__invoke();
+		return Helpers::with($obj, $closure);
 	}
 
 
