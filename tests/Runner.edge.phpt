@@ -11,7 +11,7 @@ require __DIR__ . '/bootstrap.php';
 require __DIR__ . '/../Tester/Runner/OutputHandler.php';
 require __DIR__ . '/../Tester/Runner/TestHandler.php';
 require __DIR__ . '/../Tester/Runner/PhpInterpreter.php';
-require __DIR__ . '/../Tester/Runner/PhpExecutable.php';
+require __DIR__ . '/../Tester/Runner/ZendPhpInterpreter.php';
 require __DIR__ . '/../Tester/Runner/Runner.php';
 
 
@@ -28,7 +28,7 @@ class Logger implements Tester\Runner\OutputHandler
 	function end() {}
 }
 
-$php = new Tester\Runner\PhpExecutable(PHP_BINARY, '-c ' . Tester\Helpers::escapeArg(php_ini_loaded_file()));
+$php = new Tester\Runner\ZendPhpInterpreter(PHP_BINARY, '-c ' . Tester\Helpers::escapeArg(php_ini_loaded_file()));
 $runner = new Tester\Runner\Runner($php);
 $runner->paths[] = __DIR__ . '/edge/*.phptx';
 $runner->outputHandlers[] = $logger = new Logger;
