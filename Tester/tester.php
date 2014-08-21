@@ -10,7 +10,7 @@ namespace Tester;
 use Tester\Runner\CommandLine as Cmd;
 
 require __DIR__ . '/Runner/PhpInterpreter.php';
-require __DIR__ . '/Runner/PhpExecutable.php';
+require __DIR__ . '/Runner/ZendPhpInterpreter.php';
 require __DIR__ . '/Runner/Runner.php';
 require __DIR__ . '/Runner/Job.php';
 require __DIR__ . '/Runner/CommandLine.php';
@@ -170,7 +170,7 @@ XX
 			$phpArgs .= ' -d ' . Helpers::escapeArg($item);
 		}
 
-		$this->interpreter = new Runner\PhpExecutable($this->options['-p'], $phpArgs);
+		$this->interpreter = new Runner\ZendPhpInterpreter($this->options['-p'], $phpArgs);
 	}
 
 
