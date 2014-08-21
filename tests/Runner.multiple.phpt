@@ -9,12 +9,11 @@ use Tester\Assert,
 
 require __DIR__ . '/bootstrap.php';
 require __DIR__ . '/../Tester/Runner/TestHandler.php';
-require __DIR__ . '/../Tester/Runner/PhpExecutable.php';
 require __DIR__ . '/../Tester/Runner/Runner.php';
 
 
-$php = new Tester\Runner\PhpExecutable(PHP_BINARY, '-c ' . Tester\Helpers::escapeArg(php_ini_loaded_file()));
-$runner = new Tester\Runner\Runner($php);
+$interpreter = createInterpreter();
+$runner = new Tester\Runner\Runner($interpreter);
 
 $tests = Assert::with($runner, function() {
 	$this->results = [self::PASSED => 0, self::SKIPPED => 0, self::FAILED => 0];

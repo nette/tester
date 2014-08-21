@@ -9,9 +9,9 @@ namespace Tester\Runner;
 
 
 /**
- * PHP executable command-line.
+ * PHP interpreter executable command-line.
  */
-class PhpExecutable
+class ZendPhpInterpreter implements PhpInterpreter
 {
 	/** @var string  PHP arguments */
 	public $arguments;

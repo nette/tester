@@ -6,7 +6,7 @@
 
 $iniFiles = array_merge(
 	($tmp = php_ini_loaded_file()) === FALSE ? array() : array($tmp),
-	strlen($tmp = php_ini_scanned_files()) ? explode(",\n", trim($tmp)) : array()
+	(function_exists('php_ini_scanned_files') && strlen($tmp = php_ini_scanned_files())) ? explode(",\n", trim($tmp)) : array()
 );
 
 $extensions = get_loaded_extensions();

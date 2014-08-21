@@ -9,7 +9,9 @@ namespace Tester;
 
 use Tester\Runner\CommandLine as Cmd;
 
-require __DIR__ . '/Runner/PhpExecutable.php';
+require __DIR__ . '/Runner/PhpInterpreter.php';
+require __DIR__ . '/Runner/ZendPhpInterpreter.php';
+require __DIR__ . '/Runner/HhvmPhpInterpreter.php';
 require __DIR__ . '/Runner/Runner.php';
 require __DIR__ . '/Runner/Job.php';
 require __DIR__ . '/Runner/CommandLine.php';
@@ -37,8 +39,8 @@ class Tester
 	/** @var array */
 	private $options;
 
-	/** @var Runner\PhpExecutable */
-	private $php;
+	/** @var Runner\PhpInterpreter */
+	private $interpreter;
 
 
 	/** @return int|NULL */
@@ -62,10 +64,10 @@ class Tester
 			return;
 		}
 
-		$this->createPhpExecutable();
+		$this->createPhpInterpreter();
 
 		if ($this->options['--info']) {
-			$job = new Runner\Job(__DIR__ . '/Runner/info.php', $this->php);
+			$job = new Runner\Job(__DIR__ . '/Runner/info.php', $this->interpreter);
 			$job->run();
 			echo $job->getOutput();
 			return;
@@ -113,7 +115,7 @@ Usage:
     tester.php [options] [<test file> | <directory>]...
 
 Options:
-    -p <path>              Specify PHP executable to run (default: php-cgi).
+    -p <path>              Specify PHP interpreter to run (default: php-cgi).
     -c <path>              Look for php.ini file (or look in directory) <path>.
     -l | --log <path>      Write log to file <path>.
     -d <key=value>...      Define INI entry 'key' with value 'val'.
@@ -156,7 +158,7 @@ XX
 
 
 	/** @return void */
-	private function createPhpExecutable()
+	private function createPhpInterpreter()
 	{
 		$phpArgs = '';
 		if ($this->options['-c']) {
@@ -169,14 +171,36 @@ XX
 			$phpArgs .= ' -d ' . Helpers::escapeArg($item);
 		}
 
-		$this->php = new Runner\PhpExecutable($this->options['-p'], $phpArgs);
+		// analyze whether to use PHP or HHVM
+		$proc = @proc_open(
+			$this->options['-p'] . " --php $phpArgs --version", // --version must be the last
+			array(array('pipe', 'r'), array('pipe', 'w'), array('pipe', 'w')),
+			$pipes,
+			NULL,
+			NULL,
+			array('bypass_shell' => TRUE)
+		);
+		$output = stream_get_contents($pipes[1]);
+		$error = stream_get_contents($pipes[2]);
+		if (proc_close($proc)) {
+			throw new \Exception("Unable to run '" . $this->options['-p'] . "': " . preg_replace('#[\r\n ]+#', ' ', $error));
+		}
+
+		if (preg_match('#HipHop VM#', $output)) {
+			$this->interpreter = new Runner\HhvmPhpInterpreter($this->options['-p'], $phpArgs);
+			echo "Using HHVM\n";
+		} elseif (stripos($output, 'PHP') !== FALSE) {
+			$this->interpreter = new Runner\ZendPhpInterpreter($this->options['-p'], $phpArgs);
+		} else {
+			throw new \Exception("Unable to detect whether binary is PHP or HHVM. ($output).");
+		}
 	}
 
 
 	/** @return Runner\Runner */
 	private function createRunner()
 	{
-		$runner = new Runner\Runner($this->php);
+		$runner = new Runner\Runner($this->interpreter);
 		$runner->paths = $this->options['paths'];
 		$runner->threadCount = max(1, (int) $this->options['-j']);
 		$runner->stopOnFail = $this->options['--stop-on-fail'];
@@ -204,8 +228,8 @@ XX
 	/** @return string */
 	private function prepareCodeCoverage()
 	{
-		if (!$this->php->hasXdebug()) {
-			throw new \Exception("Code coverage functionality requires Xdebug extension (used {$this->php->getCommandLine()})");
+		if (!$this->interpreter->hasXdebug()) {
+			throw new \Exception("Code coverage functionality requires Xdebug extension (used {$this->interpreter->getCommandLine()})");
 		}
 		file_put_contents($this->options['--coverage'], '');
 		$file = realpath($this->options['--coverage']);
