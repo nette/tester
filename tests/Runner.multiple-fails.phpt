@@ -44,7 +44,7 @@ Assert::same( Runner::SKIPPED, $logger->results['testcase-no-methods.phptx'][0] 
 
 $bug62725 = PHP_SAPI === 'cli' && PHP_VERSION_ID >= 50400 && PHP_VERSION_ID <= 50406;
 Assert::match(
-	$bug62725
+	$bug62725 || defined('HHVM_VERSION') // weired, bug is not applied in Runner.edge.phpt for HHVM. Probably very similar bug.
 		? "Cannot list TestCase methods in file '%a%testcase-not-call-run.phptx'. Do you call TestCase::run() in it?"
 		: 'Error: This test forgets to execute an assertion.',
 	trim($logger->results['testcase-not-call-run.phptx'][1])
@@ -60,14 +60,16 @@ Assert::same( Runner::SKIPPED, $logger->results['testcase-pre-skip.phptx'][0] );
 
 
 Assert::match(
-	"Failed: pre-fail\n%A%",
+	defined('HHVM_VERSION') ? "%A%\nFailed: pre-fail\n%A%" : "Failed: pre-fail\n%A%",
 	trim(Dumper::removeColors($logger->results['testcase-pre-fail.phptx'][1]))
 );
 Assert::same( Runner::FAILED, $logger->results['testcase-pre-fail.phptx'][0] );
 
 
 Assert::match(
-	'Parse error: syntax error, unexpected end of file in %a%testcase-syntax-error.phptx on line %d%',
+	defined('HHVM_VERSION')
+		? 'Fatal error: syntax error, unexpected $end in %a%testcase-syntax-error.phptx on line %d%'
+		: 'Parse error: syntax error, unexpected end of file in %a%testcase-syntax-error.phptx on line %d%',
 	trim($logger->results['testcase-syntax-error.phptx'][1])
 );
 Assert::same( Runner::FAILED, $logger->results['testcase-syntax-error.phptx'][0] );
