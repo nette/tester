@@ -26,8 +26,7 @@ class Logger implements Tester\Runner\OutputHandler
 	function end() {}
 }
 
-$interpreter = createInterpreter();
-$runner = new Tester\Runner\Runner($interpreter);
+$runner = new Tester\Runner\Runner(createInterpreter());
 $runner->paths[] = __DIR__ . '/edge/*.phptx';
 $runner->outputHandlers[] = $logger = new Logger;
 $runner->run();

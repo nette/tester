@@ -9,7 +9,7 @@ namespace Tester\Runner;
 
 
 /**
- * PHP interpreter executable command-line.
+ * Zend PHP command-line executable.
  */
 class ZendPhpInterpreter implements PhpInterpreter
 {

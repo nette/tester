@@ -11,8 +11,7 @@ require __DIR__ . '/../Tester/Runner/TestHandler.php';
 require __DIR__ . '/../Tester/Runner/Runner.php';
 
 
-$interpreter = createInterpreter();
-$runner = new Tester\Runner\Runner($interpreter);
+$runner = new Tester\Runner\Runner(createInterpreter());
 
 Assert::with($runner, function() {
 	$this->findTests(__DIR__ . '/find-tests/*.phptx');

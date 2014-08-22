@@ -12,8 +12,7 @@ require __DIR__ . '/../Tester/Runner/TestHandler.php';
 require __DIR__ . '/../Tester/Runner/Runner.php';
 
 
-$interpreter = createInterpreter();
-$runner = new Tester\Runner\Runner($interpreter);
+$runner = new Tester\Runner\Runner(createInterpreter());
 
 $tests = Assert::with($runner, function() {
 	$this->results = [self::PASSED => 0, self::SKIPPED => 0, self::FAILED => 0];

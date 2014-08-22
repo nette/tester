@@ -1,23 +1,30 @@
 <?php
 
+/**
+ * This file is part of the Nette Tester.
+ * Copyright (c) 2009 David Grudl (http://davidgrudl.com)
+ */
+
 namespace Tester\Runner;
 
+
 /**
- * HHVM PHP interpreter executable command-line.
- * @author Michael Moravec
+ * HHVM command-line executable.
+ *
+ * @author  Michael Moravec
  */
 class HhvmPhpInterpreter implements PhpInterpreter
 {
-	/** @var string  HHVM interpreter arguments */
+	/** @var string  HHVM arguments */
 	public $arguments;
 
-	/** @var string  HHVM interpreter executable */
+	/** @var string  HHVM executable */
 	private $path;
 
-	/** @var string  HHVM interpreter version */
+	/** @var string  HHVM version */
 	private $version;
 
-	/** @var string HHVM PHP's compliance version */
+	/** @var string  PHP version */
 	private $phpVersion;
 
 
@@ -66,6 +73,7 @@ class HhvmPhpInterpreter implements PhpInterpreter
 		$this->phpVersion = trim($output);
 	}
 
+
 	/**
 	 * @return string
 	 */
@@ -73,6 +81,7 @@ class HhvmPhpInterpreter implements PhpInterpreter
 	{
 		return $this->path . ' ' . $this->arguments;
 	}
+
 
 	/**
 	 * @return string
@@ -82,6 +91,7 @@ class HhvmPhpInterpreter implements PhpInterpreter
 		return $this->phpVersion;
 	}
 
+
 	/**
 	 * @return bool
 	 */
@@ -90,6 +100,7 @@ class HhvmPhpInterpreter implements PhpInterpreter
 		return FALSE;
 	}
 
+
 	/**
 	 * @return bool
 	 */
@@ -97,4 +108,5 @@ class HhvmPhpInterpreter implements PhpInterpreter
 	{
 		return FALSE;
 	}
+
 }
