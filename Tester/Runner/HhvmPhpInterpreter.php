@@ -7,6 +7,8 @@
 
 namespace Tester\Runner;
 
+use Tester\Helpers;
+
 
 /**
  * HHVM command-line executable.
@@ -30,9 +32,9 @@ class HhvmPhpInterpreter implements PhpInterpreter
 
 	public function __construct($path, $args = NULL)
 	{
-		$this->path = \Tester\Helpers::escapeArg($path);
+		$this->path = Helpers::escapeArg($path);
 		$proc = @proc_open(
-			"$this->path --php $args --version", // --version must be the last
+			"$this->path --php $args -r " . Helpers::escapeArg('echo HHVM_VERSION . "|" . PHP_VERSION;'),
 			array(array('pipe', 'r'), array('pipe', 'w'), array('pipe', 'w')),
 			$pipes,
 			NULL,
@@ -41,36 +43,18 @@ class HhvmPhpInterpreter implements PhpInterpreter
 		);
 		$output = stream_get_contents($pipes[1]);
 		$error = stream_get_contents($pipes[2]);
+
 		if (proc_close($proc)) {
 			throw new \Exception("Unable to run '$path': " . preg_replace('#[\r\n ]+#', ' ', $error));
-		} elseif (!preg_match('#^HipHop VM (\S+)#i', $output, $matches)) {
+		} elseif (count($tmp = explode('|', $output)) !== 2) {
 			throw new \Exception("Unable to detect HHVM version (output: $output).");
 		}
 
-		$this->version = $matches[1];
-		$this->arguments = '--php' . ($args ? " $args" : '');
-
+		list($this->version, $this->phpVersion) = $tmp;
 		if (version_compare($this->version, '3.0.0', '<')) {
-			throw new \Exception('Hip Hop VM below version 3.0.0 is not supported.');
+			throw new \Exception('HHVM below version 3.0.0 is not supported.');
 		}
-
-		// PHP version of HHVM must be obtained another way...
-
-		$proc = @proc_open(
-			"$this->path --php -r 'echo PHP_VERSION;'",
-			array(array('pipe', 'r'), array('pipe', 'w'), array('pipe', 'w')),
-			$pipes,
-			NULL,
-			NULL,
-			array('bypass_shell' => TRUE)
-		);
-		$output = stream_get_contents($pipes[1]);
-		$error = stream_get_contents($pipes[2]);
-		if (proc_close($proc)) {
-			throw new \Exception("Unable to run '$path': " . preg_replace('#[\r\n ]+#', ' ', $error));
-		}
-
-		$this->phpVersion = trim($output);
+		$this->arguments = '--php' . ($args ? " $args" : '');
 	}
 
 
