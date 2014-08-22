@@ -160,20 +160,20 @@ XX
 	/** @return void */
 	private function createPhpInterpreter()
 	{
-		$phpArgs = '';
+		$args = '';
 		if ($this->options['-c']) {
-			$phpArgs .= ' -c ' . Helpers::escapeArg($this->options['-c']);
+			$args .= ' -c ' . Helpers::escapeArg($this->options['-c']);
 		} elseif (!$this->options['--info']) {
 			echo "Note: No php.ini is used.\n";
 		}
 
 		foreach ($this->options['-d'] as $item) {
-			$phpArgs .= ' -d ' . Helpers::escapeArg($item);
+			$args .= ' -d ' . Helpers::escapeArg($item);
 		}
 
-		// analyze whether to use PHP or HHVM
+		// Is the executable Zend PHP or HHVM?
 		$proc = @proc_open(
-			$this->options['-p'] . " --php $phpArgs --version", // --version must be the last
+			$this->options['-p'] . ' --version',
 			array(array('pipe', 'r'), array('pipe', 'w'), array('pipe', 'w')),
 			$pipes,
 			NULL,
@@ -183,16 +183,13 @@ XX
 		$output = stream_get_contents($pipes[1]);
 		$error = stream_get_contents($pipes[2]);
 		if (proc_close($proc)) {
-			throw new \Exception("Unable to run '" . $this->options['-p'] . "': " . preg_replace('#[\r\n ]+#', ' ', $error));
+			throw new \Exception("Unable to run '{$this->options['-p']}': " . preg_replace('#[\r\n ]+#', ' ', $error));
 		}
 
 		if (preg_match('#HipHop VM#', $output)) {
-			$this->interpreter = new Runner\HhvmPhpInterpreter($this->options['-p'], $phpArgs);
-			echo "Using HHVM\n";
-		} elseif (stripos($output, 'PHP') !== FALSE) {
-			$this->interpreter = new Runner\ZendPhpInterpreter($this->options['-p'], $phpArgs);
+			$this->interpreter = new Runner\HhvmPhpInterpreter($this->options['-p'], $args);
 		} else {
-			throw new \Exception("Unable to detect whether binary is PHP or HHVM. ($output).");
+			$this->interpreter = new Runner\ZendPhpInterpreter($this->options['-p'], $args);
 		}
 	}
 
