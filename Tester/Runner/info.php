@@ -12,12 +12,14 @@ $iniFiles = array_merge(
 $extensions = get_loaded_extensions();
 natcasesort($extensions);
 
+$isHhvm = defined('HHVM_VERSION');
+
 $values = array(
 	'PHP binary' => defined('PHP_BINARY') ? PHP_BINARY : '(not available)',
 
-	'PHP version' => PHP_VERSION . ' (' . PHP_SAPI . ')',
+	'PHP version' . ($isHhvm ? '; HHVM version' : '') => PHP_VERSION . ' (' . PHP_SAPI . ')' . ($isHhvm ? '; ' . HHVM_VERSION : ''),
 
-	'Loaded php.ini files' => count($iniFiles) ? implode(', ', $iniFiles) : '(none)',
+	'Loaded php.ini files' => count($iniFiles) ? implode(', ', $iniFiles) : ($isHhvm ? '(unable to detect under HHVM)' : '(none)'),
 
 	$last = 'Loaded extensions' => count($extensions) ? implode(', ', $extensions) : '(none)',
 );
