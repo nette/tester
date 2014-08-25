@@ -250,7 +250,7 @@ XX
 
 
 	/** @return void */
-	private function watch($runner)
+	private function watch(Runner\Runner $runner)
 	{
 		$prev = array();
 		$counter = 0;

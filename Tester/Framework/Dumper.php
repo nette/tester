@@ -53,9 +53,9 @@ class Dumper
 			return strpos($var, '.') === FALSE ? $var . '.0' : $var;
 
 		} elseif (is_string($var)) {
-			if ($cut = @iconv_strlen($var, 'UTF-8') > self::$maxLength) {
+			if (@iconv_strlen($var, 'UTF-8') > self::$maxLength) {
 				$var = iconv_substr($var, 0, self::$maxLength, 'UTF-8') . '...';
-			} elseif ($cut = strlen($var) > self::$maxLength) {
+			} elseif (strlen($var) > self::$maxLength) {
 				$var = substr($var, 0, self::$maxLength) . '...';
 			}
 			return (preg_match('#[^\x09\x0A\x0D\x20-\x7E\xA0-\x{10FFFF}]#u', $var) || preg_last_error() ? '"' . strtr($var, $table) . '"' : "'$var'");
