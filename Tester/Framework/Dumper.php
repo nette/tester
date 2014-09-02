@@ -53,7 +53,7 @@ class Dumper
 			return strpos($var, '.') === FALSE ? $var . '.0' : $var;
 
 		} elseif (is_string($var)) {
-			if (@iconv_strlen($var, 'UTF-8') > self::$maxLength) {
+			if (extension_loaded('iconv') && @iconv_strlen($var, 'UTF-8') > self::$maxLength) { // @ - invalid UTF-8 sequence notice
 				$var = iconv_substr($var, 0, self::$maxLength, 'UTF-8') . '...';
 			} elseif (strlen($var) > self::$maxLength) {
 				$var = substr($var, 0, self::$maxLength) . '...';
