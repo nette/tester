@@ -73,8 +73,7 @@ class Job
 		putenv(Environment::COLORS . '=' . (int) Environment::$useColors);
 		$this->proc = proc_open(
 			$this->interpreter->getCommandLine()
-			. (!$this->interpreter instanceof HhvmPhpInterpreter ? ' -n' : '') // HHVM issue #3539
-			. ' -d register_argc_argv=on ' . \Tester\Helpers::escapeArg($this->file) . ' ' . implode(' ', $this->args),
+			. ' -n -d register_argc_argv=on ' . \Tester\Helpers::escapeArg($this->file) . ' ' . implode(' ', $this->args),
 			array(
 				array('pipe', 'r'),
 				array('pipe', 'w'),

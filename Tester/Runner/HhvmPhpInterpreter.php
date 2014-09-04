@@ -51,8 +51,8 @@ class HhvmPhpInterpreter implements PhpInterpreter
 		}
 
 		list($this->version, $this->phpVersion) = $tmp;
-		if (version_compare($this->version, '3.0.0', '<')) {
-			throw new \Exception('HHVM below version 3.0.0 is not supported.');
+		if (version_compare($this->version, '3.3.0', '<')) {
+			throw new \Exception('HHVM below version 3.3.0 is not supported.');
 		}
 		$this->arguments = '--php' . ($args ? " $args" : '');
 	}
