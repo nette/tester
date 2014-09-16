@@ -43,8 +43,9 @@ Assert::same( Runner::SKIPPED, $logger->results['testcase-no-methods.phptx'][0] 
 
 
 $bug62725 = PHP_SAPI === 'cli' && PHP_VERSION_ID >= 50400 && PHP_VERSION_ID <= 50406;
+$issue162 = defined('HHVM_VERSION');
 Assert::match(
-	$bug62725
+	$bug62725 || $issue162
 		? "Cannot list TestCase methods in file '%a%testcase-not-call-run.phptx'. Do you call TestCase::run() in it?"
 		: 'Error: This test forgets to execute an assertion.',
 	trim($logger->results['testcase-not-call-run.phptx'][1])
