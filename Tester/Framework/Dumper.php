@@ -49,7 +49,7 @@ class Dumper
 			if (!is_finite($var)) {
 				return var_export($var, TRUE);
 			}
-			$var = json_encode($var);
+			$var = str_replace(',', '.', "$var");
 			return strpos($var, '.') === FALSE ? $var . '.0' : $var;
 
 		} elseif (is_string($var)) {
@@ -123,7 +123,7 @@ class Dumper
 	private static function _toPhp(&$var, $level = 0)
 	{
 		if (is_float($var)) {
-			$var = json_encode($var);
+			$var = str_replace(',', '.', "$var");
 			return strpos($var, '.') === FALSE ? $var . '.0' : $var;
 
 		} elseif (is_bool($var)) {

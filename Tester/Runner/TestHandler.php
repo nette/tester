@@ -149,14 +149,13 @@ class TestHandler
 			return array($job->getExitCode() === Job::CODE_SKIP ? Runner::SKIPPED : Runner::FAILED, $job->getOutput());
 		}
 
-		$methods = json_decode(strrchr($job->getOutput(), '['));
-		if (!is_array($methods)) {
+		if (!preg_match('#\[([^[]*)]#', strrchr($job->getOutput(), '['), $m)) {
 			return array(Runner::FAILED, "Cannot list TestCase methods in file '$file'. Do you call TestCase::run() in it?");
-		} elseif (!$methods) {
+		} elseif (!strlen($m[1])) {
 			return array(Runner::SKIPPED, "TestCase in file '$file' does not contain test methods.");
 		}
 
-		return array('method', $methods);
+		return array('method', explode(',', $m[1]));
 	}
 
 
