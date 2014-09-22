@@ -37,8 +37,8 @@ class TestCase
 			$method = reset($tmp);
 			if ($method === self::LIST_METHODS) {
 				Environment::$checkAssertions = FALSE;
-				header('Content-Type: application/json');
-				echo json_encode($methods);
+				header('Content-Type: text/plain');
+				echo '[' . implode(',', $methods) . ']';
 				return;
 			}
 		}
