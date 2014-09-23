@@ -110,6 +110,7 @@ class Tester
 
 XX;
 
+		$threadsCount = $this->detectDefaultThreadsCount();
 		$cmd = new Cmd(<<<XX
 Usage:
     tester.php [options] [<test file> | <directory>]...
@@ -121,7 +122,7 @@ Options:
     -d <key=value>...      Define INI entry 'key' with value 'val'.
     -s                     Show information about skipped tests.
     --stop-on-fail         Stop execution upon the first failure.
-    -j <num>               Run <num> jobs in parallel (default: 33).
+    -j <num>               Run <num> jobs in parallel (default: $threadsCount).
     -o <console|tap|none>  Specify output format.
     -w | --watch <path>    Watch directory.
     -i | --info            Show tests environment info and exit.
@@ -270,6 +271,21 @@ XX
 			echo "Watching " . implode(', ', $this->options['--watch']) . " " . str_repeat('.', ++$counter % 5) . "    \r";
 			sleep(2);
 		}
+	}
+
+
+	/** @return int */
+	private function detectDefaultThreadsCount()
+	{
+		$threads = NULL;
+		$os = php_uname('s');
+		if (preg_match('#^(Linux|Unix|Darwin|Cygwin)#i', $os) && file_exists('/proc/cpuinfo')) {
+			preg_match_all('#processor\s+:\s+\d+#m', file_get_contents('/proc/cpuinfo'), $m);
+			$threads = count($m[0]);
+		} elseif (preg_match('#^Win#i', $os)) {
+			$threads = preg_replace('#[^\d]#m', '', shell_exec('wmic cpu get NumberOfLogicalProcessors'));
+		}
+		return $threads + 2;
 	}
 
 }
