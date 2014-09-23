@@ -63,7 +63,7 @@ Now we run tests from command-line using the `tester` command:
 |_   _/ __)( __/_   _/ __)| _ )
   |_| \___ /___) |_| \___ |_|_\  v1.2.0
 
-PHP 5.3.16 | "php-cgi" -n | 33 threads
+PHP 5.3.16 | "php-cgi" -n | 8 threads
 .
 OK (1 tests, 0 skipped, 0.0 seconds)
 ```
@@ -126,7 +126,7 @@ with code and automatically re-run tests whenever code is changed:
 tester -w /my/source/codes
 ```
 
-Running tests in parallel is very much faster and Nette Tester uses 33 threads as default.
+Running tests in parallel is very much faster and Nette Tester uses 8 threads as default.
 If you wish to run the tests in series use:
 
 ```
@@ -184,7 +184,7 @@ Options:
     -d <key=value>...      Define INI entry 'key' with value 'val'.
     -s                     Show information about skipped tests.
     --stop-on-fail         Stop execution upon the first failure.
-    -j <num>               Run <num> jobs in parallel (default: 33).
+    -j <num>               Run <num> jobs in parallel (default: 8).
     -o <console|tap|none>  Specify output format.
     -w | --watch <path>    Watch directory.
     -i | --info            Show tests environment info and exit.
