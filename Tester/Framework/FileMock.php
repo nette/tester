@@ -33,7 +33,8 @@ class FileMock
 		if (!self::$files) {
 			stream_wrapper_register(self::PROTOCOL, __CLASS__);
 		}
-		$name = self::PROTOCOL . '://' . uniqid() . '.' . $extension;
+		static $id;
+		$name = self::PROTOCOL . '://' . (++$id) . '.' . $extension;
 		self::$files[$name] = $content;
 		return $name;
 	}
