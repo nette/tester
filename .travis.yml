@@ -30,7 +30,11 @@ matrix:
 script:
     - Tester/tester -p $TESTER_PHP_BIN tests -s
     - Tester/tester -p $TESTER_PHP_BIN -o none tests/fail.phptx; if [ $? -eq 0 ]; then echo "tests/fail.phptx SHOULD FAIL"; exit 1; else echo "fail checked"; fi;
+    - php code-checker/src/code-checker.php
 
 after_failure:
     # Print *.actual content
     - for i in $(find tests -name \*.actual); do echo "--- $i"; cat $i; echo; echo; done
+
+before_script:
+    - composer create-project nette/code-checker code-checker ~2.2 --no-interaction --prefer-source
