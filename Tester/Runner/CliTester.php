@@ -83,7 +83,7 @@ class CliTester
 	/** @return CommandLine */
 	private function loadOptions()
 	{
-		echo <<<XX
+		echo <<<'XX'
  _____ ___  ___ _____ ___  ___
 |_   _/ __)( __/_   _/ __)| _ )
   |_| \___ /___) |_| \___ |_|_\  v1.3.0
