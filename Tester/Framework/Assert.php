@@ -417,6 +417,18 @@ class Assert
 
 
 	/**
+	 * Checks file existence
+	 * @return void
+	 */
+	public static function fileExists($file) {
+		self::$counter++;
+		if (!file_exists($file)) {
+			self::fail('File %1 does not exist', $file);
+		}
+	}
+
+
+	/**
 	 * Failed assertion
 	 * @return void
 	 */
