@@ -66,6 +66,8 @@ class Runner
 	 */
 	public function run()
 	{
+		$this->interrupted = FALSE;
+
 		foreach ($this->outputHandlers as $handler) {
 			$handler->begin();
 		}
@@ -191,8 +193,6 @@ class Runner
 	 */
 	private function installInterruptHandler()
 	{
-		$this->interrupted = FALSE;
-
 		if (extension_loaded('pcntl')) {
 			$interrupted = & $this->interrupted;
 			pcntl_signal(SIGINT, function() use (& $interrupted) {

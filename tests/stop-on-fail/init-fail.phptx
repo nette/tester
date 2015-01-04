@@ -1,0 +1,7 @@
+<?php
+
+/**
+ * TEST: Pre-fails because does not list the TestCase methods.
+ *
+ * @testCase
+ */
