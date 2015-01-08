@@ -168,6 +168,7 @@ class Job
 			return true;
 		}
 
+		$this->output = stream_get_contents($this->stdout);
 		fclose($this->stdout);
 		if ($this->stderr) {
 			fclose($this->stderr);

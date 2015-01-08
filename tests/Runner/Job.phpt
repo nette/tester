@@ -29,3 +29,19 @@ test(function () {
 		Assert::contains('Nette Tester', $job->getHeaders());
 	}
 });
+
+
+test(function () {
+	$job = new Job('Job.test.phpx', createInterpreter());
+	$job->run($job::RUN_ASYNC);
+
+	usleep(10000);
+	Assert::true($job->isRunning());
+
+	while ($job->isRunning()) {
+		usleep(10000);
+	}
+
+	Assert::same(231, $job->getExitCode());
+	Assert::same('Args: ', $job->getOutput());
+});
