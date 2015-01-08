@@ -25,6 +25,9 @@ class Job
 	/** waiting time between process activity check in microseconds */
 	const RUN_USLEEP = 10000;
 
+	const
+		RUN_ASYNC = 1;
+
 	/** @var string  test file */
 	private $file;
 
@@ -64,10 +67,10 @@ class Job
 
 	/**
 	 * Runs single test.
-	 * @param  bool  wait till process ends
+	 * @param  int RUN_ASYNC
 	 * @return void
 	 */
-	public function run($blocking = TRUE)
+	public function run($flags = NULL)
 	{
 		putenv(Environment::RUNNER . '=1');
 		putenv(Environment::COLORS . '=' . (int) Environment::$useColors);
@@ -89,12 +92,12 @@ class Job
 		fclose($stdin);
 		fclose($stderr);
 
-		if ($blocking) {
+		if ($flags & self::RUN_ASYNC) {
+			stream_set_blocking($this->stdout, 0); // on Windows does not work with proc_open()
+		} else {
 			while ($this->isRunning()) {
 				usleep(self::RUN_USLEEP); // stream_select() doesn't work with proc_open()
 			}
-		} else {
-			stream_set_blocking($this->stdout, 0); // on Windows does not work with proc_open()
 		}
 	}
 
@@ -108,7 +111,6 @@ class Job
 		if (!is_resource($this->stdout)) {
 			return FALSE;
 		}
-
 		$this->output .= stream_get_contents($this->stdout);
 		$status = proc_get_status($this->proc);
 		if ($status['running']) {

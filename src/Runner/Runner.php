@@ -83,7 +83,8 @@ class Runner
 		while (($this->jobs || $running) && !$this->isInterrupted()) {
 			for ($i = count($running); $this->jobs && $i < $this->threadCount; $i++) {
 				$running[] = $job = array_shift($this->jobs);
-				$job->run($this->threadCount <= 1 || (count($running) + count($this->jobs) <= 1));
+				$async = $this->threadCount > 1 && (count($running) + count($this->jobs) > 1);
+				$job->run($async ? $job::RUN_ASYNC : NULL);
 			}
 
 			if (count($running) > 1) {
