@@ -26,7 +26,8 @@ class Job
 	const RUN_USLEEP = 10000;
 
 	const
-		RUN_ASYNC = 1;
+		RUN_ASYNC = 1,
+		RUN_COLLECT_ERRORS = 2;
 
 	/** @var string  test file */
 	private $file;
@@ -36,6 +37,9 @@ class Job
 
 	/** @var string  test output */
 	private $output;
+
+	/** @var string|NULL  test error output */
+	private $errorOutput;
 
 	/** @var string[]  output headers */
 	private $headers;
@@ -48,6 +52,9 @@ class Job
 
 	/** @var resource */
 	private $stdout;
+
+	/** @var resource */
+	private $stderr;
 
 	/** @var int */
 	private $exitCode = self::CODE_NONE;
@@ -67,7 +74,7 @@ class Job
 
 	/**
 	 * Runs single test.
-	 * @param  int RUN_ASYNC
+	 * @param  int RUN_ASYNC | RUN_COLLECT_ERRORS
 	 * @return void
 	 */
 	public function run($flags = NULL)
@@ -90,10 +97,17 @@ class Job
 
 		list($stdin, $this->stdout, $stderr) = $pipes;
 		fclose($stdin);
-		fclose($stderr);
+		if ($flags & self::RUN_COLLECT_ERRORS) {
+			$this->stderr = $stderr;
+		} else {
+			fclose($stderr);
+		}
 
 		if ($flags & self::RUN_ASYNC) {
 			stream_set_blocking($this->stdout, 0); // on Windows does not work with proc_open()
+			if ($this->stderr) {
+				stream_set_blocking($this->stderr, 0);
+			}
 		} else {
 			while ($this->isRunning()) {
 				usleep(self::RUN_USLEEP); // stream_select() doesn't work with proc_open()
@@ -112,12 +126,19 @@ class Job
 			return FALSE;
 		}
 		$this->output .= stream_get_contents($this->stdout);
+		if ($this->stderr) {
+			$this->errorOutput .= stream_get_contents($this->stderr);
+		}
+
 		$status = proc_get_status($this->proc);
 		if ($status['running']) {
 			return TRUE;
 		}
 
 		fclose($this->stdout);
+		if ($this->stderr) {
+			fclose($this->stderr);
+		}
 		$code = proc_close($this->proc);
 		$this->exitCode = $code === self::CODE_NONE ? $status['exitcode'] : $code;
 
@@ -171,6 +192,16 @@ class Job
 	public function getOutput()
 	{
 		return $this->output;
+	}
+
+
+	/**
+	 * Returns test error output.
+	 * @return string|NULL
+	 */
+	public function getErrorOutput()
+	{
+		return $this->errorOutput;
 	}
 
 

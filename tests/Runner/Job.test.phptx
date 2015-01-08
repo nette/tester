@@ -4,4 +4,8 @@ header('Love: Nette Tester');
 
 echo 'Args: ', implode(', ', array_splice($_SERVER['argv'], 1));
 
+file_put_contents('php://stderr', 'Error1');
+echo '-output';
+file_put_contents('php://stderr', 'Error2');
+
 die(231);
