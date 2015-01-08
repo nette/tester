@@ -1,0 +1,7 @@
+<?php
+
+header('Love: Nette Tester');
+
+echo 'Args: ', implode(', ', array_splice($_SERVER['argv'], 1));
+
+die(231);
