@@ -213,7 +213,7 @@ XX
 		$file = realpath($this->options['--coverage']);
 		putenv(Environment::COVERAGE . '=' . $file);
 		echo "Code coverage: {$file}\n";
-		if (preg_match('#\.html?\z#', $file)) {
+		if (preg_match('#\.(?:html?|xml)\z#', $file)) {
 			return $file;
 		}
 	}
