@@ -259,15 +259,15 @@ class Dumper
 				}
 			}
 			$message = strtr($message, array(
-				'%1' => "\033[1;33m" . Dumper::toLine($actual) . "\033[1;37m",
-				'%2' => "\033[1;33m" . Dumper::toLine($expected) . "\033[1;37m",
+				'%1' => self::color('yellow') . Dumper::toLine($actual) . self::color('white'),
+				'%2' => self::color('yellow') . Dumper::toLine($expected) . self::color('white'),
 			));
 		} else {
 			$message = ($e instanceof \ErrorException ? Helpers::errorTypeToString($e->getSeverity()) : get_class($e))
 				. ': ' . preg_replace('#[\x00-\x09\x0B-\x1F]+#', ' ', $e->getMessage());
 		}
 
-		$s = "\033[1;37m$message\033[0m\n\n"
+		$s = self::color('white', $message) . "\n\n"
 			. (isset($stored) ? 'diff ' . Helpers::escapeArg($stored[0]) . ' ' . Helpers::escapeArg($stored[1]) . "\n\n" : '');
 
 		foreach ($trace as $item) {
@@ -279,15 +279,15 @@ class Dumper
 			$s .= 'in '
 				. ($item['file']
 					? (
-						($item['file'] === $testFile ? "\033[1;37m" : '')
+						($item['file'] === $testFile ? self::color('white') : '')
 						. implode(DIRECTORY_SEPARATOR, array_slice(explode(DIRECTORY_SEPARATOR, $item['file']), -self::$maxPathSegments))
-						. "($item[line])\033[1;30m "
+						. "($item[line])" . self::color('gray') . ' '
 					)
 					: '[internal function]'
 				)
 				. $item['class'] . $item['type']
 				. (isset($item['function']) ? $item['function'] . '()' : '')
-				. "\033[0m\n";
+				. self::color() . "\n";
 		}
 
 		if ($e->getPrevious()) {
@@ -311,6 +311,25 @@ class Dumper
 		@mkdir(dirname($path)); // @ - directory may already exist
 		file_put_contents($path, is_string($content) ? $content : self::toPhp($content));
 		return $path;
+	}
+
+
+	/**
+	 * Applies color to string.
+	 * @return string
+	 */
+	public static function color($color = NULL, $s = NULL)
+	{
+		static $colors = array(
+			'black' => '0;30', 'gray' => '1;30', 'silver' => '0;37', 'white' => '1;37',
+			'navy' => '0;34', 'blue' => '1;34', 'green' => '0;32', 'lime' => '1;32',
+			'teal' => '0;36', 'aqua' => '1;36', 'maroon' => '0;31', 'red' => '1;31',
+			'purple' => '0;35', 'fuchsia' => '1;35', 'olive' => '0;33', 'yellow' => '1;33',
+			NULL => '0',
+		);
+		$c = explode('/', $color);
+		return "\033[" . $colors[$c[0]] . (empty($c[1]) ? '' : ';4' . substr($colors[$c[1]], -1))
+			. 'm' . $s . ($s === NULL ? '' : "\033[0m");
 	}
 
 

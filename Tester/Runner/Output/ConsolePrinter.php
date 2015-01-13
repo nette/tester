@@ -8,6 +8,7 @@
 namespace Tester\Runner\Output;
 
 use Tester,
+	Tester\Dumper,
 	Tester\Runner\Runner;
 
 
@@ -50,13 +51,13 @@ class ConsolePrinter implements Tester\Runner\OutputHandler
 		$outputs = array(
 			Runner::PASSED => '.',
 			Runner::SKIPPED => 's',
-			Runner::FAILED => "\033[1;41;37mF\033[0m",
+			Runner::FAILED => Dumper::color('white/red', 'F'),
 		);
 		echo $outputs[$result];
 
 		$message = '   ' . str_replace("\n", "\n   ", trim($message)) . "\n\n";
 		if ($result === Runner::FAILED) {
-			$this->buffer .= "\033[1;31m-- FAILED: $testName\033[0m\n$message";
+			$this->buffer .= Dumper::color('red', "-- FAILED: $testName") . "\n$message";
 		} elseif ($result === Runner::SKIPPED && $this->displaySkipped) {
 			$this->buffer .= "-- Skipped: $testName\n$message";
 		}
@@ -70,12 +71,12 @@ class ConsolePrinter implements Tester\Runner\OutputHandler
 		$count = array_sum($results);
 		echo !$jobCount ? "No tests found\n" :
 			"\n\n" . $this->buffer . "\n"
-			. ($results[Runner::FAILED] ? "\033[1;41;37mFAILURES!" : "\033[1;42;37mOK")
+			. ($results[Runner::FAILED] ? Dumper::color('white/red') . 'FAILURES!' : Dumper::color('white/green') . 'OK')
 			. " ($jobCount test" . ($jobCount > 1 ? 's' : '') . ", "
 			. ($results[Runner::FAILED] ? $results[Runner::FAILED] . ' failure' . ($results[Runner::FAILED] > 1 ? 's' : '') . ', ' : '')
 			. ($results[Runner::SKIPPED] ? $results[Runner::SKIPPED] . ' skipped, ' : '')
 			. ($jobCount !== $count ? ($jobCount - $count) . ' not run, ' : '')
-			. sprintf('%0.1f', $this->time + microtime(TRUE)) . " seconds)\033[0m\n";
+			. sprintf('%0.1f', $this->time + microtime(TRUE)) . " seconds)\n" . Dumper::color();
 
 		$this->buffer = NULL;
 	}
