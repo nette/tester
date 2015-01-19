@@ -5,13 +5,13 @@
  * Copyright (c) 2009 David Grudl (http://davidgrudl.com)
  */
 
-namespace Tester\CodeCoverage;
+namespace Tester\CodeCoverage\Generators;
 
 
 /**
  * Code coverage report generator.
  */
-class ReportGenerator
+class HtmlGenerator
 {
 	/** @var array */
 	public $acceptFiles = array('php', 'phpc', 'phpt', 'phtml');

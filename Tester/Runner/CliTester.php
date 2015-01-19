@@ -225,7 +225,7 @@ XX
 		if ($this->options['-o'] !== 'none' && $this->options['-o'] !== 'tap') {
 			echo "Generating code coverage report\n";
 		}
-		$generator = new CodeCoverage\ReportGenerator($file, $this->options['--coverage-src']);
+		$generator = new CodeCoverage\Generators\HtmlGenerator($file, $this->options['--coverage-src']);
 		$generator->render($file);
 	}
 
