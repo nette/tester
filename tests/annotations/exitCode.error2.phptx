@@ -1,7 +1,0 @@
-<?php
-
-require __DIR__ . '/../bootstrap.php';
-Tester\Environment::$checkAssertions = FALSE;
-
-
-die(231);

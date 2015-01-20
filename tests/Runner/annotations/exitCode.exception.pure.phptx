@@ -1,0 +1,11 @@
+<?php
+
+/**
+ * @exitCode 255
+ */
+
+require __DIR__ . '/../../bootstrap.php';
+
+
+restore_exception_handler();
+throw new Exception();

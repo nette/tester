@@ -1,0 +1,10 @@
+<?php
+
+/**
+ * @phpIni default_mimetype=foo/bar
+ */
+
+require __DIR__ . '/../../bootstrap.php';
+
+
+Tester\Assert::same('foo/bar', ini_get('default_mimetype'));
