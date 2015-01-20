@@ -54,7 +54,7 @@ class HhvmPhpInterpreter implements PhpInterpreter
 		if (version_compare($this->version, '3.3.0', '<')) {
 			throw new \Exception('HHVM below version 3.3.0 is not supported.');
 		}
-		$this->arguments = '--php -d hhvm.log.always_log_unhandled_exceptions=false ' . ($args ? " $args" : ''); // HHVM issue #3019
+		$this->arguments = ' --php -d hhvm.log.always_log_unhandled_exceptions=false' . ($args ? " $args" : ''); // HHVM issue #3019
 	}
 
 
@@ -63,7 +63,7 @@ class HhvmPhpInterpreter implements PhpInterpreter
 	 */
 	public function getCommandLine()
 	{
-		return $this->path . ' ' . $this->arguments;
+		return $this->path . $this->arguments;
 	}
 
 
