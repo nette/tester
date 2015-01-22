@@ -136,8 +136,8 @@ class Environment
 	 */
 	public static function lock($name = '', $path = '')
 	{
-		static $lock;
-		flock($lock = fopen($path . '/lock-' . md5($name), 'w'), LOCK_EX);
+		static $locks;
+		flock($locks[] = fopen($path . '/lock-' . md5($name), 'w'), LOCK_EX);
 	}
 
 
