@@ -81,6 +81,10 @@ class Helpers
 	 */
 	public static function escapeArg($s)
 	{
+		if (preg_match('#^[a-z0-9._-]+\z#i', $s)) {
+			return $s;
+		}
+
 		return defined('PHP_WINDOWS_VERSION_BUILD')
 			? '"' . str_replace('"', '""', $s) . '"'
 			: escapeshellarg($s);

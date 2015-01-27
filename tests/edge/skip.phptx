@@ -1,5 +1,0 @@
-<?php
-
-require __DIR__ . '/../bootstrap.php';
-
-Tester\Environment::skip('just skipping');

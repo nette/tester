@@ -1,9 +1,0 @@
-<?php
-
-/**
- * @testcase
- */
-
-require __DIR__ . '/../bootstrap.php';
-
-Tester\Assert::fail('pre-fail');

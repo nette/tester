@@ -1,0 +1,12 @@
+<?php
+
+/**
+ * @exitCode 0 we are unable to detect this error
+ */
+
+require __DIR__ . '/../../bootstrap.php';
+Tester\Environment::$checkAssertions = FALSE;
+
+
+restore_error_handler();
+$a++;

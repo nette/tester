@@ -1,0 +1,8 @@
+<?php
+
+/**
+ * @httpCode 500
+ */
+
+require __DIR__ . '/../../bootstrap.php';
+Tester\Environment::$checkAssertions = FALSE;

@@ -60,7 +60,7 @@ class ZendPhpInterpreter implements PhpInterpreter
 	 */
 	public function getCommandLine()
 	{
-		return $this->path . ' ' . $this->arguments;
+		return $this->path . $this->arguments;
 	}
 
 
