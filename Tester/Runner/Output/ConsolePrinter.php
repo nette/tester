@@ -76,7 +76,7 @@ class ConsolePrinter implements Tester\Runner\OutputHandler
 			. ($results[Runner::FAILED] ? $results[Runner::FAILED] . ' failure' . ($results[Runner::FAILED] > 1 ? 's' : '') . ', ' : '')
 			. ($results[Runner::SKIPPED] ? $results[Runner::SKIPPED] . ' skipped, ' : '')
 			. ($jobCount !== $count ? ($jobCount - $count) . ' not run, ' : '')
-			. sprintf('%0.1f', $this->time + microtime(TRUE)) . " seconds)\n" . Dumper::color();
+			. sprintf('%0.1f', $this->time + microtime(TRUE)) . ' seconds)' . Dumper::color() . "\n";
 
 		$this->buffer = NULL;
 	}
