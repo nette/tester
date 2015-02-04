@@ -14,7 +14,7 @@ namespace Tester;
 class Dumper
 {
 	public static $maxLength = 70;
-	public static $maxDepth = 50;
+	public static $maxDepth = 10;
 	public static $dumpDir = 'output';
 	public static $maxPathSegments = 3;
 
@@ -120,7 +120,7 @@ class Dumper
 	/**
 	 * @return string
 	 */
-	private static function _toPhp(&$var, $level = 0)
+	private static function _toPhp(&$var, & $list = array(), $level = 0, & $line = 1)
 	{
 		if (is_float($var)) {
 			$var = str_replace(',', '.', "$var");
@@ -158,54 +158,68 @@ class Dumper
 				return '/* Nesting level too deep or recursive dependency */';
 
 			} else {
-				$out = '';
-				$outAlt = "\n$space";
+				$out = "\n$space";
+				$outShort = '';
 				$var[$marker] = TRUE;
+				$oldLine = $line;
+				$line++;
 				$counter = 0;
 				foreach ($var as $k => &$v) {
 					if ($k !== $marker) {
-						$item = ($k === $counter ? '' : self::_toPhp($k, $level + 1) . ' => ') . self::_toPhp($v, $level + 1);
+						$item = ($k === $counter ? '' : self::_toPhp($k, $list, $level + 1, $line) . ' => ') . self::_toPhp($v, $list, $level + 1, $line);
 						$counter = is_int($k) ? max($k + 1, $counter) : $counter;
-						$out .= ($out === '' ? '' : ', ') . $item;
-						$outAlt .= "\t$item,\n$space";
+						$outShort .= ($outShort === '' ? '' : ', ') . $item;
+						$out .= "\t$item,\n$space";
+						$line++;
 					}
 				}
 				unset($var[$marker]);
+				if (strpos($outShort, "\n") === FALSE && strlen($outShort) < self::$maxLength) {
+					$line = $oldLine;
+					$out = $outShort;
+				}
 			}
-			return 'array(' . (strpos($out, "\n") === FALSE && strlen($out) < self::$maxLength ? $out : $outAlt) . ')';
+			return 'array(' . $out . ')';
 
 		} elseif (is_object($var)) {
 			$arr = (array) $var;
 			$space = str_repeat("\t", $level);
+			$class = get_class($var);
+			$used = & $list[spl_object_hash($var)];
 
-			static $list = array();
 			if (empty($arr)) {
 				$out = '';
 
-			} elseif ($level > self::$maxDepth || in_array($var, $list, TRUE)) {
-				return '/* Nesting level too deep or recursive dependency */';
+			} elseif ($used) {
+				return "/* $class dumped on line $used */";
+
+			} elseif ($level > self::$maxDepth) {
+				return '/* Nesting level too deep */';
 
 			} else {
 				$out = "\n";
-				$list[] = $var;
+				$used = $line;
+				$line++;
 				foreach ($arr as $k => &$v) {
 					if ($k[0] === "\x00") {
 						$k = substr($k, strrpos($k, "\x00") + 1);
 					}
-					$out .= "$space\t" . self::_toPhp($k, $level + 1) . ' => ' . self::_toPhp($v, $level + 1) . ",\n";
+					$out .= "$space\t" . self::_toPhp($k, $list, $level + 1, $line) . ' => ' . self::_toPhp($v, $list, $level + 1, $line) . ",\n";
+					$line++;
 				}
-				array_pop($list);
 				$out .= $space;
 			}
-			return get_class($var) === 'stdClass'
+			return $class === 'stdClass'
 				? "(object) array($out)"
-				: get_class($var) . "::__set_state(array($out))";
+				: "$class::__set_state(array($out))";
 
 		} elseif (is_resource($var)) {
 			return '/* resource ' . get_resource_type($var) . ' */';
 
 		} else {
-			return var_export($var, TRUE);
+			$res = var_export($var, TRUE);
+			$line += substr_count($res, "\n");
+			return $res;
 		}
 	}
 
