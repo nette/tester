@@ -65,3 +65,8 @@ test(function() {
 test(function() {
 	Assert::same(123, require FileMock::create('<?php return 123;'));
 });
+
+
+test(function() {
+	Assert::false(flock(fopen(\Tester\FileMock::create(''), 'x'), LOCK_EX));
+});

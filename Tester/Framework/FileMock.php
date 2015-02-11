@@ -116,4 +116,10 @@ class FileMock
 			: FALSE;
 	}
 
+
+	public function stream_lock($operation)
+	{
+		return FALSE;
+	}
+
 }
