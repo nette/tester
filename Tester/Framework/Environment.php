@@ -65,8 +65,9 @@ class Environment
 			: (PHP_SAPI === 'cli' && ((function_exists('posix_isatty') && posix_isatty(STDOUT))
 				|| getenv('ConEmuANSI') === 'ON' || getenv('ANSICON') !== FALSE));
 
-		ob_start(function($s) {
-			return Environment::$useColors ? $s : Dumper::removeColors($s);
+		$colors = & self::$useColors;
+		ob_start(function($s) use (& $colors) {
+			return $colors ? $s : Dumper::removeColors($s);
 		}, PHP_VERSION_ID < 50400 ? 2 : 1);
 	}
 
