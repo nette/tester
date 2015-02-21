@@ -132,13 +132,18 @@ class Environment
 
 
 	/**
-	 * locks the parallel tests.
+	 * Locks the parallel tests.
+	 * @param  string
+	 * @param  string  lock store directory
 	 * @return void
 	 */
 	public static function lock($name = '', $path = '')
 	{
 		static $locks;
-		flock($locks[] = fopen($path . '/lock-' . md5($name), 'w'), LOCK_EX);
+		$file = "$path/lock-" . md5($name);
+		if (!isset($locks[$file])) {
+			flock($locks[$file] = fopen($file, 'w'), LOCK_EX);
+		}
 	}
 
 
