@@ -1,0 +1,12 @@
+<<?php ?>?xml version="1.0" encoding="UTF-8"?>
+<coverage generated="<?php echo time(); ?>">
+	<project>
+		<?php foreach ($files as $id => $info): ?>
+		<file name="<?php echo htmlspecialchars($info->file); ?>">
+			<?php foreach ($info->lines as $line => $arg): if ($arg < -1) continue; ?>
+			<line num="<?php echo intval($line); ?>" count="<?php echo $arg >= 1 ? 1 : 0 ?>"/>
+			<?php endforeach; ?>
+		</file>
+		<?php endforeach; ?>
+	</project>
+</coverage>

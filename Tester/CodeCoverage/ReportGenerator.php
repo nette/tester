@@ -94,7 +94,11 @@ class ReportGenerator
 			throw new \Exception("Unable to write to file '$file'.");
 		}
 		ob_start(function($buffer) use ($handle) { fwrite($handle, $buffer); }, 4096);
-		include __DIR__ . '/template.phtml';
+		if ($file && pathinfo($file, PATHINFO_EXTENSION) === 'xml') {
+			include __DIR__ . '/template-clover.phtml';
+		} else {
+			include __DIR__ . '/template-html.phtml';
+		}
 		ob_end_flush();
 	}
 
