@@ -27,7 +27,12 @@ $float1 = 1 / 3;
 $float2 = 1 - 2 / 3;
 
 $equals = array(
+	array(1, 1.0),
 	array(1, 1),
+	array(1, "1"),
+	array(1, TRUE),
+	array(0, FALSE),
+	array(0, NULL),
 	array('1', '1'),
 	array(array('1'), array('1')),
 	array(array('a', 'b'), array(1 => 'b', 0 => 'a')),
@@ -47,7 +52,6 @@ $equals = array(
 );
 
 $notEquals = array(
-	array(1, 1.0),
 	array(INF, -INF),
 	array(array('a', 'b'), array('b', 'a')),
 );
