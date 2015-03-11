@@ -417,6 +417,28 @@ class Assert
 
 
 	/**
+	 * Checks if the command exits with code.
+	 * @param  string
+	 * @param  integer
+	 * @return string  command output
+	 */
+	public static function command($command, $exitCode = 0)
+	{
+		self::$counter++;
+
+		ob_start();
+		system($command, $code);
+		$output = ob_get_clean();
+
+		if ($code !== $exitCode) {
+			self::fail('Exit code %2 was expected but got %1', $code, $exitCode);
+		}
+
+		return $output;
+	}
+
+
+	/**
 	 * Failed assertion
 	 * @return void
 	 */
