@@ -4,6 +4,10 @@
  * @internal
  */
 
+if (isset($_SERVER['argv'][1])) {
+	die(extension_loaded($_SERVER['argv'][1]) ? 0 : 1);
+}
+
 $iniFiles = array_merge(
 	($tmp = php_ini_loaded_file()) === FALSE ? array() : array($tmp),
 	(function_exists('php_ini_scanned_files') && strlen($tmp = php_ini_scanned_files())) ? explode(",\n", trim($tmp)) : array()

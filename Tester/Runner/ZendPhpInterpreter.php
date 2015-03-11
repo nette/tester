@@ -50,8 +50,11 @@ class ZendPhpInterpreter implements PhpInterpreter
 
 		$this->version = $matches[1];
 		$this->cgi = strcasecmp($matches[2], 'g') === 0;
-		$this->xdebug = strpos($output, 'Xdebug') > 0;
 		$this->arguments = $args;
+
+		$job = new Job(__DIR__ . '/info.php', $this, array('xdebug'));
+		$job->run();
+		$this->xdebug = !$job->getExitCode();
 	}
 
 
