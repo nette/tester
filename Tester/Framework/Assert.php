@@ -524,7 +524,7 @@ class Assert
 			return TRUE;
 		}
 
-		return $expected === $actual;
+		return $expected == $actual;
 	}
 
 }

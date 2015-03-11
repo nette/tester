@@ -8,7 +8,7 @@ require __DIR__ . '/../bootstrap.php';
 $cases = array(
 	"Failed: array(TRUE) should contain 1" => function() { Assert::contains(1, array(TRUE)); },
 	"Failed: array('') should not contain ''" => function() { Assert::notContains('', array('')); },
-	'Failed: 1.0 should be equal to 1' => function() { Assert::equal(1, 1.0); },
+	'Failed: 1.0 should not be equal to 1' => function() { Assert::notEqual(1, 1.0); },
 	"Failed: 0.33%d% should not be equal to 0.33%d%" => function() { Assert::notEqual(1/3, 1 - 2/3); },
 	"Failed: NULL should be FALSE" => function() { Assert::false(NULL); },
 	"Failed: FALSE should be TRUE" => function() { Assert::true(FALSE); },
