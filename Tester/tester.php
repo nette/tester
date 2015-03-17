@@ -23,8 +23,10 @@ require __DIR__ . '/Framework/Assert.php';
 require __DIR__ . '/Framework/Dumper.php';
 require __DIR__ . '/Framework/DataProvider.php';
 require __DIR__ . '/Framework/TestCase.php';
+require __DIR__ . '/CodeCoverage/PhpParser.php';
 require __DIR__ . '/CodeCoverage/Generators/AbstractGenerator.php';
 require __DIR__ . '/CodeCoverage/Generators/HtmlGenerator.php';
+require __DIR__ . '/CodeCoverage/Generators/CloverXMLGenerator.php';
 
 
 $tester = new Tester\Runner\CliTester;

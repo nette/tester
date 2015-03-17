@@ -213,7 +213,7 @@ XX
 		$file = realpath($this->options['--coverage']);
 		putenv(Environment::COVERAGE . '=' . $file);
 		echo "Code coverage: {$file}\n";
-		if (preg_match('#\.html?\z#', $file)) {
+		if (preg_match('#\.(?:html?|xml)\z#', $file)) {
 			return $file;
 		}
 	}
@@ -225,7 +225,11 @@ XX
 		if ($this->options['-o'] !== 'none' && $this->options['-o'] !== 'tap') {
 			echo "Generating code coverage report\n";
 		}
-		$generator = new CodeCoverage\Generators\HtmlGenerator($file, $this->options['--coverage-src']);
+		if (pathinfo($file, PATHINFO_EXTENSION) === 'xml') {
+			$generator = new CodeCoverage\Generators\CloverXMLGenerator($file, $this->options['--coverage-src']);
+		} else {
+			$generator = new CodeCoverage\Generators\HtmlGenerator($file, $this->options['--coverage-src']);
+		}
 		$generator->render($file);
 	}
 
