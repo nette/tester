@@ -69,9 +69,21 @@ abstract class AbstractGenerator
 		if (!$handle) {
 			throw new \Exception("Unable to write to file '$file'.");
 		}
+
 		ob_start(function($buffer) use ($handle) { fwrite($handle, $buffer); }, 4096);
-		$this->renderSelf();
+		try {
+			$this->renderSelf();
+		} catch (\Exception $e) {
+		}
 		ob_end_flush();
+		fclose($handle);
+
+		if (isset($e)) {
+			if ($file) {
+				unlink($file);
+			}
+			throw $e;
+		}
 	}
 
 
