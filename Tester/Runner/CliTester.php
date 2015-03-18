@@ -36,7 +36,7 @@ class CliTester
 		Environment::$debugMode = (bool) $this->options['--debug'];
 		if (isset($this->options['--colors'])) {
 			Environment::$useColors = (bool) $this->options['--colors'];
-		} elseif ($this->options['-o'] === 'tap') {
+		} elseif (in_array($this->options['-o'], array('tap', 'junit'))) {
 			Environment::$useColors = FALSE;
 		}
 
@@ -96,21 +96,21 @@ Usage:
     tester.php [options] [<test file> | <directory>]...
 
 Options:
-    -p <path>              Specify PHP interpreter to run (default: php-cgi).
-    -c <path>              Look for php.ini file (or look in directory) <path>.
-    -l | --log <path>      Write log to file <path>.
-    -d <key=value>...      Define INI entry 'key' with value 'val'.
-    -s                     Show information about skipped tests.
-    --stop-on-fail         Stop execution upon the first failure.
-    -j <num>               Run <num> jobs in parallel (default: 8).
-    -o <console|tap|none>  Specify output format.
-    -w | --watch <path>    Watch directory.
-    -i | --info            Show tests environment info and exit.
-    --setup <path>         Script for runner setup.
-    --colors [1|0]         Enable or disable colors.
-    --coverage <path>      Generate code coverage report to file.
-    --coverage-src <path>  Path to source code.
-    -h | --help            This help.
+    -p <path>                    Specify PHP interpreter to run (default: php-cgi).
+    -c <path>                    Look for php.ini file (or look in directory) <path>.
+    -l | --log <path>            Write log to file <path>.
+    -d <key=value>...            Define INI entry 'key' with value 'val'.
+    -s                           Show information about skipped tests.
+    --stop-on-fail               Stop execution upon the first failure.
+    -j <num>                     Run <num> jobs in parallel (default: 8).
+    -o <console|tap|junit|none>  Specify output format.
+    -w | --watch <path>          Watch directory.
+    -i | --info                  Show tests environment info and exit.
+    --setup <path>               Script for runner setup.
+    --colors [1|0]               Enable or disable colors.
+    --coverage <path>            Generate code coverage report to file.
+    --coverage-src <path>        Path to source code.
+    -h | --help                  This help.
 
 XX
 		, array(
@@ -184,9 +184,16 @@ XX
 		$runner->stopOnFail = $this->options['--stop-on-fail'];
 
 		if ($this->options['-o'] !== 'none') {
-			$runner->outputHandlers[] = $this->options['-o'] === 'tap'
-				? new Output\TapPrinter($runner)
-				: new Output\ConsolePrinter($runner, $this->options['-s']);
+			switch ($this->options['-o']) {
+				case 'tap':
+					$runner->outputHandlers[] = new Output\TapPrinter($runner);
+					break;
+				case 'junit':
+					$runner->outputHandlers[] = new Output\JUnitPrinter($runner);
+					break;
+				default:
+					$runner->outputHandlers[] = new Output\ConsolePrinter($runner, $this->options['-s']);
+			}
 		}
 
 		if ($this->options['--log']) {
@@ -222,7 +229,7 @@ XX
 	/** @return void */
 	private function finishCodeCoverage($file)
 	{
-		if ($this->options['-o'] !== 'none' && $this->options['-o'] !== 'tap') {
+		if (!in_array($this->options['-o'], array('none', 'tap', 'junit'), TRUE)) {
 			echo "Generating code coverage report\n";
 		}
 		if (pathinfo($file, PATHINFO_EXTENSION) === 'xml') {
