@@ -96,6 +96,7 @@ This table shows all assertions (class `Assert` means `Tester\Assert`):
 - `Assert::match($pattern, $value)` - Compares result using regular expression or mask.
 - `Assert::matchFile($file, $value)` - Compares result using regular expression or mask sorted in file.
 - `Assert::count($count, $value)` - Reports an error if number of items in $value is not $count.
+- `Assert::fileExists($file)` - Reports an error if $file does not exist.
 
 Testing exceptions:
 
