@@ -4,7 +4,7 @@ use Tester\Assert,
 	Tester\Runner\CommandLine as Cmd;
 
 require __DIR__ . '/../bootstrap.php';
-require __DIR__ . '/../../Tester/Runner/CommandLine.php';
+require __DIR__ . '/../../src/Runner/CommandLine.php';
 
 
 

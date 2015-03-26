@@ -9,10 +9,10 @@ use Tester\Assert,
 	Tester\Runner\Output\JUnitPrinter;
 
 require __DIR__ . '/../bootstrap.php';
-require __DIR__ . '/../../Tester/Runner/TestHandler.php';
-require __DIR__ . '/../../Tester/Runner/Runner.php';
-require __DIR__ . '/../../Tester/Runner/OutputHandler.php';
-require __DIR__ . '/../../Tester/Runner/Output/JUnitPrinter.php';
+require __DIR__ . '/../../src/Runner/TestHandler.php';
+require __DIR__ . '/../../src/Runner/Runner.php';
+require __DIR__ . '/../../src/Runner/OutputHandler.php';
+require __DIR__ . '/../../src/Runner/Output/JUnitPrinter.php';
 
 
 Environment::$useColors = FALSE;

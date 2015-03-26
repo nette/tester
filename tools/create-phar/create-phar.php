@@ -25,7 +25,7 @@ __HALT_COMPILER();
 ");
 
 $phar->startBuffering();
-foreach ($iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator(__DIR__ . '/../../Tester', RecursiveDirectoryIterator::SKIP_DOTS)) as $file) {
+foreach ($iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator(__DIR__ . '/../../src', RecursiveDirectoryIterator::SKIP_DOTS)) as $file) {
 	echo "adding: {$iterator->getSubPathname()}\n";
 	$phar[$iterator->getSubPathname()] = php_strip_whitespace($file);
 }
