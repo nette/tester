@@ -4,7 +4,7 @@ use Tester\Assert;
 use Tester\CodeCoverage;
 
 require __DIR__ . '/../bootstrap.php';
-require __DIR__ . '/../../Tester/CodeCoverage/PhpParser.php';
+require __DIR__ . '/../../src/CodeCoverage/PhpParser.php';
 
 
 $parser = new CodeCoverage\PhpParser;

@@ -43,7 +43,7 @@ class Greeting
 So we create test file named `greeting.test.phpt`:
 
 ```php
-require 'Tester/bootstrap.php';
+require 'src/bootstrap.php';
 
 use Tester\Assert;
 

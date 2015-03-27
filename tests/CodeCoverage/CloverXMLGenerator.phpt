@@ -4,9 +4,9 @@ use Tester\Assert;
 use Tester\CodeCoverage;
 
 require __DIR__ . '/../bootstrap.php';
-require __DIR__ . '/../../Tester/CodeCoverage/PhpParser.php';
-require __DIR__ . '/../../Tester/CodeCoverage/Generators/AbstractGenerator.php';
-require __DIR__ . '/../../Tester/CodeCoverage/Generators/CloverXMLGenerator.php';
+require __DIR__ . '/../../src/CodeCoverage/PhpParser.php';
+require __DIR__ . '/../../src/CodeCoverage/Generators/AbstractGenerator.php';
+require __DIR__ . '/../../src/CodeCoverage/Generators/CloverXMLGenerator.php';
 
 
 $coveredFile = __DIR__ . DIRECTORY_SEPARATOR . 'CloverXMLGenerator.covered.php';

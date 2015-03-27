@@ -7,8 +7,8 @@
 use Tester\Assert;
 
 require __DIR__ . '/../bootstrap.php';
-require __DIR__ . '/../../Tester/Runner/TestHandler.php';
-require __DIR__ . '/../../Tester/Runner/Runner.php';
+require __DIR__ . '/../../src/Runner/TestHandler.php';
+require __DIR__ . '/../../src/Runner/Runner.php';
 
 
 $runner = new Tester\Runner\Runner(createInterpreter());
