@@ -255,7 +255,7 @@ class Assert
 			}
 
 		} elseif (in_array($type, array('array', 'bool', 'callable', 'float',
-			'int', 'integer', 'null', 'object', 'resource', 'scalar', 'string'), TRUE)
+			'int', 'integer', 'numeric', 'null', 'object', 'resource', 'scalar', 'string'), TRUE)
 		) {
 			if (!call_user_func("is_$type", $value)) {
 				self::fail(gettype($value) . " should be $type");
