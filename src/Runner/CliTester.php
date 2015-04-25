@@ -161,6 +161,9 @@ XX
 			NULL,
 			array('bypass_shell' => TRUE)
 		);
+		if ($proc === FALSE) {
+			throw new \Exception('Cannot run PHP interpreter ' . $this->options['-p'] . '. Use -p option.');
+		}
 		$output = stream_get_contents($pipes[1]);
 		$error = stream_get_contents($pipes[2]);
 		if (proc_close($proc)) {
