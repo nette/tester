@@ -48,8 +48,11 @@ class ZendPhpInterpreter implements PhpInterpreter
 			throw new \Exception("Unable to detect PHP version (output: $output).");
 		}
 
-		$this->version = $matches[1];
 		$this->cgi = strcasecmp($matches[2], 'g') === 0;
+		if ($error) {
+			throw new \Exception('PHP startup error' . ($this->cgi ? ' (note that PHP CLI generates better error messages)' : '') . ": $error");
+		}
+		$this->version = $matches[1];
 		$this->arguments = $args;
 
 		$job = new Job(__DIR__ . '/info.php', $this, array('xdebug'));
