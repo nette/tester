@@ -84,15 +84,17 @@ class Job
 			NULL,
 			array('bypass_shell' => TRUE)
 		);
+
 		list($stdin, $this->stdout, $stderr) = $pipes;
 		fclose($stdin);
 		fclose($stderr);
+
 		if ($blocking) {
 			while ($this->isRunning()) {
 				usleep(self::RUN_USLEEP); // stream_select() doesn't work with proc_open()
 			}
 		} else {
-			stream_set_blocking($this->stdout, 0);
+			stream_set_blocking($this->stdout, 0); // on Windows does not work with proc_open()
 		}
 	}
 
