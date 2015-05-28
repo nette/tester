@@ -31,4 +31,9 @@ interface PhpInterpreter
 	 */
 	function isCgi();
 
+	/**
+	 * @return string
+	 */
+	function getErrorOutput();
+
 }

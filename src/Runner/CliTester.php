@@ -10,6 +10,7 @@ namespace Tester\Runner;
 use Tester\CodeCoverage;
 use Tester\Environment;
 use Tester\Helpers;
+use Tester\Dumper;
 
 
 /**
@@ -174,6 +175,13 @@ XX
 			$this->interpreter = new HhvmPhpInterpreter($this->options['-p'], $args);
 		} else {
 			$this->interpreter = new ZendPhpInterpreter($this->options['-p'], $args);
+		}
+
+		if ($this->interpreter->getErrorOutput()) {
+			echo Dumper::color('red', 'PHP startup error: ' . $this->interpreter->getErrorOutput()) . "\n";
+			if ($this->interpreter->isCgi()) {
+				echo "(note that PHP CLI generates better error messages)\n";
+			}
 		}
 	}
 
