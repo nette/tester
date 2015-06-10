@@ -2,7 +2,7 @@
 <coverage generated="%d%">
   <project timestamp="%d%">
     <metrics packages="0" files="1" loc="38" ncloc="22" classes="1" methods="3" coveredmethods="2" statements="5" coveredstatements="3" elements="8" coveredelements="5" conditionals="0" coveredconditionals="0"/>
-    <file name="%a%CloverXMLGenerator.covered.php">
+    <file name="%a%Logger.php">
       <metrics loc="38" ncloc="22" classes="1" methods="3" coveredmethods="2" statements="5" coveredstatements="3" elements="8" coveredelements="5" conditionals="0" coveredconditionals="0"/>
       <class namespace="CloverXMLGeneratorTest" name="Logger">
         <metrics methods="3" coveredmethods="2" statements="5" coveredstatements="3" conditionals="0" coveredconditionals="0" elements="8" coveredelements="5"/>
