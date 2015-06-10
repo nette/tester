@@ -157,7 +157,7 @@ class CloverXMLGenerator extends AbstractGenerator
 		);
 
 		foreach ($info->methods as $name => $methodInfo) {
-			list($lineCount, $coveredLineCount) = $this->analyzeMethod($methodInfo, (array) $coverageData);
+			list($lineCount, $coveredLineCount) = $this->analyzeMethod($methodInfo, $coverageData);
 
 			$stats->statementCount += $lineCount;
 
@@ -177,16 +177,20 @@ class CloverXMLGenerator extends AbstractGenerator
 	/**
 	 * @return array
 	 */
-	private static function analyzeMethod(\stdClass $info, array $coverageData)
+	private static function analyzeMethod(\stdClass $info, array $coverageData = NULL)
 	{
 		$count = 0;
 		$coveredCount = 0;
 
-		for ($i = $info->start; $i <= $info->end; $i++) {
-			if (isset($coverageData[$i]) && $coverageData[$i] !== self::CODE_DEAD) {
-				$count++;
-				if ($coverageData[$i] > 0) {
-					$coveredCount++;
+		if ($coverageData === NULL) { // Never loaded file
+			$count = max(1, $info->end - $info->start - 2);
+		} else {
+			for ($i = $info->start; $i <= $info->end; $i++) {
+				if (isset($coverageData[$i]) && $coverageData[$i] !== self::CODE_DEAD) {
+					$count++;
+					if ($coverageData[$i] > 0) {
+						$coveredCount++;
+					}
 				}
 			}
 		}
