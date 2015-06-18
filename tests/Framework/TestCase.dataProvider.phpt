@@ -27,7 +27,7 @@ class MyTest extends Tester\TestCase
 	/**
 	 * @dataProvider dataProvider
 	 * @dataProvider dataProvider
-	*/
+	 */
 	public function testMultipleDataProvider($a, $b)
 	{
 		$this->order[] = array(__METHOD__, func_get_args());
@@ -76,7 +76,7 @@ Assert::same(array(
 ), $test->order);
 
 
-Assert::exception(function() {
+Assert::exception(function () {
 	$test = new MyTest;
 	$test->run('testAssertion');
 }, 'Tester\AssertException', 'FALSE should be TRUE in testAssertion(1, 2)');

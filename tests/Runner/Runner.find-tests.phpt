@@ -14,7 +14,7 @@ require __DIR__ . '/../../src/Runner/Runner.php';
 $runner = new Tester\Runner\Runner(createInterpreter());
 
 if (defined('HHVM_VERSION') && version_compare(HHVM_VERSION, '3.4.0-dev', '<')) {
-	$jobs = call_user_func(function() use ($runner) {
+	$jobs = call_user_func(function () use ($runner) {
 		// Workaround for missing Closure::bindTo()
 		$findTests = new ReflectionMethod($runner, 'findTests');
 		$findTests->setAccessible(TRUE);
@@ -27,7 +27,7 @@ if (defined('HHVM_VERSION') && version_compare(HHVM_VERSION, '3.4.0-dev', '<')) 
 	});
 
 } else {
-	$jobs = Assert::with($runner, function() {
+	$jobs = Assert::with($runner, function () {
 		$this->findTests(__DIR__ . '/find-tests/*.phptx');
 		return $this->jobs;
 	});

@@ -25,7 +25,7 @@ class TestCase
 	public function run($method = NULL)
 	{
 		$r = new \ReflectionObject($this);
-		$methods = array_values(preg_grep(self::METHOD_PATTERN, array_map(function(\ReflectionMethod $rm) {
+		$methods = array_values(preg_grep(self::METHOD_PATTERN, array_map(function (\ReflectionMethod $rm) {
 			return $rm->getName();
 		}, $r->getMethods())));
 
@@ -103,7 +103,7 @@ class TestCase
 			try {
 				if ($info['throws']) {
 					$tmp = $this;
-					$e = Assert::error(function() use ($tmp, $method, $args) {
+					$e = Assert::error(function () use ($tmp, $method, $args) {
 						$tmp->runTest($method->getName(), $args);
 					}, $throws[0], $throws[1]);
 					if ($e instanceof AssertException) {

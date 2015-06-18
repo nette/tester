@@ -10,7 +10,7 @@ use Tester\Assert,
 require __DIR__ . '/../bootstrap.php';
 
 
-test(function() {
+test(function () {
 	$job = new Job($file = 'Job.test.phptx', createInterpreter(), $args = array('one', 'two'));
 	$job->run();
 

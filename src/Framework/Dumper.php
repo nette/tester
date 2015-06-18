@@ -30,7 +30,7 @@ class Dumper
 			foreach (array_merge(range("\x00", "\x1F"), range("\x7F", "\xFF")) as $ch) {
 				$table[$ch] = '\x' . str_pad(dechex(ord($ch)), 2, '0', STR_PAD_LEFT);
 			}
-			$table["\\"] = '\\\\';
+			$table['\\'] = '\\\\';
 			$table["\r"] = '\r';
 			$table["\n"] = '\n';
 			$table["\t"] = '\t';
@@ -255,7 +255,7 @@ class Dumper
 			if ((is_string($actual) && is_string($expected))) {
 				for ($i = 0; $i < strlen($actual) && isset($expected[$i]) && $actual[$i] === $expected[$i]; $i++);
 				$i = max(0, min($i, max(strlen($actual), strlen($expected)) - self::$maxLength + 3));
-				for (; $i && $i < count($actual) && $actual[$i-1] >= "\x80" && $actual[$i] >= "\x80" && $actual[$i] < "\xC0"; $i--);
+				for (; $i && $i < count($actual) && $actual[$i - 1] >= "\x80" && $actual[$i] >= "\x80" && $actual[$i] < "\xC0"; $i--);
 				if ($i) {
 					$expected = substr_replace($expected, '...', 0, $i);
 					$actual = substr_replace($actual, '...', 0, $i);
@@ -273,8 +273,8 @@ class Dumper
 				}
 			}
 			$message = strtr($message, array(
-				'%1' => self::color('yellow') . Dumper::toLine($actual) . self::color('white'),
-				'%2' => self::color('yellow') . Dumper::toLine($expected) . self::color('white'),
+				'%1' => self::color('yellow') . self::toLine($actual) . self::color('white'),
+				'%2' => self::color('yellow') . self::toLine($expected) . self::color('white'),
 			));
 		} else {
 			$message = ($e instanceof \ErrorException ? Helpers::errorTypeToString($e->getSeverity()) : get_class($e))
