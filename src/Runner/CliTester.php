@@ -7,9 +7,9 @@
 
 namespace Tester\Runner;
 
-use Tester\CodeCoverage,
-	Tester\Environment,
-	Tester\Helpers;
+use Tester\CodeCoverage;
+use Tester\Environment;
+use Tester\Helpers;
 
 
 /**
@@ -202,7 +202,7 @@ XX
 		}
 
 		if ($this->options['--setup']) {
-			call_user_func(function() use ($runner) {
+			call_user_func(function () use ($runner) {
 				require func_get_arg(0);
 			}, $this->options['--setup']);
 		}
@@ -259,7 +259,7 @@ XX
 				$prev = $state;
 				$runner->run();
 			}
-			echo "Watching " . implode(', ', $this->options['--watch']) . " " . str_repeat('.', ++$counter % 5) . "    \r";
+			echo 'Watching ' . implode(', ', $this->options['--watch']) . ' ' . str_repeat('.', ++$counter % 5) . "    \r";
 			sleep(2);
 		}
 	}

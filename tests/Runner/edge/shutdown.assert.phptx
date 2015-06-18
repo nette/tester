@@ -5,6 +5,6 @@ use Tester\Assert;
 require __DIR__ . '/../../bootstrap.php';
 
 
-register_shutdown_function(function() {
+register_shutdown_function(function () {
 	Assert::same('a', 'b');
 });

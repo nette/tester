@@ -1,7 +1,7 @@
 <?php
 
-use Tester\Assert,
-	Tester\CodeCoverage;
+use Tester\Assert;
+use Tester\CodeCoverage;
 
 require __DIR__ . '/../bootstrap.php';
 
@@ -11,6 +11,6 @@ if (!extension_loaded('xdebug')) {
 }
 
 CodeCoverage\Collector::start('php://memory');
-Assert::exception(function() {
+Assert::exception(function () {
 	CodeCoverage\Collector::start('php://memory');
 }, 'LogicException', 'Code coverage collector has been already started.');

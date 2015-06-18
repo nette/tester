@@ -7,9 +7,9 @@
 
 namespace Tester\Runner;
 
-use Tester,
-	Tester\Dumper,
-	Tester\Helpers;
+use Tester;
+use Tester\Dumper;
+use Tester\Helpers;
 
 
 /**

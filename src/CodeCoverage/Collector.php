@@ -32,7 +32,7 @@ class Collector
 
 		self::$file = fopen($file, 'a+');
 		xdebug_start_code_coverage(XDEBUG_CC_UNUSED | XDEBUG_CC_DEAD_CODE);
-		register_shutdown_function(function() {
+		register_shutdown_function(function () {
 			register_shutdown_function(array(__CLASS__, 'save'));
 		});
 	}

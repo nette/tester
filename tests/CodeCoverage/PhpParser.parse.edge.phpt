@@ -13,7 +13,7 @@ $parsed = $parser->parse(file_get_contents(__DIR__ . '/parse/edge.php'));
 Assert::equal(array(
 	'foo' => (object) array(
 		'start' => 3,
-		'end' => 6
+		'end' => 6,
 	),
 ), $parsed->functions);
 
@@ -21,7 +21,7 @@ Assert::equal(array(
 	'fun' => (object) array(
 		'start' => 10,
 		'end' => 14,
-		'visibility' => 'public'
+		'visibility' => 'public',
 	),
 ), $parsed->classes['C']->methods);
 
@@ -38,5 +38,5 @@ if (PHP_VERSION_ID >= 50500) {
 		),
 		'traits' => array(),
 		'interfaces' => array(),
-	), $parser->parse("<? class A {}  echo A::CLASS;  class B {}"));
+	), $parser->parse('<? class A {}  echo A::CLASS;  class B {}'));
 }

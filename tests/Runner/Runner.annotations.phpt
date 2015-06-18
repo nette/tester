@@ -4,8 +4,8 @@
  * @phpversion 5.4  Requires constant PHP_BINARY available since PHP 5.4.0
  */
 
-use Tester\Assert,
-	Tester\Runner\Runner;
+use Tester\Assert;
+use Tester\Runner\Runner;
 
 require __DIR__ . '/../bootstrap.php';
 require __DIR__ . '/../../src/Runner/OutputHandler.php';
@@ -39,8 +39,8 @@ $path = __DIR__ . DIRECTORY_SEPARATOR . 'annotations' . DIRECTORY_SEPARATOR;
 Assert::same([
 	['dataProvider.error.phptx', Runner::FAILED, "Missing data-provider file '{$path}missing.ini'."],
 	['exitCode.die.phptx', Runner::PASSED, NULL],
-	['exitCode.error1.phptx', Runner::FAILED, "Exited with error code 231 (expected 1)"],
-	['exitCode.error2.phptx', Runner::FAILED, "Exited with error code 231 (expected 0)"],
+	['exitCode.error1.phptx', Runner::FAILED, 'Exited with error code 231 (expected 1)'],
+	['exitCode.error2.phptx', Runner::FAILED, 'Exited with error code 231 (expected 0)'],
 	['exitCode.exception.phptx', Runner::PASSED, NULL],
 	['exitCode.exception.pure.phptx', Runner::PASSED, NULL],
 	['exitCode.fatalError.phptx', Runner::PASSED, NULL],

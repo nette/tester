@@ -195,7 +195,7 @@ class Runner
 	{
 		if (extension_loaded('pcntl')) {
 			$interrupted = & $this->interrupted;
-			pcntl_signal(SIGINT, function() use (& $interrupted) {
+			pcntl_signal(SIGINT, function () use (& $interrupted) {
 				pcntl_signal(SIGINT, SIG_DFL);
 				$interrupted = TRUE;
 			});

@@ -1,7 +1,7 @@
 <?php
 
-use Tester\Assert,
-	Tester\DataProvider;
+use Tester\Assert;
+use Tester\DataProvider;
 
 require __DIR__ . '/../bootstrap.php';
 

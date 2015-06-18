@@ -4,8 +4,8 @@
  * @phpversion 5.4  Requires constant PHP_BINARY available since PHP 5.4.0
  */
 
-use Tester\Assert,
-	Tester\Runner\Runner;
+use Tester\Assert;
+use Tester\Runner\Runner;
 
 require __DIR__ . '/../bootstrap.php';
 require __DIR__ . '/../../src/Runner/OutputHandler.php';

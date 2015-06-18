@@ -4,8 +4,8 @@
  * @phpversion 5.4  Requires constant PHP_BINARY available since PHP 5.4.0
  */
 
-use Tester\Assert,
-	Tester\Runner\Runner;
+use Tester\Assert;
+use Tester\Runner\Runner;
 
 require __DIR__ . '/../bootstrap.php';
 require __DIR__ . '/../../src/Runner/OutputHandler.php';
@@ -30,7 +30,7 @@ $interpreter = createInterpreter();
 
 
 // Normal stop on the end
-test(function() use ($interpreter) {
+test(function () use ($interpreter) {
 	$runner = new Runner($interpreter);
 	$runner->outputHandlers[] = $logger = new Logger;
 	$runner->paths = [
@@ -39,7 +39,7 @@ test(function() use ($interpreter) {
 		__DIR__ . '/stop-on-fail/pass.phptx',
 	];
 
-	Assert::notSame( 0, $runner->run() );
+	Assert::notSame(0, $runner->run());
 	Assert::same([
 		[Runner::FAILED, 'init-fail.phptx'],
 		[Runner::FAILED, 'runtime-fail.phptx'],
@@ -49,7 +49,7 @@ test(function() use ($interpreter) {
 
 
 // Stop in initial phase
-test(function() use ($interpreter) {
+test(function () use ($interpreter) {
 	$runner = new Runner($interpreter);
 	$runner->outputHandlers[] = $logger = new Logger;
 	$runner->stopOnFail = TRUE;
@@ -58,7 +58,7 @@ test(function() use ($interpreter) {
 		__DIR__ . '/stop-on-fail/pass.phptx',
 	];
 
-	Assert::notSame( 0, $runner->run() );
+	Assert::notSame(0, $runner->run());
 	Assert::same([
 		[Runner::FAILED, 'init-fail.phptx'],
 	], $logger->results);
@@ -66,7 +66,7 @@ test(function() use ($interpreter) {
 
 
 // Stop in run-time
-test(function() use ($interpreter) {
+test(function () use ($interpreter) {
 	$runner = new Runner($interpreter);
 	$runner->outputHandlers[] = $logger = new Logger;
 	$runner->stopOnFail = TRUE;
@@ -75,7 +75,7 @@ test(function() use ($interpreter) {
 		__DIR__ . '/stop-on-fail/pass.phptx',
 	];
 
-	Assert::notSame( 0, $runner->run() );
+	Assert::notSame(0, $runner->run());
 	Assert::same([
 		[Runner::FAILED, 'runtime-fail.phptx'],
 	], $logger->results);

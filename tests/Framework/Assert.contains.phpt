@@ -22,9 +22,9 @@ foreach ($contains as $case) {
 
 	Assert::contains($expected, $value);
 
-	Assert::exception(function() use ($expected, $value) {
+	Assert::exception(function () use ($expected, $value) {
 		Assert::notContains($expected, $value);
-	}, 'Tester\AssertException', "%a% should not contain %a%");
+	}, 'Tester\AssertException', '%a% should not contain %a%');
 }
 
 foreach ($notContains as $case) {
@@ -32,20 +32,20 @@ foreach ($notContains as $case) {
 
 	Assert::notContains($case[0], $case[1]);
 
-	Assert::exception(function() use ($expected, $value) {
+	Assert::exception(function () use ($expected, $value) {
 		Assert::contains($expected, $value);
-	}, 'Tester\AssertException', "%a% should contain %a%");
+	}, 'Tester\AssertException', '%a% should contain %a%');
 }
 
 
-Assert::exception(function() {
+Assert::exception(function () {
 	Assert::contains(1, 1);
 }, 'Tester\AssertException', '1 should be string or array');
 
-Assert::exception(function() {
+Assert::exception(function () {
 	Assert::notContains(1, 1);
 }, 'Tester\AssertException', '1 should be string or array');
 
-Assert::exception(function() {
+Assert::exception(function () {
 	Assert::notContains('', '1');
 }, 'Tester\AssertException', "'1' should not contain ''");

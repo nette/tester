@@ -1,28 +1,28 @@
 <?php
 
-use Tester\Assert,
-	Tester\Dumper;
+use Tester\Assert;
+use Tester\Dumper;
 
 require __DIR__ . '/../bootstrap.php';
 
 
 $arr = array(1, 2, 3);
 $arr[] = & $arr;
-Assert::match( 'array(
+Assert::match('array(
 	1,
 	2,
 	3,
 	array(1, 2, 3, /* Nesting level too deep or recursive dependency */),
-)', Dumper::toPhp($arr) );
+)', Dumper::toPhp($arr));
 
 
 $obj = (object) array('x' => 1, 'y' => 2);
 $obj->z = & $obj;
-Assert::match( "(object) array(
+Assert::match("(object) array(
 	'x' => 1,
 	'y' => 2,
 	'z' => /* stdClass dumped on line 1 */,
-)", Dumper::toPhp($obj) );
+)", Dumper::toPhp($obj));
 
 
 $var = array(
@@ -32,7 +32,7 @@ $var = array(
 	$empty,
 	$obj,
 );
-Assert::match( "array(
+Assert::match("array(
 	array(
 		1,
 		2,
@@ -47,4 +47,4 @@ Assert::match( "array(
 	),
 	(object) array(),
 	/* stdClass dumped on line 9 */,
-)", Dumper::toPhp($var) );
+)", Dumper::toPhp($var));

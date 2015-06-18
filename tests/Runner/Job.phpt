@@ -4,13 +4,13 @@
  * @phpversion 5.4  Requires constant PHP_BINARY available since PHP 5.4.0
  */
 
-use Tester\Assert,
-	Tester\Runner\Job;
+use Tester\Assert;
+use Tester\Runner\Job;
 
 require __DIR__ . '/../bootstrap.php';
 
 
-test(function() {
+test(function () {
 	$job = new Job($file = 'Job.test.phptx', createInterpreter(), $args = array('one', 'two'));
 	$job->run();
 

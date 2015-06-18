@@ -1,12 +1,12 @@
 <?php
 
-use Tester\Assert,
-	Tester\FileMock;
+use Tester\Assert;
+use Tester\FileMock;
 
 require __DIR__ . '/../bootstrap.php';
 
 
-test(function() {
+test(function () {
 	$f = fopen($name = FileMock::create('', 'txt'), 'w+');
 
 	Assert::match('%a%.txt', $name);
@@ -55,18 +55,18 @@ test(function() {
 });
 
 
-test(function() {
+test(function () {
 	$f = fopen($name = Tester\FileMock::create('A'), 'a');
 	fwrite($f, 'B');
 	Assert::same('AB', file_get_contents($name));
 });
 
 
-test(function() {
+test(function () {
 	Assert::same(123, require FileMock::create('<?php return 123;'));
 });
 
 
-test(function() {
+test(function () {
 	Assert::false(flock(fopen(\Tester\FileMock::create(''), 'x'), LOCK_EX));
 });

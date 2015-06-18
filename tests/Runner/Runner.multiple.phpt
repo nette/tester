@@ -4,8 +4,8 @@
  * @phpversion 5.4  Requires constant PHP_BINARY available since PHP 5.4.0
  */
 
-use Tester\Assert,
-	Tester\Helpers;
+use Tester\Assert;
+use Tester\Helpers;
 
 require __DIR__ . '/../bootstrap.php';
 require __DIR__ . '/../../src/Runner/TestHandler.php';
@@ -32,7 +32,7 @@ if (defined('HHVM_VERSION') && version_compare(HHVM_VERSION, '3.4.0-dev', '<')) 
 	});
 
 } else {
-	$tests = Assert::with($runner, function() {
+	$tests = Assert::with($runner, function () {
 		$this->results = [self::PASSED => 0, self::SKIPPED => 0, self::FAILED => 0];
 		$this->findTests(__DIR__ . '/multiple/*.phptx');
 		return $this->jobs;

@@ -7,9 +7,9 @@
 
 namespace Tester\CodeCoverage\Generators;
 
-use DOMDocument,
-	DOMElement,
-	Tester\CodeCoverage\PhpParser;
+use DOMDocument;
+use DOMElement;
+use Tester\CodeCoverage\PhpParser;
 
 
 class CloverXMLGenerator extends AbstractGenerator
@@ -35,7 +35,7 @@ class CloverXMLGenerator extends AbstractGenerator
 	public function __construct($file, $source = NULL)
 	{
 		if (!extension_loaded('dom')) {
-			throw new \LogicException("CloverXML generator requires DOM extension to be loaded.");
+			throw new \LogicException('CloverXML generator requires DOM extension to be loaded.');
 		}
 		parent::__construct($file, $source);
 	}
@@ -141,7 +141,7 @@ class CloverXMLGenerator extends AbstractGenerator
 
 
 	/**
-	 * @return  \stdClass
+	 * @return \stdClass
 	 */
 	private function calculateClassMetrics(\stdClass $info, array $coverageData = NULL)
 	{

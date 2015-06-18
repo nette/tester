@@ -61,12 +61,12 @@ foreach ($matches as $case) {
 
 foreach ($notMatches as $case) {
 	list($expected, $value) = $case;
-	Assert::exception(function() use ($expected, $value) {
+	Assert::exception(function () use ($expected, $value) {
 		Assert::match($expected, $value);
-	}, 'Tester\AssertException', "%A% should match %A%");
+	}, 'Tester\AssertException', '%A% should match %A%');
 }
 
-Assert::exception(function() {
+Assert::exception(function () {
 	Assert::match(NULL, '');
 }, 'Exception', 'Pattern must be a string.');
 

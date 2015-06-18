@@ -17,26 +17,26 @@ class Assert
 	const EPSILON = 1e-10;
 
 	/** used by match(); in values, each $ followed by number is backreference */
-	static public $patterns = array(
+	public static $patterns = array(
 		'%a%' => '[^\r\n]+',    // one or more of anything except the end of line characters
-		'%a\?%'=> '[^\r\n]*',   // zero or more of anything except the end of line characters
+		'%a\?%' => '[^\r\n]*',  // zero or more of anything except the end of line characters
 		'%A%' => '.+',          // one or more of anything including the end of line characters
-		'%A\?%'=> '.*',         // zero or more of anything including the end of line characters
+		'%A\?%' => '.*',        // zero or more of anything including the end of line characters
 		'%s%' => '[\t ]+',      // one or more white space characters except the end of line characters
-		'%s\?%'=> '[\t ]*',     // zero or more white space characters except the end of line characters
+		'%s\?%' => '[\t ]*',    // zero or more white space characters except the end of line characters
 		'%S%' => '\S+',         // one or more of characters except the white space
-		'%S\?%'=> '\S*',        // zero or more of characters except the white space
+		'%S\?%' => '\S*',       // zero or more of characters except the white space
 		'%c%' => '[^\r\n]',     // a single character of any sort (except the end of line)
 		'%d%' => '[0-9]+',      // one or more digits
-		'%d\?%'=> '[0-9]*',     // zero or more digits
+		'%d\?%' => '[0-9]*',    // zero or more digits
 		'%i%' => '[+-]?[0-9]+', // signed integer value
 		'%f%' => '[+-]?\.?\d+\.?\d*(?:[Ee][+-]?\d+)?', // floating point number
 		'%h%' => '[0-9a-fA-F]+',// one or more HEX digits
-		'%ds%'=> '[\\\\/]', // directory separator
-		'%(\[.*\].*)%'=> '$1',  // range
+		'%ds%' => '[\\\\/]',    // directory separator
+		'%(\[.*\].*)%' => '$1', // range
 	);
 
-	/** @var callable  function(AssertException $exception) */
+	/** @var callable  function (AssertException $exception) */
 	public static $onFailure;
 
 	/** @var int  the count of assertions */
@@ -273,7 +273,7 @@ class Assert
 	 * @param  callable
 	 * @param  string class
 	 * @param  string message
-	 * @param  integer code
+	 * @param  int code
 	 * @return \Exception
 	 */
 	public static function exception($function, $class, $message = NULL, $code = NULL)
@@ -336,7 +336,7 @@ class Assert
 			}
 		}
 
-		set_error_handler(function($severity, $message, $file, $line) use (& $expected) {
+		set_error_handler(function ($severity, $message, $file, $line) use (& $expected) {
 			if (($severity & error_reporting()) !== $severity) {
 				return;
 			}
@@ -459,7 +459,7 @@ class Assert
 				'[.\\\\+*?[^$(){|\x00\#]' => '\$0', // preg quoting
 				'[\t ]*\r?\n' => "[\\t ]*\n", // right trim
 			);
-			$pattern = '#^' . preg_replace_callback('#' . implode('|', array_keys($patterns)) . '#U' . $utf8, function($m) use ($patterns) {
+			$pattern = '#^' . preg_replace_callback('#' . implode('|', array_keys($patterns)) . '#U' . $utf8, function ($m) use ($patterns) {
 				foreach ($patterns as $re => $replacement) {
 					$s = preg_replace("#^$re\\z#", str_replace('\\', '\\\\', $replacement), $m[0], 1, $count);
 					if ($count) {
