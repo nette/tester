@@ -35,6 +35,8 @@ test(function () { // attribute selectors
 	Assert::same("//div[contains(@foo, 'bar')]", DomQuery::css2xpath('div[foo*="bar"]'));
 	Assert::same("//div[starts-with(@foo, 'bar')]", DomQuery::css2xpath('div[foo^="bar"]'));
 	Assert::same("//div[substring(@foo, string-length(@foo)-0)='bar']", DomQuery::css2xpath('div[foo$="bar"]'));
+	Assert::same("//div[@foo='bar[]']", DomQuery::css2xpath("div[foo='bar[]']"));
+	Assert::same("//div[@foo='bar[]']", DomQuery::css2xpath('div[foo="bar[]"]'));
 });
 
 

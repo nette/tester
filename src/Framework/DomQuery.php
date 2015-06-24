@@ -81,7 +81,16 @@ class DomQuery extends \SimpleXMLElement
 		$xpath = '//*';
 		preg_match_all('/
 			([#.:]?)([a-z][a-z0-9_-]*)|               # id, class, pseudoclass (1,2)
-			\[([a-z0-9_-]+)(?:([~*^$]?)=([^\]]+))?\]| # [attr=val] (3,4,5)
+			\[
+				([a-z0-9_-]+)
+				(?:
+					([~*^$]?)=(
+						"[^"]*"|
+						\'[^\']*\'|
+						[^\]]+
+					)
+				)?
+			\]|                                       # [attr=val] (3,4,5)
 			\s*([>,+~])\s*|                           # > , + ~ (6)
 			(\s+)|                                    # whitespace (7)
 			(\*)                                      # * (8)
