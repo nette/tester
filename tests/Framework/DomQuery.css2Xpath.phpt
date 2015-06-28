@@ -52,6 +52,10 @@ test(function () { // descendant combinator
 		"//div[@id='foo']//*[contains(concat(' ', normalize-space(@class), ' '), ' bar ')]",
 		DomQuery::css2xpath('div#foo .bar')
 	);
+	Assert::same(
+		'//div//*//p',
+		DomQuery::css2xpath('div * p')
+	);
 });
 
 
