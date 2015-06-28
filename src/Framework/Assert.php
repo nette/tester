@@ -282,6 +282,7 @@ class Assert
 		$e = NULL;
 		try {
 			call_user_func($function);
+		} catch (\Throwable $e) {
 		} catch (\Exception $e) {
 		}
 		if ($e === NULL) {

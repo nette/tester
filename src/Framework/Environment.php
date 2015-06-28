@@ -110,8 +110,11 @@ class Environment
 	}
 
 
-	/** @internal */
-	public static function handleException(\Exception $e)
+	/**
+	 * @param  \Exception|\Throwable
+	 * @internal
+	 */
+	public static function handleException($e)
 	{
 		self::$checkAssertions = FALSE;
 		echo self::$debugMode ? Dumper::dumpException($e) : "\nError: {$e->getMessage()}\n";

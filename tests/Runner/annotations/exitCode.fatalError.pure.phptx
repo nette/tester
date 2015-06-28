@@ -8,4 +8,5 @@ require __DIR__ . '/../../bootstrap.php';
 
 
 restore_error_handler();
-array() * array();
+$a = array();
+$a * $a;

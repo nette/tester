@@ -75,7 +75,7 @@ class Dumper
 			}
 			return "array($out)";
 
-		} elseif ($var instanceof \Exception) {
+		} elseif ($var instanceof \Exception || $var instanceof \Throwable) {
 			return 'Exception ' . get_class($var) . ': ' . ($var->getCode() ? '#' . $var->getCode() . ' ' : '') . $var->getMessage();
 
 		} elseif (is_object($var)) {
@@ -224,8 +224,11 @@ class Dumper
 	}
 
 
-	/** @internal */
-	public static function dumpException(\Exception $e)
+	/**
+	 * @param  \Exception|\Throwable
+	 * @internal
+	 */
+	public static function dumpException($e)
 	{
 		$trace = $e->getTrace();
 		array_splice($trace, 0, $e instanceof \ErrorException ? 1 : 0, array(array('file' => $e->getFile(), 'line' => $e->getLine())));
