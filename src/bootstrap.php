@@ -8,6 +8,7 @@ require __DIR__ . '/Framework/Helpers.php';
 require __DIR__ . '/Framework/Environment.php';
 require __DIR__ . '/Framework/DataProvider.php';
 require __DIR__ . '/Framework/Assert.php';
+require __DIR__ . '/Framework/AssertException.php';
 require __DIR__ . '/Framework/Dumper.php';
 require __DIR__ . '/Framework/FileMock.php';
 require __DIR__ . '/Framework/TestCase.php';
