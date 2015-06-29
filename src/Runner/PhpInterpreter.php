@@ -8,9 +8,6 @@
 namespace Tester\Runner;
 
 
-/**
- * @author  Michael Moravec
- */
 interface PhpInterpreter
 {
 

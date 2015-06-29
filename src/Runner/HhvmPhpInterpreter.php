@@ -12,8 +12,6 @@ use Tester\Helpers;
 
 /**
  * HHVM command-line executable.
- *
- * @author  Michael Moravec
  */
 class HhvmPhpInterpreter implements PhpInterpreter
 {
