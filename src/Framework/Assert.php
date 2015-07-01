@@ -407,7 +407,7 @@ class Assert
 	public static function matchFile($file, $actual)
 	{
 		self::$counter++;
-		$pattern = @file_get_contents($file);
+		$pattern = @file_get_contents($file); // @ is escalated to exception
 		if ($pattern === FALSE) {
 			throw new \Exception("Unable to read file '$file'.");
 

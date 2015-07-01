@@ -20,7 +20,7 @@ class DataProvider
 			throw new \Exception("Missing data-provider file '$file'.");
 		}
 
-		$data = @parse_ini_file($file, TRUE);
+		$data = @parse_ini_file($file, TRUE); // @ is escalated to exception
 		if ($data === FALSE) {
 			throw new \Exception("Cannot parse data-provider file '$file'.");
 		}

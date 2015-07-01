@@ -153,7 +153,7 @@ XX
 		}
 
 		// Is the executable Zend PHP or HHVM?
-		$proc = @proc_open(
+		$proc = @proc_open( // @ is escalated to exception
 			$this->options['-p'] . ' --version',
 			array(array('pipe', 'r'), array('pipe', 'w'), array('pipe', 'w')),
 			$pipes,

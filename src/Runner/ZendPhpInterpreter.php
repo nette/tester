@@ -32,7 +32,7 @@ class ZendPhpInterpreter implements PhpInterpreter
 	public function __construct($path, $args = NULL)
 	{
 		$this->path = \Tester\Helpers::escapeArg($path);
-		$proc = @proc_open(
+		$proc = proc_open(
 			"$this->path -n $args -v", // -v must be the last
 			array(array('pipe', 'r'), array('pipe', 'w'), array('pipe', 'w')),
 			$pipes,

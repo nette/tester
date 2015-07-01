@@ -31,7 +31,7 @@ class HhvmPhpInterpreter implements PhpInterpreter
 	public function __construct($path, $args = NULL)
 	{
 		$this->path = Helpers::escapeArg($path);
-		$proc = @proc_open(
+		$proc = proc_open(
 			"$this->path --php $args -r " . Helpers::escapeArg('echo HHVM_VERSION . "|" . PHP_VERSION;'),
 			array(array('pipe', 'r'), array('pipe', 'w'), array('pipe', 'w')),
 			$pipes,

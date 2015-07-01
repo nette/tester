@@ -38,7 +38,7 @@ abstract class AbstractGenerator
 			throw new \Exception("File '$file' is missing.");
 		}
 
-		$this->data = @unserialize(file_get_contents($file));
+		$this->data = @unserialize(file_get_contents($file)); // @ is escalated to exception
 		if (!is_array($this->data)) {
 			throw new \Exception("Content of file '$file' is invalid.");
 		}
@@ -65,7 +65,7 @@ abstract class AbstractGenerator
 
 	public function render($file = NULL)
 	{
-		$handle = $file ? @fopen($file, 'w') : STDOUT;
+		$handle = $file ? @fopen($file, 'w') : STDOUT; // @ is escalated to exception
 		if (!$handle) {
 			throw new \Exception("Unable to write to file '$file'.");
 		}

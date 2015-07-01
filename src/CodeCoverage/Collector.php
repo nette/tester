@@ -47,7 +47,7 @@ class Collector
 	{
 		flock(self::$file, LOCK_EX);
 		fseek(self::$file, 0);
-		$coverage = @unserialize(stream_get_contents(self::$file));
+		$coverage = @unserialize(stream_get_contents(self::$file)); // @ file may be empty
 
 		foreach (xdebug_get_code_coverage() as $filename => $lines) {
 			if (!file_exists($filename)) {
