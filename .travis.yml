@@ -34,4 +34,10 @@ after_failure:
     - for i in $(find tests -name \*.actual); do echo "--- $i"; cat $i; echo; echo; done
 
 before_script:
-    - composer create-project nette/code-checker code-checker ~2.2 --no-interaction --prefer-source
+    - travis_retry composer create-project nette/code-checker code-checker ~2.5 --no-interaction
+  
+sudo: false
+
+cache:
+    directories:
+        - $HOME/.composer/cache
