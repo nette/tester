@@ -31,5 +31,3 @@ $values = array(
 foreach ($values as $title => $value) {
 	echo "\033[1;32m$title\033[0m:\n$value\n\n";
 }
-
-echo "\n\n";

@@ -49,8 +49,10 @@ class CliTester
 
 		if ($this->options['--info']) {
 			$job = new Job(__DIR__ . '/info.php', $this->interpreter);
-			$job->run();
+			$job->run($job::RUN_COLLECT_ERRORS);
 			echo $job->getOutput();
+			echo $job->getErrorOutput() ? \Tester\Dumper::color('red', 'Errors:') . "\n" . $job->getErrorOutput() : '';
+			echo "\n\n";
 			return;
 		}
 
