@@ -22,4 +22,15 @@ $coverageData = Tester\FileMock::create(serialize(array(
 $generator = new CodeCoverage\Generators\CloverXMLGenerator($coverageData, $coveredDir);
 $generator->render($output = Tester\FileMock::create('', 'xml'));
 
-Assert::matchFile(__DIR__ . '/CloverXMLGenerator.expected.xml', file_get_contents($output));
+$dom = new DOMDocument;
+$dom->load($output);
+$files = $sorted = iterator_to_array($dom->getElementsByTagName('file'), FALSE); // TRUE crashes on Travis & PHP 5.3.3
+usort($sorted, function($a, $b) {
+	return strcmp($a->getAttribute('name'), $b->getAttribute('name'));
+});
+foreach ($files as $file) {
+	$file->parentNode->replaceChild(array_shift($sorted)->cloneNode(TRUE), $file);
+}
+$xml = $dom->saveXML();
+
+Assert::matchFile(__DIR__ . '/CloverXMLGenerator.expected.xml', $xml);
