@@ -18,6 +18,7 @@
 		margin: -4.7em auto 0;
 		background: white;
 		color: #333;
+		overflow-y: scroll;
 	}
 
 	h1 {
@@ -27,27 +28,47 @@
 		text-shadow: 1px 1px 0 white;
 	}
 
-	div.code {
-		font: 14px/1.2 Consolas, monospace;
-		background: #FDF5CE;
-		padding: .4em .7em;
-		border: 1px dotted silver;
-		overflow-x: auto;
+	.file {
 		display: none;
+		font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace;
+		font-size: 12px;
+		color: #333;
+		overflow: visible;
+		word-wrap: normal;
+		border-collapse: collapse;
 	}
 
-	span.line {
-		color: #9F9C7F;
-		font-weight: normal;
-		font-style: normal;
+	.line-num {
+		width: 1%;
+		min-width: 50px;
+		white-space: nowrap;
+		font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace;
+		font-size: 12px;
+		line-height: 18px;
+		color: rgba(0, 0, 0, 0.3);
+		vertical-align: top;
+		text-align: right;
+		border: solid #eee;
+
+		border-width: 0 1px 0 0;
+		-webkit-user-select: none;
+		-moz-user-select: none;
+		-ms-user-select: none;
+		user-select: none;
+		padding-left: 10px;
+		padding-right: 10px
+	}
+
+	.code {
+		padding-left: 10px;
 	}
 
 	.t {
-		background: #99f999;
+		background: #E6FFE5;
 	}
 
 	.u {
-		background: #f9ac9e;
+		background: #FFECEC;
 	}
 
 	td {
@@ -93,7 +114,7 @@
 	<h1><?php echo $title ? htmlSpecialChars("$title - ") : ''; ?>Code coverage <?php echo $totalSum ? round($coveredSum * 100 / $totalSum) : 0 ?>&nbsp;%</h1>
 
 	<?php foreach ($files as $id => $info): ?>
-	<div>
+	<table>
 		<table>
 		<tr<?php echo $info->class ? " class='$info->class'" : '' ?>>
 			<td class="number"><small><?php echo $info->coverage ?> %</small></td>
@@ -102,7 +123,7 @@
 		</tr>
 		</table>
 
-		<div class="code" id="fragment<?php echo $id ?>">
+		<table class="file" id="fragment<?php echo $id ?>">
 		<?php
 			$source = explode('<br />', highlight_file($info->file, TRUE));
 
@@ -110,8 +131,7 @@
 			$numWidth = strlen((string) key($source));
 
 			unset($prevColor);
-			$tags = '';
-			foreach ($source as $n => $line) {
+			foreach ($source as $n => $line):
 				if (isset($info->lines[$n + 1]) && isset($classes[$info->lines[$n + 1]])) {
 					$color = $classes[$info->lines[$n + 1]];
 				} else {
@@ -120,29 +140,14 @@
 				if (!isset($prevColor)) {
 					$prevColor = $color;
 				}
-				$line = sprintf("<span class='line'>%{$numWidth}s:    </span>", $n + 1) . $line;
-				if ($prevColor !== $color || $n === count($source) - 1) {
-					echo '<div' . ($prevColor ? " class='$prevColor'" : '') . '>', str_replace(' />', '>', $tags);
-					$openTags = array();
-					preg_match_all('#<([^>]+)#', $tags, $matches);
-					foreach ($matches[1] as $m) {
-						if ($m[0] === '/') {
-							array_pop($openTags);
-						} elseif (substr($m, -1) !== '/') {
-							$openTags[] = $m;
-						}
-					}
-					foreach (array_reverse($openTags) as $tag) {
-						echo '</' . preg_replace('# .*#', '', $tag) . '>';
-					}
-					echo "</div>\n";
-					$tags = ($openTags ? '<' . implode('><', $openTags) . '>' : '');
-					$prevColor = $color;
-				}
-				$tags .= "$line<br />\n";
-			}
-		?></div>
-	</div>
+				?>
+				<tr<?php echo $color ? " class=\"$color\"" : '' ?>>
+					<td class="line-num"><?php echo $n + 1 ?></td>
+					<td class="code"><?php echo $line ?></td>
+				</tr>
+			<?php endforeach ?>
+		</table>
+	</table>
 	<?php endforeach ?>
 
 	<footer>
