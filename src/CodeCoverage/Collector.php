@@ -7,14 +7,21 @@
 
 namespace Tester\CodeCoverage;
 
+use Tester\Environment;
+use Tester\Helpers;
+
 
 /**
  * Code coverage collector.
  */
 class Collector
 {
+	const COVER_NOTHING = 1;
+	const COVER_ALL = 2;
+
+
 	/** @var resource */
-	private static $file;
+	protected static $file;
 
 
 	/**
@@ -38,6 +45,72 @@ class Collector
 	}
 
 
+	protected static function getCoverAnnotations()
+	{
+		global $argv;
+		$testFile = $argv[0];
+		return Helpers::parseDocComment(file_get_contents($testFile));
+	}
+
+
+	/**
+	 * @return int|array[] (filename => \Reflector[])
+	 * @throws \ReflectionException
+	 */
+	protected static function getCoverFilters()
+	{
+		$annotations = static::getCoverAnnotations();
+		if (isset($annotations['coversNothing'])) {
+			if (isset($annotations['covers'])) {
+				throw new \Exception('Using both @covers and @coversNothing is not supported');
+			}
+
+			return self::COVER_NOTHING;
+		}
+
+		if (!isset($annotations['covers'])) {
+			// TODO warn user to use covers
+			return self::COVER_ALL;
+		}
+
+		$filters = [];
+		foreach ((array) $annotations['covers'] as $name) {
+			$ref = NULL;
+			try {
+				if (strpos($name, '::') !== FALSE) {
+					$ref = new \ReflectionMethod(rtrim($name, '()'));
+
+				} else {
+					$ref = new \ReflectionClass($name);
+				}
+
+			} catch (\ReflectionException $e) {
+				throw new \Exception("Failed to find '$name' when generating coverage", NULL, $e);
+			}
+
+			$filters[$ref->getFileName()][] = $ref;
+		}
+
+		return $filters;
+	}
+
+
+	/**
+	 * @param \ReflectionClass[]|\ReflectionMethod[] $refs
+	 * @param int                                    $line
+	 * @return bool
+	 */
+	private static function isCovered(array $refs, $line)
+	{
+		foreach ($refs as $ref) {
+			if ($line >= $ref->getStartLine() && $line <= $ref->getEndLine()) {
+				return TRUE;
+			}
+		}
+		return FALSE;
+	}
+
+
 	/**
 	 * Saves information about code coverage. Do not call directly.
 	 * @return void
@@ -45,6 +118,8 @@ class Collector
 	 */
 	public static function save()
 	{
+		$filters = static::getCoverFilters();
+
 		flock(self::$file, LOCK_EX);
 		fseek(self::$file, 0);
 		$coverage = @unserialize(stream_get_contents(self::$file)); // @ file may be empty
@@ -53,7 +128,13 @@ class Collector
 			if (!file_exists($filename)) {
 				continue;
 			}
+
+			$refs = isset($filters[$filename]) ? $filters[$filename] : [];
 			foreach ($lines as $num => $val) {
+				if ($filters === self::COVER_NOTHING || ($filters !== self::COVER_ALL && !static::isCovered($refs, $num))) {
+					$val = -1;
+				}
+
 				if (empty($coverage[$filename][$num]) || $val > 0) {
 					$coverage[$filename][$num] = $val; // -1 => untested; -2 => dead code
 				}
