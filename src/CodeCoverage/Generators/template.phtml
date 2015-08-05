@@ -132,7 +132,7 @@
 	<h1><?php echo $title ? htmlSpecialChars("$title - ") : ''; ?>Code coverage <?php echo $totalSum ? round($coveredSum * 100 / $totalSum) : 0 ?>&nbsp;%</h1>
 
 	<?php foreach ($files as $id => $info): ?>
-	<table>
+	<div>
 		<table>
 		<tr<?php echo $info->class ? " class='$info->class'" : '' ?>>
 			<td class="number"><small><?php echo $info->coverage ?> %</small></td>
@@ -169,8 +169,8 @@
 				<?php highlight_file($info->file) ?>
 			</div>
 		</div>
-		<div class="clear" />
-	</table>
+		<div class="clear"></div>
+	</div>
 	<?php endforeach ?>
 
 	<footer>
