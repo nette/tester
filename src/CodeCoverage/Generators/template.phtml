@@ -19,6 +19,7 @@
 		background: white;
 		color: #333;
 		overflow-y: scroll;
+		overflow-x: hidden;
 	}
 
 	h1 {
@@ -33,14 +34,15 @@
 		font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace;
 		font-size: 12px;
 		color: #333;
-		overflow: visible;
 		word-wrap: normal;
-		border-collapse: collapse;
+		width: 1000px;
+		overflow: hidden;
 	}
 
-	.line-num {
-		width: 1%;
-		min-width: 50px;
+	.lines {
+		float: left;
+
+		width: 50px;
 		white-space: nowrap;
 		font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace;
 		font-size: 12px;
@@ -59,8 +61,24 @@
 		padding-right: 10px
 	}
 
-	.code {
+	.source {
+		float: left;
 		padding-left: 10px;
+		width: 90%;
+		width: calc(100% - 83px);
+		white-space: nowrap;
+	}
+
+	.clear {
+		clear: both;
+	}
+
+	.color {
+		position: absolute;
+		display: block;
+		height: 18px;
+		width: 1000px;
+		z-index: -1;
 	}
 
 	.t {
@@ -123,30 +141,35 @@
 		</tr>
 		</table>
 
-		<table class="file" id="fragment<?php echo $id ?>">
-		<?php
-			$source = explode('<br />', highlight_file($info->file, TRUE));
+		<div class="file" id="fragment<?php echo $id ?>">
+			<div class="lines">
+				<?php
+					$keys = array_keys($info->lines);
+					$lines = array_pop($keys);
 
-			end($source);
-			$numWidth = strlen((string) key($source));
+					$prevColor = NULL;
+					for ($n = 1; $n < $lines; ++$n) {
+						if (isset($info->lines[$n]) && isset($classes[$info->lines[$n]])) {
+							$color = $classes[$info->lines[$n]];
+						} else {
+							$color = '';  // not executable
+						}
+						if (!$prevColor) {
+							$prevColor = $color;
+						}
 
-			unset($prevColor);
-			foreach ($source as $n => $line):
-				if (isset($info->lines[$n + 1]) && isset($classes[$info->lines[$n + 1]])) {
-					$color = $classes[$info->lines[$n + 1]];
-				} else {
-					$color = '';  // not executable
-				}
-				if (!isset($prevColor)) {
-					$prevColor = $color;
-				}
+						if ($color) {
+							echo "<div class=\"color $color\"></div>";
+						}
+						echo "$n<br />";
+					}
 				?>
-				<tr<?php echo $color ? " class=\"$color\"" : '' ?>>
-					<td class="line-num"><?php echo $n + 1 ?></td>
-					<td class="code"><?php echo $line ?></td>
-				</tr>
-			<?php endforeach ?>
-		</table>
+			</div>
+			<div class="source">
+				<?php highlight_file($info->file) ?>
+			</div>
+		</div>
+		<div class="clear" />
 	</table>
 	<?php endforeach ?>
 
