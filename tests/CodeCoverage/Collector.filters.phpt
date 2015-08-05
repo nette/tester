@@ -48,7 +48,7 @@ function getCoverage(array $annotations, $tempFile) {
 	MockCollector::save();
 	$coverage = unserialize(file_get_contents($tempFile));
 	if (!$coverage) {
-		$coverage = [];
+		$coverage = array();
 	}
 
 	// return only coverage of CoveredClass to make tests more readable
@@ -67,32 +67,32 @@ $tempFile = tempnam(sys_get_temp_dir(), 'nette-tester-coverage-');
 $a = 16;
 $b = 18;
 
-assertCoverage([$a => -1, $b => -1], [
+assertCoverage(array($a => -1, $b => -1), array(
 	'coversNothing' => TRUE
-], $tempFile);
+), $tempFile);
 
-assertCoverage([$a => 1, $b => -1], [
+assertCoverage(array($a => 1, $b => -1), array(
 	'covers' => 'CoveredClass::a'
-], $tempFile);
+), $tempFile);
 
-assertCoverage([$a => 1, $b => -1], [
+assertCoverage(array($a => 1, $b => -1), array(
 	'covers' => 'CoveredClass::a()'
-], $tempFile);
+), $tempFile);
 
-assertCoverage([$a => 1, $b => 1], [
-	'covers' => ['CoveredClass::a', 'CoveredClass::b']
-], $tempFile);
+assertCoverage(array($a => 1, $b => 1), array(
+	'covers' => array('CoveredClass::a', 'CoveredClass::b')
+), $tempFile);
 
-assertCoverage([$a => 1, $b => 1], [
-	'covers' => ['CoveredClass']
-], $tempFile);
+assertCoverage(array($a => 1, $b => 1), array(
+	'covers' => array('CoveredClass')
+), $tempFile);
 
 Assert::throws(function() {
-	MockCollector::$annotations = ['covers' => 'BogusClassName'];
+	MockCollector::$annotations = array('covers' => 'BogusClassName');
 	MockCollector::save();
 }, 'Exception', "~Failed to find 'BogusClassName'~");
 
 Assert::throws(function () {
-	MockCollector::$annotations = ['covers' => 'BogusClassName', 'coversNothing' => TRUE];
+	MockCollector::$annotations = array('covers' => 'BogusClassName', 'coversNothing' => TRUE);
 	MockCollector::save();
 }, 'Exception', "~both @covers and @coversNothing~");

@@ -73,7 +73,7 @@ class Collector
 			return self::COVER_ALL;
 		}
 
-		$filters = [];
+		$filters = array();
 		foreach ((array) $annotations['covers'] as $name) {
 			$ref = NULL;
 			try {
@@ -129,7 +129,7 @@ class Collector
 				continue;
 			}
 
-			$refs = isset($filters[$filename]) ? $filters[$filename] : [];
+			$refs = isset($filters[$filename]) ? $filters[$filename] : array();
 			foreach ($lines as $num => $val) {
 				if ($filters === self::COVER_NOTHING || ($filters !== self::COVER_ALL && !static::isCovered($refs, $num))) {
 					$val = -1;
