@@ -43,3 +43,7 @@ foreach ($cases as $case) {
 $arr = array();
 $arr[] = & $arr;
 Assert::type('list', $arr);
+
+Assert::exception(function () {
+	Assert::type('int', 'string', 'Custom description');
+}, 'Tester\AssertException', 'Custom description: string should be int');

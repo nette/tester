@@ -53,3 +53,11 @@ Assert::exception(function () {
 	$rec[] = & $rec;
 	Assert::same($rec, array());
 }, 'Tester\AssertException');
+
+Assert::exception(function () {
+	Assert::same(true, false, 'Custom description');
+}, 'Tester\AssertException', 'Custom description: %a% should be %a%');
+
+Assert::exception(function () {
+	Assert::notSame(true, true, 'Custom description');
+}, 'Tester\AssertException', 'Custom description: %a% should not be %a%');

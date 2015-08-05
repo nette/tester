@@ -23,3 +23,11 @@ foreach ($notTruthy as $value) {
 		Assert::truthy($value);
 	}, 'Tester\AssertException', '%a% should be truthy');
 }
+
+Assert::exception(function () {
+	Assert::truthy(false, 'Custom description');
+}, 'Tester\AssertException', 'Custom description: %a% should be truthy');
+
+Assert::exception(function () {
+	Assert::falsey(true, 'Custom description');
+}, 'Tester\AssertException', 'Custom description: %a% should be falsey');

@@ -82,3 +82,11 @@ Assert::exception(function () {
 	$rec[] = & $rec;
 	Assert::equal($rec, $rec);
 }, 'Exception', 'Nesting level too deep or recursive dependency.');
+
+Assert::exception(function () {
+	Assert::equal(true, false, 'Custom description');
+}, 'Tester\AssertException', 'Custom description: %a% should be equal to %a%');
+
+Assert::exception(function () {
+	Assert::notEqual(true, true, 'Custom description');
+}, 'Tester\AssertException', 'Custom description: %a% should not be equal to %a%');
