@@ -11,13 +11,18 @@ class TestCaseTest extends Tester\TestCase
 	{
 		Assert::true(FALSE);
 	}
+
+	public function testPass()
+	{
+		Assert::true(TRUE);
+	}
 }
 
 class TestCaseTearDownException extends TestCaseTest
 {
 	public function tearDown()
 	{
-		throw new RuntimeException;
+		throw new RuntimeException("Error in tearDown");
 	}
 }
 
@@ -33,6 +38,16 @@ Assert::exception(function () use ($test) {
 	$test->tearDown();
 }, 'RuntimeException');
 
+
 Assert::exception(function () use ($test) {
 	$test->run('testAssertion');
-}, 'Tester\AssertException', 'FALSE should be TRUE in testAssertion()');
+},
+'Tester\TestCaseException',
+"tearDown() phase failed in testAssertion()");
+
+
+Assert::exception(function () use ($test) {
+	$test->run('testPass');
+},
+'Tester\TestCaseException',
+"tearDown() phase failed in testPass()");

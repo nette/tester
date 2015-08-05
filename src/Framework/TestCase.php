@@ -103,10 +103,28 @@ class TestCase
 			try {
 				if ($info['throws']) {
 					$tmp = $this;
-					$e = Assert::error(function () use ($tmp, $method, $args) {
-						$tmp->runTest($method->getName(), $args);
-					}, $throws[0], $throws[1]);
-					if ($e instanceof AssertException) {
+					$e = null;
+					try {
+						$e = Assert::error(function () use ($tmp, $method, $args) {
+							$tmp->runTest($method->getName(), $args);
+						}, $throws[0], $throws[1]);
+						if($e) throw $e;
+					} catch (TestCaseException $e) {
+						if ($e->getPrimaryException() instanceof AssertException) {
+							throw $e->getPrimaryException();
+						}
+						if (isset($throws[0]) && is_string($throws[0]) && preg_match('#^E_[A-Z_]+\z#', $throws[0])) {
+							throw $e;
+						}
+						Assert::error(function () use ($e) {
+							if ($e->getPrimaryException()) { throw $e->getPrimaryException(); };
+						}, $throws[0], $throws[1]);
+						throw $e;
+					} catch (AssertException $e) {
+						throw $e;
+					} catch (\Exception $e) {
+					}
+					if ($e instanceof AssertException || $e instanceof TestCaseException) {
 						throw $e;
 					}
 				} else {
@@ -114,6 +132,8 @@ class TestCase
 				}
 			} catch (AssertException $e) {
 				throw $e->setMessage("$e->origMessage in {$method->getName()}" . (substr(Dumper::toLine($args), 5)));
+			} catch (TestCaseException $e) {
+				throw $e->appendMessage(" in {$method->getName()}()");
 			}
 		}
 	}
@@ -125,7 +145,11 @@ class TestCase
 	 */
 	public function runTest($name, array $args = array())
 	{
-		$this->setUp();
+		try {
+			$this->setUp();
+		} catch (\Exception $setUpEx) {
+			throw new TestCaseException('setUp() phase failed', 0, $setUpEx);
+		}
 		try {
 			call_user_func_array(array($this, $name), $args);
 		} catch (\Exception $e) {
@@ -133,7 +157,7 @@ class TestCase
 		try {
 			$this->tearDown();
 		} catch (\Exception $tearDownEx) {
-			throw isset($e) ? $e : $tearDownEx;
+			throw new TestCaseException('tearDown() phase failed', 0, $tearDownEx, isset($e) ? $e : NULL);
 		}
 		if (isset($e)) {
 			throw $e;
@@ -178,4 +202,24 @@ class TestCase
 
 class TestCaseException extends \Exception
 {
+
+	private $primaryException;
+
+	public function __construct($message = NULL, $code = NULL, \Exception $originalException = NULL, \Exception $primaryException = NULL)
+	{
+		parent::__construct($message, $code, $originalException);
+		$this->primaryException = $primaryException;
+	}
+
+	public function getPrimaryException()
+	{
+		return $this->primaryException;
+	}
+
+	public function appendMessage($text)
+	{
+		$this->message .= $text;
+		return $this;
+	}
+
 }
