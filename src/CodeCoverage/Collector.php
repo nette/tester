@@ -7,7 +7,6 @@
 
 namespace Tester\CodeCoverage;
 
-
 /**
  * Code coverage collector.
  */
@@ -45,20 +44,26 @@ class Collector
 	 */
 	public static function save()
 	{
-		flock(self::$file, LOCK_EX);
-		fseek(self::$file, 0);
-		$coverage = @unserialize(stream_get_contents(self::$file)); // @ file may be empty
-
+		$negative = array();
+		$positive = array();
 		foreach (xdebug_get_code_coverage() as $filename => $lines) {
 			if (!file_exists($filename)) {
 				continue;
 			}
+
+			$pnode = &$positive[$filename];
+			$nnode = &$negative[$filename];
+
 			foreach ($lines as $num => $val) {
-				if (empty($coverage[$filename][$num]) || $val > 0) {
-					$coverage[$filename][$num] = $val; // -1 => untested; -2 => dead code
-				}
+				$val > 0 ? $pnode[$num] = $val : $nnode[$num] = $val;
 			}
 		}
+
+		flock(self::$file, LOCK_EX);
+		fseek(self::$file, 0);
+		$original = @unserialize(stream_get_contents(self::$file)) ?: array(); // @ file may be empty
+
+		$coverage = array_replace_recursive($negative, $original, $positive);
 
 		ftruncate(self::$file, 0);
 		fwrite(self::$file, serialize($coverage));
