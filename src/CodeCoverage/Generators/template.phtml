@@ -145,11 +145,11 @@
 		<div class="file" id="fragment<?php echo $id ?>">
 			<div class="lines">
 				<?php
-					$keys = array_keys($info->lines);
-					$lines = array_pop($keys);
+					$source = highlight_file($info->file, TRUE);
+					$lineCount = count(explode('<br />', $source));
 
 					$prevColor = NULL;
-					for ($n = 1; $n < $lines; ++$n) {
+					for ($n = 1; $n < $lineCount; ++$n) {
 						if (isset($info->lines[$n]) && isset($classes[$info->lines[$n]])) {
 							$color = $classes[$info->lines[$n]];
 						} else {
@@ -167,7 +167,7 @@
 				?>
 			</div>
 			<div class="source">
-				<?php highlight_file($info->file) ?>
+				<?php echo $source ?>
 			</div>
 		</div>
 		<div class="clear"></div>
