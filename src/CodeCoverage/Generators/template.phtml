@@ -37,6 +37,9 @@
 		word-wrap: normal;
 		width: 1000px;
 		overflow: hidden;
+	    border: 1px solid #DEDEDE;
+    	border-radius: 3px;
+    	margin-bottom: 4ex;
 	}
 
 	.lines {
@@ -57,7 +60,6 @@
 		-moz-user-select: none;
 		-ms-user-select: none;
 		user-select: none;
-		padding-left: 10px;
 		padding-right: 10px
 	}
 
@@ -83,11 +85,11 @@
 	}
 
 	.t {
-		background: #E6FFE5;
+		background: #D2EFD2;
 	}
 
 	.u {
-		background: #FFECEC;
+		background: #F6D5D5;
 	}
 
 	td {
@@ -104,8 +106,7 @@
 	}
 
 	.bar {
-		border: 1px solid #ACACAC;
-		background: #e50400;
+		background: hsl(0, 71%, 55%);
 		width: 35px;
 		height: 1em;
 	}
@@ -116,7 +117,7 @@
 	}
 
 	.light td {
-		opacity: .5;
+		opacity: .6;
 	}
 
 	.light td * {
@@ -124,7 +125,12 @@
 	}
 
 	.not-loaded td * {
-		color: red;
+		color: hsl(360, 72%, 51%);
+	}
+
+	table a {
+		text-decoration: none;
+		color: hsl(240, 63%, 48%);
 	}
 	</style>
 </head>
