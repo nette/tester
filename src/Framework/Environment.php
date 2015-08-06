@@ -48,7 +48,7 @@ class Environment
 		$annotations = self::getTestAnnotations();
 		self::$checkAssertions = !isset($annotations['outputmatch']) && !isset($annotations['outputmatchfile']);
 
-		if (getenv(self::COVERAGE)) {
+		if (getenv(self::COVERAGE) && !in_array('--method=' . TestCase::LIST_METHODS, $_SERVER['argv'])) {
 			CodeCoverage\Collector::start(getenv(self::COVERAGE));
 		}
 	}
