@@ -326,7 +326,7 @@ class Dumper
 			$path = dirname($testFile) . DIRECTORY_SEPARATOR . $path;
 		}
 		@mkdir(dirname($path)); // @ - directory may already exist
-		file_put_contents($path, is_string($content) ? $content : self::toPhp($content));
+		file_put_contents($path, is_string($content) ? $content : (self::toPhp($content) . "\n"));
 		return $path;
 	}
 
