@@ -43,7 +43,7 @@ class MyTest extends Tester\TestCase
 	/** @throws Exception  With message */
 	public function testThrowsBadMessage()
 	{
-		throw new Exception('Bad message');
+		throw new RuntimeException('Bad message');
 	}
 
 	/** @throws E_NOTICE */
@@ -91,6 +91,14 @@ class MyTest extends Tester\TestCase
 
 }
 
+class MyTestTearDownException extends MyTest
+{
+	public function tearDown()
+	{
+		throw new RuntimeException("Error in tearDown");
+	}
+}
+
 
 $test = new MyTest;
 $test->run('testThrows');
@@ -134,3 +142,29 @@ Assert::exception(function () use ($test) {
 Assert::exception(function () use ($test) {
 	$test->run('testNoticeBadMessage');
 }, 'Tester\AssertException', "E_NOTICE with a message matching 'With message' was expected but got 'Undefined variable: a' in testNoticeBadMessage()");
+
+
+$test = new MyTestTearDownException;
+Assert::exception(function () use ($test) {
+	$test->tearDown();
+}, 'RuntimeException');
+
+Assert::exception(function () use ($test) {
+	$test->run('testThrows');
+}, 'Tester\TestCaseException', "tearDown() phase failed in testThrows()");
+
+Assert::exception(function () use ($test) {
+	$test->run('testThrowsButDont');
+}, 'Tester\AssertException', "Exception was expected, but none was thrown in testThrowsButDont()");
+
+Assert::exception(function () use ($test) {
+	$test->run('testThrowsBadClass');
+}, 'Tester\AssertException', "MyException was expected but got Tester\\TestCaseException (tearDown() phase failed) in testThrowsBadClass()");
+
+Assert::exception(function () use ($test) {
+	$test->run('testNotice');
+}, 'Tester\TestCaseException', "tearDown() phase failed in testNotice()");
+
+Assert::exception(function () use ($test) {
+	$test->run('testNoticeMessage');
+}, 'Tester\TestCaseException', "tearDown() phase failed in testNoticeMessage()");
