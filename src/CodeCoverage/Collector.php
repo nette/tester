@@ -52,7 +52,9 @@ class Collector
 			}
 
 			$pnode = &$positive[$filename];
+			$pnode = array();
 			$nnode = &$negative[$filename];
+			$nnode = array();
 
 			foreach ($lines as $num => $val) {
 				$val > 0 ? $pnode[$num] = $val : $nnode[$num] = $val;
