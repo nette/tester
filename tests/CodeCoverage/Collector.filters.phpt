@@ -93,6 +93,6 @@ Assert::throws(function() {
 }, 'Exception', "~Failed to find 'BogusClassName'~");
 
 Assert::throws(function () {
-	MockCollector::$annotations = array('covers' => 'BogusClassName', 'coversNothing' => TRUE);
+	MockCollector::$annotations = array('covers' => 'BogusClassName', 'coversnothing' => TRUE);
 	MockCollector::save();
 }, 'Exception', "~both @covers and @coversNothing~");

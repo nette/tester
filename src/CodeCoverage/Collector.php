@@ -60,7 +60,7 @@ class Collector
 	protected static function getCoverFilters()
 	{
 		$annotations = static::getCoverAnnotations();
-		if (isset($annotations['coversNothing'])) {
+		if (isset($annotations['coversnothing'])) {
 			if (isset($annotations['covers'])) {
 				throw new \Exception('Using both @covers and @coversNothing is not supported');
 			}
