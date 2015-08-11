@@ -150,27 +150,29 @@
 
 		<div class="file" id="fragment<?php echo $id ?>">
 			<div class="lines">
-				<?php
-					$source = highlight_file($info->file, TRUE);
-					$lineCount = count(explode('<br />', $source));
+				<code>
+					<?php
+						$source = highlight_file($info->file, TRUE);
+						$lineCount = count(explode('<br />', $source));
 
-					$prevColor = NULL;
-					for ($n = 1; $n < $lineCount; ++$n) {
-						if (isset($info->lines[$n]) && isset($classes[$info->lines[$n]])) {
-							$color = $classes[$info->lines[$n]];
-						} else {
-							$color = '';  // not executable
-						}
-						if (!$prevColor) {
-							$prevColor = $color;
-						}
+						$prevColor = NULL;
+						for ($n = 1; $n < $lineCount; ++$n) {
+							if (isset($info->lines[$n]) && isset($classes[$info->lines[$n]])) {
+								$color = $classes[$info->lines[$n]];
+							} else {
+								$color = '';  // not executable
+							}
+							if (!$prevColor) {
+								$prevColor = $color;
+							}
 
-						if ($color) {
-							echo "<div class=\"color $color\"></div>";
+							if ($color) {
+								echo "<div class=\"color $color\"></div>";
+							}
+							echo "$n<br />";
 						}
-						echo "$n<br />";
-					}
-				?>
+					?>
+				</code>
 			</div>
 			<div class="source">
 				<?php echo $source ?>
