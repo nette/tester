@@ -17,6 +17,44 @@ class TestCase
 	const LIST_METHODS = 'nette-tester-list-methods',
 		METHOD_PATTERN = '#^test[A-Z0-9_]#';
 
+	/** @var array */
+	public $onBeforeSetUp;
+
+	/** @var array */
+	public $onAfterSetUp;
+
+	/** @var array */
+	public $onBeforeTearDown;
+
+	/** @var array */
+	public $onAfterTearDown;
+
+	/** @var array */
+	public $onBeforeRunTest;
+
+	/** @var array */
+	public $onAfterRunTest;
+
+	/** @var array */
+	public $onBeforeRun;
+
+	/** @var array */
+	public $onAfterRun;
+
+	private function onEvent($name, $testName = NULL) {
+		if (is_array($this->$name) || $this->$name instanceof \Traversable) {
+			foreach ($this->$name as $index => $handler) {
+				if (!is_callable($handler, false)) {
+					throw new TestCaseException(sprintf("Event callback $name [$index] is not callable.")
+					);
+				}
+				call_user_func_array($handler, $testName !== NULL ? array($this, $testName) : array($this));
+			}
+		} elseif ($this->$name !== NULL) {
+			throw new TestCaseException(
+				"Events " . get_class($this) . "::$$name must be array or NULL, " . gettype($this->$name) . ' given.');
+		}
+	}
 
 	/**
 	 * Runs the test case.
@@ -43,15 +81,23 @@ class TestCase
 			}
 		}
 
-		if ($method === NULL) {
-			foreach ($methods as $method) {
+		try {
+			$this->onEvent("onBeforeRun");
+			if ($method === NULL) {
+				foreach ($methods as $method) {
+					$this->runTest($method);
+				}
+			} elseif (in_array($method, $methods, TRUE)) {
 				$this->runTest($method);
+			} else {
+				throw new TestCaseException("Method '$method' does not exist or it is not a testing method.");
 			}
-		} elseif (in_array($method, $methods, TRUE)) {
-			$this->runTest($method);
-		} else {
-			throw new TestCaseException("Method '$method' does not exist or it is not a testing method.");
+			$this->onEvent("onAfterRun");
+		} catch(\Exception $e) {
+			$this->onEvent("onAfterRun");
+			throw $e;
 		}
+
 	}
 
 
@@ -105,9 +151,12 @@ class TestCase
 			$data[] = $args;
 		}
 
+		$this->onEvent("onBeforeRunTest", $method->getName());
 		foreach ($data as $params) {
 			try {
+				$this->onEvent("onBeforeSetUp", $method->getName());
 				$this->setUp();
+				$this->onEvent("onAfterSetUp", $method->getName());
 
 				try {
 					if ($info['throws']) {
@@ -125,7 +174,9 @@ class TestCase
 				}
 
 				try {
+					$this->onEvent("onBeforeTearDown", $method->getName());
 					$this->tearDown();
+					$this->onEvent("onAfterTearDown", $method->getName());
 				} catch (\Exception $tearDownException) {
 				}
 
@@ -136,9 +187,11 @@ class TestCase
 				}
 
 			} catch (AssertException $e) {
+				$this->onEvent("onAfterRunTest", $method->getName());
 				throw $e->setMessage("$e->origMessage in {$method->getName()}" . (substr(Dumper::toLine($params), 5)));
 			}
 		}
+		$this->onEvent("onAfterRunTest", $method->getName());
 	}
 
 
