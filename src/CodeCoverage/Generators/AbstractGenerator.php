@@ -37,8 +37,11 @@ abstract class AbstractGenerator
 		if (!is_file($file)) {
 			throw new \Exception("File '$file' is missing.");
 		}
-
-		$this->data = @unserialize(file_get_contents($file)); // @ is escalated to exception
+		$coverageData = file_get_contents($file);
+		if(strlen($coverageData) === 0) {
+			throw new \Exception("There was no coverage data generated. Haven't you forget to call Tester\\Environment::setup() in your tests?");
+		}
+		$this->data = @unserialize($coverageData);
 		if (!is_array($this->data)) {
 			throw new \Exception("Content of file '$file' is invalid.");
 		}
