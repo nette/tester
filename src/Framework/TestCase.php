@@ -17,6 +17,24 @@ class TestCase
 	const LIST_METHODS = 'nette-tester-list-methods',
 		METHOD_PATTERN = '#^test[A-Z0-9_]#';
 
+	/** @var ITestCaseListener[] */
+	private $listeners = array();
+
+	/**
+	 * Add listener for TestCaseEvents
+	 */
+	public function addListener(ITestCaseListener $listener) {
+		$this->listeners[] = $listener;
+	}
+
+	private function onEvent($name) {
+		foreach($this->listeners as $listener) {
+			if(method_exists($listener, $name)) {
+				$args = array_merge(array($this), array_slice(func_get_args(), 1));
+				call_user_func_array(array($listener, $name), $args);
+			}
+		}
+	}
 
 	/**
 	 * Runs the test case.
@@ -105,9 +123,13 @@ class TestCase
 			$data[] = $args;
 		}
 
+		$this->onEvent("onBeforeRunTest", $method->getName());
+
 		foreach ($data as $params) {
 			try {
+				$this->onEvent("onBeforeSetUp", $method->getName(), $params);
 				$this->setUp();
+				$this->onEvent("onAfterSetUp", $method->getName(), $params);
 
 				try {
 					if ($info['throws']) {
@@ -125,7 +147,9 @@ class TestCase
 				}
 
 				try {
+					$this->onEvent("onBeforeTearDown", $method->getName(), $params);
 					$this->tearDown();
+					$this->onEvent("onAfterTearDown", $method->getName(), $params);
 				} catch (\Exception $tearDownException) {
 				}
 
@@ -136,9 +160,20 @@ class TestCase
 				}
 
 			} catch (AssertException $e) {
-				throw $e->setMessage("$e->origMessage in {$method->getName()}" . (substr(Dumper::toLine($params), 5)));
+				$e->setMessage("$e->origMessage in {$method->getName()}" . (substr(Dumper::toLine($params), 5)));
+				$this->onEvent("onTestFail", $method->getName(), $params, $e);
+				$this->onEvent("onAfterRunTest", $method->getName());
+				throw $e;
+			} catch (\Exception $e) {
+				$this->onEvent("onTestFail", $method->getName(), $params, $e);
+				$this->onEvent("onAfterRunTest", $method->getName());
+				throw $e;
 			}
+
+			$this->onEvent("onTestPass", $method->getName(), $params);
+			$this->onEvent("onAfterRunTest", $method->getName());
 		}
+
 	}
 
 
