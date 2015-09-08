@@ -376,6 +376,17 @@ class Assert
 
 
 	/**
+	 * Checks that the function does not generate PHP error and does not throw exception.
+	 * @param  callable
+	 * @return void
+	 */
+	public static function noError($function)
+	{
+		self::error($function, array());
+	}
+
+
+	/**
 	 * Compares result using regular expression or mask:
 	 *   %a%    one or more of anything except the end of line characters
 	 *   %a?%   zero or more of anything except the end of line characters
