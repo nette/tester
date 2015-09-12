@@ -38,5 +38,5 @@ if (PHP_VERSION_ID >= 50500) {
 		),
 		'traits' => array(),
 		'interfaces' => array(),
-	), $parser->parse('<? class A {}  echo A::CLASS;  class B {}'));
+	), $parser->parse('<?php class A {}  echo A::CLASS;  class B {}'));
 }
