@@ -374,6 +374,37 @@ class Assert
 		}
 	}
 
+	/**
+	 * Checks if the function does neither generate PHP error nor throw Exception
+	 * @param  callable
+	 * @param  string
+	 * @return null|\Exception
+	 */
+	public static function noError($function, $message = NULL)
+	{
+		self::$counter++;
+
+		set_error_handler(function ($severity, $msg, $file, $line) use (& $expected, $message) {
+			if (($severity & error_reporting()) !== $severity) {
+				return;
+			}
+			$errorStr = Helpers::errorTypeToString($severity) . ($msg ? " ($msg)" : '');
+			restore_error_handler();
+			Assert::fail(($message ? "$message: " : '') . "occurred error $errorStr");
+		});
+		try {
+			call_user_func($function);
+		} catch (\Exception $e) {
+			if ($e instanceof AssertException) {
+				// assertion exception already thrown by error handler, re-throw
+				throw $e;
+			}
+			restore_error_handler();
+			Assert::fail(($message ? "$message: " : '') . sprintf('%s was thrown. Code: %d Message: %s',
+					get_class($e), $e->getCode(), $e->getMessage()));
+		}
+		restore_error_handler();
+	}
 
 	/**
 	 * Compares result using regular expression or mask:
