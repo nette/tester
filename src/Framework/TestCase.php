@@ -17,6 +17,7 @@ class TestCase
 	const LIST_METHODS = 'nette-tester-list-methods',
 		METHOD_PATTERN = '#^test[A-Z0-9_]#';
 
+	private $previousHandler = NULL;
 
 	/**
 	 * Runs the test case.
@@ -108,7 +109,8 @@ class TestCase
 		foreach ($data as $params) {
 			try {
 				$this->setUp();
-
+				$me = $this; // PHP 5.3 compatibility
+				$this->previousHandler = set_error_handler(array($this, '_errorHandler'));
 				try {
 					if ($info['throws']) {
 						$tmp = $this;
@@ -123,6 +125,7 @@ class TestCase
 					}
 				} catch (\Exception $testException) {
 				}
+				restore_error_handler();
 
 				try {
 					$this->tearDown();
@@ -172,6 +175,15 @@ class TestCase
 	 */
 	protected function tearDown()
 	{
+	}
+
+
+	/** @internal */
+	public function _errorHandler()
+	{
+		restore_error_handler();
+		@$this->tearDown(); // ignore, error from testMethod() has higher precedence
+		return ($this->previousHandler === NULL) ? FALSE : call_user_func_array($this->previousHandler, func_get_args());
 	}
 
 }
