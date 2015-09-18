@@ -88,8 +88,6 @@ Assert::exception(function () use ($test) {
 Assert::same(array(
 	'FailingTest::setUp',
 	'FailingTest::testPublic',
-	'FailingTest::tearDown',
 	'FailingTest::setUp',
 	'FailingTest::testPublicStatic',
-	'FailingTest::tearDown',
 ), FailingTest::$order);

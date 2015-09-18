@@ -109,31 +109,20 @@ class TestCase
 			try {
 				$this->setUp();
 
-				try {
-					if ($info['throws']) {
-						$tmp = $this;
-						$e = Assert::error(function () use ($tmp, $method, $params) {
-							call_user_func_array(array($tmp, $method->getName()), $params);
-						}, $throws[0], $throws[1]);
-						if ($e instanceof AssertException) {
-							throw $e;
-						}
-					} else {
-						call_user_func_array(array($this, $method->getName()), $params);
+				if ($info['throws']) {
+					$tmp = $this;
+					$e = Assert::error(function () use ($tmp, $method, $params) {
+						call_user_func_array(array($tmp, $method->getName()), $params);
+					}, $throws[0], $throws[1]);
+					if ($e instanceof AssertException) {
+						throw $e;
 					}
-				} catch (\Exception $testException) {
+
+				} else {
+					call_user_func_array(array($this, $method->getName()), $params);
 				}
 
-				try {
-					$this->tearDown();
-				} catch (\Exception $tearDownException) {
-				}
-
-				if (isset($testException)) {
-					throw $testException;
-				} elseif (isset($tearDownException)) {
-					throw $tearDownException;
-				}
+				$this->tearDown();
 
 			} catch (AssertException $e) {
 				throw $e->setMessage("$e->origMessage in {$method->getName()}" . (substr(Dumper::toLine($params), 5)));
