@@ -71,6 +71,18 @@ class FailingTest extends Tester\TestCase
 		Assert::fail('STOP');
 	}
 
+	public function testPublicError()
+	{
+		self::$order[] = __METHOD__;
+		trigger_error('STOP');
+	}
+
+	public static function testPublicErrorStatic()
+	{
+		self::$order[] = __METHOD__;
+		trigger_error('STOP');
+	}
+
 }
 
 
@@ -85,9 +97,30 @@ Assert::exception(function () use ($test) {
 }, 'Tester\AssertException');
 
 
+set_error_handler(function () {
+	// Throwing an exception emulates test-interruption as a standard Environment handler.
+	throw new \ErrorException;
+});
+
+Assert::exception(function () use ($test) {
+	$test->run('testPublicError');
+}, 'ErrorException');
+
+Assert::exception(function () use ($test) {
+	$test->run('testPublicErrorStatic');
+}, 'ErrorException');
+
+restore_error_handler();
+
+
+
 Assert::same(array(
 	'FailingTest::setUp',
 	'FailingTest::testPublic',
 	'FailingTest::setUp',
 	'FailingTest::testPublicStatic',
+	'FailingTest::setUp',
+	'FailingTest::testPublicError',
+	'FailingTest::setUp',
+	'FailingTest::testPublicErrorStatic',
 ), FailingTest::$order);
