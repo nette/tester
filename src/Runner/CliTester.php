@@ -177,6 +177,8 @@ XX
 
 		if (preg_match('#HipHop VM#', $output)) {
 			$this->interpreter = new HhvmPhpInterpreter($this->options['-p'], $args);
+		} elseif (strpos($output, 'phpdbg') !== FALSE) {
+			$this->interpreter = new ZendPhpDbgInterpreter($this->options['-p'], $args);
 		} else {
 			$this->interpreter = new ZendPhpInterpreter($this->options['-p'], $args);
 		}

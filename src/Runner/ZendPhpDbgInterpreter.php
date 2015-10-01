@@ -2,7 +2,7 @@
 
 /**
  * This file is part of the Nette Tester.
- * Copyright (c) 2009 David Grudl (https://davidgrudl.com)
+ * Copyright (c) 2009 David Grudl (http://davidgrudl.com)
  */
 
 namespace Tester\Runner;
@@ -11,9 +11,9 @@ use Tester\Helpers;
 
 
 /**
- * Zend PHP command-line executable.
+ * Zend phpdbg command-line executable.
  */
-class ZendPhpInterpreter implements PhpInterpreter
+class ZendPhpDbgInterpreter implements PhpInterpreter
 {
 	/** @var string  PHP arguments */
 	public $arguments;
@@ -24,12 +24,6 @@ class ZendPhpInterpreter implements PhpInterpreter
 	/** @var string  PHP version */
 	private $version;
 
-	/** @var bool is CGI? */
-	private $cgi;
-
-	/** @var bool */
-	private $xdebug;
-
 	/** @var string */
 	private $error;
 
@@ -38,7 +32,7 @@ class ZendPhpInterpreter implements PhpInterpreter
 	{
 		$this->path = Helpers::escapeArg($path);
 		$proc = proc_open(
-			"$this->path -n $args -v", // -v must be the last
+			"$this->path -n $args -V",
 			array(array('pipe', 'r'), array('pipe', 'w'), array('pipe', 'w')),
 			$pipes,
 			NULL,
@@ -46,20 +40,18 @@ class ZendPhpInterpreter implements PhpInterpreter
 			array('bypass_shell' => TRUE)
 		);
 		$output = stream_get_contents($pipes[1]);
+
 		$this->error = trim(stream_get_contents($pipes[2]));
 		if (proc_close($proc)) {
 			throw new \Exception("Unable to run '$path': " . preg_replace('#[\r\n ]+#', ' ', $this->error));
-		} elseif (!preg_match('#^PHP (\S+).*c(g|l)i#i', $output, $matches)) {
+		} elseif (!preg_match('#^PHP ([\w.-]+)#im', $output, $matches)) {
 			throw new \Exception("Unable to detect PHP version (output: $output).");
+		} elseif (version_compare($matches[1], '7.0.0', '<')) {
+			throw new \Exception('Unable to use phpdbg on PHP < 7.0.0.');
 		}
 
 		$this->version = $matches[1];
-		$this->cgi = strcasecmp($matches[2], 'g') === 0;
 		$this->arguments = $args;
-
-		$job = new Job(__DIR__ . '/info.php', $this, array('xdebug'));
-		$job->run();
-		$this->xdebug = !$job->getExitCode();
 	}
 
 
@@ -68,7 +60,7 @@ class ZendPhpInterpreter implements PhpInterpreter
 	 */
 	public function getCommandLine()
 	{
-		return $this->path . $this->arguments;
+		return $this->path . ' -qrrb -S cli' . $this->arguments;
 	}
 
 
@@ -86,7 +78,7 @@ class ZendPhpInterpreter implements PhpInterpreter
 	 */
 	public function hasXdebug()
 	{
-		return $this->xdebug;
+		return FALSE;
 	}
 
 
@@ -95,7 +87,7 @@ class ZendPhpInterpreter implements PhpInterpreter
 	 */
 	public function isCgi()
 	{
-		return $this->cgi;
+		return FALSE;
 	}
 
 
