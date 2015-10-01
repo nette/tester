@@ -186,6 +186,9 @@ class Dumper
 			return "/* Closure defined in file {$rc->getFileName()} on line {$rc->getStartLine()} */";
 
 		} elseif (is_object($var)) {
+			if (PHP_VERSION_ID >= 70000 && ($rc = new \ReflectionObject($var)) && $rc->isAnonymous()) {
+				return "/* Anonymous class defined in file {$rc->getFileName()} on line {$rc->getStartLine()} */";
+			}
 			$arr = (array) $var;
 			$space = str_repeat("\t", $level);
 			$class = get_class($var);
