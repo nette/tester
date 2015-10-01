@@ -181,6 +181,10 @@ class Dumper
 			}
 			return 'array(' . $out . ')';
 
+		} elseif ($var instanceof \Closure) {
+			$rc = new \ReflectionFunction($var);
+			return "/* Closure defined in file {$rc->getFileName()} on line {$rc->getStartLine()} */";
+
 		} elseif (is_object($var)) {
 			$arr = (array) $var;
 			$space = str_repeat("\t", $level);

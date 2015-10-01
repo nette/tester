@@ -48,3 +48,5 @@ Assert::match("Test::__set_state(array(
 	'y' => 'hello',
 	'z' => 30.0,
 ))", Dumper::toPhp(new Test));
+
+Assert::match('/* Closure defined in file %a% on line %d% */', Dumper::toPhp(function () {}));
