@@ -1,9 +1,5 @@
 <?php
 
-/**
- * @phpversion 5.4  Requires constant PHP_BINARY available since PHP 5.4.0
- */
-
 use Tester\Assert;
 use Tester\Runner\Runner;
 
@@ -32,10 +28,10 @@ $runner->outputHandlers[] = $logger = new Logger;
 $runner->run();
 
 $cli = PHP_SAPI === 'cli';
-$bug62725 = $cli && PHP_VERSION_ID >= 50400 && PHP_VERSION_ID <= 50406;
+$bug62725 = $cli && PHP_VERSION_ID <= 50406;
 Assert::same($bug62725 ? [Runner::PASSED, NULL] : [Runner::FAILED, 'Exited with error code 231 (expected 0)'], $logger->results['shutdown.exitCode.a.phptx']);
 
-$bug65275 = !defined('HHVM_VERSION') && $cli && PHP_VERSION_ID >= 50300; // bug still exists
+$bug65275 = !defined('HHVM_VERSION') && $cli;
 Assert::same($bug65275 ? [Runner::FAILED, 'Exited with error code 231 (expected 0)'] : [Runner::PASSED, NULL], $logger->results['shutdown.exitCode.b.phptx']);
 
 Assert::same([Runner::SKIPPED, 'just skipping'], $logger->results['skip.phptx']);

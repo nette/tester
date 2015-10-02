@@ -24,15 +24,8 @@ $generator->render($output = Tester\FileMock::create('', 'xml'));
 
 $dom = new DOMDocument;
 $dom->load($output);
-
-//$files = $sorted = iterator_to_array($dom->getElementsByTagName('file')); // iterator_to_array() crashes on Travis & PHP 5.3.3
-$files = array();
-foreach ($dom->getElementsByTagName('file') as $node) {
-	$files[] = $node;
-}
-
-$sorted = $files;
-usort($sorted, function($a, $b) {
+$files = $sorted = iterator_to_array($dom->getElementsByTagName('file'));
+usort($sorted, function ($a, $b) {
 	return strcmp($a->getAttribute('name'), $b->getAttribute('name'));
 });
 foreach ($files as $file) {

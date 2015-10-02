@@ -192,11 +192,9 @@ test(function () {
 	Assert::same(1, fwrite($f, '!'));
 	Assert::same("hello world\x00\x00\x00!", file_get_contents($name));
 
-	if (PHP_VERSION_ID >= 50400) {
-		Assert::true(ftruncate($f, 5));
-		Assert::same(15, ftell($f));
-		Assert::same('hello', file_get_contents($name));
-	}
+	Assert::true(ftruncate($f, 5));
+	Assert::same(15, ftell($f));
+	Assert::same('hello', file_get_contents($name));
 
 	fclose($f);
 });
@@ -243,11 +241,9 @@ test(function () {
 		Assert::same(ftell($handleReal), ftell($handleMock));
 		Assert::same(file_get_contents($pathReal), file_get_contents($pathMock));
 
-		if (PHP_VERSION_ID >= 50400) {
-			Assert::same(ftruncate($handleReal, 0), ftruncate($handleMock, 0));
-			Assert::same(ftell($handleReal), ftell($handleMock));
-			Assert::same(file_get_contents($pathReal), file_get_contents($pathMock));
-		}
+		Assert::same(ftruncate($handleReal, 0), ftruncate($handleMock, 0));
+		Assert::same(ftell($handleReal), ftell($handleMock));
+		Assert::same(file_get_contents($pathReal), file_get_contents($pathMock));
 
 		Assert::same(fwrite($handleReal, 'World'), fwrite($handleMock, 'World'));
 		Assert::same(ftell($handleReal), ftell($handleMock));

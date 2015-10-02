@@ -72,7 +72,7 @@ class Environment
 
 		ob_start(function ($s) {
 			return self::$useColors ? $s : Dumper::removeColors($s);
-		}, PHP_VERSION_ID < 50400 ? 2 : 1, FALSE);
+		}, 1, FALSE);
 	}
 
 

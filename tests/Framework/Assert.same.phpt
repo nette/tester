@@ -42,7 +42,7 @@ foreach ($notSame as $case) {
 }
 
 
-if ((PHP_VERSION_ID >= 50315 && PHP_VERSION_ID < 50400) || PHP_VERSION_ID >= 50405) {
+if (PHP_VERSION_ID >= 50405) {
 	$rec = [];
 	$rec[] = & $rec;
 	Assert::same($rec, $rec);

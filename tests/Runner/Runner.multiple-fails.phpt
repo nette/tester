@@ -1,9 +1,5 @@
 <?php
 
-/**
- * @phpversion 5.4  Requires constant PHP_BINARY available since PHP 5.4.0
- */
-
 use Tester\Assert;
 use Tester\Dumper;
 use Tester\Runner\Runner;
@@ -42,7 +38,7 @@ Assert::match(
 Assert::same(Runner::SKIPPED, $logger->results['testcase-no-methods.phptx'][0]);
 
 
-$bug62725 = PHP_SAPI === 'cli' && PHP_VERSION_ID >= 50400 && PHP_VERSION_ID <= 50406;
+$bug62725 = PHP_SAPI === 'cli' && PHP_VERSION_ID <= 50406;
 $issue162 = defined('HHVM_VERSION') && HHVM_VERSION_ID < 30400;
 Assert::match(
 	$bug62725 || $issue162

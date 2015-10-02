@@ -104,7 +104,7 @@ This table shows all assertions (class `Assert` means `Tester\Assert`):
 Testing exceptions:
 
 ```php
-Assert::exception(function() {
+Assert::exception(function () {
 	$h = new Greeting;
 	$h->say(NULL);
 }, 'InvalidArgumentException', 'Invalid name.');
@@ -114,7 +114,7 @@ Testing PHP errors, warnings or notices:
 
 
 ```php
-Assert::error(function() {
+Assert::error(function () {
 	$h = new Greeting;
 	echo $h->abc;
 }, E_NOTICE, 'Undefined property: Greeting::$abc');

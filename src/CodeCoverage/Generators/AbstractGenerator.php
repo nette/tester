@@ -88,7 +88,7 @@ abstract class AbstractGenerator
 
 
 	/**
-	 * @return AcceptIterator
+	 * @return \CallbackFilterIterator
 	 */
 	protected function getSourceIterator()
 	{
@@ -96,31 +96,13 @@ abstract class AbstractGenerator
 			? new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($this->source))
 			: new \ArrayIterator([new \SplFileInfo($this->source)]);
 
-		return new AcceptIterator($iterator, $this->acceptFiles);
+		return new \CallbackFilterIterator($iterator, function (\SplFileInfo $file) {
+			return $file->getBasename()[0] !== '.'  // . or .. or .gitignore
+				&& in_array($file->getExtension(), $this->acceptFiles, TRUE);
+		});
 	}
 
 
 	abstract protected function renderSelf();
-
-}
-
-
-/** @internal */
-class AcceptIterator extends \FilterIterator
-{
-	private $acceptFiles;
-
-	public function __construct(\Iterator $iterator, array $acceptFiles)
-	{
-		parent::__construct($iterator);
-		$this->acceptFiles = $acceptFiles;
-	}
-
-
-	public function accept()
-	{
-		return substr($this->current()->getBasename(), 0, 1) !== '.'  // . or .. or .gitignore
-			&& in_array(pathinfo($this->current(), PATHINFO_EXTENSION), $this->acceptFiles, TRUE);
-	}
 
 }

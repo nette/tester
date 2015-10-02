@@ -198,7 +198,7 @@ class FileMock
 
 	private function warning($message)
 	{
-		$bt = PHP_VERSION_ID < 50400 ? debug_backtrace(FALSE) : debug_backtrace(0, 3);
+		$bt = debug_backtrace(0, 3);
 		if (isset($bt[2]['function'])) {
 			$message = $bt[2]['function'] . '(' . @$bt[2]['args'][0] . '): ' . $message;
 		}

@@ -64,12 +64,8 @@ class PhpParser
 			'interfaces' => [],
 		];
 
-		$T_TRAIT = PHP_VERSION_ID < 50400 ? -1 : T_TRAIT;
 		while (list(, $token) = each($tokens)) {
 			if (is_array($token)) {
-				if (PHP_VERSION_ID < 50400 && $token[0] === T_STRING && strcasecmp($token[1], 'trait') === 0) {
-					$token[0] = $T_TRAIT;
-				}
 				$line = $token[2];
 			}
 
@@ -80,7 +76,7 @@ class PhpParser
 
 				case T_CLASS:
 				case T_INTERFACE:
-				case $T_TRAIT:
+				case T_TRAIT:
 					if ($name = self::fetch($tokens, T_STRING)) {
 						if ($token[0] === T_CLASS) {
 							$class = & $result->classes[$namespace . $name];

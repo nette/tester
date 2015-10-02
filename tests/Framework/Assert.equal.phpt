@@ -52,7 +52,7 @@ $notEquals = [
 	[['a', 'b'], ['b', 'a']],
 ];
 
-if (!defined('PHP_WINDOWS_VERSION_BUILD') || PHP_VERSION_ID < 50301 || PHP_VERSION_ID > 50304) {
+if (!defined('PHP_WINDOWS_VERSION_BUILD')) {
 	$notEquals[] = [NAN, NAN];
 }
 

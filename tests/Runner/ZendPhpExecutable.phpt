@@ -1,9 +1,5 @@
 <?php
 
-/**
- * @phpversion 5.4
- */
-
 use Tester\Assert;
 use Tester\Environment;
 

@@ -312,7 +312,7 @@ class Dumper
 				continue;
 			}
 			$line = $item['class'] === 'Tester\Assert' && method_exists($item['class'], $item['function'])
-				&& ($tmp = file($item['file'])) && strpos($tmp = $tmp[$item['line'] - 1], "::$item[function](") ? $tmp : NULL;
+				&& strpos($tmp = file($item['file'])[$item['line'] - 1], "::$item[function](") ? $tmp : NULL;
 
 			$s .= 'in '
 				. ($item['file']
