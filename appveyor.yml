@@ -8,14 +8,6 @@ init:
     - SET ANSICON=121x90 (121x90)
 
 install:
-    # Install PHP 5.3
-    - IF EXIST c:\php\53 (SET PHP=0) ELSE (SET PHP=1)
-    - IF %PHP%==1 mkdir c:\php\53
-    - IF %PHP%==1 cd c:\php\53
-    - IF %PHP%==1 appveyor DownloadFile http://windows.php.net/downloads/releases/archives/php-5.3.29-Win32-VC9-x86.zip
-    - IF %PHP%==1 7z x php-5.3.29-Win32-VC9-x86.zip >nul
-    - IF %PHP%==1 del /Q *.zip
-
     # Install PHP 5.4
     - IF EXIST c:\php\54 (SET PHP=0) ELSE (SET PHP=1)
     - IF %PHP%==1 mkdir c:\php\54
@@ -59,9 +51,6 @@ install:
     - cd c:\projects\tester
 
 test_script:
-    - c:\php\53\php src\tester tests -s -p c:\php\53\php
-    - c:\php\53\php src\tester tests -s -p c:\php\53\php-cgi
-
     - c:\php\54\php src\tester tests -s -p c:\php\54\php
     - c:\php\54\php src\tester tests -s -p c:\php\54\php-cgi
 

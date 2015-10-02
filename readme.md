@@ -21,7 +21,7 @@ or use a Composer:
 php composer.phar require --dev nette/tester
 ```
 
-Nette Tester requires PHP 5.3.0 or later. Collecting and processing
+Nette Tester requires PHP 5.4.0 or later. Collecting and processing
 code coverage information depends on Xdebug.
 
 
@@ -66,7 +66,7 @@ Now we run tests from command-line using the `tester` command:
 |_   _/ __)( __/_   _/ __)| _ )
   |_| \___ /___) |_| \___ |_|_\  v2.0.x
 
-PHP 5.3.16 | "php-cgi" -n | 8 threads
+PHP 5.4.0 | "php-cgi" -n | 8 threads
 .
 OK (1 tests, 0 skipped, 0.0 seconds)
 ```
