@@ -44,5 +44,4 @@ class MyTest extends TestCase
 
 }
 
-$testCase = new MyTest;
-$testCase->run();
+(new MyTest)->run();

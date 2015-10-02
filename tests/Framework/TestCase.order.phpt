@@ -31,8 +31,7 @@ class SuccessTest extends Tester\TestCase
 
 }
 
-$test = new SuccessTest;
-$test->run();
+(new SuccessTest)->run();
 
 Assert::same([
 	'SuccessTest::setUp',

@@ -142,5 +142,4 @@ class RecursionTest extends Tester\TestCase
 
 }
 
-$test = new RecursionTest;
-$test->run();
+(new RecursionTest)->run();

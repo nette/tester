@@ -32,5 +32,4 @@ require __DIR__ . '/CodeCoverage/Generators/HtmlGenerator.php';
 require __DIR__ . '/CodeCoverage/Generators/CloverXMLGenerator.php';
 
 
-$tester = new Tester\Runner\CliTester;
-die($tester->run());
+die((new Tester\Runner\CliTester)->run());
