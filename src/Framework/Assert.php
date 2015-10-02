@@ -283,7 +283,7 @@ class Assert
 	 * @param  int code
 	 * @return \Exception
 	 */
-	public static function exception($function, $class, $message = NULL, $code = NULL)
+	public static function exception(callable $function, $class, $message = NULL, $code = NULL)
 	{
 		self::$counter++;
 		$e = NULL;
@@ -312,7 +312,7 @@ class Assert
 	 * Checks if the function throws exception, alias for exception().
 	 * @return \Exception
 	 */
-	public static function throws($function, $class, $message = NULL, $code = NULL)
+	public static function throws(callable $function, $class, $message = NULL, $code = NULL)
 	{
 		return self::exception($function, $class, $message, $code);
 	}
@@ -325,7 +325,7 @@ class Assert
 	 * @param  string message
 	 * @return null|\Exception
 	 */
-	public static function error($function, $expectedType, $expectedMessage = NULL)
+	public static function error(callable $function, $expectedType, $expectedMessage = NULL)
 	{
 		if (is_string($expectedType) && !preg_match('#^E_[A-Z_]+\z#', $expectedType)) {
 			return static::exception($function, $expectedType, $expectedMessage);
