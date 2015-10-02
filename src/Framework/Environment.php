@@ -70,9 +70,8 @@ class Environment
 				&& ((function_exists('posix_isatty') && posix_isatty(STDOUT))
 					|| getenv('ConEmuANSI') === 'ON' || getenv('ANSICON') !== FALSE) || getenv('term') === 'xterm-256color');
 
-		$colors = & self::$useColors;
-		ob_start(function ($s) use (& $colors) {
-			return $colors ? $s : Dumper::removeColors($s);
+		ob_start(function ($s) {
+			return self::$useColors ? $s : Dumper::removeColors($s);
 		}, PHP_VERSION_ID < 50400 ? 2 : 1, FALSE);
 	}
 
@@ -92,7 +91,7 @@ class Environment
 
 		set_error_handler(function ($severity, $message, $file, $line) {
 			if (in_array($severity, [E_RECOVERABLE_ERROR, E_USER_ERROR], TRUE) || ($severity & error_reporting()) === $severity) {
-				Environment::handleException(new \ErrorException($message, 0, $severity, $file, $line));
+				self::handleException(new \ErrorException($message, 0, $severity, $file, $line));
 			}
 			return FALSE;
 		});
@@ -104,11 +103,11 @@ class Environment
 			register_shutdown_function(function () use ($error) {
 				if (in_array($error['type'], [E_ERROR, E_CORE_ERROR, E_COMPILE_ERROR, E_PARSE], TRUE)) {
 					if (($error['type'] & error_reporting()) !== $error['type']) { // show fatal errors hidden by @shutup
-						Environment::removeOutputBuffers();
+						self::removeOutputBuffers();
 						echo "\nFatal error: $error[message] in $error[file] on line $error[line]\n";
 					}
-				} elseif (Environment::$checkAssertions && !Assert::$counter) {
-					Environment::removeOutputBuffers();
+				} elseif (self::$checkAssertions && !Assert::$counter) {
+					self::removeOutputBuffers();
 					echo "\nError: This test forgets to execute an assertion.\n";
 					exit(Runner\Job::CODE_FAIL);
 				}
@@ -192,10 +191,7 @@ class Environment
 	}
 
 
-	/**
-	 * @internal
-	 */
-	public static function removeOutputBuffers()
+	private static function removeOutputBuffers()
 	{
 		while (ob_get_level() > self::$obLevel && @ob_end_flush()); // @ may be not removable
 	}

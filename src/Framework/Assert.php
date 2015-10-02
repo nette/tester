@@ -352,13 +352,13 @@ class Assert
 			$errorStr = Helpers::errorTypeToString($severity) . ($message ? " ($message)" : '');
 			list($expectedType, $expectedMessage, $expectedTypeStr) = array_shift($expected);
 			if ($expectedType === NULL) {
-				Assert::fail("Generated more errors than expected: $errorStr was generated in file $file on line $line");
+				self::fail("Generated more errors than expected: $errorStr was generated in file $file on line $line");
 
 			} elseif ($severity !== $expectedType) {
-				Assert::fail("$expectedTypeStr was expected, but $errorStr was generated in file $file on line $line");
+				self::fail("$expectedTypeStr was expected, but $errorStr was generated in file $file on line $line");
 
-			} elseif ($expectedMessage && !Assert::isMatching($expectedMessage, $message)) {
-				Assert::fail("$expectedTypeStr with a message matching %2 was expected but got %1", $message, $expectedMessage);
+			} elseif ($expectedMessage && !self::isMatching($expectedMessage, $message)) {
+				self::fail("$expectedTypeStr with a message matching %2 was expected but got %1", $message, $expectedMessage);
 			}
 		});
 
@@ -510,9 +510,8 @@ class Assert
 	/**
 	 * Compares two structures. Ignores the identity of objects and the order of keys in the arrays.
 	 * @return bool
-	 * @internal
 	 */
-	public static function isEqual($expected, $actual, $level = 0, $objects = NULL)
+	private static function isEqual($expected, $actual, $level = 0, $objects = NULL)
 	{
 		if ($level > 10) {
 			throw new \Exception('Nesting level too deep or recursive dependency.');

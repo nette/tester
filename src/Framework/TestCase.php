@@ -141,9 +141,8 @@ class TestCase
 				$this->handleErrors = TRUE;
 				try {
 					if ($info['throws']) {
-						$tmp = $this;
-						$e = Assert::error(function () use ($tmp, $method, $params) {
-							call_user_func_array([$tmp, $method->getName()], $params);
+						$e = Assert::error(function () use ($method, $params) {
+							call_user_func_array([$this, $method->getName()], $params);
 						}, $throws[0], $throws[1]);
 						if ($e instanceof AssertException) {
 							throw $e;
