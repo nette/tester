@@ -10,33 +10,33 @@ require __DIR__ . '/../../src/CodeCoverage/PhpParser.php';
 $parser = new CodeCoverage\PhpParser;
 $parsed = $parser->parse(file_get_contents(__DIR__ . '/parse/edge.php'));
 
-Assert::equal(array(
-	'foo' => (object) array(
+Assert::equal([
+	'foo' => (object) [
 		'start' => 3,
 		'end' => 6,
-	),
-), $parsed->functions);
+	],
+], $parsed->functions);
 
-Assert::equal(array(
-	'fun' => (object) array(
+Assert::equal([
+	'fun' => (object) [
 		'start' => 10,
 		'end' => 14,
 		'visibility' => 'public',
-	),
-), $parsed->classes['C']->methods);
+	],
+], $parsed->classes['C']->methods);
 
 
 if (PHP_VERSION_ID >= 50500) {
 	// The '::CLASS' construct
-	Assert::equal((object) array(
+	Assert::equal((object) [
 		'linesOfCode' => 1,
 		'linesOfComments' => 0,
-		'functions' => array(),
-		'classes' => array(
-			'A' => (object) array('start' => 1, 'end' => 1, 'methods' => array()),
-			'B' => (object) array('start' => 1, 'end' => 1, 'methods' => array()),
-		),
-		'traits' => array(),
-		'interfaces' => array(),
-	), $parser->parse('<?php class A {}  echo A::CLASS;  class B {}'));
+		'functions' => [],
+		'classes' => [
+			'A' => (object) ['start' => 1, 'end' => 1, 'methods' => []],
+			'B' => (object) ['start' => 1, 'end' => 1, 'methods' => []],
+		],
+		'traits' => [],
+		'interfaces' => [],
+	], $parser->parse('<?php class A {}  echo A::CLASS;  class B {}'));
 }

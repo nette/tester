@@ -36,7 +36,7 @@ class TestHandler
 	{
 		list($annotations, $testName) = $this->getAnnotations($file);
 		$php = clone $this->runner->getInterpreter();
-		$jobsArgs = array(array());
+		$jobsArgs = [[]];
 
 		foreach (get_class_methods($this) as $method) {
 			if (!preg_match('#^initiate(.+)#', strtolower($method), $m) || !isset($annotations[$m[1]])) {
@@ -48,7 +48,7 @@ class TestHandler
 					$this->runner->writeResult($testName, $res[0], $res[1]);
 					return;
 				} elseif ($res && $res[1]) { // [param name, values]
-					$tmp = array();
+					$tmp = [];
 					foreach ($res[1] as $val) {
 						foreach ($jobsArgs as $args) {
 							$args[] = Helpers::escapeArg("--$res[0]=$val");
@@ -73,12 +73,12 @@ class TestHandler
 	{
 		list($annotations, $testName) = $this->getAnnotations($job->getFile());
 		$testName .= $job->getArguments()
-			? ' [' . implode(' ', preg_replace(array('#["\'-]*(.+?)["\']?$#A', '#(.{30}).+#A'), array('$1', '$1...'), $job->getArguments())) . ']'
+			? ' [' . implode(' ', preg_replace(['#["\'-]*(.+?)["\']?$#A', '#(.{30}).+#A'], ['$1', '$1...'], $job->getArguments())) . ']'
 			: '';
-		$annotations += array(
+		$annotations += [
 			'exitcode' => Job::CODE_OK,
 			'httpcode' => self::HTTP_OK,
-		);
+		];
 
 		foreach (get_class_methods($this) as $method) {
 			if (!preg_match('#^assess(.+)#', strtolower($method), $m) || !isset($annotations[$m[1]])) {
@@ -97,7 +97,7 @@ class TestHandler
 
 	private function initiateSkip($message)
 	{
-		return array(Runner::SKIPPED, $message);
+		return [Runner::SKIPPED, $message];
 	}
 
 
@@ -106,7 +106,7 @@ class TestHandler
 		if (preg_match('#^(<=|<|==|=|!=|<>|>=|>)?\s*(.+)#', $version, $matches)
 			&& version_compare($matches[2], $interpreter->getVersion(), $matches[1] ?: '>='))
 		{
-			return array(Runner::SKIPPED, "Requires PHP $version.");
+			return [Runner::SKIPPED, "Requires PHP $version."];
 		}
 	}
 
@@ -123,39 +123,39 @@ class TestHandler
 			list($dataFile, $query, $optional) = Tester\DataProvider::parseAnnotation($provider, $file);
 			$data = Tester\DataProvider::load($dataFile, $query);
 		} catch (\Exception $e) {
-			return array(empty($optional) ? Runner::FAILED : Runner::SKIPPED, $e->getMessage());
+			return [empty($optional) ? Runner::FAILED : Runner::SKIPPED, $e->getMessage()];
 		}
 
-		$res = array();
+		$res = [];
 		foreach (array_keys($data) as $item) {
 			$res[] = "$item|$dataFile";
 		}
-		return array('dataprovider', $res);
+		return ['dataprovider', $res];
 	}
 
 
 	private function initiateMultiple($count, PhpInterpreter $interpreter, $file)
 	{
-		return array('multiple', range(0, (int) $count - 1));
+		return ['multiple', range(0, (int) $count - 1)];
 	}
 
 
 	private function initiateTestCase($foo, PhpInterpreter $interpreter, $file)
 	{
-		$job = new Job($file, $interpreter, array(Helpers::escapeArg('--method=' . Tester\TestCase::LIST_METHODS)));
+		$job = new Job($file, $interpreter, [Helpers::escapeArg('--method=' . Tester\TestCase::LIST_METHODS)]);
 		$job->run();
 
-		if (in_array($job->getExitCode(), array(Job::CODE_ERROR, Job::CODE_FAIL, Job::CODE_SKIP), TRUE)) {
-			return array($job->getExitCode() === Job::CODE_SKIP ? Runner::SKIPPED : Runner::FAILED, $job->getOutput());
+		if (in_array($job->getExitCode(), [Job::CODE_ERROR, Job::CODE_FAIL, Job::CODE_SKIP], TRUE)) {
+			return [$job->getExitCode() === Job::CODE_SKIP ? Runner::SKIPPED : Runner::FAILED, $job->getOutput()];
 		}
 
 		if (!preg_match('#\[([^[]*)]#', strrchr($job->getOutput(), '['), $m)) {
-			return array(Runner::FAILED, "Cannot list TestCase methods in file '$file'. Do you call TestCase::run() in it?");
+			return [Runner::FAILED, "Cannot list TestCase methods in file '$file'. Do you call TestCase::run() in it?"];
 		} elseif (!strlen($m[1])) {
-			return array(Runner::SKIPPED, "TestCase in file '$file' does not contain test methods.");
+			return [Runner::SKIPPED, "TestCase in file '$file' does not contain test methods."];
 		}
 
-		return array('method', explode(',', $m[1]));
+		return ['method', explode(',', $m[1])];
 	}
 
 
@@ -166,11 +166,11 @@ class TestHandler
 			$message = preg_match('#.*Skipped:\n(.*?)\z#s', $output = $job->getOutput(), $m)
 				? $m[1]
 				: $output;
-			return array(Runner::SKIPPED, trim($message));
+			return [Runner::SKIPPED, trim($message)];
 
 		} elseif ($job->getExitCode() !== $code) {
 			$message = $job->getExitCode() !== Job::CODE_FAIL ? "Exited with error code {$job->getExitCode()} (expected $code)" : '';
-			return array(Runner::FAILED, trim($message . "\n" . $job->getOutput()));
+			return [Runner::FAILED, trim($message . "\n" . $job->getOutput())];
 		}
 	}
 
@@ -184,7 +184,7 @@ class TestHandler
 		$actual = isset($headers['Status']) ? (int) $headers['Status'] : self::HTTP_OK;
 		$code = (int) $code;
 		if ($code && $code !== $actual) {
-			return array(Runner::FAILED, "Exited with HTTP code $actual (expected $code)");
+			return [Runner::FAILED, "Exited with HTTP code $actual (expected $code)"];
 		}
 	}
 
@@ -193,7 +193,7 @@ class TestHandler
 	{
 		$file = dirname($job->getFile()) . DIRECTORY_SEPARATOR . $file;
 		if (!is_file($file)) {
-			return array(Runner::FAILED, "Missing matching file '$file'.");
+			return [Runner::FAILED, "Missing matching file '$file'."];
 		}
 		return $this->assessOutputMatch($job, file_get_contents($file));
 	}
@@ -204,7 +204,7 @@ class TestHandler
 		if (!Tester\Assert::isMatching($content, $job->getOutput())) {
 			Dumper::saveOutput($job->getFile(), $job->getOutput(), '.actual');
 			Dumper::saveOutput($job->getFile(), $content, '.expected');
-			return array(Runner::FAILED, 'Failed: output should match ' . Dumper::toLine(rtrim($content)));
+			return [Runner::FAILED, 'Failed: output should match ' . Dumper::toLine(rtrim($content))];
 		}
 	}
 
@@ -214,7 +214,7 @@ class TestHandler
 		$annotations = Helpers::parseDocComment(file_get_contents($file));
 		$testName = (isset($annotations[0]) ? preg_replace('#^TEST:\s*#i', '', $annotations[0]) . ' | ' : '')
 			. implode(DIRECTORY_SEPARATOR, array_slice(explode(DIRECTORY_SEPARATOR, $file), -3));
-		return array($annotations, $testName);
+		return [$annotations, $testName];
 	}
 
 }

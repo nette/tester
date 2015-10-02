@@ -75,19 +75,19 @@ class TestCase
 			throw new TestCaseException("Method {$method->getName()} is not public. Make it public or rename it.");
 		}
 
-		$info = Helpers::parseDocComment($method->getDocComment()) + array('dataprovider' => NULL, 'throws' => NULL);
+		$info = Helpers::parseDocComment($method->getDocComment()) + ['dataprovider' => NULL, 'throws' => NULL];
 
 		if ($info['throws'] === '') {
 			throw new TestCaseException("Missing class name in @throws annotation for {$method->getName()}().");
 		} elseif (is_array($info['throws'])) {
 			throw new TestCaseException("Annotation @throws for {$method->getName()}() can be specified only once.");
 		} else {
-			$throws = preg_split('#\s+#', $info['throws'], 2) + array(NULL, NULL);
+			$throws = preg_split('#\s+#', $info['throws'], 2) + [NULL, NULL];
 		}
 
-		$data = array();
+		$data = [];
 		if ($args === NULL) {
-			$defaultParams = array();
+			$defaultParams = [];
 			foreach ($method->getParameters() as $param) {
 				$defaultParams[$param->getName()] = $param->isDefaultValueAvailable() ? $param->getDefaultValue() : NULL;
 			}
@@ -106,7 +106,7 @@ class TestCase
 				if ($method->getNumberOfRequiredParameters()) {
 					throw new TestCaseException("Method {$method->getName()}() has arguments, but @dataProvider is missing.");
 				}
-				$data[] = array();
+				$data[] = [];
 			}
 		} else {
 			$data[] = $args;
@@ -143,13 +143,13 @@ class TestCase
 					if ($info['throws']) {
 						$tmp = $this;
 						$e = Assert::error(function () use ($tmp, $method, $params) {
-							call_user_func_array(array($tmp, $method->getName()), $params);
+							call_user_func_array([$tmp, $method->getName()], $params);
 						}, $throws[0], $throws[1]);
 						if ($e instanceof AssertException) {
 							throw $e;
 						}
 					} else {
-						call_user_func_array(array($this, $method->getName()), $params);
+						call_user_func_array([$this, $method->getName()], $params);
 					}
 				} catch (\Exception $testException) {
 				}

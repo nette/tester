@@ -131,7 +131,7 @@ class Dumper
 	/**
 	 * @return string
 	 */
-	private static function _toPhp(&$var, & $list = array(), $level = 0, & $line = 1)
+	private static function _toPhp(&$var, & $list = [], $level = 0, & $line = 1)
 	{
 		if (is_float($var)) {
 			$var = str_replace(',', '.', "$var");
@@ -250,7 +250,7 @@ class Dumper
 	public static function dumpException($e)
 	{
 		$trace = $e->getTrace();
-		array_splice($trace, 0, $e instanceof \ErrorException ? 1 : 0, array(array('file' => $e->getFile(), 'line' => $e->getLine())));
+		array_splice($trace, 0, $e instanceof \ErrorException ? 1 : 0, [['file' => $e->getFile(), 'line' => $e->getLine()]]);
 
 		$testFile = NULL;
 		foreach (array_reverse($trace) as $item) {
@@ -268,7 +268,7 @@ class Dumper
 				|| is_object($actual) || is_array($actual) || (is_string($actual) && strlen($actual) > self::$maxLength)
 			) {
 				$args = isset($_SERVER['argv'][1])
-					? '.[' . implode(' ', preg_replace(array('#^-*(.{1,20}).*#i', '#[^=a-z0-9. -]+#i'), array('$1', '-'), array_slice($_SERVER['argv'], 1))) . ']'
+					? '.[' . implode(' ', preg_replace(['#^-*(.{1,20}).*#i', '#[^=a-z0-9. -]+#i'], ['$1', '-'], array_slice($_SERVER['argv'], 1))) . ']'
 					: '';
 				$stored[] = self::saveOutput($testFile, $expected, $args . '.expected');
 				$stored[] = self::saveOutput($testFile, $actual, $args . '.actual');
@@ -294,10 +294,10 @@ class Dumper
 					$message = "$m[1]$m[2]$m[3]\n" . str_repeat(' ', strlen($m[1]) - 4) . "... $m[4]";
 				}
 			}
-			$message = strtr($message, array(
+			$message = strtr($message, [
 				'%1' => self::color('yellow') . self::toLine($actual) . self::color('white'),
 				'%2' => self::color('yellow') . self::toLine($expected) . self::color('white'),
-			));
+			]);
 		} else {
 			$message = ($e instanceof \ErrorException ? Helpers::errorTypeToString($e->getSeverity()) : get_class($e))
 				. ': ' . preg_replace('#[\x00-\x09\x0B-\x1F]+#', ' ', $e->getMessage());
@@ -307,7 +307,7 @@ class Dumper
 			. (isset($stored) ? 'diff ' . Helpers::escapeArg($stored[0]) . ' ' . Helpers::escapeArg($stored[1]) . "\n\n" : '');
 
 		foreach ($trace as $item) {
-			$item += array('file' => NULL, 'class' => NULL, 'type' => NULL, 'function' => NULL);
+			$item += ['file' => NULL, 'class' => NULL, 'type' => NULL, 'function' => NULL];
 			if ($e instanceof AssertException && $item['file'] === __DIR__ . DIRECTORY_SEPARATOR . 'Assert.php') {
 				continue;
 			}
@@ -360,13 +360,13 @@ class Dumper
 	 */
 	public static function color($color = NULL, $s = NULL)
 	{
-		static $colors = array(
+		static $colors = [
 			'black' => '0;30', 'gray' => '1;30', 'silver' => '0;37', 'white' => '1;37',
 			'navy' => '0;34', 'blue' => '1;34', 'green' => '0;32', 'lime' => '1;32',
 			'teal' => '0;36', 'aqua' => '1;36', 'maroon' => '0;31', 'red' => '1;31',
 			'purple' => '0;35', 'fuchsia' => '1;35', 'olive' => '0;33', 'yellow' => '1;33',
 			NULL => '0',
-		);
+		];
 		$c = explode('/', $color);
 		return "\033["
 			. str_replace(';', "m\033[", $colors[$c[0]] . (empty($c[1]) ? '' : ';4' . substr($colors[$c[1]], -1)))

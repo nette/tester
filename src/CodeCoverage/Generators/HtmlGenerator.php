@@ -17,7 +17,7 @@ class HtmlGenerator extends AbstractGenerator
 	private $title;
 
 	/** @var array */
-	private $files = array();
+	private $files = [];
 
 	/** @var int */
 	private $totalSum = 0;
@@ -26,11 +26,11 @@ class HtmlGenerator extends AbstractGenerator
 	private $coveredSum = 0;
 
 	/** @var array */
-	public static $classes = array(
+	public static $classes = [
 		self::CODE_TESTED => 't', // tested
 		self::CODE_UNTESTED => 'u', // untested
 		self::CODE_DEAD => 'dead', // dead code
-	);
+	];
 
 
 	/**
@@ -76,13 +76,13 @@ class HtmlGenerator extends AbstractGenerator
 			return;
 		}
 
-		$this->files = array();
+		$this->files = [];
 		foreach ($this->getSourceIterator() as $entry) {
 			$entry = (string) $entry;
 
 			$coverage = $covered = $total = 0;
 			$loaded = isset($this->data[$entry]);
-			$lines = array();
+			$lines = [];
 			if ($loaded) {
 				$lines = $this->data[$entry];
 				foreach ($lines as $flag) {
@@ -101,14 +101,14 @@ class HtmlGenerator extends AbstractGenerator
 			}
 
 			$light = $total ? $total < 5 : count(file($entry)) < 50;
-			$this->files[] = (object) array(
+			$this->files[] = (object) [
 				'name' => str_replace((is_dir($this->source) ? $this->source : dirname($this->source)) . DIRECTORY_SEPARATOR, '', $entry),
 				'file' => $entry,
 				'lines' => $lines,
 				'coverage' => $coverage,
 				'total' => $total,
 				'class' => $light ? 'light' : ($loaded ? NULL : 'not-loaded'),
-			);
+			];
 		}
 	}
 

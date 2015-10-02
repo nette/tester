@@ -33,11 +33,11 @@ class ZendPhpDbgInterpreter implements PhpInterpreter
 		$this->path = Helpers::escapeArg($path);
 		$proc = proc_open(
 			"$this->path -n $args -V",
-			array(array('pipe', 'r'), array('pipe', 'w'), array('pipe', 'w')),
+			[['pipe', 'r'], ['pipe', 'w'], ['pipe', 'w']],
 			$pipes,
 			NULL,
 			NULL,
-			array('bypass_shell' => TRUE)
+			['bypass_shell' => TRUE]
 		);
 		$output = stream_get_contents($pipes[1]);
 

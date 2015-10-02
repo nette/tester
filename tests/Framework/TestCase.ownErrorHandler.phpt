@@ -23,7 +23,7 @@ class Test extends Tester\TestCase
 
 	protected function data()
 	{
-		return array(array(1), array(2));
+		return [[1], [2]];
 	}
 }
 

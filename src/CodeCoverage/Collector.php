@@ -44,7 +44,7 @@ class Collector
 
 		register_shutdown_function(function () use ($collector) {
 			register_shutdown_function(function () use ($collector) {
-				list($positive, $negative) = call_user_func(array(__CLASS__, $collector));
+				list($positive, $negative) = call_user_func([__CLASS__, $collector]);
 				self::save($positive, $negative);
 			});
 		});
@@ -57,7 +57,7 @@ class Collector
 	 */
 	private static function collectXdebug()
 	{
-		$positive = $negative = array();
+		$positive = $negative = [];
 
 		foreach (xdebug_get_code_coverage() as $file => $lines) {
 			if (!file_exists($file)) {
@@ -73,7 +73,7 @@ class Collector
 			}
 		}
 
-		return array($positive, $negative);
+		return [$positive, $negative];
 	}
 
 
@@ -94,7 +94,7 @@ class Collector
 			$lines = array_fill_keys(array_keys($lines), -1);
 		}
 
-		return array($positive, $negative);
+		return [$positive, $negative];
 	}
 
 
@@ -106,7 +106,7 @@ class Collector
 	{
 		flock(self::$file, LOCK_EX);
 		fseek(self::$file, 0);
-		$original = @unserialize(stream_get_contents(self::$file)) ?: array(); // @ file may be empty
+		$original = @unserialize(stream_get_contents(self::$file)) ?: []; // @ file may be empty
 		$coverage = array_replace_recursive($negative, $original, $positive);
 
 		ftruncate(self::$file, 0);

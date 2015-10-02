@@ -23,7 +23,7 @@ class Runner
 	const TEST_FILE_EXTENSION = 'phpt';
 
 	/** @var string[]  paths to test files/directories */
-	public $paths = array();
+	public $paths = [];
 
 	/** @var int  run in parallel threads */
 	public $threadCount = 1;
@@ -32,7 +32,7 @@ class Runner
 	public $testHandler;
 
 	/** @var OutputHandler[] */
-	public $outputHandlers = array();
+	public $outputHandlers = [];
 
 	/** @var bool */
 	public $stopOnFail = FALSE;
@@ -72,8 +72,8 @@ class Runner
 			$handler->begin();
 		}
 
-		$this->results = array(self::PASSED => 0, self::SKIPPED => 0, self::FAILED => 0);
-		$this->jobs = $running = array();
+		$this->results = [self::PASSED => 0, self::SKIPPED => 0, self::FAILED => 0];
+		$this->jobs = $running = [];
 		foreach ($this->paths as $path) {
 			$this->findTests($path);
 		}
@@ -121,12 +121,12 @@ class Runner
 		}
 
 		if (is_dir($path)) {
-			foreach (glob(str_replace('[', '[[]', $path) . '/*', GLOB_ONLYDIR) ?: array() as $dir) {
+			foreach (glob(str_replace('[', '[[]', $path) . '/*', GLOB_ONLYDIR) ?: [] as $dir) {
 				$this->findTests($dir);
 			}
 			$path .= '/*.' . self::TEST_FILE_EXTENSION;
 		}
-		foreach (glob(str_replace('[', '[[]', $path)) ?: array() as $file) {
+		foreach (glob(str_replace('[', '[[]', $path)) ?: [] as $file) {
 			if (is_file($file)) {
 				$this->testHandler->initiate(realpath($file));
 			}

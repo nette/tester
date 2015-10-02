@@ -11,7 +11,7 @@ require __DIR__ . '/../bootstrap.php';
 
 
 test(function () {
-	$job = new Job($file = 'Job.test.phptx', createInterpreter(), $args = array('one', 'two'));
+	$job = new Job($file = 'Job.test.phptx', createInterpreter(), $args = ['one', 'two']);
 	$job->run($job::RUN_COLLECT_ERRORS);
 
 	Assert::false($job->isRunning());

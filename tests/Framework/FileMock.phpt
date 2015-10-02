@@ -13,24 +13,24 @@ Assert::contains('mock', stream_get_wrappers());
 
 // Opening non-existing
 test(function () {
-	$cases = array(
-		'r'  => $tmp = array(
-			array(E_USER_WARNING, 'fopen(mock://none): failed to open stream: No such file or directory'),
-			array(E_WARNING, 'fopen(mock://none): failed to open stream: "Tester\FileMock::stream_open" call failed'),
-		),
+	$cases = [
+		'r'  => $tmp = [
+			[E_USER_WARNING, 'fopen(mock://none): failed to open stream: No such file or directory'],
+			[E_WARNING, 'fopen(mock://none): failed to open stream: "Tester\FileMock::stream_open" call failed'],
+		],
 		'r+' => $tmp,
-		'w'  => array(),
-		'w+' => array(),
-		'a'  => array(),
-		'a+' => array(),
-		'x'  => array(),
-		'x+' => array(),
-		'c'  => array(),
-		'c+' => array(),
-	);
+		'w'  => [],
+		'w+' => [],
+		'a'  => [],
+		'a+' => [],
+		'x'  => [],
+		'x+' => [],
+		'c'  => [],
+		'c+' => [],
+	];
 
 	foreach ($cases as $mode => $errors) {
-		FileMock::$files = array();
+		FileMock::$files = [];
 
 		Assert::error(function () use ($mode) {
 			fopen('mock://none', $mode);
@@ -42,23 +42,23 @@ test(function () {
 
 // Opening existing
 test(function () {
-	FileMock::$files = array();
+	FileMock::$files = [];
 
-	$cases = array(
-		'r'  => array(),
-		'r+' => array(),
-		'w'  => array(),
-		'w+' => array(),
-		'a'  => array(),
-		'a+' => array(),
-		'x'  => $tmp = array(
-			array(E_USER_WARNING, 'fopen(mock://%i%.): failed to open stream: File exists'),
-			array(E_WARNING, 'fopen(mock://%i%.): failed to open stream: "Tester\FileMock::stream_open" call failed'),
-		),
+	$cases = [
+		'r'  => [],
+		'r+' => [],
+		'w'  => [],
+		'w+' => [],
+		'a'  => [],
+		'a+' => [],
+		'x'  => $tmp = [
+			[E_USER_WARNING, 'fopen(mock://%i%.): failed to open stream: File exists'],
+			[E_WARNING, 'fopen(mock://%i%.): failed to open stream: "Tester\FileMock::stream_open" call failed'],
+		],
 		'x+' => $tmp,
-		'c'  => array(),
-		'c+' => array(),
-	);
+		'c'  => [],
+		'c+' => [],
+	];
 
 	foreach ($cases as $mode => $errors) {
 		Assert::error(function () use ($mode) {
@@ -70,9 +70,9 @@ test(function () {
 
 // Initial cursor position
 test(function () {
-	FileMock::$files = array();
+	FileMock::$files = [];
 
-	$cases = array(
+	$cases = [
 		'r'  => 0,
 		'r+' => 0,
 		'w'  => 0,
@@ -83,7 +83,7 @@ test(function () {
 		'x+' => 0,
 		'c'  => 0,
 		'c+' => 0,
-	);
+	];
 
 	foreach ($cases as $mode => $position) {
 		$file = $mode[0] === 'x' ? "mock://none-$mode" : FileMock::create('ABC');
@@ -94,20 +94,20 @@ test(function () {
 
 // Truncation on open
 test(function () {
-	FileMock::$files = array();
+	FileMock::$files = [];
 
-	$cases = array(
-		'r'  => array('ABC', 'ABC'),
-		'r+' => array('ABC', 'ABC'),
-		'w'  => array('', ''),
-		'w+' => array('', ''),
-		'a'  => array('ABC', ''),
-		'a+' => array('ABC', 'ABC'),
-		'x'  => array('', ''),
-		'x+' => array('', ''),
-		'c'  => array('ABC', ''),
-		'c+' => array('ABC', 'ABC'),
-	);
+	$cases = [
+		'r'  => ['ABC', 'ABC'],
+		'r+' => ['ABC', 'ABC'],
+		'w'  => ['', ''],
+		'w+' => ['', ''],
+		'a'  => ['ABC', ''],
+		'a+' => ['ABC', 'ABC'],
+		'x'  => ['', ''],
+		'x+' => ['', ''],
+		'c'  => ['ABC', ''],
+		'c+' => ['ABC', 'ABC'],
+	];
 
 	foreach ($cases as $mode => $case) {
 		list($contents, $readOut) = $case;
@@ -123,20 +123,20 @@ test(function () {
 
 // Writing position after open
 test(function () {
-	FileMock::$files = array();
+	FileMock::$files = [];
 
-	$cases = array(
-		'r'  => array('ABC', 'ABC'),
-		'r+' => array('_BC', '_BC'),
-		'w'  => array('_', ''),
-		'w+' => array('_', '_'),
-		'a'  => array('ABC_', ''),
-		'a+' => array('ABC_', 'ABC_'),
-		'x'  => array('_', ''),
-		'x+' => array('_', '_'),
-		'c'  => array('_BC', ''),
-		'c+' => array('_BC', '_BC'),
-	);
+	$cases = [
+		'r'  => ['ABC', 'ABC'],
+		'r+' => ['_BC', '_BC'],
+		'w'  => ['_', ''],
+		'w+' => ['_', '_'],
+		'a'  => ['ABC_', ''],
+		'a+' => ['ABC_', 'ABC_'],
+		'x'  => ['_', ''],
+		'x+' => ['_', '_'],
+		'c'  => ['_BC', ''],
+		'c+' => ['_BC', '_BC'],
+	];
 
 	foreach ($cases as $mode => $case) {
 		list($contents, $readOut) = $case;
@@ -227,7 +227,7 @@ test(function () {
 
 // Position handling across modes
 test(function () {
-	$modes = array('r', 'r+', 'w', 'w+', 'a', 'a+', 'c', 'c+');
+	$modes = ['r', 'r+', 'w', 'w+', 'a', 'a+', 'c', 'c+'];
 	$pathReal = __DIR__ . '/real-file.txt';
 
 	foreach ($modes as $mode) {

@@ -12,25 +12,25 @@ class MyTest extends Tester\TestCase
 	public function dataProvider()
 	{
 		$this->order[] = __METHOD__;
-		return array(
-			array(1, 2),
-			array(3, 4),
-		);
+		return [
+			[1, 2],
+			[3, 4],
+		];
 	}
 
 	public function dataProviderIterator()
 	{
 		$this->order[] = __METHOD__;
-		return new \ArrayIterator(array(
-			array(1, 2),
-			array(3, 4),
-		));
+		return new \ArrayIterator([
+			[1, 2],
+			[3, 4],
+		]);
 	}
 
 	/** @dataProvider dataProvider */
 	public function testSingleDataProvider($a, $b)
 	{
-		$this->order[] = array(__METHOD__, func_get_args());
+		$this->order[] = [__METHOD__, func_get_args()];
 	}
 
 	/**
@@ -39,19 +39,19 @@ class MyTest extends Tester\TestCase
 	 */
 	public function testMultipleDataProvider($a, $b)
 	{
-		$this->order[] = array(__METHOD__, func_get_args());
+		$this->order[] = [__METHOD__, func_get_args()];
 	}
 
 	/** @dataProvider dataProviderIterator */
 	public function testIteratorDataProvider($a, $b)
 	{
-		$this->order[] = array(__METHOD__, func_get_args());
+		$this->order[] = [__METHOD__, func_get_args()];
 	}
 
 	/** @dataProvider ../Framework/fixtures/dataprovider.query.ini != foo */
 	public function testFileDataProvider($a = 'a', $b = 'b')
 	{
-		$this->order[] = array(__METHOD__, func_get_args());
+		$this->order[] = [__METHOD__, func_get_args()];
 	}
 
 	/** @dataProvider dataProvider */
@@ -64,40 +64,40 @@ class MyTest extends Tester\TestCase
 
 $test = new MyTest;
 $test->run('testSingleDataProvider');
-Assert::same(array(
+Assert::same([
 	'MyTest::dataProvider',
-	array('MyTest::testSingleDataProvider', array(1, 2)),
-	array('MyTest::testSingleDataProvider', array(3, 4)),
-), $test->order);
+	['MyTest::testSingleDataProvider', [1, 2]],
+	['MyTest::testSingleDataProvider', [3, 4]],
+], $test->order);
 
 
 $test = new MyTest;
 $test->run('testMultipleDataProvider');
-Assert::same(array(
+Assert::same([
 	'MyTest::dataProvider',
 	'MyTest::dataProvider',
-	array('MyTest::testMultipleDataProvider', array(1, 2)),
-	array('MyTest::testMultipleDataProvider', array(3, 4)),
-	array('MyTest::testMultipleDataProvider', array(1, 2)),
-	array('MyTest::testMultipleDataProvider', array(3, 4)),
-), $test->order);
+	['MyTest::testMultipleDataProvider', [1, 2]],
+	['MyTest::testMultipleDataProvider', [3, 4]],
+	['MyTest::testMultipleDataProvider', [1, 2]],
+	['MyTest::testMultipleDataProvider', [3, 4]],
+], $test->order);
 
 
 $test = new MyTest;
 $test->run('testIteratorDataProvider');
-Assert::same(array(
+Assert::same([
 	'MyTest::dataProviderIterator',
-	array('MyTest::testIteratorDataProvider', array(1, 2)),
-	array('MyTest::testIteratorDataProvider', array(3, 4)),
-), $test->order);
+	['MyTest::testIteratorDataProvider', [1, 2]],
+	['MyTest::testIteratorDataProvider', [3, 4]],
+], $test->order);
 
 
 $test = new MyTest;
 $test->run('testFileDataProvider');
-Assert::same(array(
-	array('MyTest::testFileDataProvider', array('1', 'b')),
-	array('MyTest::testFileDataProvider', array('a', '2')),
-), $test->order);
+Assert::same([
+	['MyTest::testFileDataProvider', ['1', 'b']],
+	['MyTest::testFileDataProvider', ['a', '2']],
+], $test->order);
 
 
 Assert::exception(function () {

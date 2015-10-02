@@ -11,13 +11,13 @@ require __DIR__ . '/../../src/CodeCoverage/Generators/CloverXMLGenerator.php';
 
 $coveredDir = __DIR__ . DIRECTORY_SEPARATOR . 'clover';
 
-$coverageData = Tester\FileMock::create(serialize(array(
+$coverageData = Tester\FileMock::create(serialize([
 	$coveredDir . DIRECTORY_SEPARATOR . 'Logger.php' => array_map('intval', preg_filter(
 		'~.*# (-?\d+)~',
 		'$1',
 		explode("\n", "\n" . file_get_contents($coveredDir . DIRECTORY_SEPARATOR . 'Logger.php'))
 	)),
-)));
+]));
 
 $generator = new CodeCoverage\Generators\CloverXMLGenerator($coverageData, $coveredDir);
 $generator->render($output = Tester\FileMock::create('', 'xml'));

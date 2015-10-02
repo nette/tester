@@ -26,34 +26,34 @@ $deep1->x = $deep2->x = $deep1;
 $float1 = 1 / 3;
 $float2 = 1 - 2 / 3;
 
-$equals = array(
-	array(1, 1),
-	array('1', '1'),
-	array(array('1'), array('1')),
-	array(array('a', 'b'), array(1 => 'b', 0 => 'a')),
-	array(array('a' => TRUE, 'b' => FALSE), array('b' => FALSE, 'a' => TRUE)),
-	array(new stdClass, new stdClass),
-	array(array(new stdClass), array(new stdClass)),
-	array($float1, $float2),
-	array($float1 * 1e9, $float2 * 1e9),
-	array($float1 - $float2, 0.0),
-	array($float1 - $float2, $float2 - $float1),
-	array(0.0, 0.0),
-	array(INF, INF),
-	array($obj1, $obj2),
-	array($obj3, $obj4),
-	array(array(0 => 'a', 'str' => 'b'), array('str' => 'b', 0 => 'a')),
-	array($deep1, $deep2),
-);
+$equals = [
+	[1, 1],
+	['1', '1'],
+	[['1'], ['1']],
+	[['a', 'b'], [1 => 'b', 0 => 'a']],
+	[['a' => TRUE, 'b' => FALSE], ['b' => FALSE, 'a' => TRUE]],
+	[new stdClass, new stdClass],
+	[[new stdClass], [new stdClass]],
+	[$float1, $float2],
+	[$float1 * 1e9, $float2 * 1e9],
+	[$float1 - $float2, 0.0],
+	[$float1 - $float2, $float2 - $float1],
+	[0.0, 0.0],
+	[INF, INF],
+	[$obj1, $obj2],
+	[$obj3, $obj4],
+	[[0 => 'a', 'str' => 'b'], ['str' => 'b', 0 => 'a']],
+	[$deep1, $deep2],
+];
 
-$notEquals = array(
-	array(1, 1.0),
-	array(INF, -INF),
-	array(array('a', 'b'), array('b', 'a')),
-);
+$notEquals = [
+	[1, 1.0],
+	[INF, -INF],
+	[['a', 'b'], ['b', 'a']],
+];
 
 if (!defined('PHP_WINDOWS_VERSION_BUILD') || PHP_VERSION_ID < 50301 || PHP_VERSION_ID > 50304) {
-	$notEquals[] = array(NAN, NAN);
+	$notEquals[] = [NAN, NAN];
 }
 
 
@@ -78,7 +78,7 @@ foreach ($notEquals as $case) {
 }
 
 Assert::exception(function () {
-	$rec = array();
+	$rec = [];
 	$rec[] = & $rec;
 	Assert::equal($rec, $rec);
 }, 'Exception', 'Nesting level too deep or recursive dependency.');

@@ -7,7 +7,7 @@ require __DIR__ . '/../bootstrap.php';
 
 Assert::true(TRUE);
 
-$notTrue = array(FALSE, 0, 1, NULL, 'TRUE');
+$notTrue = [FALSE, 0, 1, NULL, 'TRUE'];
 
 foreach ($notTrue as $value) {
 	Assert::exception(function () use ($value) {

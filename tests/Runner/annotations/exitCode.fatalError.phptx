@@ -7,5 +7,5 @@
 require __DIR__ . '/../../bootstrap.php';
 
 
-$a = array();
+$a = [];
 $a * $a;

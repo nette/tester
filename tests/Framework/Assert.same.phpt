@@ -5,21 +5,21 @@ use Tester\Assert;
 require __DIR__ . '/../bootstrap.php';
 
 
-$same = array(
-	array(1, 1),
-	array('1', '1'),
-	array(array('1'), array('1')),
-	array($obj = new stdClass, $obj),
-);
+$same = [
+	[1, 1],
+	['1', '1'],
+	[['1'], ['1']],
+	[$obj = new stdClass, $obj],
+];
 
-$notSame = array(
-	array(1, 1.0),
-	array(array('a' => TRUE, 'b' => FALSE), array('b' => FALSE, 'a' => TRUE)),
-	array(array('a', 'b'), array('b', 'a')),
-	array(array('a', 'b'), array(1 => 'b', 0 => 'a')),
-	array(new stdClass, new stdClass),
-	array(array(new stdClass), array(new stdClass)),
-);
+$notSame = [
+	[1, 1.0],
+	[['a' => TRUE, 'b' => FALSE], ['b' => FALSE, 'a' => TRUE]],
+	[['a', 'b'], ['b', 'a']],
+	[['a', 'b'], [1 => 'b', 0 => 'a']],
+	[new stdClass, new stdClass],
+	[[new stdClass], [new stdClass]],
+];
 
 foreach ($same as $case) {
 	list($expected, $value) = $case;
@@ -43,15 +43,15 @@ foreach ($notSame as $case) {
 
 
 if ((PHP_VERSION_ID >= 50315 && PHP_VERSION_ID < 50400) || PHP_VERSION_ID >= 50405) {
-	$rec = array();
+	$rec = [];
 	$rec[] = & $rec;
 	Assert::same($rec, $rec);
 }
 
 Assert::exception(function () {
-	$rec = array();
+	$rec = [];
 	$rec[] = & $rec;
-	Assert::same($rec, array());
+	Assert::same($rec, []);
 }, 'Tester\AssertException');
 
 Assert::exception(function () {

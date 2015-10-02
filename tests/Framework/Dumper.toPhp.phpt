@@ -8,7 +8,7 @@ require __DIR__ . '/../bootstrap.php';
 
 class Test
 {
-	public $x = array(10, NULL);
+	public $x = [10, NULL];
 	private $y = 'hello';
 	protected $z = 30.0;
 }
@@ -35,13 +35,13 @@ Assert::match('array(
 	"\r" => array(),
 	array(1, 2),
 	array(1 => 1, 2, 3, 4, 5, 6, 7),
-)', Dumper::toPhp(array(1, 'hello', "\r" => array(), array(1, 2), array(1 => 1, 2, 3, 4, 5, 6, 7))));
+)', Dumper::toPhp([1, 'hello', "\r" => [], [1, 2], [1 => 1, 2, 3, 4, 5, 6, 7]]));
 
 Assert::match('/* resource stream */', Dumper::toPhp(fopen(__FILE__, 'r')));
 Assert::match('(object) /* #%a% */ array()', Dumper::toPhp((object) NULL));
 Assert::match("(object) /* #%a% */ array(
 	'a' => 'b',
-)", Dumper::toPhp((object) array('a' => 'b')));
+)", Dumper::toPhp((object) ['a' => 'b']));
 
 Assert::match("Test::__set_state(/* #%a% */ array(
 	'x' => array(10, NULL),

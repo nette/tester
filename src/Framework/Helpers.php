@@ -41,9 +41,9 @@ class Helpers
 	 */
 	public static function parseDocComment($s)
 	{
-		$options = array();
+		$options = [];
 		if (!preg_match('#^/\*\*(.*?)\*/#ms', $s, $content)) {
-			return array();
+			return [];
 		}
 		if (preg_match('#^[ \t\*]*+([^\s@].*)#mi', $content[1], $matches)) {
 			$options[0] = trim($matches[1]);

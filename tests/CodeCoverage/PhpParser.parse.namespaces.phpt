@@ -13,73 +13,73 @@ $parser = new CodeCoverage\PhpParser;
 test(function () use ($parser) {
 	$parsed = $parser->parse(file_get_contents(__DIR__ . '/parse/namespaces.none.php'));
 
-	Assert::equal(array(
-		'f' => (object) array('start' => 3, 'end' => 3),
-	), $parsed->functions);
+	Assert::equal([
+		'f' => (object) ['start' => 3, 'end' => 3],
+	], $parsed->functions);
 
-	Assert::equal(array(
-		'C' => (object) array('start' => 4, 'end' => 4, 'methods' => array()),
-	), $parsed->classes);
+	Assert::equal([
+		'C' => (object) ['start' => 4, 'end' => 4, 'methods' => []],
+	], $parsed->classes);
 
-	Assert::equal(array(
-		'T' => (object) array('start' => 5, 'end' => 5, 'methods' => array()),
-	), $parsed->traits);
+	Assert::equal([
+		'T' => (object) ['start' => 5, 'end' => 5, 'methods' => []],
+	], $parsed->traits);
 
-	Assert::equal(array(
-		'I' => (object) array('start' => 6, 'end' => 6, 'methods' => array()),
-	), $parsed->interfaces);
+	Assert::equal([
+		'I' => (object) ['start' => 6, 'end' => 6, 'methods' => []],
+	], $parsed->interfaces);
 });
 
 
 test(function () use ($parser) {
 	$parsed = $parser->parse(file_get_contents(__DIR__ . '/parse/namespaces.php'));
 
-	Assert::equal(array(
-		'N\f' => (object) array('start' => 5, 'end' => 5),
-		'N\S\f' => (object) array('start' => 13, 'end' => 13),
-	), $parsed->functions);
+	Assert::equal([
+		'N\f' => (object) ['start' => 5, 'end' => 5],
+		'N\S\f' => (object) ['start' => 13, 'end' => 13],
+	], $parsed->functions);
 
-	Assert::equal(array(
-		'N\C' => (object) array('start' => 6, 'end' => 6, 'methods' => array()),
-		'N\S\C' => (object) array('start' => 14, 'end' => 14, 'methods' => array()),
-	), $parsed->classes);
+	Assert::equal([
+		'N\C' => (object) ['start' => 6, 'end' => 6, 'methods' => []],
+		'N\S\C' => (object) ['start' => 14, 'end' => 14, 'methods' => []],
+	], $parsed->classes);
 
-	Assert::equal(array(
-		'N\T' => (object) array('start' => 7, 'end' => 7, 'methods' => array()),
-		'N\S\T' => (object) array('start' => 15, 'end' => 15, 'methods' => array()),
-	), $parsed->traits);
+	Assert::equal([
+		'N\T' => (object) ['start' => 7, 'end' => 7, 'methods' => []],
+		'N\S\T' => (object) ['start' => 15, 'end' => 15, 'methods' => []],
+	], $parsed->traits);
 
-	Assert::equal(array(
-		'N\I' => (object) array('start' => 8, 'end' => 8, 'methods' => array()),
-		'N\S\I' => (object) array('start' => 16, 'end' => 16, 'methods' => array()),
-	), $parsed->interfaces);
+	Assert::equal([
+		'N\I' => (object) ['start' => 8, 'end' => 8, 'methods' => []],
+		'N\S\I' => (object) ['start' => 16, 'end' => 16, 'methods' => []],
+	], $parsed->interfaces);
 });
 
 
 test(function () use ($parser) {
 	$parsed = $parser->parse(file_get_contents(__DIR__ . '/parse/namespaces.braces.php'));
 
-	Assert::equal(array(
-		'f' => (object) array('start' => 4, 'end' => 4),
-		'N\f' => (object) array('start' => 11, 'end' => 11),
-		'N\S\f' => (object) array('start' => 18, 'end' => 18),
-	), $parsed->functions);
+	Assert::equal([
+		'f' => (object) ['start' => 4, 'end' => 4],
+		'N\f' => (object) ['start' => 11, 'end' => 11],
+		'N\S\f' => (object) ['start' => 18, 'end' => 18],
+	], $parsed->functions);
 
-	Assert::equal(array(
-		'C' => (object) array('start' => 5, 'end' => 5, 'methods' => array()),
-		'N\C' => (object) array('start' => 12, 'end' => 12, 'methods' => array()),
-		'N\S\C' => (object) array('start' => 19, 'end' => 19, 'methods' => array()),
-	), $parsed->classes);
+	Assert::equal([
+		'C' => (object) ['start' => 5, 'end' => 5, 'methods' => []],
+		'N\C' => (object) ['start' => 12, 'end' => 12, 'methods' => []],
+		'N\S\C' => (object) ['start' => 19, 'end' => 19, 'methods' => []],
+	], $parsed->classes);
 
-	Assert::equal(array(
-		'T' => (object) array('start' => 6, 'end' => 6, 'methods' => array()),
-		'N\T' => (object) array('start' => 13, 'end' => 13, 'methods' => array()),
-		'N\S\T' => (object) array('start' => 20, 'end' => 20, 'methods' => array()),
-	), $parsed->traits);
+	Assert::equal([
+		'T' => (object) ['start' => 6, 'end' => 6, 'methods' => []],
+		'N\T' => (object) ['start' => 13, 'end' => 13, 'methods' => []],
+		'N\S\T' => (object) ['start' => 20, 'end' => 20, 'methods' => []],
+	], $parsed->traits);
 
-	Assert::equal(array(
-		'I' => (object) array('start' => 7, 'end' => 7, 'methods' => array()),
-		'N\I' => (object) array('start' => 14, 'end' => 14, 'methods' => array()),
-		'N\S\I' => (object) array('start' => 21, 'end' => 21, 'methods' => array()),
-	), $parsed->interfaces);
+	Assert::equal([
+		'I' => (object) ['start' => 7, 'end' => 7, 'methods' => []],
+		'N\I' => (object) ['start' => 14, 'end' => 14, 'methods' => []],
+		'N\S\I' => (object) ['start' => 21, 'end' => 21, 'methods' => []],
+	], $parsed->interfaces);
 });

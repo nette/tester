@@ -5,8 +5,8 @@ use Tester\Assert;
 require __DIR__ . '/../bootstrap.php';
 
 
-$truthy = array(1, '1', array(1), TRUE, new stdClass);
-$notTruthy = array(0, '', '0', array(), NULL, new SimpleXMLElement('<xml></xml>'));
+$truthy = [1, '1', [1], TRUE, new stdClass];
+$notTruthy = [0, '', '0', [], NULL, new SimpleXMLElement('<xml></xml>')];
 
 foreach ($truthy as $value) {
 	Assert::truthy($value);

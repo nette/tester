@@ -48,11 +48,11 @@ class ConsolePrinter implements Tester\Runner\OutputHandler
 
 	public function result($testName, $result, $message)
 	{
-		$outputs = array(
+		$outputs = [
 			Runner::PASSED => '.',
 			Runner::SKIPPED => 's',
 			Runner::FAILED => Dumper::color('white/red', 'F'),
-		);
+		];
 		echo $outputs[$result];
 
 		$message = '   ' . str_replace("\n", "\n   ", trim($message)) . "\n\n";

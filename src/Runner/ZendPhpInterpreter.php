@@ -39,11 +39,11 @@ class ZendPhpInterpreter implements PhpInterpreter
 		$this->path = Helpers::escapeArg($path);
 		$proc = proc_open(
 			"$this->path -n $args -v", // -v must be the last
-			array(array('pipe', 'r'), array('pipe', 'w'), array('pipe', 'w')),
+			[['pipe', 'r'], ['pipe', 'w'], ['pipe', 'w']],
 			$pipes,
 			NULL,
 			NULL,
-			array('bypass_shell' => TRUE)
+			['bypass_shell' => TRUE]
 		);
 		$output = stream_get_contents($pipes[1]);
 		$this->error = trim(stream_get_contents($pipes[2]));
@@ -57,7 +57,7 @@ class ZendPhpInterpreter implements PhpInterpreter
 		$this->cgi = strcasecmp($matches[2], 'g') === 0;
 		$this->arguments = $args;
 
-		$job = new Job(__DIR__ . '/info.php', $this, array('xdebug'));
+		$job = new Job(__DIR__ . '/info.php', $this, ['xdebug']);
 		$job->run();
 		$this->xdebug = !$job->getExitCode();
 	}

@@ -37,7 +37,7 @@ class CliTester
 		Environment::$debugMode = (bool) $this->options['--debug'];
 		if (isset($this->options['--colors'])) {
 			Environment::$useColors = (bool) $this->options['--colors'];
-		} elseif (in_array($this->options['-o'], array('tap', 'junit'))) {
+		} elseif (in_array($this->options['-o'], ['tap', 'junit'])) {
 			Environment::$useColors = FALSE;
 		}
 
@@ -114,14 +114,14 @@ Options:
     -h | --help                  This help.
 
 XX
-		, array(
-			'-c' => array(CommandLine::REALPATH => TRUE),
-			'--watch' => array(CommandLine::REPEATABLE => TRUE, CommandLine::REALPATH => TRUE),
-			'--setup' => array(CommandLine::REALPATH => TRUE),
-			'paths' => array(CommandLine::REPEATABLE => TRUE, CommandLine::VALUE => getcwd()),
-			'--debug' => array(),
-			'--coverage-src' => array(CommandLine::REALPATH => TRUE),
-		));
+		, [
+			'-c' => [CommandLine::REALPATH => TRUE],
+			'--watch' => [CommandLine::REPEATABLE => TRUE, CommandLine::REALPATH => TRUE],
+			'--setup' => [CommandLine::REALPATH => TRUE],
+			'paths' => [CommandLine::REPEATABLE => TRUE, CommandLine::VALUE => getcwd()],
+			'--debug' => [],
+			'--coverage-src' => [CommandLine::REALPATH => TRUE],
+		]);
 
 		if (isset($_SERVER['argv'])) {
 			if ($tmp = array_search('-log', $_SERVER['argv'])) {
@@ -130,7 +130,7 @@ XX
 
 			if ($tmp = array_search('--tap', $_SERVER['argv'])) {
 				unset($_SERVER['argv'][$tmp]);
-				$_SERVER['argv'] = array_merge($_SERVER['argv'], array('-o', 'tap'));
+				$_SERVER['argv'] = array_merge($_SERVER['argv'], ['-o', 'tap']);
 			}
 		}
 
@@ -149,7 +149,7 @@ XX
 			echo "Note: No php.ini is used.\n";
 		}
 
-		if (in_array($this->options['-o'], array('tap', 'junit'))) {
+		if (in_array($this->options['-o'], ['tap', 'junit'])) {
 			$args .= ' -d html_errors=off';
 		}
 
@@ -160,11 +160,11 @@ XX
 		// Is the executable Zend PHP or HHVM?
 		$proc = @proc_open( // @ is escalated to exception
 			$this->options['-p'] . ' --version',
-			array(array('pipe', 'r'), array('pipe', 'w'), array('pipe', 'w')),
+			[['pipe', 'r'], ['pipe', 'w'], ['pipe', 'w']],
 			$pipes,
 			NULL,
 			NULL,
-			array('bypass_shell' => TRUE)
+			['bypass_shell' => TRUE]
 		);
 		if ($proc === FALSE) {
 			throw new \Exception('Cannot run PHP interpreter ' . $this->options['-p'] . '. Use -p option.');
@@ -247,7 +247,7 @@ XX
 	/** @return void */
 	private function finishCodeCoverage($file)
 	{
-		if (!in_array($this->options['-o'], array('none', 'tap', 'junit'), TRUE)) {
+		if (!in_array($this->options['-o'], ['none', 'tap', 'junit'], TRUE)) {
 			echo "Generating code coverage report\n";
 		}
 		if (pathinfo($file, PATHINFO_EXTENSION) === 'xml') {
@@ -262,10 +262,10 @@ XX
 	/** @return void */
 	private function watch(Runner $runner)
 	{
-		$prev = array();
+		$prev = [];
 		$counter = 0;
 		while (TRUE) {
-			$state = array();
+			$state = [];
 			foreach ($this->options['--watch'] as $directory) {
 				foreach (new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($directory)) as $file) {
 					if (substr($file->getExtension(), 0, 3) === 'php' && substr($file->getBasename(), 0, 1) !== '.') {

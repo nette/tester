@@ -21,10 +21,10 @@ Assert::error(function () {
 	$a++;
 	@$x++;
 	$b++;
-}, array(
-	array(E_NOTICE, 'Undefined variable: a'),
-	array(E_NOTICE, 'Undefined variable: b'),
-));
+}, [
+	[E_NOTICE, 'Undefined variable: a'],
+	[E_NOTICE, 'Undefined variable: b'],
+]);
 
 Assert::exception(function () {
 	Assert::error(function () {
@@ -53,10 +53,10 @@ Assert::exception(function () {
 Assert::exception(function () {
 	Assert::error(function () {
 		$a++;
-	}, array(
-		array(E_NOTICE, 'Undefined variable: a'),
-		array(E_NOTICE, 'Undefined variable: b'),
-	));
+	}, [
+		[E_NOTICE, 'Undefined variable: a'],
+		[E_NOTICE, 'Undefined variable: b'],
+	]);
 }, 'Tester\AssertException', 'Error was expected, but was not generated');
 
 

@@ -1,6 +1,6 @@
 <?php
 
-return array(
-	'foo' => array(),
-	'bar' => array(),
-);
+return [
+	'foo' => [],
+	'bar' => [],
+];

@@ -15,7 +15,7 @@ use Tester\CodeCoverage\PhpParser;
 class CloverXMLGenerator extends AbstractGenerator
 {
 
-	private static $metricAttributesMap = array(
+	private static $metricAttributesMap = [
 		'packageCount' => 'packages',
 		'fileCount' => 'files',
 		'linesOfCode' => 'loc',
@@ -29,7 +29,7 @@ class CloverXMLGenerator extends AbstractGenerator
 		'coveredElementCount' => 'coveredelements',
 		'conditionalCount' => 'conditionals',
 		'coveredConditionalCount' => 'coveredconditionals',
-	);
+	];
 
 
 	public function __construct($file, $source = NULL)
@@ -57,7 +57,7 @@ class CloverXMLGenerator extends AbstractGenerator
 		$elProject->setAttribute('timestamp', $time);
 		$elProjectMetrics = $elProject->appendChild($doc->createElement('metrics'));
 
-		$projectMetrics = (object) array(
+		$projectMetrics = (object) [
 			'packageCount' => 0,
 			'fileCount' => 0,
 			'linesOfCode' => 0,
@@ -71,7 +71,7 @@ class CloverXMLGenerator extends AbstractGenerator
 			'coveredElementCount' => 0,
 			'conditionalCount' => 0,
 			'coveredConditionalCount' => 0,
-		);
+		];
 
 		foreach ($this->getSourceIterator() as $file) {
 			$file = (string) $file;
@@ -87,7 +87,7 @@ class CloverXMLGenerator extends AbstractGenerator
 
 			$code = $parser->parse(file_get_contents($file));
 
-			$fileMetrics = (object) array(
+			$fileMetrics = (object) [
 				'linesOfCode' => $code->linesOfCode,
 				'linesOfNonCommentedCode' => $code->linesOfCode - $code->linesOfComments,
 				'classCount' => count($code->classes) + count($code->traits),
@@ -99,7 +99,7 @@ class CloverXMLGenerator extends AbstractGenerator
 				'coveredElementCount' => 0,
 				'conditionalCount' => 0,
 				'coveredConditionalCount' => 0,
-			);
+			];
 
 			foreach (array_merge($code->classes, $code->traits) as $name => $info) { // TODO: interfaces?
 				$elClass = $elFile->appendChild($doc->createElement('class'));
@@ -145,7 +145,7 @@ class CloverXMLGenerator extends AbstractGenerator
 	 */
 	private function calculateClassMetrics(\stdClass $info, array $coverageData = NULL)
 	{
-		$stats = (object) array(
+		$stats = (object) [
 			'methodCount' => count($info->methods),
 			'coveredMethodCount' => 0,
 			'statementCount' => 0,
@@ -154,7 +154,7 @@ class CloverXMLGenerator extends AbstractGenerator
 			'coveredConditionalCount' => 0,
 			'elementCount' => NULL,
 			'coveredElementCount' => NULL,
-		);
+		];
 
 		foreach ($info->methods as $name => $methodInfo) {
 			list($lineCount, $coveredLineCount) = $this->analyzeMethod($methodInfo, $coverageData);
@@ -195,7 +195,7 @@ class CloverXMLGenerator extends AbstractGenerator
 			}
 		}
 
-		return array($count, $coveredCount);
+		return [$count, $coveredCount];
 	}
 
 

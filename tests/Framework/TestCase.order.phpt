@@ -34,14 +34,14 @@ class SuccessTest extends Tester\TestCase
 $test = new SuccessTest;
 $test->run();
 
-Assert::same(array(
+Assert::same([
 	'SuccessTest::setUp',
 	'SuccessTest::testPublic',
 	'SuccessTest::tearDown',
 	'SuccessTest::setUp',
 	'SuccessTest::testPublicStatic',
 	'SuccessTest::tearDown',
-), SuccessTest::$order);
+], SuccessTest::$order);
 
 
 
@@ -85,11 +85,11 @@ Assert::exception(function () use ($test) {
 }, 'Tester\AssertException');
 
 
-Assert::same(array(
+Assert::same([
 	'FailingTest::setUp',
 	'FailingTest::testPublic',
 	'FailingTest::tearDown',
 	'FailingTest::setUp',
 	'FailingTest::testPublicStatic',
 	'FailingTest::tearDown',
-), FailingTest::$order);
+], FailingTest::$order);

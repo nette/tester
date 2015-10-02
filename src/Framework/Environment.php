@@ -88,21 +88,21 @@ class Environment
 		ini_set('html_errors', FALSE);
 		ini_set('log_errors', FALSE);
 
-		set_exception_handler(array(__CLASS__, 'handleException'));
+		set_exception_handler([__CLASS__, 'handleException']);
 
 		set_error_handler(function ($severity, $message, $file, $line) {
-			if (in_array($severity, array(E_RECOVERABLE_ERROR, E_USER_ERROR), TRUE) || ($severity & error_reporting()) === $severity) {
+			if (in_array($severity, [E_RECOVERABLE_ERROR, E_USER_ERROR], TRUE) || ($severity & error_reporting()) === $severity) {
 				Environment::handleException(new \ErrorException($message, 0, $severity, $file, $line));
 			}
 			return FALSE;
 		});
 
 		register_shutdown_function(function () {
-			Assert::$onFailure = array(__CLASS__, 'handleException'); // note that Runner is unable to catch this errors in CLI & PHP 5.4.0 - 5.4.6 due PHP bug #62725
+			Assert::$onFailure = [__CLASS__, 'handleException']; // note that Runner is unable to catch this errors in CLI & PHP 5.4.0 - 5.4.6 due PHP bug #62725
 
 			$error = error_get_last();
 			register_shutdown_function(function () use ($error) {
-				if (in_array($error['type'], array(E_ERROR, E_CORE_ERROR, E_COMPILE_ERROR, E_PARSE), TRUE)) {
+				if (in_array($error['type'], [E_ERROR, E_CORE_ERROR, E_COMPILE_ERROR, E_PARSE], TRUE)) {
 					if (($error['type'] & error_reporting()) !== $error['type']) { // show fatal errors hidden by @shutup
 						Environment::removeOutputBuffers();
 						echo "\nFatal error: $error[message] in $error[file] on line $error[line]\n";
@@ -166,7 +166,7 @@ class Environment
 	{
 		$trace = debug_backtrace();
 		$file = $trace[count($trace) - 1]['file'];
-		return Helpers::parseDocComment(file_get_contents($file)) + array('file' => $file);
+		return Helpers::parseDocComment(file_get_contents($file)) + ['file' => $file];
 	}
 
 

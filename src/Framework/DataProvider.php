@@ -64,7 +64,7 @@ class DataProvider
 	 */
 	public static function testQuery($input, $query)
 	{
-		static $replaces = array('' => '=', '=>' => '>=', '=<' => '<=');
+		static $replaces = ['' => '=', '=>' => '>=', '=<' => '<='];
 		$tokens = preg_split('#\s+#', $input);
 		preg_match_all('#\s*,?\s*(<=|=<|<|==|=|!=|<>|>=|=>|>)?\s*([^\s,]+)#A', $query, $queryParts, PREG_SET_ORDER);
 		foreach ($queryParts as $queryPart) {
@@ -119,7 +119,7 @@ class DataProvider
 		if (!preg_match('#^(\??)\s*([^,\s]+)\s*,?\s*(\S.*)?()#', $annotation, $m)) {
 			throw new \Exception("Invalid @dataProvider value '$annotation'.");
 		}
-		return array(dirname($file) . DIRECTORY_SEPARATOR . $m[2], $m[3], (bool) $m[1]);
+		return [dirname($file) . DIRECTORY_SEPARATOR . $m[2], $m[3], (bool) $m[1]];
 	}
 
 }

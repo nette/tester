@@ -5,17 +5,17 @@ use Tester\Assert;
 require __DIR__ . '/../bootstrap.php';
 
 
-$contains = array(
-	array('1', '1'),
-	array('1', 'a1'),
-	array('1', array('1')),
-	array('', '1'),
-);
+$contains = [
+	['1', '1'],
+	['1', 'a1'],
+	['1', ['1']],
+	['', '1'],
+];
 
-$notContains = array(
-	array('2', 'a1'),
-	array('1', array(TRUE)),
-);
+$notContains = [
+	['2', 'a1'],
+	['1', [TRUE]],
+];
 
 foreach ($contains as $case) {
 	list($expected, $value) = $case;

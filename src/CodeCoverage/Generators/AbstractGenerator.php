@@ -19,7 +19,7 @@ abstract class AbstractGenerator
 		CODE_TESTED = 1;
 
 	/** @var array */
-	public $acceptFiles = array('php', 'phpc', 'phpt', 'phtml');
+	public $acceptFiles = ['php', 'phpc', 'phpt', 'phtml'];
 
 	/** @var array */
 	protected $data;
@@ -94,7 +94,7 @@ abstract class AbstractGenerator
 	{
 		$iterator = is_dir($this->source)
 			? new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($this->source))
-			: new \ArrayIterator(array(new \SplFileInfo($this->source)));
+			: new \ArrayIterator([new \SplFileInfo($this->source)]);
 
 		return new AcceptIterator($iterator, $this->acceptFiles);
 	}

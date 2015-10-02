@@ -15,15 +15,15 @@ test(function () {
 		--a-b
 	');
 
-	Assert::same(array('-p' => NULL, '--p' => NULL, '--a-b' => NULL), $cmd->parse(array()));
-	Assert::same(array('-p' => TRUE, '--p' => NULL, '--a-b' => NULL), $cmd->parse(array('-p')));
+	Assert::same(['-p' => NULL, '--p' => NULL, '--a-b' => NULL], $cmd->parse([]));
+	Assert::same(['-p' => TRUE, '--p' => NULL, '--a-b' => NULL], $cmd->parse(['-p']));
 
 	$cmd = new Cmd('
 		-p  description
 	');
 
-	Assert::same(array('-p' => NULL), $cmd->parse(array()));
-	Assert::same(array('-p' => TRUE), $cmd->parse(array('-p')));
+	Assert::same(['-p' => NULL], $cmd->parse([]));
+	Assert::same(['-p' => TRUE], $cmd->parse(['-p']));
 });
 
 
@@ -32,18 +32,18 @@ test(function () { // default value
 		-p  (default: 123)
 	');
 
-	Assert::same(array('-p' => '123'), $cmd->parse(array()));
-	Assert::same(array('-p' => TRUE), $cmd->parse(array('-p')));
+	Assert::same(['-p' => '123'], $cmd->parse([]));
+	Assert::same(['-p' => TRUE], $cmd->parse(['-p']));
 
 
 	$cmd = new Cmd('
 		-p
-	', array(
-		'-p' => array(Cmd::VALUE => 123),
-	));
+	', [
+		'-p' => [Cmd::VALUE => 123],
+	]);
 
-	Assert::same(array('-p' => 123), $cmd->parse(array()));
-	Assert::same(array('-p' => TRUE), $cmd->parse(array('-p')));
+	Assert::same(['-p' => 123], $cmd->parse([]));
+	Assert::same(['-p' => TRUE], $cmd->parse(['-p']));
 });
 
 
@@ -52,25 +52,25 @@ test(function () { // alias
 		-p | --param
 	');
 
-	Assert::same(array('--param' => NULL), $cmd->parse(array()));
-	Assert::same(array('--param' => TRUE), $cmd->parse(array('-p')));
-	Assert::same(array('--param' => TRUE), $cmd->parse(array('--param')));
-	Assert::same(array('--param' => TRUE), $cmd->parse(explode(' ', '-p --param')));
+	Assert::same(['--param' => NULL], $cmd->parse([]));
+	Assert::same(['--param' => TRUE], $cmd->parse(['-p']));
+	Assert::same(['--param' => TRUE], $cmd->parse(['--param']));
+	Assert::same(['--param' => TRUE], $cmd->parse(explode(' ', '-p --param')));
 	Assert::exception(function () use ($cmd) {
-		$cmd->parse(array('-p=val'));
+		$cmd->parse(['-p=val']);
 	}, 'Exception', 'Option --param has not argument.');
 
 	$cmd = new Cmd('
 		-p --param
 	');
 
-	Assert::same(array('--param' => TRUE), $cmd->parse(array('-p')));
+	Assert::same(['--param' => TRUE], $cmd->parse(['-p']));
 
 	$cmd = new Cmd('
 		-p, --param
 	');
 
-	Assert::same(array('--param' => TRUE), $cmd->parse(array('-p')));
+	Assert::same(['--param' => TRUE], $cmd->parse(['-p']));
 });
 
 
@@ -79,17 +79,17 @@ test(function () { // argument
 		-p param
 	');
 
-	Assert::same(array('-p' => NULL), $cmd->parse(array()));
-	Assert::same(array('-p' => 'val'), $cmd->parse(explode(' ', '-p val')));
-	Assert::same(array('-p' => 'val'), $cmd->parse(explode(' ', '-p=val')));
-	Assert::same(array('-p' => 'val2'), $cmd->parse(explode(' ', '-p val1 -p val2')));
+	Assert::same(['-p' => NULL], $cmd->parse([]));
+	Assert::same(['-p' => 'val'], $cmd->parse(explode(' ', '-p val')));
+	Assert::same(['-p' => 'val'], $cmd->parse(explode(' ', '-p=val')));
+	Assert::same(['-p' => 'val2'], $cmd->parse(explode(' ', '-p val1 -p val2')));
 
 	Assert::exception(function () use ($cmd) {
-		$cmd->parse(array('-p'));
+		$cmd->parse(['-p']);
 	}, 'Exception', 'Option -p requires argument.');
 
 	Assert::exception(function () use ($cmd) {
-		$cmd->parse(array('-p', '-a'));
+		$cmd->parse(['-p', '-a']);
 	}, 'Exception', 'Option -p requires argument.');
 
 
@@ -97,7 +97,7 @@ test(function () { // argument
 		-p=<param>
 	');
 
-	Assert::same(array('-p' => 'val'), $cmd->parse(explode(' ', '-p val')));
+	Assert::same(['-p' => 'val'], $cmd->parse(explode(' ', '-p val')));
 });
 
 
@@ -107,31 +107,31 @@ test(function () { // optional argument
 		-p [param]
 	');
 
-	Assert::same(array('-p' => NULL), $cmd->parse(array()));
-	Assert::same(array('-p' => TRUE), $cmd->parse(array('-p')));
-	Assert::same(array('-p' => 'val'), $cmd->parse(explode(' ', '-p val')));
+	Assert::same(['-p' => NULL], $cmd->parse([]));
+	Assert::same(['-p' => TRUE], $cmd->parse(['-p']));
+	Assert::same(['-p' => 'val'], $cmd->parse(explode(' ', '-p val')));
 
 
 	$cmd = new Cmd('
 		-p param
-	', array(
-		'-p' => array(Cmd::VALUE => 123),
-	));
+	', [
+		'-p' => [Cmd::VALUE => 123],
+	]);
 
-	Assert::same(array('-p' => 123), $cmd->parse(array()));
-	Assert::same(array('-p' => TRUE), $cmd->parse(array('-p')));
-	Assert::same(array('-p' => 'val'), $cmd->parse(explode(' ', '-p val')));
+	Assert::same(['-p' => 123], $cmd->parse([]));
+	Assert::same(['-p' => TRUE], $cmd->parse(['-p']));
+	Assert::same(['-p' => 'val'], $cmd->parse(explode(' ', '-p val')));
 
 
 	$cmd = new Cmd('
 		-p param
-	', array(
-		'-p' => array(Cmd::OPTIONAL => TRUE),
-	));
+	', [
+		'-p' => [Cmd::OPTIONAL => TRUE],
+	]);
 
-	Assert::same(array('-p' => NULL), $cmd->parse(array()));
-	Assert::same(array('-p' => TRUE), $cmd->parse(array('-p')));
-	Assert::same(array('-p' => 'val'), $cmd->parse(explode(' ', '-p val')));
+	Assert::same(['-p' => NULL], $cmd->parse([]));
+	Assert::same(['-p' => TRUE], $cmd->parse(['-p']));
+	Assert::same(['-p' => 'val'], $cmd->parse(explode(' ', '-p val')));
 });
 
 
@@ -141,10 +141,10 @@ test(function () { // repeatable argument
 		-p [param]...
 	');
 
-	Assert::same(array('-p' => array()), $cmd->parse(array()));
-	Assert::same(array('-p' => array(TRUE)), $cmd->parse(array('-p')));
-	Assert::same(array('-p' => array('val')), $cmd->parse(explode(' ', '-p val')));
-	Assert::same(array('-p' => array('val1', 'val2')), $cmd->parse(explode(' ', '-p val1 -p val2')));
+	Assert::same(['-p' => []], $cmd->parse([]));
+	Assert::same(['-p' => [TRUE]], $cmd->parse(['-p']));
+	Assert::same(['-p' => ['val']], $cmd->parse(explode(' ', '-p val')));
+	Assert::same(['-p' => ['val1', 'val2']], $cmd->parse(explode(' ', '-p val1 -p val2')));
 });
 
 
@@ -154,11 +154,11 @@ test(function () { // enumerates
 		-p <a|b|c>
 	');
 
-	Assert::same(array('-p' => NULL), $cmd->parse(array()));
+	Assert::same(['-p' => NULL], $cmd->parse([]));
 	Assert::exception(function () use ($cmd) {
-		$cmd->parse(array('-p'));
+		$cmd->parse(['-p']);
 	}, 'Exception', 'Option -p requires argument.');
-	Assert::same(array('-p' => 'a'), $cmd->parse(explode(' ', '-p a')));
+	Assert::same(['-p' => 'a'], $cmd->parse(explode(' ', '-p a')));
 	Assert::exception(function () use ($cmd) {
 		$cmd->parse(explode(' ', '-p foo'));
 	}, 'Exception', 'Value of option -p must be a, or b, or c.');
@@ -168,9 +168,9 @@ test(function () { // enumerates
 		-p [a|b|c]
 	');
 
-	Assert::same(array('-p' => NULL), $cmd->parse(array()));
-	Assert::same(array('-p' => TRUE), $cmd->parse(array('-p')));
-	Assert::same(array('-p' => 'a'), $cmd->parse(explode(' ', '-p a')));
+	Assert::same(['-p' => NULL], $cmd->parse([]));
+	Assert::same(['-p' => TRUE], $cmd->parse(['-p']));
+	Assert::same(['-p' => 'a'], $cmd->parse(explode(' ', '-p a')));
 	Assert::exception(function () use ($cmd) {
 		$cmd->parse(explode(' ', '-p foo'));
 	}, 'Exception', 'Value of option -p must be a, or b, or c.');
@@ -181,52 +181,52 @@ test(function () { // enumerates
 test(function () { // realpath
 	$cmd = new Cmd('
 		-p <path>
-	', array(
-		'-p' => array(Cmd::REALPATH => TRUE),
-	));
+	', [
+		'-p' => [Cmd::REALPATH => TRUE],
+	]);
 
 	Assert::exception(function () use ($cmd) {
-		$cmd->parse(array('-p', 'xyz'));
+		$cmd->parse(['-p', 'xyz']);
 	}, 'Exception', "File path 'xyz' not found.");
-	Assert::same(array('-p' => __FILE__), $cmd->parse(array('-p', __FILE__)));
+	Assert::same(['-p' => __FILE__], $cmd->parse(['-p', __FILE__]));
 });
 
 
 
 test(function () { // positional arguments
-	$cmd = new Cmd('', array(
-		'pos' => array(),
-	));
+	$cmd = new Cmd('', [
+		'pos' => [],
+	]);
 
-	Assert::same(array('pos' => 'val'), $cmd->parse(array('val')));
+	Assert::same(['pos' => 'val'], $cmd->parse(['val']));
 
 	Assert::exception(function () use ($cmd) {
-		$cmd->parse(array());
+		$cmd->parse([]);
 	}, 'Exception', 'Missing required argument <pos>.');
 
 	Assert::exception(function () use ($cmd) {
-		$cmd->parse(array('val1', 'val2'));
+		$cmd->parse(['val1', 'val2']);
 	}, 'Exception', 'Unexpected parameter val2.');
 
-	$cmd = new Cmd('', array(
-		'pos' => array(Cmd::REPEATABLE => TRUE),
-	));
+	$cmd = new Cmd('', [
+		'pos' => [Cmd::REPEATABLE => TRUE],
+	]);
 
-	Assert::same(array('pos' => array('val1', 'val2')), $cmd->parse(array('val1', 'val2')));
-
-
-	$cmd = new Cmd('', array(
-		'pos' => array(Cmd::OPTIONAL => TRUE),
-	));
-
-	Assert::same(array('pos' => NULL), $cmd->parse(array()));
+	Assert::same(['pos' => ['val1', 'val2']], $cmd->parse(['val1', 'val2']));
 
 
-	$cmd = new Cmd('', array(
-		'pos' => array(Cmd::VALUE => 'default', Cmd::REPEATABLE => TRUE),
-	));
+	$cmd = new Cmd('', [
+		'pos' => [Cmd::OPTIONAL => TRUE],
+	]);
 
-	Assert::same(array('pos' => array('default')), $cmd->parse(array()));
+	Assert::same(['pos' => NULL], $cmd->parse([]));
+
+
+	$cmd = new Cmd('', [
+		'pos' => [Cmd::VALUE => 'default', Cmd::REPEATABLE => TRUE],
+	]);
+
+	Assert::same(['pos' => ['default']], $cmd->parse([]));
 });
 
 
@@ -237,10 +237,10 @@ test(function () { // errors
 	');
 
 	Assert::exception(function () use ($cmd) {
-		$cmd->parse(array('-x'));
+		$cmd->parse(['-x']);
 	}, 'Exception', 'Unknown option -x.');
 
 	Assert::exception(function () use ($cmd) {
-		$cmd->parse(array('val'));
+		$cmd->parse(['val']);
 	}, 'Exception', 'Unexpected parameter val.');
 });

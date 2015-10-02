@@ -41,11 +41,11 @@ class Logger implements Tester\Runner\OutputHandler
 	public function result($testName, $result, $message)
 	{
 		$message = '   ' . str_replace("\n", "\n   ", Tester\Dumper::removeColors(trim($message)));
-		$outputs = array(
+		$outputs = [
 			Runner::PASSED => "-- OK: $testName",
 			Runner::SKIPPED => "-- Skipped: $testName\n$message",
 			Runner::FAILED => "-- FAILED: $testName\n$message",
-		);
+		];
 		fwrite($this->file, $outputs[$result] . "\n\n");
 	}
 

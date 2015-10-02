@@ -16,7 +16,7 @@ class FileMock
 	const PROTOCOL = 'mock';
 
 	/** @var string[] */
-	public static $files = array();
+	public static $files = [];
 
 	/** @var string */
 	private $content;
@@ -166,14 +166,14 @@ class FileMock
 
 	public function stream_stat()
 	{
-		return array('mode' => 0100666, 'size' => strlen($this->content));
+		return ['mode' => 0100666, 'size' => strlen($this->content)];
 	}
 
 
 	public function url_stat($path, $flags)
 	{
 		return isset(self::$files[$path])
-			? array('mode' => 0100666, 'size' => strlen(self::$files[$path]))
+			? ['mode' => 0100666, 'size' => strlen(self::$files[$path])]
 			: FALSE;
 	}
 

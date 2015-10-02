@@ -84,15 +84,15 @@ class Job
 		$this->proc = proc_open(
 			$this->interpreter->getCommandLine()
 			. ' -n -d register_argc_argv=on ' . \Tester\Helpers::escapeArg($this->file) . ' ' . implode(' ', $this->args),
-			array(
-				array('pipe', 'r'),
-				array('pipe', 'w'),
-				array('pipe', 'w'),
-			),
+			[
+				['pipe', 'r'],
+				['pipe', 'w'],
+				['pipe', 'w'],
+			],
 			$pipes,
 			dirname($this->file),
 			NULL,
-			array('bypass_shell' => TRUE)
+			['bypass_shell' => TRUE]
 		);
 
 		list($stdin, $this->stdout, $stderr) = $pipes;

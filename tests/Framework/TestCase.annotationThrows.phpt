@@ -78,7 +78,7 @@ class MyTest extends Tester\TestCase
 
 	public function dataProvider()
 	{
-		return array(array(1));
+		return [[1]];
 	}
 
 	/**

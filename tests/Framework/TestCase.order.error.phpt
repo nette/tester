@@ -34,7 +34,7 @@ class Test extends Tester\TestCase
 
 	protected function data()
 	{
-		return array(array('arg'));
+		return [['arg']];
 	}
 }
 

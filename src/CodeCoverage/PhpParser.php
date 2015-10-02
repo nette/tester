@@ -55,14 +55,14 @@ class PhpParser
 		$namespace = '';
 		$line = 1;
 
-		$result = (object) array(
+		$result = (object) [
 			'linesOfCode' => max(1, substr_count($code, "\n")),
 			'linesOfComments' => 0,
-			'functions' => array(),
-			'classes' => array(),
-			'traits' => array(),
-			'interfaces' => array(),
-		);
+			'functions' => [],
+			'classes' => [],
+			'traits' => [],
+			'interfaces' => [],
+		];
 
 		$T_TRAIT = PHP_VERSION_ID < 50400 ? -1 : T_TRAIT;
 		while (list(, $token) = each($tokens)) {
@@ -75,7 +75,7 @@ class PhpParser
 
 			switch (is_array($token) ? $token[0] : $token) {
 				case T_NAMESPACE:
-					$namespace = ltrim(self::fetch($tokens, array(T_STRING, T_NS_SEPARATOR)) . '\\', '\\');
+					$namespace = ltrim(self::fetch($tokens, [T_STRING, T_NS_SEPARATOR]) . '\\', '\\');
 					break;
 
 				case T_CLASS:
@@ -91,11 +91,11 @@ class PhpParser
 						}
 
 						$classLevel = $level + 1;
-						$class = (object) array(
+						$class = (object) [
 							'start' => $line,
 							'end' => NULL,
-							'methods' => array(),
-						);
+							'methods' => [],
+						];
 					}
 					break;
 
@@ -113,18 +113,18 @@ class PhpParser
 					if (($name = self::fetch($tokens, T_STRING)) && !isset($isAbstract)) {
 						if (isset($class) && $level === $classLevel) {
 							$function = & $class->methods[$name];
-							$function = (object) array(
+							$function = (object) [
 								'start' => $line,
 								'end' => NULL,
 								'visibility' => isset($visibility) ? $visibility : 'public',
-							);
+							];
 
 						} else {
 							$function = & $result->functions[$namespace . $name];
-							$function = (object) array(
+							$function = (object) [
 								'start' => $line,
 								'end' => NULL,
-							);
+							];
 						}
 						$functionLevel = $level + 1;
 					}
@@ -169,10 +169,10 @@ class PhpParser
 	{
 		$res = NULL;
 		while ($token = current($tokens)) {
-			list($token, $s) = is_array($token) ? $token : array($token, $token);
+			list($token, $s) = is_array($token) ? $token : [$token, $token];
 			if (in_array($token, (array) $take, TRUE)) {
 				$res .= $s;
-			} elseif (!in_array($token, array(T_DOC_COMMENT, T_WHITESPACE, T_COMMENT), TRUE)) {
+			} elseif (!in_array($token, [T_DOC_COMMENT, T_WHITESPACE, T_COMMENT], TRUE)) {
 				break;
 			}
 			next($tokens);

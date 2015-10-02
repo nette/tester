@@ -17,7 +17,7 @@ class Assert
 	const EPSILON = 1e-10;
 
 	/** used by match(); in values, each $ followed by number is backreference */
-	public static $patterns = array(
+	public static $patterns = [
 		'%a%' => '[^\r\n]+',    // one or more of anything except the end of line characters
 		'%a\?%' => '[^\r\n]*',  // zero or more of anything except the end of line characters
 		'%A%' => '.+',          // one or more of anything including the end of line characters
@@ -34,7 +34,7 @@ class Assert
 		'%h%' => '[0-9a-fA-F]+',// one or more HEX digits
 		'%ds%' => '[\\\\/]',    // directory separator
 		'%(\[.+\][+*?{},\d]*)%' => '$1', // range
-	);
+	];
 
 	/** @var callable  function (AssertException $exception) */
 	public static $onFailure;
@@ -261,8 +261,8 @@ class Assert
 				self::fail(self::describe("%1 should be $type", $description), $value);
 			}
 
-		} elseif (in_array($type, array('array', 'bool', 'callable', 'float',
-			'int', 'integer', 'null', 'object', 'resource', 'scalar', 'string'), TRUE)
+		} elseif (in_array($type, ['array', 'bool', 'callable', 'float',
+			'int', 'integer', 'null', 'object', 'resource', 'scalar', 'string'], TRUE)
 		) {
 			if (!call_user_func("is_$type", $value)) {
 				self::fail(self::describe(gettype($value) . " should be $type", $description));
@@ -332,7 +332,7 @@ class Assert
 		}
 
 		self::$counter++;
-		$expected = is_array($expectedType) ? $expectedType : array(array($expectedType, $expectedMessage));
+		$expected = is_array($expectedType) ? $expectedType : [[$expectedType, $expectedMessage]];
 		foreach ($expected as & $item) {
 			list($expectedType, $expectedMessage) = $item;
 			if (is_int($expectedType)) {
@@ -384,7 +384,7 @@ class Assert
 	 */
 	public static function noError($function)
 	{
-		self::error($function, array());
+		self::error($function, []);
 	}
 
 
@@ -483,10 +483,10 @@ class Assert
 
 		if (!preg_match('/^([~#]).+(\1)[imsxUu]*\z/s', $pattern)) {
 			$utf8 = preg_match('#\x80-\x{10FFFF}]#u', $pattern) ? 'u' : '';
-			$patterns = static::$patterns + array(
+			$patterns = static::$patterns + [
 				'[.\\\\+*?[^$(){|\x00\#]' => '\$0', // preg quoting
 				'[\t ]*\r?\n' => "[\\t ]*\n", // right trim
-			);
+			];
 			$pattern = '#^' . preg_replace_callback('#' . implode('|', array_keys($patterns)) . '#U' . $utf8, function ($m) use ($patterns) {
 				foreach ($patterns as $re => $replacement) {
 					$s = preg_replace("#^$re\\z#", str_replace('\\', '\\\\', $replacement), $m[0], 1, $count);

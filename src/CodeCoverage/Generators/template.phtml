@@ -123,7 +123,7 @@
 				$line = sprintf("<span class='line'>%{$numWidth}s:    </span>", $n + 1) . $line;
 				if ($prevColor !== $color || $n === count($source) - 1) {
 					echo '<div' . ($prevColor ? " class='$prevColor'" : '') . '>', str_replace(' />', '>', $tags);
-					$openTags = array();
+					$openTags = [];
 					preg_match_all('#<([^>]+)#', $tags, $matches);
 					foreach ($matches[1] as $m) {
 						if ($m[0] === '/') {
