@@ -9,7 +9,7 @@ the New BSD License or the GNU General Public License (GPL) version 2 or 3.
 New BSD License
 ---------------
 
-Copyright (c) 2004, 2013 David Grudl (http://davidgrudl.com)
+Copyright (c) 2004, 2013 David Grudl (https://davidgrudl.com)
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification,

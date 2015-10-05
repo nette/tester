@@ -2,7 +2,7 @@
 
 /**
  * Nette Tester.
- * Copyright (c) 2009 David Grudl (http://davidgrudl.com)
+ * Copyright (c) 2009 David Grudl (https://davidgrudl.com)
  */
 
 require __DIR__ . '/Runner/PhpInterpreter.php';

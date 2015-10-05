@@ -1,4 +1,4 @@
-[Nette Tester](http://tester.nette.org): enjoyable unit testing
+[Nette Tester](https://tester.nette.org): enjoyable unit testing
 ===============================================================
 
 [![Downloads this Month](https://img.shields.io/packagist/dm/nette/tester.svg)](https://packagist.org/packages/nette/tester)
@@ -7,7 +7,7 @@
 [![License](https://img.shields.io/badge/license-New%20BSD-blue.svg)](https://github.com/nette/tester/blob/master/license.md)
 
 Nette Tester is a productive and enjoyable unit testing framework. It's used by
-the [Nette Framework](http://nette.org) and is capable of testing any PHP code.
+the [Nette Framework](https://nette.org) and is capable of testing any PHP code.
 
 
 Installation
@@ -152,7 +152,7 @@ require 'vendor/autoload.php';
 Tester\Environment::setup();
 ```
 
-We can also test HTML pages. Let the [template engine](http://latte.nette.org) generate
+We can also test HTML pages. Let the [template engine](https://latte.nette.org) generate
 HTML code or download existing page to `$html` variable. We will check whether
 the page contains form fields for username and password. The syntax is the
 same as the CSS selectors:
