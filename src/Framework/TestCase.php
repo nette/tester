@@ -105,10 +105,24 @@ class TestCase
 			$data[] = $args;
 		}
 
+		$me = $this;
+		$errorHandler = function () use ($me, & $prev) {
+			restore_error_handler();
+			$rm = new \ReflectionMethod($me, 'tearDown');
+			$rm->setAccessible(TRUE);
+
+			set_error_handler(function () {}); // mute all errors
+			$rm->invoke($me);
+			restore_error_handler();
+
+			return $prev ? call_user_func_array($prev, func_get_args()) : FALSE;
+		};
+
 		foreach ($data as $params) {
 			try {
 				$this->setUp();
 
+				$prev = set_error_handler($errorHandler);
 				try {
 					if ($info['throws']) {
 						$tmp = $this;
@@ -123,6 +137,7 @@ class TestCase
 					}
 				} catch (\Exception $testException) {
 				}
+				restore_error_handler();
 
 				try {
 					$this->tearDown();
