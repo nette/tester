@@ -95,6 +95,7 @@ This table shows all assertions (class `Assert` means `Tester\Assert`):
 - `Assert::type($type, $value)` -  Reports an error if the variable $value is not of PHP or class type $type.
 - `Assert::exception($closure, $class, $message = NULL, $code = NULL)` -  Checks if the function throws exception.
 - `Assert::error($closure, $level, $message = NULL)` -  Checks if the function $closure throws PHP warning/notice/error.
+- `Assert::noError($closure)` -  Checks that the function $closure does not throw PHP warning/notice/error or exception.
 - `Assert::match($pattern, $value)` - Compares result using regular expression or mask.
 - `Assert::matchFile($file, $value)` - Compares result using regular expression or mask sorted in file.
 - `Assert::count($count, $value)` - Reports an error if number of items in $value is not $count.
