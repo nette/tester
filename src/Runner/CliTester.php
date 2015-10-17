@@ -149,6 +149,10 @@ XX
 			echo "Note: No php.ini is used.\n";
 		}
 
+		if (in_array($this->options['-o'], array('tap', 'junit'))) {
+			$args .= ' -d html_errors=off';
+		}
+
 		foreach ($this->options['-d'] as $item) {
 			$args .= ' -d ' . Helpers::escapeArg($item);
 		}
