@@ -106,14 +106,16 @@ class TestCase
 		}
 
 		$me = $this;
-		$errorHandler = function () use ($me, & $prev) {
-			restore_error_handler();
-			$rm = new \ReflectionMethod($me, 'tearDown');
-			$rm->setAccessible(TRUE);
+		$errorHandler = function ($severity, $message) use ($me, & $prev) {
+			if (($severity & error_reporting()) === $severity) {
+				restore_error_handler();
+				$rm = new \ReflectionMethod($me, 'tearDown');
+				$rm->setAccessible(TRUE);
 
-			set_error_handler(function () {}); // mute all errors
-			$rm->invoke($me);
-			restore_error_handler();
+				set_error_handler(function () {}); // mute all errors
+				$rm->invoke($me);
+				restore_error_handler();
+			}
 
 			return $prev ? call_user_func_array($prev, func_get_args()) : FALSE;
 		};
