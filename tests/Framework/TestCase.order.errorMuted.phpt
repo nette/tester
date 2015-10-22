@@ -1,8 +1,7 @@
 <?php
 
 /**
- * @exitCode 255
- * @outputMatch Test::setUp,Test::testMe,Test::tearDown,E_USER_WARNING: SHOWN%A%
+ * @outputMatch Test::setUp,Test::testMe,Test::tearDown
  */
 
 require __DIR__ . '/../bootstrap.php';
@@ -22,14 +21,11 @@ class Test extends Tester\TestCase
 	{
 		echo __METHOD__ . ',';
 		@trigger_error('MUTED', E_USER_WARNING);
-		trigger_error('SHOWN', E_USER_WARNING);
-		trigger_error('AFTER', E_USER_WARNING);
 	}
 
 	protected function tearDown()
 	{
-		echo __METHOD__ . ',';
-		trigger_error('NOT SHOWN', E_USER_WARNING);
+		echo __METHOD__;
 	}
 
 	protected function data()
