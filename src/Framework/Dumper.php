@@ -368,7 +368,8 @@ class Dumper
 			NULL => '0',
 		);
 		$c = explode('/', $color);
-		return "\033[" . $colors[$c[0]] . (empty($c[1]) ? '' : ';4' . substr($colors[$c[1]], -1))
+		return "\033["
+			. str_replace(';', "m\033[", $colors[$c[0]] . (empty($c[1]) ? '' : ';4' . substr($colors[$c[1]], -1)))
 			. 'm' . $s . ($s === NULL ? '' : "\033[0m");
 	}
 
