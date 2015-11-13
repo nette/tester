@@ -87,8 +87,8 @@ class TestCase
 
 			foreach ((array) $info['dataprovider'] as $provider) {
 				$res = $this->getData($provider);
-				if (!is_array($res)) {
-					throw new TestCaseException("Data provider $provider() doesn't return array.");
+				if (!is_array($res) && !$res instanceof \Traversable) {
+					throw new TestCaseException("Data provider $provider() doesn't return array or Traversable.");
 				}
 				foreach ($res as $set) {
 					$data[] = is_string(key($set)) ? array_merge($defaultParams, $set) : $set;
