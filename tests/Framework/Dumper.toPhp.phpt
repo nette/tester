@@ -38,12 +38,12 @@ Assert::match('array(
 )', Dumper::toPhp(array(1, 'hello', "\r" => array(), array(1, 2), array(1 => 1, 2, 3, 4, 5, 6, 7))));
 
 Assert::match('/* resource stream */', Dumper::toPhp(fopen(__FILE__, 'r')));
-Assert::match('(object) array()', Dumper::toPhp((object) NULL));
-Assert::match("(object) array(
+Assert::match('(object) /* #%a% */ array()', Dumper::toPhp((object) NULL));
+Assert::match("(object) /* #%a% */ array(
 	'a' => 'b',
 )", Dumper::toPhp((object) array('a' => 'b')));
 
-Assert::match("Test::__set_state(array(
+Assert::match("Test::__set_state(/* #%a% */ array(
 	'x' => array(10, NULL),
 	'y' => 'hello',
 	'z' => 30.0,

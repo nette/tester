@@ -18,7 +18,7 @@ Assert::match('array(
 
 $obj = (object) array('x' => 1, 'y' => 2);
 $obj->z = & $obj;
-Assert::match("(object) array(
+Assert::match("(object) /* #%a% */ array(
 	'x' => 1,
 	'y' => 2,
 	'z' => /* stdClass dumped on line 1 */,
@@ -39,12 +39,12 @@ Assert::match("array(
 		3,
 		array(1, 2, 3, /* Nesting level too deep or recursive dependency */),
 	),
-	(object) array(),
-	(object) array(
+	(object) /* #%a% */ array(),
+	(object) /* #%a% */ array(
 		'x' => 1,
 		'y' => 2,
 		'z' => /* stdClass dumped on line 9 */,
 	),
-	(object) array(),
+	(object) /* #%a% */ array(),
 	/* stdClass dumped on line 9 */,
 )", Dumper::toPhp($var));
