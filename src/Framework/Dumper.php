@@ -102,7 +102,7 @@ class Dumper
 			$line .= '(' . $object->format('Y-m-d H:i:s O') . ')';
 		}
 
-		return $line . '(#' . substr(md5(spl_object_hash($object)), 0, 4) . ')';
+		return $line . '(' . self::hash($object) . ')';
 	}
 
 
@@ -114,6 +114,17 @@ class Dumper
 	public static function toPhp($var)
 	{
 		return self::_toPhp($var);
+	}
+
+
+	/**
+	 * Returns object's stripped hash.
+	 * @param  object
+	 * @return string
+	 */
+	private static function hash($object)
+	{
+		return '#' . substr(md5(spl_object_hash($object)), 0, 4);
 	}
 
 
@@ -216,9 +227,10 @@ class Dumper
 				}
 				$out .= $space;
 			}
+			$hash = self::hash($var);
 			return $class === 'stdClass'
-				? "(object) array($out)"
-				: "$class::__set_state(array($out))";
+				? "(object) /* $hash */ array($out)"
+				: "$class::__set_state(/* $hash */ array($out))";
 
 		} elseif (is_resource($var)) {
 			return '/* resource ' . get_resource_type($var) . ' */';
