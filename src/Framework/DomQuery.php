@@ -24,6 +24,9 @@ class DomQuery extends \SimpleXMLElement
 		}
 
 		$html = preg_replace('#<(keygen|source|track|wbr)(?=\s|>)("[^"]*"|\'[^\']*\'|[^"\'>]+)*+(?<!/)>#', '<$1$2 />', $html);
+		if (LIBXML_VERSION < 20800) {
+			$html = preg_replace('~\\<meta\\s+.*?charset=(?:"|\')(.+)(?:"|\').*?\\>~i', '<meta http-equiv="Content-Type" content="text/html; charset=$1" />', $html);
+		}
 
 		$dom = new \DOMDocument();
 		$old = libxml_use_internal_errors(TRUE);
