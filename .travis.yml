@@ -16,6 +16,10 @@ matrix:
     allow_failures:
         - php: hhvm
 
+    include:
+        - php: 7.0
+          env: TESTER_PHP_BIN=phpdbg
+
     exclude:
         - php: 5.3
           env: TESTER_PHP_BIN=php-cgi
