@@ -7,6 +7,8 @@
 
 namespace Tester\Runner;
 
+use Tester\Helpers;
+
 
 /**
  * Zend PHP command-line executable.
@@ -34,9 +36,9 @@ class ZendPhpInterpreter implements PhpInterpreter
 
 	public function __construct($path, $args = NULL)
 	{
-		$this->path = \Tester\Helpers::escapeArg($path);
+		$this->path = Helpers::escapeArg($path);
 		$proc = proc_open(
-			"$this->path -n $args -v", // -v must be the last
+			"$this->path -n $args --version", // --version must be the last
 			array(array('pipe', 'r'), array('pipe', 'w'), array('pipe', 'w')),
 			$pipes,
 			NULL,
@@ -47,17 +49,28 @@ class ZendPhpInterpreter implements PhpInterpreter
 		$this->error = trim(stream_get_contents($pipes[2]));
 		if (proc_close($proc)) {
 			throw new \Exception("Unable to run '$path': " . preg_replace('#[\r\n ]+#', ' ', $this->error));
-		} elseif (!preg_match('#^PHP (\S+).*c(g|l)i#i', $output, $matches)) {
+		} elseif (!preg_match('#^(phpdbg .*\n)?PHP ([^\s,]+)#i', $output, $matches)) {
 			throw new \Exception("Unable to detect PHP version (output: $output).");
 		}
 
-		$this->version = $matches[1];
-		$this->cgi = strcasecmp($matches[2], 'g') === 0;
-		$this->arguments = $args;
+		$this->version = $matches[2];
+		if ($matches[1]) {
+			if (version_compare($this->version, '7.0.0', '<')) {
+				throw new \Exception('PHP 7.0.0+ is required to use phpdbg.');
+			}
 
-		$job = new Job(__DIR__ . '/info.php', $this, array('xdebug'));
-		$job->run();
-		$this->xdebug = !$job->getExitCode();
+			$this->cgi = FALSE;
+			$this->arguments = ' -qrrb -S cli' . $args;
+			$this->xdebug = FALSE;
+
+		} else {
+			$this->cgi = stripos($output, 'cgi') !== FALSE;
+			$this->arguments = $args;
+
+			$job = new Job(__DIR__ . '/info.php', $this, array('xdebug'));
+			$job->run();
+			$this->xdebug = !$job->getExitCode();
+		}
 	}
 
 
