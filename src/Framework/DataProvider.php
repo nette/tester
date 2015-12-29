@@ -14,15 +14,34 @@ namespace Tester;
 class DataProvider
 {
 
+	/**
+	 * @param  string  path to data provider file
+	 * @param  string  filtering condition
+	 * @return array
+	 * @throws \Exception
+	 */
 	public static function load($file, $query = NULL)
 	{
 		if (!is_file($file)) {
 			throw new \Exception("Missing data-provider file '$file'.");
 		}
 
-		$data = @parse_ini_file($file, TRUE); // @ is escalated to exception
-		if ($data === FALSE) {
-			throw new \Exception("Cannot parse data-provider file '$file'.");
+		if (pathinfo($file, PATHINFO_EXTENSION) === 'php') {
+			$data = call_user_func(function () {
+				return require func_get_arg(0);
+			}, realpath($file));
+
+			if ($data instanceof \Traversable) {
+				$data = iterator_to_array($data);
+			} elseif (!is_array($data)) {
+				throw new \Exception("Data provider file '$file' did not return array or Traversable.");
+			}
+
+		} else {
+			$data = @parse_ini_file($file, TRUE); // @ is escalated to exception
+			if ($data === FALSE) {
+				throw new \Exception("Cannot parse data-provider file '$file'.");
+			}
 		}
 
 		foreach ($data as $key => $value) {
@@ -38,6 +57,11 @@ class DataProvider
 	}
 
 
+	/**
+	 * @param  string  tested subject
+	 * @param  string  condition
+	 * @return bool
+	 */
 	public static function testQuery($input, $query)
 	{
 		static $replaces = array('' => '=', '=>' => '>=', '=<' => '<=');
@@ -84,8 +108,11 @@ class DataProvider
 
 
 	/**
-	 * @return [file, query, optional]
 	 * @internal
+	 * @param  string
+	 * @param  string
+	 * @return array
+	 * @throws \Exception
 	 */
 	public static function parseAnnotation($annotation, $file)
 	{
