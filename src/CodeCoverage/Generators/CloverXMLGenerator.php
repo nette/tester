@@ -78,7 +78,12 @@ class CloverXMLGenerator extends AbstractGenerator
 
 			$projectMetrics->fileCount++;
 
-			$coverageData = isset($this->data[$file]) ? $this->data[$file] : NULL;
+			if (isset($this->data[$file])) {
+				$coverageData = $this->data[$file];
+			} else {
+				$coverageData = NULL;
+				$this->totalSum += count(file($file, FILE_SKIP_EMPTY_LINES));
+			}
 
 			// TODO: split to <package> by namespace?
 			$elFile = $elProject->appendChild($doc->createElement('file'));
@@ -128,6 +133,9 @@ class CloverXMLGenerator extends AbstractGenerator
 				$elLine->setAttribute('num', $line);
 				$elLine->setAttribute('type', 'stmt');
 				$elLine->setAttribute('count', max(0, $count));
+
+				$this->totalSum++;
+				$this->coveredSum += $count > 0 ? 1 : 0;
 			}
 
 			self::appendMetrics($projectMetrics, $fileMetrics);

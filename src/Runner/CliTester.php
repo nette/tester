@@ -226,7 +226,7 @@ XX
 	private function finishCodeCoverage($file)
 	{
 		if (!in_array($this->options['-o'], ['none', 'tap', 'junit'], TRUE)) {
-			echo "Generating code coverage report\n";
+			echo "Generating code coverage report... ";
 		}
 		if (pathinfo($file, PATHINFO_EXTENSION) === 'xml') {
 			$generator = new CodeCoverage\Generators\CloverXMLGenerator($file, $this->options['--coverage-src']);
@@ -234,6 +234,7 @@ XX
 			$generator = new CodeCoverage\Generators\HtmlGenerator($file, $this->options['--coverage-src']);
 		}
 		$generator->render($file);
+		echo round($generator->getCoveredPercent()) . "% covered\n";
 	}
 
 

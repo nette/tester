@@ -137,7 +137,7 @@
 </head>
 
 <body>
-	<h1><?= $title ? htmlSpecialChars("$title - ") : ''; ?>Code coverage <?= $totalSum ? round($coveredSum * 100 / $totalSum) : 0 ?>&nbsp;%</h1>
+	<h1><?= $title ? htmlSpecialChars("$title - ") : ''; ?>Code coverage <?= round($coveredPercent) ?>&nbsp;%</h1>
 
 	<?php foreach ($files as $id => $info): ?>
 	<div>

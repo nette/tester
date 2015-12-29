@@ -27,6 +27,12 @@ abstract class AbstractGenerator
 	/** @var string */
 	protected $source;
 
+	/** @var int */
+	protected $totalSum = 0;
+
+	/** @var int */
+	protected $coveredSum = 0;
+
 
 	/**
 	 * @param  string  path to coverage.dat file
@@ -84,6 +90,15 @@ abstract class AbstractGenerator
 			}
 			throw $e;
 		}
+	}
+
+
+	/**
+	 * @return float
+	 */
+	public function getCoveredPercent()
+	{
+		return $this->totalSum ? $this->coveredSum * 100 / $this->totalSum : 0;
 	}
 
 

@@ -19,12 +19,6 @@ class HtmlGenerator extends AbstractGenerator
 	/** @var array */
 	private $files = [];
 
-	/** @var int */
-	private $totalSum = 0;
-
-	/** @var int */
-	private $coveredSum = 0;
-
 	/** @var array */
 	public static $classes = [
 		self::CODE_TESTED => 't', // tested
@@ -53,8 +47,7 @@ class HtmlGenerator extends AbstractGenerator
 		$title = $this->title;
 		$classes = self::$classes;
 		$files = $this->files;
-		$totalSum = $this->totalSum;
-		$coveredSum = $this->coveredSum;
+		$coveredPercent = $this->getCoveredPercent();
 
 		include __DIR__ . '/template.phtml';
 	}
