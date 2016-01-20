@@ -47,10 +47,10 @@ class Dumper
 
 		} elseif (is_float($var)) {
 			if (!is_finite($var)) {
-				return var_export($var, TRUE);
+				return str_replace('.0', '', var_export($var, TRUE)); // workaround for PHP 7.0.2
 			}
 			$var = str_replace(',', '.', "$var");
-			return strpos($var, '.') === FALSE ? $var . '.0' : $var;
+			return strpos($var, '.') === FALSE ? $var . '.0' : $var; // workaround for PHP < 7.0.2
 
 		} elseif (is_string($var)) {
 			if (preg_match('#^(.{' . self::$maxLength . '}).#su', $var, $m)) {
