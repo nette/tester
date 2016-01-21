@@ -70,7 +70,7 @@ class Dumper
 					break;
 				}
 				$out .= ($k === $counter ? '' : self::toLine($k) . ' => ')
-					. (is_array($v) ? 'array(...)' : self::toLine($v));
+					. (is_array($v) && $v ? 'array(...)' : self::toLine($v));
 				$counter = is_int($k) ? max($k + 1, $counter) : $counter;
 			}
 			return "array($out)";
