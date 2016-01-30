@@ -3,6 +3,7 @@
 require __DIR__ . '/../src/bootstrap.php';
 require __DIR__ . '/../src/Runner/PhpInterpreter.php';
 require __DIR__ . '/../src/Runner/ZendPhpInterpreter.php';
+require __DIR__ . '/../src/Runner/ZendPhpDbgInterpreter.php';
 require __DIR__ . '/../src/Runner/HhvmPhpInterpreter.php';
 
 
@@ -17,7 +18,11 @@ function test(\Closure $function)
 /** @return Tester\Runner\PhpInterpreter */
 function createInterpreter()
 {
-	return defined('HHVM_VERSION')
-		? new Tester\Runner\HhvmPhpInterpreter(PHP_BINARY)
-		: new Tester\Runner\ZendPhpInterpreter(PHP_BINARY, ' -c ' . Tester\Helpers::escapeArg(php_ini_loaded_file()));
+	if (defined('HHVM_VERSION')) {
+		return new Tester\Runner\HhvmPhpInterpreter(PHP_BINARY);
+	} elseif (defined('PHPDBG_VERSION')) {
+		return new Tester\Runner\ZendPhpDbgInterpreter(PHP_BINARY, ' -c ' . Tester\Helpers::escapeArg(php_ini_loaded_file()));
+	} else {
+		return new Tester\Runner\ZendPhpInterpreter(PHP_BINARY, ' -c ' . Tester\Helpers::escapeArg(php_ini_loaded_file()));
+	}
 }

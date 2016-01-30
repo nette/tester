@@ -62,7 +62,7 @@ class Environment
 	{
 		self::$useColors = getenv(self::COLORS) !== FALSE
 			? (bool) getenv(self::COLORS)
-			: (PHP_SAPI === 'cli' && ((function_exists('posix_isatty') && posix_isatty(STDOUT))
+			: ((PHP_SAPI === 'cli' || PHP_SAPI === 'phpdbg') && ((function_exists('posix_isatty') && posix_isatty(STDOUT))
 				|| getenv('ConEmuANSI') === 'ON' || getenv('ANSICON') !== FALSE));
 
 		$colors = & self::$useColors;

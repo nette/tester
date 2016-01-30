@@ -23,6 +23,10 @@ matrix:
         - php: hhvm
           env: TESTER_PHP_BIN=php-cgi
 
+    include:
+        - php: 7.0
+          env: TESTER_PHP_BIN=phpdbg
+
 script:
     - src/tester -p $TESTER_PHP_BIN tests -s
     - src/tester -p $TESTER_PHP_BIN -o none tests/fail.phptx; if [ $? -eq 0 ]; then echo "tests/fail.phptx SHOULD FAIL"; exit 1; else echo "fail checked"; fi;
