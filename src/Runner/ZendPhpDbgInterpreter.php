@@ -78,7 +78,7 @@ class ZendPhpDbgInterpreter implements PhpInterpreter
 	 */
 	public function hasXdebug()
 	{
-		return FALSE;
+		return TRUE;
 	}
 
 
