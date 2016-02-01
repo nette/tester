@@ -178,12 +178,12 @@ class TestCase
 	 */
 	protected function getData($provider)
 	{
-		if (strpos($provider, '.')) {
+		if (strpos($provider, '.') === FALSE) {
+			return $this->$provider();
+		} else {
 			$rc = new \ReflectionClass($this);
 			list($file, $query) = DataProvider::parseAnnotation($provider, $rc->getFileName());
 			return DataProvider::load($file, $query);
-		} else {
-			return $this->$provider();
 		}
 	}
 

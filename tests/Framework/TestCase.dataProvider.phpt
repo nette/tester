@@ -48,7 +48,7 @@ class MyTest extends Tester\TestCase
 		$this->order[] = array(__METHOD__, func_get_args());
 	}
 
-	/** @dataProvider fixtures/dataprovider.query.ini != foo */
+	/** @dataProvider ../Framework/fixtures/dataprovider.query.ini != foo */
 	public function testFileDataProvider($a = 'a', $b = 'b')
 	{
 		$this->order[] = array(__METHOD__, func_get_args());
