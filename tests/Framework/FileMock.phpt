@@ -63,6 +63,16 @@ test(function () {
 
 
 test(function () {
+	fopen($name = Tester\FileMock::create('foo'), 'r');
+	Assert::true(unlink($name));
+	Assert::false(@unlink($name));
+	Assert::error(function () use ($name) {
+		unlink($name);
+	}, E_USER_WARNING, "unlink($name): No such file");
+});
+
+
+test(function () {
 	Assert::same(123, require FileMock::create('<?php return 123;'));
 });
 

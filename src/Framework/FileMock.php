@@ -122,4 +122,16 @@ class FileMock
 		return FALSE;
 	}
 
+
+	public function unlink($path)
+	{
+		if (isset(self::$files[$path])) {
+			unset(self::$files[$path]);
+			return TRUE;
+		}
+
+		trigger_error("unlink($path): No such file", E_USER_WARNING);
+		return FALSE;
+	}
+
 }
