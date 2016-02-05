@@ -62,8 +62,9 @@ class Environment
 	{
 		self::$useColors = getenv(self::COLORS) !== FALSE
 			? (bool) getenv(self::COLORS)
-			: ((PHP_SAPI === 'cli' || PHP_SAPI === 'phpdbg') && ((function_exists('posix_isatty') && posix_isatty(STDOUT))
-				|| getenv('ConEmuANSI') === 'ON' || getenv('ANSICON') !== FALSE));
+			: ((PHP_SAPI === 'cli' || PHP_SAPI === 'phpdbg')
+				&& ((function_exists('posix_isatty') && posix_isatty(STDOUT))
+					|| getenv('ConEmuANSI') === 'ON' || getenv('ANSICON') !== FALSE) || getenv('term') === 'xterm-256color');
 
 		$colors = & self::$useColors;
 		ob_start(function ($s) use (& $colors) {
