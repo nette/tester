@@ -38,7 +38,7 @@ after_failure:
 
 before_script:
     - travis_retry composer create-project nette/code-checker code-checker ~2.5 --no-interaction
-  
+
 sudo: false
 
 cache:
