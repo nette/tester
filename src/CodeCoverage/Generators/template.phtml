@@ -9,45 +9,72 @@
 
 	<style type="text/css">
 	html {
-		font: 16px/1.5 sans-serif;
-		border-top: 4.7em solid #F4EBDB;
+		font: 14px/1.5 Verdana,"Geneva CE",lucida,sans-serif;
+		border-top: 4.7em solid #f4ebdb;
 	}
 
 	body {
 		max-width: 990px;
 		margin: -4.7em auto 0;
-		background: white;
+		background: #fcfaf5;
 		color: #333;
 	}
 
+	footer {
+		margin-left: .5em;
+	}
+
 	h1 {
+		font-family: "Trebuchet MS","Geneva CE",lucida,sans-serif;
 		font-size: 1.9em;
-		margin: .5em 0 1.5em;
-		color: #7A7772;
+		margin: .5em .5em 1.5em;
+		color: #7a7772;
 		text-shadow: 1px 1px 0 white;
 	}
 
 	div.code {
-		font: 14px/1.2 Consolas, monospace;
-		background: #FDF5CE;
-		padding: .4em .7em;
+		background: white;
 		border: 1px dotted silver;
-		overflow-x: auto;
 		display: none;
+		color: #333;
+		position: relative;
+		overflow: auto;
 	}
 
-	span.line {
-		color: #9F9C7F;
-		font-weight: normal;
-		font-style: normal;
+	code,
+	div.code {
+		font: 13px/1.3 monospace;
+		padding: .4em .7em;
 	}
 
-	.t {
-		background: #99f999;
+	div.code div {
+		white-space: pre;
 	}
 
-	.u {
-		background: #f9ac9e;
+	div.code a {
+		color: #c0c0c0;
+	}
+
+	div.code a:hover {
+		color: inherit;
+		font-weight: bold;
+		text-decoration: none;
+	}
+
+	code {
+		white-space: nowrap;
+		position: absolute;
+		top: 0;
+	}
+
+	a {
+		color: #006aeb;
+		text-decoration: none;
+	}
+
+	a:active,
+	a:hover {
+		text-decoration: underline;
 	}
 
 	td {
@@ -64,14 +91,14 @@
 	}
 
 	.bar {
-		border: 1px solid #ACACAC;
+		border: 1px solid #acacac;
 		background: #e50400;
 		width: 35px;
 		height: 1em;
 	}
 
 	.bar div {
-		background: #1A7E1E;
+		background: #1a7e1e;
 		height: 1em;
 	}
 
@@ -86,6 +113,15 @@
 	.not-loaded td * {
 		color: red;
 	}
+
+	.t { background-color: #e0ffe0; }
+	.u { background-color: #ffe0e0; }
+
+	code .hc { color: #929292; }
+	code .hd { color: #333; }
+	code .hh { color: #06B; }
+	code .hk { color: #e71818; }
+	code .hs { color: #008000; }
 	</style>
 </head>
 
@@ -98,49 +134,39 @@
 		<tr<?= $info->class ? " class='$info->class'" : '' ?>>
 			<td class="number"><small><?= $info->coverage ?> %</small></td>
 			<td><div class="bar"><div style="width: <?= $info->coverage ?>%"></div></div></td>
-			<td><a href="#fragment<?= $id ?>" onclick="toggle(this); return false"><span><?= $info->name ?></span></a></td>
+			<td><a href="#F<?= $id ?>" class="toggle"><?= $info->name ?></a></td>
 		</tr>
 		</table>
 
-		<div class="code" id="fragment<?= $id ?>">
+		<div class="code" id="F<?= $id ?>">
 		<?php
-			$source = explode('<br />', highlight_file($info->file, TRUE));
+			$code = file_get_contents($info->file);
+			$lineCount = substr_count($code, "\n") + 1;
+			$digits = ceil(log10($lineCount));
 
-			end($source);
-			$numWidth = strlen((string) key($source));
+			$prevClass = NULL;
+			$closeTag = $buffer = '';
+			for ($i = 1; $i < $lineCount; $i++) {
+				$class = isset($info->lines[$i]) && isset($classes[$info->lines[$i]])
+					? $classes[$info->lines[$i]]
+					: '';
 
-			unset($prevColor);
-			$tags = '';
-			foreach ($source as $n => $line) {
-				if (isset($info->lines[$n + 1]) && isset($classes[$info->lines[$n + 1]])) {
-					$color = $classes[$info->lines[$n + 1]];
-				} else {
-					$color = '';  // not executable
+				if ($class !== $prevClass) {
+					echo rtrim($buffer) . $closeTag;
+					$buffer = '';
+					$closeTag = '</div>';
+					echo '<div' . ($class ? " class='$class'" : '') . '>';
 				}
-				if (!isset($prevColor)) {
-					$prevColor = $color;
-				}
-				$line = sprintf("<span class='line'>%{$numWidth}s:    </span>", $n + 1) . $line;
-				if ($prevColor !== $color || $n === count($source) - 1) {
-					echo '<div' . ($prevColor ? " class='$prevColor'" : '') . '>', str_replace(' />', '>', $tags);
-					$openTags = [];
-					preg_match_all('#<([^>]+)#', $tags, $matches);
-					foreach ($matches[1] as $m) {
-						if ($m[0] === '/') {
-							array_pop($openTags);
-						} elseif (substr($m, -1) !== '/') {
-							$openTags[] = $m;
-						}
-					}
-					foreach (array_reverse($openTags) as $tag) {
-						echo '</' . preg_replace('# .*#', '', $tag) . '>';
-					}
-					echo "</div>\n";
-					$tags = ($openTags ? '<' . implode('><', $openTags) . '>' : '');
-					$prevColor = $color;
-				}
-				$tags .= "$line<br />\n";
+
+				$buffer .= "<a href='#F{$id}L{$i}' id='F{$id}L{$i}'>" . sprintf("%{$digits}s", $i) . "</a>\n";
+				$prevClass = $class;
 			}
+			echo $buffer . $closeTag;
+
+			echo strtr(highlight_string($code, TRUE), [
+				'<code>' => "<code style='left: {$digits}em'>",
+				'<span style="color: ' => '<span class="',
+			]);
 		?></div>
 	</div>
 	<?php endforeach ?>
@@ -150,14 +176,20 @@
 	</footer>
 
 	<script>
-	function toggle(link) {
-		var el = document.getElementById(link.href.split('#')[1]);
-		if (el.style.display === 'block') {
-			el.style.display = 'none';
-			return false;
-		} else {
-			el.style.display = 'block';
+	document.body.addEventListener('click', function (e) {
+		if (e.target.className === 'toggle') {
+			var el = document.getElementById(e.target.href.split('#')[1]);
+			if (el.style.display === 'block') {
+				el.style.display = 'none';
+			} else {
+				el.style.display = 'block';
+			}
+			e.preventDefault();
 		}
+	});
+
+	if (el = document.getElementById(window.location.hash.replace(/^#|L\d+$/g, ''))) {
+		el.style.display = 'block';
 	}
 	</script>
 </body>

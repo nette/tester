@@ -62,11 +62,11 @@ class HtmlGenerator extends AbstractGenerator
 
 	private function setupHighlight()
 	{
-		ini_set('highlight.comment', '#999; font-style: italic');
-		ini_set('highlight.default', '#000');
-		ini_set('highlight.html', '#06B');
-		ini_set('highlight.keyword', '#D24; font-weight: bold');
-		ini_set('highlight.string', '#080');
+		ini_set('highlight.comment', 'hc');
+		ini_set('highlight.default', 'hd');
+		ini_set('highlight.html', 'hh');
+		ini_set('highlight.keyword', 'hk');
+		ini_set('highlight.string', 'hs');
 	}
 
 
