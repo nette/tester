@@ -316,6 +316,26 @@ class Assert
 	{
 		return self::exception($function, $class, $message, $code);
 	}
+	
+	
+	/**
+	 * Checks if the function does not throw exception
+	 * @return void
+	 */
+	public static function noException($function)
+	{
+		self::$counter++;
+		$e = NULL;
+		try {
+			call_user_func($function)
+		} catch (\Throwable $e) {
+		} catch (\Exception $e) {
+		}
+		
+		if ($e !== NULL) {
+			self::fail('Exception was not expected, but was thrown.');
+		}
+	}
 
 
 	/**
