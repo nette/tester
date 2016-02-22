@@ -311,6 +311,8 @@ class Dumper
 			if ($e instanceof AssertException && $item['file'] === __DIR__ . DIRECTORY_SEPARATOR . 'Assert.php') {
 				continue;
 			}
+			$line = $item['class'] === 'Tester\Assert' && method_exists($item['class'], $item['function'])
+				&& ($tmp = file($item['file'])) && strpos($tmp = $tmp[$item['line'] - 1], "::$item[function](") ? $tmp : NULL;
 
 			$s .= 'in '
 				. ($item['file']
@@ -321,8 +323,8 @@ class Dumper
 					)
 					: '[internal function]'
 				)
-				. ($item['class'] === 'Tester\Assert' && ($tmp = file($item['file'])) && strpos($tmp[$item['line'] - 1], "::$item[function](")
-					? trim($tmp[$item['line'] - 1])
+				. ($line
+					? trim($line)
 					: $item['class'] . $item['type'] . $item['function'] . ($item['function'] ? '()' : '')
 				)
 				. self::color() . "\n";
