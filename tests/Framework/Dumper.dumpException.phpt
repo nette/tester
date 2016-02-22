@@ -20,7 +20,7 @@ $cases = array(
 	'Failed: boolean should be instance of x' => function () { Assert::type('x', TRUE); },
 	'Failed: resource should be int' => function () { Assert::type('int', fopen(__FILE__, 'r')); },
 	"Failed: 'Hello\nWorld' should match\n    ... '%a%'" => function () { Assert::match('%a%', "Hello\nWorld"); },
-	"Failed: '...xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx' should be \n    ... '...xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'" => function () { Assert::same(str_repeat('x', 100), str_repeat('x', 120)); },
+	"Failed: '...xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx...' should be \n    ... '...xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'" => function () { Assert::same(str_repeat('x', 100), str_repeat('x', 120)); },
 );
 
 foreach ($cases as $message => $closure) {
