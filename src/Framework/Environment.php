@@ -31,6 +31,9 @@ class Environment
 	/** @var bool */
 	public static $useColors;
 
+	/** @var int initial output buffer level */
+	private static $obLevel;
+
 
 	/**
 	 * Configures testing environment.
@@ -40,6 +43,7 @@ class Environment
 	{
 		self::setupErrors();
 		self::setupColors();
+		self::$obLevel = ob_get_level();
 
 		class_exists('Tester\Runner\Job');
 		class_exists('Tester\Dumper');
@@ -69,7 +73,7 @@ class Environment
 		$colors = & self::$useColors;
 		ob_start(function ($s) use (& $colors) {
 			return $colors ? $s : Dumper::removeColors($s);
-		}, PHP_VERSION_ID < 50400 ? 2 : 1);
+		}, PHP_VERSION_ID < 50400 ? 2 : 1, FALSE);
 	}
 
 
@@ -100,9 +104,11 @@ class Environment
 			register_shutdown_function(function () use ($error) {
 				if (in_array($error['type'], array(E_ERROR, E_CORE_ERROR, E_COMPILE_ERROR, E_PARSE), TRUE)) {
 					if (($error['type'] & error_reporting()) !== $error['type']) { // show fatal errors hidden by @shutup
+						self::removeOutputBuffers();
 						echo "\nFatal error: $error[message] in $error[file] on line $error[line]\n";
 					}
 				} elseif (Environment::$checkAssertions && !Assert::$counter) {
+					self::removeOutputBuffers();
 					echo "\nError: This test forgets to execute an assertion.\n";
 					exit(Runner\Job::CODE_FAIL);
 				}
@@ -117,6 +123,7 @@ class Environment
 	 */
 	public static function handleException($e)
 	{
+		self::removeOutputBuffers();
 		self::$checkAssertions = FALSE;
 		echo self::$debugMode ? Dumper::dumpException($e) : "\nError: {$e->getMessage()}\n";
 		exit($e instanceof AssertException ? Runner\Job::CODE_FAIL : Runner\Job::CODE_ERROR);
@@ -182,6 +189,12 @@ class Environment
 		}
 		$data = DataProvider::load($file, $query);
 		return reset($data);
+	}
+
+
+	private static function removeOutputBuffers()
+	{
+		while (ob_get_level() > self::$obLevel && @ob_end_flush()); // @ may be not removable
 	}
 
 }
