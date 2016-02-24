@@ -30,9 +30,8 @@ class FileMock
 	 */
 	public static function create($content, $extension = NULL)
 	{
-		if (!self::$files) {
-			stream_wrapper_register(self::PROTOCOL, __CLASS__);
-		}
+		self::register();
+
 		static $id;
 		$name = self::PROTOCOL . '://' . (++$id) . '.' . $extension;
 		self::$files[$name] = $content;
@@ -40,10 +39,37 @@ class FileMock
 	}
 
 
+	public static function register()
+	{
+		if (!in_array(self::PROTOCOL, stream_get_wrappers(), TRUE)) {
+			stream_wrapper_register(self::PROTOCOL, __CLASS__);
+		}
+	}
+
+
 	public function stream_open($path, $mode)
 	{
+		if (!preg_match('#^([rwaxc])#', $mode, $m)) {
+			// Windows: failed to open stream: Bad file descriptor
+			// Linux: failed to open stream: Illegal seek
+			$this->warning("failed to open stream: Invalid mode '$mode'");
+			return FALSE;
+
+		} elseif ($m[1] === 'x' && isset(self::$files[$path])) {
+			$this->warning('failed to open stream: File exists');
+			return FALSE;
+
+		} elseif ($m[1] === 'r' && !isset(self::$files[$path])) {
+			$this->warning('failed to open stream: No such file or directory');
+			return FALSE;
+
+		} elseif ($m[1] === 'w' || $m[1] === 'x') {
+			self::$files[$path] = '';
+		}
+
 		$this->content = & self::$files[$path];
-		$this->pos = strpos($mode, 'a') === FALSE ? 0 : strlen($this->content);
+		$this->pos = $m[1] === 'a' ? strlen($this->content) : 0;
+
 		return TRUE;
 	}
 
@@ -130,8 +156,19 @@ class FileMock
 			return TRUE;
 		}
 
-		trigger_error("unlink($path): No such file", E_USER_WARNING);
+		$this->warning('No such file');
 		return FALSE;
+	}
+
+
+	private function warning($message)
+	{
+		$bt = PHP_VERSION_ID < 50400 ? debug_backtrace(FALSE) : debug_backtrace(0, 3);
+		if (isset($bt[2]['function'])) {
+			$message = $bt[2]['function'] . '(' . @$bt[2]['args'][0] . '): ' . $message;
+		}
+
+		trigger_error($message, E_USER_WARNING);
 	}
 
 }
