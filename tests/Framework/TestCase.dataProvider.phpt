@@ -18,6 +18,14 @@ class MyTest extends Tester\TestCase
 		];
 	}
 
+	public function dataProviderNamedSets()
+	{
+		$this->order[] = __METHOD__;
+		return array(
+			'Test 1 and 2' => array(1, 2),
+		);
+	}
+
 	public function dataProviderIterator()
 	{
 		$this->order[] = __METHOD__;
@@ -42,6 +50,12 @@ class MyTest extends Tester\TestCase
 		$this->order[] = [__METHOD__, func_get_args()];
 	}
 
+	/** @dataProvider dataProviderNamedSets */
+	public function testDataProviderNamedSets($a, $b)
+	{
+		$this->order[] = array(__METHOD__, func_get_args());
+	}
+
 	/** @dataProvider dataProviderIterator */
 	public function testIteratorDataProvider($a, $b)
 	{
@@ -58,6 +72,12 @@ class MyTest extends Tester\TestCase
 	public function testAssertion()
 	{
 		Assert::true(FALSE);
+	}
+
+	/** @dataProvider dataProviderNamedSets */
+	public function testAssertionNamedSets()
+	{
+		Assert::true(false);
 	}
 }
 
@@ -84,6 +104,14 @@ Assert::same([
 
 
 $test = new MyTest;
+$test->runTest('testDataProviderNamedSets');
+Assert::same(array(
+	'MyTest::dataProviderNamedSets',
+	array('MyTest::testDataProviderNamedSets', array(1, 2)),
+), $test->order);
+
+
+$test = new MyTest;
 $test->runTest('testIteratorDataProvider');
 Assert::same([
 	'MyTest::dataProviderIterator',
@@ -104,3 +132,9 @@ Assert::exception(function () {
 	$test = new MyTest;
 	$test->runTest('testAssertion');
 }, 'Tester\AssertException', 'FALSE should be TRUE in testAssertion(1, 2)');
+
+
+Assert::exception(function () {
+	$test = new MyTest;
+	$test->runTest('testAssertionNamedSets');
+}, 'Tester\AssertException', 'FALSE should be TRUE in "Test 1 and 2": testAssertionNamedSets(1, 2)');

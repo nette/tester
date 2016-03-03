@@ -98,8 +98,13 @@ class TestCase
 				if (!is_array($res) && !$res instanceof \Traversable) {
 					throw new TestCaseException("Data provider $provider() doesn't return array or Traversable.");
 				}
-				foreach ($res as $set) {
-					$data[] = is_string(key($set)) ? array_merge($defaultParams, $set) : $set;
+				foreach ($res as $setName => $set) {
+					$set = is_string(key($set)) ? array_merge($defaultParams, $set) : $set;
+					if (is_string($setName)) {
+						$data[$setName] = $set;
+					} else {
+						$data[] = $set;
+					}
 				}
 			}
 
@@ -126,7 +131,7 @@ class TestCase
 		}
 
 
-		foreach ($data as $params) {
+		foreach ($data as $setName => $params) {
 			try {
 				$this->setUp();
 
@@ -152,7 +157,7 @@ class TestCase
 				$this->tearDown();
 
 			} catch (AssertException $e) {
-				throw $e->setMessage("$e->origMessage in {$method->getName()}(" . (substr(Dumper::toLine($params), 1, -1)) . ')');
+				throw $e->setMessage("$e->origMessage in " . (is_string($setName) ? "\"" . $setName . "\": " : "") . "{$method->getName()}(" . (substr(Dumper::toLine($params), 1, -1)) . ')');
 			}
 		}
 	}
