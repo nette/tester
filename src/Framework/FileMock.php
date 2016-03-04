@@ -24,6 +24,12 @@ class FileMock
 	/** @var int */
 	private $pos;
 
+	/** @var bool */
+	private $isReadable;
+
+	/** @var bool */
+	private $isWritable;
+
 
 	/**
 	 * @return string  file name
@@ -49,7 +55,7 @@ class FileMock
 
 	public function stream_open($path, $mode)
 	{
-		if (!preg_match('#^([rwaxc])#', $mode, $m)) {
+		if (!preg_match('#^([rwaxc]).*?(\+)?#', $mode, $m)) {
 			// Windows: failed to open stream: Bad file descriptor
 			// Linux: failed to open stream: Illegal seek
 			$this->warning("failed to open stream: Invalid mode '$mode'");
@@ -70,12 +76,19 @@ class FileMock
 		$this->content = & self::$files[$path];
 		$this->pos = $m[1] === 'a' ? strlen($this->content) : 0;
 
+		$this->isReadable = isset($m[2]) || $m[1] === 'r';
+		$this->isWritable = isset($m[2]) || $m[1] !== 'r';
+
 		return TRUE;
 	}
 
 
 	public function stream_read($len)
 	{
+		if (!$this->isReadable) {
+			return '';
+		}
+
 		$res = substr($this->content, $this->pos, $len);
 		$this->pos += strlen($res);
 		return $res;
@@ -84,6 +97,10 @@ class FileMock
 
 	public function stream_write($data)
 	{
+		if (!$this->isWritable) {
+			return 0;
+		}
+
 		$this->content = substr($this->content, 0, $this->pos)
 			. str_repeat("\x00", max(0, $this->pos - strlen($this->content)))
 			. $data

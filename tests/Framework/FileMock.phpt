@@ -101,11 +101,11 @@ test(function () {
 		'r+' => array('ABC', 'ABC'),
 		'w'  => array('', ''),
 		'w+' => array('', ''),
-		'a'  => array('ABC', 'ABC'),
+		'a'  => array('ABC', ''),
 		'a+' => array('ABC', 'ABC'),
 		'x'  => array('', ''),
 		'x+' => array('', ''),
-		'c'  => array('ABC', 'ABC'),
+		'c'  => array('ABC', ''),
 		'c+' => array('ABC', 'ABC'),
 	);
 
@@ -126,15 +126,15 @@ test(function () {
 	FileMock::$files = array();
 
 	$cases = array(
-		'r'  => array('_BC', '_BC'),
+		'r'  => array('ABC', 'ABC'),
 		'r+' => array('_BC', '_BC'),
-		'w'  => array('_', '_'),
+		'w'  => array('_', ''),
 		'w+' => array('_', '_'),
-		'a'  => array('ABC_', 'ABC_'),
+		'a'  => array('ABC_', ''),
 		'a+' => array('ABC_', 'ABC_'),
-		'x'  => array('_', '_'),
+		'x'  => array('_', ''),
 		'x+' => array('_', '_'),
-		'c'  => array('_BC', '_BC'),
+		'c'  => array('_BC', ''),
 		'c+' => array('_BC', '_BC'),
 	);
 
