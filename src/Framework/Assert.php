@@ -352,22 +352,24 @@ class Assert
 			$errorStr = Helpers::errorTypeToString($severity) . ($message ? " ($message)" : '');
 			list($expectedType, $expectedMessage, $expectedTypeStr) = array_shift($expected);
 			if ($expectedType === NULL) {
-				restore_error_handler();
 				Assert::fail("Generated more errors than expected: $errorStr was generated in file $file on line $line");
 
 			} elseif ($severity !== $expectedType) {
-				restore_error_handler();
 				Assert::fail("$expectedTypeStr was expected, but $errorStr was generated in file $file on line $line");
 
 			} elseif ($expectedMessage && !Assert::isMatching($expectedMessage, $message)) {
-				restore_error_handler();
 				Assert::fail("$expectedTypeStr with a message matching %2 was expected but got %1", $message, $expectedMessage);
 			}
 		});
 
 		reset($expected);
-		call_user_func($function);
-		restore_error_handler();
+		try {
+			call_user_func($function);
+			restore_error_handler();
+		} catch (\Exception $e) {
+			restore_error_handler();
+			throw $e;
+		}
 
 		if ($expected) {
 			self::fail('Error was expected, but was not generated');
