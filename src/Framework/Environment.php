@@ -104,11 +104,11 @@ class Environment
 			register_shutdown_function(function () use ($error) {
 				if (in_array($error['type'], array(E_ERROR, E_CORE_ERROR, E_COMPILE_ERROR, E_PARSE), TRUE)) {
 					if (($error['type'] & error_reporting()) !== $error['type']) { // show fatal errors hidden by @shutup
-						self::removeOutputBuffers();
+						Environment::removeOutputBuffers();
 						echo "\nFatal error: $error[message] in $error[file] on line $error[line]\n";
 					}
 				} elseif (Environment::$checkAssertions && !Assert::$counter) {
-					self::removeOutputBuffers();
+					Environment::removeOutputBuffers();
 					echo "\nError: This test forgets to execute an assertion.\n";
 					exit(Runner\Job::CODE_FAIL);
 				}
@@ -192,7 +192,10 @@ class Environment
 	}
 
 
-	private static function removeOutputBuffers()
+	/**
+	 * @internal
+	 */
+	public static function removeOutputBuffers()
 	{
 		while (ob_get_level() > self::$obLevel && @ob_end_flush()); // @ may be not removable
 	}
