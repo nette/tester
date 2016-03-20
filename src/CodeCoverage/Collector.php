@@ -106,7 +106,8 @@ class Collector
 	{
 		flock(self::$file, LOCK_EX);
 		fseek(self::$file, 0);
-		$original = @unserialize(stream_get_contents(self::$file)) ?: []; // @ file may be empty
+		$rawContent = stream_get_contents(self::$file);
+		$original = $rawContent ? unserialize($rawContent) : [];
 		$coverage = array_replace_recursive($negative, $original, $positive);
 
 		ftruncate(self::$file, 0);
