@@ -27,7 +27,7 @@ class Collector
 		if (self::$file) {
 			throw new \LogicException('Code coverage collector has been already started.');
 		}
-		self::$file = fopen($file, 'a+');
+		self::$file = fopen($file, 'c+');
 
 		if (defined('PHPDBG_VERSION') && PHP_VERSION_ID >= 70000) {
 			phpdbg_start_oplog();
@@ -110,6 +110,7 @@ class Collector
 		$original = $rawContent ? unserialize($rawContent) : [];
 		$coverage = array_replace_recursive($negative, $original, $positive);
 
+		fseek(self::$file, 0);
 		ftruncate(self::$file, 0);
 		fwrite(self::$file, serialize($coverage));
 		fclose(self::$file);
