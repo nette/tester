@@ -77,8 +77,8 @@ test(function () {
 		'r+' => 0,
 		'w'  => 0,
 		'w+' => 0,
-		'a'  => 3,
-		'a+' => 3,
+		'a'  => 0,
+		'a+' => 0,
 		'x'  => 0,
 		'x+' => 0,
 		'c'  => 0,
@@ -222,4 +222,41 @@ test(function () {
 // Locking
 test(function () {
 	Assert::false(flock(fopen(FileMock::create(''), 'w'), LOCK_EX));
+});
+
+
+// Position handling across modes
+test(function () {
+	$modes = array('r', 'r+', 'w', 'w+', 'a', 'a+', 'c', 'c+');
+	$pathReal = __DIR__ . '/real-file.txt';
+
+	foreach ($modes as $mode) {
+		file_put_contents($pathReal, 'Hello');
+		$pathMock = FileMock::create('Hello');
+
+		$handleReal = fopen($pathReal, $mode);
+		$handleMock = fopen($pathMock, $mode);
+		Assert::same(ftell($handleReal), ftell($handleMock));
+		Assert::same(file_get_contents($pathReal), file_get_contents($pathMock));
+
+		Assert::same(fwrite($handleReal, 'World'), fwrite($handleMock, 'World'));
+		Assert::same(ftell($handleReal), ftell($handleMock));
+		Assert::same(file_get_contents($pathReal), file_get_contents($pathMock));
+
+		if (PHP_VERSION_ID >= 50400) {
+			Assert::same(ftruncate($handleReal, 0), ftruncate($handleMock, 0));
+			Assert::same(ftell($handleReal), ftell($handleMock));
+			Assert::same(file_get_contents($pathReal), file_get_contents($pathMock));
+		}
+
+		Assert::same(fwrite($handleReal, 'World'), fwrite($handleMock, 'World'));
+		Assert::same(ftell($handleReal), ftell($handleMock));
+		Assert::same(file_get_contents($pathReal), file_get_contents($pathMock));
+
+		Assert::same(fseek($handleReal, 2), fseek($handleMock, 2));
+		Assert::same(fread($handleReal, 7), fread($handleMock, 7));
+		Assert::same(fclose($handleReal), fclose($handleMock));
+	}
+
+	unlink($pathReal);
 });
