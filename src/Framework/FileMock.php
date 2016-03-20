@@ -22,7 +22,13 @@ class FileMock
 	private $content;
 
 	/** @var int */
-	private $pos;
+	private $readingPos;
+
+	/** @var int */
+	private $writingPos;
+
+	/** @var bool */
+	private $appendMode;
 
 	/** @var bool */
 	private $isReadable;
@@ -74,8 +80,9 @@ class FileMock
 		}
 
 		$this->content = & self::$files[$path];
-		$this->pos = $m[1] === 'a' ? strlen($this->content) : 0;
-
+		$this->appendMode = $m[1] === 'a';
+		$this->readingPos = 0;
+		$this->writingPos = $this->appendMode ? strlen($this->content) : 0;
 		$this->isReadable = isset($m[2]) || $m[1] === 'r';
 		$this->isWritable = isset($m[2]) || $m[1] !== 'r';
 
@@ -89,8 +96,9 @@ class FileMock
 			return '';
 		}
 
-		$res = substr($this->content, $this->pos, $len);
-		$this->pos += strlen($res);
+		$res = substr($this->content, $this->readingPos, $len);
+		$this->readingPos += strlen($res);
+		$this->writingPos += $this->appendMode ? 0 : strlen($res);
 		return $res;
 	}
 
@@ -101,36 +109,41 @@ class FileMock
 			return 0;
 		}
 
-		$this->content = substr($this->content, 0, $this->pos)
-			. str_repeat("\x00", max(0, $this->pos - strlen($this->content)))
+		$length = strlen($data);
+		$this->content = substr($this->content, 0, $this->writingPos)
+			. str_repeat("\x00", max(0, $this->writingPos - strlen($this->content)))
 			. $data
-			. substr($this->content, $this->pos + strlen($data));
-		$this->pos += strlen($data);
-		return strlen($data);
+			. substr($this->content, $this->writingPos + $length);
+
+		$this->readingPos += $length;
+		$this->writingPos += $length;
+
+		return $length;
 	}
 
 
 	public function stream_tell()
 	{
-		return $this->pos;
+		return $this->readingPos;
 	}
 
 
 	public function stream_eof()
 	{
-		return $this->pos >= strlen($this->content);
+		return $this->readingPos >= strlen($this->content);
 	}
 
 
 	public function stream_seek($offset, $whence)
 	{
 		if ($whence === SEEK_CUR) {
-			$offset += $this->pos;
+			$offset += $this->readingPos;
 		} elseif ($whence === SEEK_END) {
 			$offset += strlen($this->content);
 		}
 		if ($offset >= 0) {
-			$this->pos = $offset;
+			$this->readingPos = $offset;
+			$this->writingPos = $this->appendMode ? $this->writingPos : $offset;
 			return TRUE;
 		} else {
 			return FALSE;
@@ -140,8 +153,13 @@ class FileMock
 
 	public function stream_truncate($size)
 	{
+		if (!$this->isWritable) {
+			return FALSE;
+		}
+
 		$this->content = (string) substr($this->content, 0, $size)
 			. str_repeat("\x00", max(0, $size - strlen($this->content)));
+		$this->writingPos = $this->appendMode ? 0 : $this->writingPos;
 		return TRUE;
 	}
 
