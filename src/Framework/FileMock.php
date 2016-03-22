@@ -90,16 +90,16 @@ class FileMock
 	}
 
 
-	public function stream_read($len)
+	public function stream_read($length)
 	{
 		if (!$this->isReadable) {
 			return '';
 		}
 
-		$res = substr($this->content, $this->readingPos, $len);
-		$this->readingPos += strlen($res);
-		$this->writingPos += $this->appendMode ? 0 : strlen($res);
-		return $res;
+		$result = substr($this->content, $this->readingPos, $length);
+		$this->readingPos += strlen($result);
+		$this->writingPos += $this->appendMode ? 0 : strlen($result);
+		return $result;
 	}
 
 
@@ -110,14 +110,10 @@ class FileMock
 		}
 
 		$length = strlen($data);
-		$this->content = substr($this->content, 0, $this->writingPos)
-			. str_repeat("\x00", max(0, $this->writingPos - strlen($this->content)))
-			. $data
-			. substr($this->content, $this->writingPos + $length);
-
+		$this->content = str_pad($this->content, $this->writingPos, "\x00");
+		$this->content = substr_replace($this->content, $data, $this->writingPos, $length);
 		$this->readingPos += $length;
 		$this->writingPos += $length;
-
 		return $length;
 	}
 
@@ -157,8 +153,7 @@ class FileMock
 			return FALSE;
 		}
 
-		$this->content = (string) substr($this->content, 0, $size)
-			. str_repeat("\x00", max(0, $size - strlen($this->content)));
+		$this->content = substr(str_pad($this->content, $size, "\x00"), 0, $size);
 		$this->writingPos = $this->appendMode ? 0 : $this->writingPos;
 		return TRUE;
 	}
