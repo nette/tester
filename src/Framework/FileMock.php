@@ -154,7 +154,7 @@ class FileMock
 		}
 
 		$this->content = substr(str_pad($this->content, $size, "\x00"), 0, $size);
-		$this->writingPos = $this->appendMode ? 0 : $this->writingPos;
+		$this->writingPos = $this->appendMode ? $size : $this->writingPos;
 		return TRUE;
 	}
 

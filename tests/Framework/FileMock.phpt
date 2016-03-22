@@ -241,7 +241,7 @@ test(function () {
 		Assert::same(ftell($handleReal), ftell($handleMock));
 		Assert::same(file_get_contents($pathReal), file_get_contents($pathMock));
 
-		Assert::same(ftruncate($handleReal, 0), ftruncate($handleMock, 0));
+		Assert::same(ftruncate($handleReal, 2), ftruncate($handleMock, 2));
 		Assert::same(ftell($handleReal), ftell($handleMock));
 		Assert::same(file_get_contents($pathReal), file_get_contents($pathMock));
 
