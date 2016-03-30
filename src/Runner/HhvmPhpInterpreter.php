@@ -34,7 +34,7 @@ class HhvmPhpInterpreter implements PhpInterpreter
 	public function __construct($path, $args = NULL)
 	{
 		$this->path = Helpers::escapeArg($path);
-		$this->arguments = ' --php -d hhvm.log.always_log_unhandled_exceptions=false' . $args; // HHVM issue #3019
+		$this->arguments = ' --php -n -d hhvm.log.always_log_unhandled_exceptions=false' . $args; // HHVM issue #3019
 
 		$proc = proc_open(
 			"$this->path $this->arguments " . Helpers::escapeArg(__DIR__ . '/info.php' . ' serialized'),

@@ -31,10 +31,10 @@ class ZendPhpDbgInterpreter implements PhpInterpreter
 	public function __construct($path, $args = NULL)
 	{
 		$this->path = Helpers::escapeArg($path);
-		$this->arguments = ' -qrrb -S cli' . $args;
+		$this->arguments = ' -qrrb -S cli -n' . $args;
 
 		$proc = proc_open(
-			"$this->path -n $this->arguments " . Helpers::escapeArg(__DIR__ . '/info.php') . ' serialized',
+			"$this->path $this->arguments " . Helpers::escapeArg(__DIR__ . '/info.php') . ' serialized',
 			[['pipe', 'r'], ['pipe', 'w'], ['pipe', 'w']],
 			$pipes,
 			NULL,
