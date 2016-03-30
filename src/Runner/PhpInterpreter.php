@@ -149,4 +149,14 @@ class PhpInterpreter
 			. ($this->info->hhvmVersion ? "; HHVM {$this->info->hhvmVersion}" : '');
 	}
 
+
+	/**
+	 * @param  string
+	 * @return bool
+	 */
+	public function hasExtension($name)
+	{
+		return in_array(strtolower($name), array_map('strtolower', $this->info->extensions), TRUE);
+	}
+
 }
