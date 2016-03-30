@@ -40,7 +40,7 @@ class ConsolePrinter implements Tester\Runner\OutputHandler
 	public function begin()
 	{
 		$this->time = -microtime(TRUE);
-		echo 'PHP ' . $this->runner->getInterpreter()->getVersion()
+		echo $this->runner->getInterpreter()->getShortInfo()
 			. ' | ' . $this->runner->getInterpreter()->getCommandLine()
 			. " | {$this->runner->threadCount} thread" . ($this->runner->threadCount > 1 ? 's' : '') . "\n\n";
 	}

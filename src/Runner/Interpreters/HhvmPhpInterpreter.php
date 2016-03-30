@@ -29,4 +29,10 @@ class HhvmPhpInterpreter extends AbstractInterpreter
 		return FALSE;
 	}
 
+
+	public function getShortInfo()
+	{
+		return parent::getShortInfo() . "; HHVM {$this->info->hhvmVersion}";
+	}
+
 }

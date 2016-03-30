@@ -29,4 +29,10 @@ class ZendPhpDbgInterpreter extends AbstractInterpreter
 		return TRUE;
 	}
 
+
+	public function getShortInfo()
+	{
+		return parent::getShortInfo() . "; PHPDBG {$this->info->phpDbgVersion}";
+	}
+
 }

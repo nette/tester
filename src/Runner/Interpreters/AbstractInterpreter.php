@@ -115,4 +115,13 @@ abstract class AbstractInterpreter implements PhpInterpreter
 		return $this->error;
 	}
 
+
+	/**
+	 * @return string
+	 */
+	public function getShortInfo()
+	{
+		return "PHP {$this->info->version} ({$this->info->sapi})";
+	}
+
 }

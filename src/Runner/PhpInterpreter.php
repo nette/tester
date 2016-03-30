@@ -42,4 +42,10 @@ interface PhpInterpreter
 	 */
 	function getStartupError();
 
+
+	/**
+	 * @return string
+	 */
+	function getShortInfo();
+
 }
