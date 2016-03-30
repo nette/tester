@@ -6,6 +6,7 @@
  */
 
 require __DIR__ . '/Runner/PhpInterpreter.php';
+require __DIR__ . '/Runner/Interpreters/AbstractInterpreter.php';
 require __DIR__ . '/Runner/Interpreters/ZendPhpCgiInterpreter.php';
 require __DIR__ . '/Runner/Interpreters/ZendPhpCliInterpreter.php';
 require __DIR__ . '/Runner/Interpreters/ZendPhpDbgInterpreter.php';

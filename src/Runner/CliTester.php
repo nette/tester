@@ -186,11 +186,8 @@ XX
 			$this->interpreter = new Interpreters\ZendPhpCliInterpreter($this->options['-p'], $args);
 		}
 
-		if ($this->interpreter->getStartupError()) {
-			echo Dumper::color('red', 'PHP startup error: ' . $this->interpreter->getStartupError()) . "\n";
-			if ($this->interpreter->isCgi()) {
-				echo "(note that PHP CLI generates better error messages)\n";
-			}
+		if ($error = $this->interpreter->getStartupError()) {
+			echo Dumper::color('red', "PHP startup error: $error") . "\n";
 		}
 	}
 

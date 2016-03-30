@@ -5,6 +5,7 @@ use Tester\Runner\Interpreters;
 
 require __DIR__ . '/../src/bootstrap.php';
 require __DIR__ . '/../src/Runner/PhpInterpreter.php';
+require __DIR__ . '/../src/Runner/Interpreters/AbstractInterpreter.php';
 require __DIR__ . '/../src/Runner/Interpreters/ZendPhpCgiInterpreter.php';
 require __DIR__ . '/../src/Runner/Interpreters/ZendPhpCliInterpreter.php';
 require __DIR__ . '/../src/Runner/Interpreters/ZendPhpDbgInterpreter.php';
