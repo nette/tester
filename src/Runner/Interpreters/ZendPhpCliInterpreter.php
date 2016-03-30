@@ -12,9 +12,9 @@ use Tester\Runner\PhpInterpreter;
 
 
 /**
- * Zend PHP command-line executable.
+ * Zend PHP CLI executable.
  */
-class ZendPhpInterpreter implements PhpInterpreter
+class ZendPhpCliInterpreter implements PhpInterpreter
 {
 	/** @var string  PHP arguments */
 	private $arguments;
@@ -24,9 +24,6 @@ class ZendPhpInterpreter implements PhpInterpreter
 
 	/** @var string  PHP version */
 	private $version;
-
-	/** @var bool is CGI? */
-	private $cgi;
 
 	/** @var bool */
 	private $xdebug;
@@ -53,14 +50,7 @@ class ZendPhpInterpreter implements PhpInterpreter
 
 		if (proc_close($proc)) {
 			throw new \Exception("Unable to run '$path': " . preg_replace('#[\r\n ]+#', ' ', $this->error));
-		}
-
-		$this->cgi = stripos($output, 'cgi') !== FALSE;
-		if ($this->cgi) {
-			list(, $output) = explode("\r\n\r\n", $output, 2);
-		}
-
-		if (!($info = @unserialize($output))) {
+		} elseif (!($info = @unserialize($output))) {
 			throw new \Exception("Unable to detect PHP version (output: $output).");
 		}
 
@@ -111,7 +101,7 @@ class ZendPhpInterpreter implements PhpInterpreter
 	 */
 	public function isCgi()
 	{
-		return $this->cgi;
+		return FALSE;
 	}
 
 

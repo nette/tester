@@ -5,7 +5,8 @@ use Tester\Runner\Interpreters;
 
 require __DIR__ . '/../src/bootstrap.php';
 require __DIR__ . '/../src/Runner/PhpInterpreter.php';
-require __DIR__ . '/../src/Runner/Interpreters/ZendPhpInterpreter.php';
+require __DIR__ . '/../src/Runner/Interpreters/ZendPhpCgiInterpreter.php';
+require __DIR__ . '/../src/Runner/Interpreters/ZendPhpCliInterpreter.php';
 require __DIR__ . '/../src/Runner/Interpreters/ZendPhpDbgInterpreter.php';
 require __DIR__ . '/../src/Runner/Interpreters/HhvmPhpInterpreter.php';
 
@@ -25,7 +26,9 @@ function createInterpreter()
 		return new Interpreters\HhvmPhpInterpreter(PHP_BINARY);
 	} elseif (defined('PHPDBG_VERSION')) {
 		return new Interpreters\ZendPhpDbgInterpreter(PHP_BINARY, ' -c ' . Tester\Helpers::escapeArg(php_ini_loaded_file()));
+	} elseif (PHP_SAPI === 'cli') {
+		return new Interpreters\ZendPhpCliInterpreter(PHP_BINARY, ' -c ' . Tester\Helpers::escapeArg(php_ini_loaded_file()));
 	} else {
-		return new Interpreters\ZendPhpInterpreter(PHP_BINARY, ' -c ' . Tester\Helpers::escapeArg(php_ini_loaded_file()));
+		return new Interpreters\ZendPhpCgiInterpreter(PHP_BINARY, ' -c ' . Tester\Helpers::escapeArg(php_ini_loaded_file()));
 	}
 }

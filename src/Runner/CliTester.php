@@ -180,8 +180,10 @@ XX
 			$this->interpreter = new Interpreters\HhvmPhpInterpreter($this->options['-p'], $args);
 		} elseif (strpos($output, 'phpdbg') !== FALSE) {
 			$this->interpreter = new Interpreters\ZendPhpDbgInterpreter($this->options['-p'], $args);
+		} elseif (strpos($output, 'cgi') !== FALSE) {
+			$this->interpreter = new Interpreters\ZendPhpCgiInterpreter($this->options['-p'], $args);
 		} else {
-			$this->interpreter = new Interpreters\ZendPhpInterpreter($this->options['-p'], $args);
+			$this->interpreter = new Interpreters\ZendPhpCliInterpreter($this->options['-p'], $args);
 		}
 
 		if ($this->interpreter->getStartupError()) {
