@@ -124,4 +124,14 @@ abstract class AbstractInterpreter implements PhpInterpreter
 		return "PHP {$this->info->version} ({$this->info->sapi})";
 	}
 
+
+	/**
+	 * @param  string
+	 * @return bool
+	 */
+	public function hasExtension($name)
+	{
+		return in_array(strtolower($name), array_map('strtolower', $this->info->extensions), TRUE);
+	}
+
 }

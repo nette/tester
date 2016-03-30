@@ -42,10 +42,15 @@ interface PhpInterpreter
 	 */
 	function getStartupError();
 
-
 	/**
 	 * @return string
 	 */
 	function getShortInfo();
+
+	/**
+	 * @param  string
+	 * @return bool
+	 */
+	function hasExtension($name);
 
 }
