@@ -138,4 +138,15 @@ class PhpInterpreter
 		return $this->error;
 	}
 
+
+	/**
+	 * @return string
+	 */
+	public function getShortInfo()
+	{
+		return "PHP {$this->info->version} ({$this->info->sapi})"
+			. ($this->info->phpDbgVersion ? "; PHPDBG {$this->info->phpDbgVersion}" : '')
+			. ($this->info->hhvmVersion ? "; HHVM {$this->info->hhvmVersion}" : '');
+	}
+
 }
