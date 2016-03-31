@@ -6,14 +6,14 @@ require __DIR__ . '/../bootstrap.php';
 
 
 $cases = [
-	'Failed: array(TRUE) should contain 1' => function () { Assert::contains(1, [TRUE]); },
-	"Failed: array('') should not contain ''" => function () { Assert::notContains('', ['']); },
+	'Failed: [TRUE] should contain 1' => function () { Assert::contains(1, [TRUE]); },
+	"Failed: [''] should not contain ''" => function () { Assert::notContains('', ['']); },
 	'Failed: 1.0 should be equal to 1' => function () { Assert::equal(1, 1.0); },
 	'Failed: 0.33%d% should not be equal to 0.33%d%' => function () { Assert::notEqual(1 / 3, 1 - 2 / 3); },
 	'Failed: NULL should be FALSE' => function () { Assert::false(NULL); },
 	'Failed: FALSE should be TRUE' => function () { Assert::true(FALSE); },
 	'Failed: 0 should be NULL' => function () { Assert::null(0); },
-	"Failed: array('b' => FALSE, 'a' => TRUE) should be falsey" => function () { Assert::falsey(['b' => FALSE, 'a' => TRUE]); },
+	"Failed: ['b' => FALSE, 'a' => TRUE] should be falsey" => function () { Assert::falsey(['b' => FALSE, 'a' => TRUE]); },
 	'Failed: SimpleXMLElement(#%a%) should be truthy' => function () { Assert::truthy(new SimpleXMLElement('<xml></xml>')); },
 	'Failed: stdClass(#%a%) should be stdClass(#%a%)' => function () { Assert::same(new stdClass, new stdClass); },
 	'Failed: NULL should not be NULL' => function () { Assert::notSame(NULL, NULL); },

@@ -29,24 +29,24 @@ Assert::match("'	'", Dumper::toPhp("\t"));
 Assert::match('"\\xff"', Dumper::toPhp("\xFF"));
 Assert::match('"multi\nline"', Dumper::toPhp("multi\nline"));
 Assert::match("'Iñtërnâtiônàlizætiøn'", Dumper::toPhp("I\xc3\xb1t\xc3\xabrn\xc3\xa2ti\xc3\xb4n\xc3\xa0liz\xc3\xa6ti\xc3\xb8n"));
-Assert::match('array(
+Assert::match('[
 	1,
 	\'hello\',
-	"\r" => array(),
-	array(1, 2),
-	array(1 => 1, 2, 3, 4, 5, 6, 7),
-)', Dumper::toPhp([1, 'hello', "\r" => [], [1, 2], [1 => 1, 2, 3, 4, 5, 6, 7]]));
+	"\r" => [],
+	[1, 2],
+	[1 => 1, 2, 3, 4, 5, 6, 7, \'abcdefgh\'],
+]', Dumper::toPhp([1, 'hello', "\r" => [], [1, 2], [1 => 1, 2, 3, 4, 5, 6, 7, 'abcdefgh']]));
 
 Assert::match('/* resource stream */', Dumper::toPhp(fopen(__FILE__, 'r')));
-Assert::match('(object) /* #%a% */ array()', Dumper::toPhp((object) NULL));
-Assert::match("(object) /* #%a% */ array(
+Assert::match('(object) /* #%a% */ []', Dumper::toPhp((object) NULL));
+Assert::match("(object) /* #%a% */ [
 	'a' => 'b',
-)", Dumper::toPhp((object) ['a' => 'b']));
+]", Dumper::toPhp((object) ['a' => 'b']));
 
-Assert::match("Test::__set_state(/* #%a% */ array(
-	'x' => array(10, NULL),
+Assert::match("Test::__set_state(/* #%a% */ [
+	'x' => [10, NULL],
 	'y' => 'hello',
 	'z' => 30.0,
-))", Dumper::toPhp(new Test));
+])", Dumper::toPhp(new Test));
 
 Assert::match('/* Closure defined in file %a% on line %d% */', Dumper::toPhp(function () {}));

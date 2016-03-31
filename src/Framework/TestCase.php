@@ -166,7 +166,7 @@ class TestCase
 				}
 
 			} catch (AssertException $e) {
-				throw $e->setMessage("$e->origMessage in {$method->getName()}" . (substr(Dumper::toLine($params), 5)));
+				throw $e->setMessage("$e->origMessage in {$method->getName()}(" . (substr(Dumper::toLine($params), 1, -1)) . ')');
 			}
 		}
 	}

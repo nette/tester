@@ -25,7 +25,7 @@ $cases = [
 	['list', NULL, 'NULL should be list'],
 	['list', []],
 	['list', [1]],
-	['list', [4 => 1], 'array(4 => 1) should be list'],
+	['list', [4 => 1], '[4 => 1] should be list'],
 ];
 
 foreach ($cases as $case) {

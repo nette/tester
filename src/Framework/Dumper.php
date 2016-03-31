@@ -70,10 +70,10 @@ class Dumper
 					break;
 				}
 				$out .= ($k === $counter ? '' : self::toLine($k) . ' => ')
-					. (is_array($v) && $v ? 'array(...)' : self::toLine($v));
+					. (is_array($v) && $v ? '[...]' : self::toLine($v));
 				$counter = is_int($k) ? max($k + 1, $counter) : $counter;
 			}
-			return "array($out)";
+			return "[$out]";
 
 		} elseif ($var instanceof \Exception || $var instanceof \Throwable) {
 			return 'Exception ' . get_class($var) . ': ' . ($var->getCode() ? '#' . $var->getCode() . ' ' : '') . $var->getMessage();
@@ -190,7 +190,7 @@ class Dumper
 					$out = $outShort;
 				}
 			}
-			return 'array(' . $out . ')';
+			return '[' . $out . ']';
 
 		} elseif ($var instanceof \Closure) {
 			$rc = new \ReflectionFunction($var);
@@ -229,8 +229,8 @@ class Dumper
 			}
 			$hash = self::hash($var);
 			return $class === 'stdClass'
-				? "(object) /* $hash */ array($out)"
-				: "$class::__set_state(/* $hash */ array($out))";
+				? "(object) /* $hash */ [$out]"
+				: "$class::__set_state(/* $hash */ [$out])";
 
 		} elseif (is_resource($var)) {
 			return '/* resource ' . get_resource_type($var) . ' */';

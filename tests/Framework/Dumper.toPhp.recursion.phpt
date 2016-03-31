@@ -8,21 +8,21 @@ require __DIR__ . '/../bootstrap.php';
 
 $arr = [1, 2, 3];
 $arr[] = & $arr;
-Assert::match('array(
+Assert::match('[
 	1,
 	2,
 	3,
-	array(1, 2, 3, /* Nesting level too deep or recursive dependency */),
-)', Dumper::toPhp($arr));
+	[1, 2, 3, /* Nesting level too deep or recursive dependency */],
+]', Dumper::toPhp($arr));
 
 
 $obj = (object) ['x' => 1, 'y' => 2];
 $obj->z = & $obj;
-Assert::match("(object) /* #%a% */ array(
+Assert::match("(object) /* #%a% */ [
 	'x' => 1,
 	'y' => 2,
 	'z' => /* stdClass dumped on line 1 */,
-)", Dumper::toPhp($obj));
+]", Dumper::toPhp($obj));
 
 
 $var = [
@@ -32,19 +32,19 @@ $var = [
 	$empty,
 	$obj,
 ];
-Assert::match("array(
-	array(
+Assert::match("[
+	[
 		1,
 		2,
 		3,
-		array(1, 2, 3, /* Nesting level too deep or recursive dependency */),
-	),
-	(object) /* #%a% */ array(),
-	(object) /* #%a% */ array(
+		[1, 2, 3, /* Nesting level too deep or recursive dependency */],
+	],
+	(object) /* #%a% */ [],
+	(object) /* #%a% */ [
 		'x' => 1,
 		'y' => 2,
 		'z' => /* stdClass dumped on line 9 */,
-	),
-	(object) /* #%a% */ array(),
+	],
+	(object) /* #%a% */ [],
 	/* stdClass dumped on line 9 */,
-)", Dumper::toPhp($var));
+]", Dumper::toPhp($var));
