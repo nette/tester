@@ -77,7 +77,7 @@ class MyTest extends Tester\TestCase
 	/** @dataProvider dataProviderNamedSets */
 	public function testAssertionNamedSets()
 	{
-		Assert::true(false);
+		Assert::true(FALSE);
 	}
 }
 
