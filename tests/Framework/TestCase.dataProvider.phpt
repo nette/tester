@@ -21,9 +21,9 @@ class MyTest extends Tester\TestCase
 	public function dataProviderNamedSets()
 	{
 		$this->order[] = __METHOD__;
-		return array(
-			'Test 1 and 2' => array(1, 2),
-		);
+		return [
+			'Test 1 and 2' => [1, 2],
+		];
 	}
 
 	public function dataProviderIterator()
@@ -53,7 +53,7 @@ class MyTest extends Tester\TestCase
 	/** @dataProvider dataProviderNamedSets */
 	public function testDataProviderNamedSets($a, $b)
 	{
-		$this->order[] = array(__METHOD__, func_get_args());
+		$this->order[] = [__METHOD__, func_get_args()];
 	}
 
 	/** @dataProvider dataProviderIterator */
@@ -105,10 +105,10 @@ Assert::same([
 
 $test = new MyTest;
 $test->runTest('testDataProviderNamedSets');
-Assert::same(array(
+Assert::same([
 	'MyTest::dataProviderNamedSets',
-	array('MyTest::testDataProviderNamedSets', array(1, 2)),
-), $test->order);
+	['MyTest::testDataProviderNamedSets', [1, 2]],
+], $test->order);
 
 
 $test = new MyTest;
