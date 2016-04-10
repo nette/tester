@@ -17,7 +17,7 @@ use Tester\Runner\PhpInterpreter;
 class HhvmPhpInterpreter implements PhpInterpreter
 {
 	/** @var string  HHVM arguments */
-	public $arguments;
+	private $arguments;
 
 	/** @var string  HHVM executable */
 	private $path;
@@ -57,6 +57,16 @@ class HhvmPhpInterpreter implements PhpInterpreter
 			throw new \Exception('HHVM below version 3.3.0 is not supported.');
 		}
 		$this->arguments = ' --php -d hhvm.log.always_log_unhandled_exceptions=false' . ($args ? " $args" : ''); // HHVM issue #3019
+	}
+
+
+	/**
+	 * @param  string
+	 * @param  string
+	 */
+	public function addPhpIniOption($name, $value = NULL)
+	{
+		$this->arguments .= ' -d ' . Helpers::escapeArg($name . ($value === NULL ? '' : "=$value"));
 	}
 
 
