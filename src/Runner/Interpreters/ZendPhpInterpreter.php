@@ -5,27 +5,32 @@
  * Copyright (c) 2009 David Grudl (https://davidgrudl.com)
  */
 
-namespace Tester\Runner;
+namespace Tester\Runner\Interpreters;
 
 use Tester\Helpers;
+use Tester\Runner\Job;
+use Tester\Runner\PhpInterpreter;
 
 
 /**
- * HHVM command-line executable.
+ * Zend PHP command-line executable.
  */
-class HhvmPhpInterpreter implements PhpInterpreter
+class ZendPhpInterpreter implements PhpInterpreter
 {
-	/** @var string  HHVM arguments */
+	/** @var string  PHP arguments */
 	public $arguments;
 
-	/** @var string  HHVM executable */
+	/** @var string  PHP executable */
 	private $path;
 
-	/** @var string  HHVM version */
+	/** @var string  PHP version */
 	private $version;
 
-	/** @var string  PHP version */
-	private $phpVersion;
+	/** @var bool is CGI? */
+	private $cgi;
+
+	/** @var bool */
+	private $xdebug;
 
 	/** @var string */
 	private $error;
@@ -35,7 +40,7 @@ class HhvmPhpInterpreter implements PhpInterpreter
 	{
 		$this->path = Helpers::escapeArg($path);
 		$proc = proc_open(
-			"$this->path --php $args -r " . Helpers::escapeArg('echo HHVM_VERSION . "|" . PHP_VERSION;'),
+			"$this->path -n $args -v", // -v must be the last
 			[['pipe', 'r'], ['pipe', 'w'], ['pipe', 'w']],
 			$pipes,
 			NULL,
@@ -44,18 +49,19 @@ class HhvmPhpInterpreter implements PhpInterpreter
 		);
 		$output = stream_get_contents($pipes[1]);
 		$this->error = trim(stream_get_contents($pipes[2]));
-
 		if (proc_close($proc)) {
 			throw new \Exception("Unable to run '$path': " . preg_replace('#[\r\n ]+#', ' ', $this->error));
-		} elseif (count($tmp = explode('|', $output)) !== 2) {
-			throw new \Exception("Unable to detect HHVM version (output: $output).");
+		} elseif (!preg_match('#^PHP (\S+).*c(g|l)i#i', $output, $matches)) {
+			throw new \Exception("Unable to detect PHP version (output: $output).");
 		}
 
-		list($this->version, $this->phpVersion) = $tmp;
-		if (version_compare($this->version, '3.3.0', '<')) {
-			throw new \Exception('HHVM below version 3.3.0 is not supported.');
-		}
-		$this->arguments = ' --php -d hhvm.log.always_log_unhandled_exceptions=false' . ($args ? " $args" : ''); // HHVM issue #3019
+		$this->version = $matches[1];
+		$this->cgi = strcasecmp($matches[2], 'g') === 0;
+		$this->arguments = $args;
+
+		$job = new Job(__DIR__ . '/info.php', $this, ['xdebug']);
+		$job->run();
+		$this->xdebug = !$job->getExitCode();
 	}
 
 
@@ -73,7 +79,7 @@ class HhvmPhpInterpreter implements PhpInterpreter
 	 */
 	public function getVersion()
 	{
-		return $this->phpVersion;
+		return $this->version;
 	}
 
 
@@ -82,7 +88,7 @@ class HhvmPhpInterpreter implements PhpInterpreter
 	 */
 	public function hasXdebug()
 	{
-		return FALSE;
+		return $this->xdebug;
 	}
 
 
@@ -91,7 +97,7 @@ class HhvmPhpInterpreter implements PhpInterpreter
 	 */
 	public function isCgi()
 	{
-		return FALSE;
+		return $this->cgi;
 	}
 
 

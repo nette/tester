@@ -8,9 +8,10 @@
 namespace Tester\Runner;
 
 use Tester\CodeCoverage;
+use Tester\Dumper;
 use Tester\Environment;
 use Tester\Helpers;
-use Tester\Dumper;
+use Tester\Runner\Interpreters;
 
 
 /**
@@ -176,11 +177,11 @@ XX
 		}
 
 		if (preg_match('#HipHop VM#', $output)) {
-			$this->interpreter = new HhvmPhpInterpreter($this->options['-p'], $args);
+			$this->interpreter = new Interpreters\HhvmPhpInterpreter($this->options['-p'], $args);
 		} elseif (strpos($output, 'phpdbg') !== FALSE) {
-			$this->interpreter = new ZendPhpDbgInterpreter($this->options['-p'], $args);
+			$this->interpreter = new Interpreters\ZendPhpDbgInterpreter($this->options['-p'], $args);
 		} else {
-			$this->interpreter = new ZendPhpInterpreter($this->options['-p'], $args);
+			$this->interpreter = new Interpreters\ZendPhpInterpreter($this->options['-p'], $args);
 		}
 
 		if ($this->interpreter->getErrorOutput()) {

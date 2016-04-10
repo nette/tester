@@ -2,27 +2,31 @@
 
 /**
  * This file is part of the Nette Tester.
- * Copyright (c) 2009 David Grudl (http://davidgrudl.com)
+ * Copyright (c) 2009 David Grudl (https://davidgrudl.com)
  */
 
-namespace Tester\Runner;
+namespace Tester\Runner\Interpreters;
 
 use Tester\Helpers;
+use Tester\Runner\PhpInterpreter;
 
 
 /**
- * Zend phpdbg command-line executable.
+ * HHVM command-line executable.
  */
-class ZendPhpDbgInterpreter implements PhpInterpreter
+class HhvmPhpInterpreter implements PhpInterpreter
 {
-	/** @var string  PHP arguments */
+	/** @var string  HHVM arguments */
 	public $arguments;
 
-	/** @var string  PHP executable */
+	/** @var string  HHVM executable */
 	private $path;
 
-	/** @var string  PHP version */
+	/** @var string  HHVM version */
 	private $version;
+
+	/** @var string  PHP version */
+	private $phpVersion;
 
 	/** @var string */
 	private $error;
@@ -32,7 +36,7 @@ class ZendPhpDbgInterpreter implements PhpInterpreter
 	{
 		$this->path = Helpers::escapeArg($path);
 		$proc = proc_open(
-			"$this->path -n $args -V",
+			"$this->path --php $args -r " . Helpers::escapeArg('echo HHVM_VERSION . "|" . PHP_VERSION;'),
 			[['pipe', 'r'], ['pipe', 'w'], ['pipe', 'w']],
 			$pipes,
 			NULL,
@@ -40,18 +44,19 @@ class ZendPhpDbgInterpreter implements PhpInterpreter
 			['bypass_shell' => TRUE]
 		);
 		$output = stream_get_contents($pipes[1]);
-
 		$this->error = trim(stream_get_contents($pipes[2]));
+
 		if (proc_close($proc)) {
 			throw new \Exception("Unable to run '$path': " . preg_replace('#[\r\n ]+#', ' ', $this->error));
-		} elseif (!preg_match('#^PHP ([\w.-]+)#im', $output, $matches)) {
-			throw new \Exception("Unable to detect PHP version (output: $output).");
-		} elseif (version_compare($matches[1], '7.0.0', '<')) {
-			throw new \Exception('Unable to use phpdbg on PHP < 7.0.0.');
+		} elseif (count($tmp = explode('|', $output)) !== 2) {
+			throw new \Exception("Unable to detect HHVM version (output: $output).");
 		}
 
-		$this->version = $matches[1];
-		$this->arguments = $args;
+		list($this->version, $this->phpVersion) = $tmp;
+		if (version_compare($this->version, '3.3.0', '<')) {
+			throw new \Exception('HHVM below version 3.3.0 is not supported.');
+		}
+		$this->arguments = ' --php -d hhvm.log.always_log_unhandled_exceptions=false' . ($args ? " $args" : ''); // HHVM issue #3019
 	}
 
 
@@ -60,7 +65,7 @@ class ZendPhpDbgInterpreter implements PhpInterpreter
 	 */
 	public function getCommandLine()
 	{
-		return $this->path . ' -qrrb -S cli' . $this->arguments;
+		return $this->path . $this->arguments;
 	}
 
 
@@ -69,7 +74,7 @@ class ZendPhpDbgInterpreter implements PhpInterpreter
 	 */
 	public function getVersion()
 	{
-		return $this->version;
+		return $this->phpVersion;
 	}
 
 
@@ -78,7 +83,7 @@ class ZendPhpDbgInterpreter implements PhpInterpreter
 	 */
 	public function hasXdebug()
 	{
-		return TRUE;
+		return FALSE;
 	}
 
 

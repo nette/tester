@@ -6,9 +6,9 @@
  */
 
 require __DIR__ . '/Runner/PhpInterpreter.php';
-require __DIR__ . '/Runner/ZendPhpInterpreter.php';
-require __DIR__ . '/Runner/ZendPhpDbgInterpreter.php';
-require __DIR__ . '/Runner/HhvmPhpInterpreter.php';
+require __DIR__ . '/Runner/Interpreters/ZendPhpInterpreter.php';
+require __DIR__ . '/Runner/Interpreters/ZendPhpDbgInterpreter.php';
+require __DIR__ . '/Runner/Interpreters/HhvmPhpInterpreter.php';
 require __DIR__ . '/Runner/Runner.php';
 require __DIR__ . '/Runner/CliTester.php';
 require __DIR__ . '/Runner/Job.php';
