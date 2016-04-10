@@ -16,7 +16,7 @@ use Tester\Helpers;
 class ZendPhpInterpreter implements PhpInterpreter
 {
 	/** @var string  PHP arguments */
-	public $arguments;
+	private $arguments;
 
 	/** @var string  PHP executable */
 	private $path;
@@ -60,6 +60,16 @@ class ZendPhpInterpreter implements PhpInterpreter
 		$job = new Job(__DIR__ . '/info.php', $this, ['xdebug']);
 		$job->run();
 		$this->xdebug = !$job->getExitCode();
+	}
+
+
+	/**
+	 * @param  string
+	 * @param  string
+	 */
+	public function addPhpIniOption($name, $value = NULL)
+	{
+		$this->arguments .= ' -d ' . Helpers::escapeArg($name . ($value === NULL ? '' : "=$value"));
 	}
 
 

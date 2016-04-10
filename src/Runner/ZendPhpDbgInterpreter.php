@@ -16,7 +16,7 @@ use Tester\Helpers;
 class ZendPhpDbgInterpreter implements PhpInterpreter
 {
 	/** @var string  PHP arguments */
-	public $arguments;
+	private $arguments;
 
 	/** @var string  PHP executable */
 	private $path;
@@ -52,6 +52,16 @@ class ZendPhpDbgInterpreter implements PhpInterpreter
 
 		$this->version = $matches[1];
 		$this->arguments = $args;
+	}
+
+
+	/**
+	 * @param  string
+	 * @param  string
+	 */
+	public function addPhpIniOption($name, $value = NULL)
+	{
+		$this->arguments .= ' -d ' . Helpers::escapeArg($name . ($value === NULL ? '' : "=$value"));
 	}
 
 

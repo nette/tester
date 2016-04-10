@@ -12,6 +12,12 @@ interface PhpInterpreter
 {
 
 	/**
+	 * @param string
+	 * @param string
+	 */
+	function addPhpIniOption($name, $value = NULL);
+
+	/**
 	 * @return string
 	 */
 	function getCommandLine();
