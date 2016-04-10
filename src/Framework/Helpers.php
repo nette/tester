@@ -81,7 +81,7 @@ class Helpers
 	 */
 	public static function escapeArg($s)
 	{
-		if (preg_match('#^[a-z0-9._-]+\z#i', $s)) {
+		if (preg_match('#^[a-z0-9._=/:-]+\z#i', $s)) {
 			return $s;
 		}
 
