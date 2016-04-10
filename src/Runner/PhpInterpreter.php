@@ -24,7 +24,7 @@ interface PhpInterpreter
 	/**
 	 * @return bool
 	 */
-	function hasXdebug();
+	function canMeasureCodeCoverage();
 
 	/**
 	 * @return bool
@@ -34,6 +34,6 @@ interface PhpInterpreter
 	/**
 	 * @return string
 	 */
-	function getErrorOutput();
+	function getStartupError();
 
 }

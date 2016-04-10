@@ -183,8 +183,8 @@ XX
 			$this->interpreter = new ZendPhpInterpreter($this->options['-p'], $args);
 		}
 
-		if ($this->interpreter->getErrorOutput()) {
-			echo Dumper::color('red', 'PHP startup error: ' . $this->interpreter->getErrorOutput()) . "\n";
+		if ($this->interpreter->getStartupError()) {
+			echo Dumper::color('red', 'PHP startup error: ' . $this->interpreter->getStartupError()) . "\n";
 			if ($this->interpreter->isCgi()) {
 				echo "(note that PHP CLI generates better error messages)\n";
 			}
@@ -230,7 +230,7 @@ XX
 	/** @return string */
 	private function prepareCodeCoverage()
 	{
-		if (!$this->interpreter->hasXdebug()) {
+		if (!$this->interpreter->canMeasureCodeCoverage()) {
 			$alternative = PHP_VERSION_ID >= 70000 ? ' or phpdbg SAPI' : '';
 			throw new \Exception("Code coverage functionality requires Xdebug extension$alternative (used {$this->interpreter->getCommandLine()})");
 		}

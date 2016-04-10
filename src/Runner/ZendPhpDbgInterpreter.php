@@ -76,7 +76,7 @@ class ZendPhpDbgInterpreter implements PhpInterpreter
 	/**
 	 * @return bool
 	 */
-	public function hasXdebug()
+	public function canMeasureCodeCoverage()
 	{
 		return TRUE;
 	}
@@ -94,7 +94,7 @@ class ZendPhpDbgInterpreter implements PhpInterpreter
 	/**
 	 * @return string
 	 */
-	public function getErrorOutput()
+	public function getStartupError()
 	{
 		return $this->error;
 	}
