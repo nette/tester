@@ -4,32 +4,37 @@
  * @internal
  */
 
-if (isset($_SERVER['argv'][1])) {
-	die(extension_loaded($_SERVER['argv'][1]) ? 0 : 1);
-}
-
-$iniFiles = array_merge(
-	($tmp = php_ini_loaded_file()) === FALSE ? [] : [$tmp],
-	(function_exists('php_ini_scanned_files') && strlen($tmp = php_ini_scanned_files())) ? explode(",\n", trim($tmp)) : []
-);
-
+$isPhpDbg = defined('PHPDBG_VERSION');
+$isHhvm = defined('HHVM_VERSION');
 $extensions = get_loaded_extensions();
 natcasesort($extensions);
 
-$isHhvm = defined('HHVM_VERSION');
-
-$values = [
-	'PHP binary' => defined('PHP_BINARY') ? PHP_BINARY : '(not available)',
-
-	'PHP version' . ($isHhvm ? '; HHVM version' : '') => PHP_VERSION . ' (' . PHP_SAPI . ')' . ($isHhvm ? '; ' . HHVM_VERSION : ''),
-
-	'Loaded php.ini files' => count($iniFiles) ? implode(', ', $iniFiles) : ($isHhvm ? '(unable to detect under HHVM)' : '(none)'),
-
-	'Loaded extensions' => count($extensions) ? implode(', ', $extensions) : '(none)',
+$info = (object) [
+	'binary' => defined('PHP_BINARY') ? PHP_BINARY : NULL,
+	'version' => PHP_VERSION,
+	'phpDbgVersion' => $isPhpDbg ? PHPDBG_VERSION : NULL,
+	'sapi' => PHP_SAPI,
+	'hhvmVersion' => $isHhvm ? HHVM_VERSION : NULL,
+	'iniFiles' => array_merge(
+		($tmp = php_ini_loaded_file()) === FALSE ? [] : [$tmp],
+		(function_exists('php_ini_scanned_files') && strlen($tmp = php_ini_scanned_files())) ? explode(",\n", trim($tmp)) : []
+	),
+	'extensions' => $extensions,
 ];
 
-foreach ($values as $title => $value) {
+if (isset($_SERVER['argv'][1])) {
+	echo serialize($info);
+	die();
+}
+
+foreach ([
+	'PHP binary' => $info->binary ?: '(not available)',
+	'PHP version' . ($isPhpDbg ? '; PHPDBG version' : '') . ($isHhvm ? '; HHVM version' : '')
+		=> "$info->version ($info->sapi)" . ($isPhpDbg ? "; $info->phpDbgVersion" : '') . ($isHhvm ? "; $info->hhvmVersion" : ''),
+	'Loaded php.ini files' => count($info->iniFiles) ? implode(', ', $info->iniFiles) : ($isHhvm ? '(unable to detect under HHVM)' : '(none)'),
+	'Loaded extensions' => count($info->extensions) ? implode(', ', $info->extensions) : '(none)',
+] as $title => $value) {
 	echo "\033[1;32m$title\033[0m:\n$value\n\n";
 }
 
-echo "\n\n";
+echo "\n";
