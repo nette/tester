@@ -14,9 +14,14 @@ namespace Tester\Runner\Interpreters;
 class HhvmPhpInterpreter extends AbstractInterpreter
 {
 
-	public function __construct($path, $args = NULL)
+	public function __construct($path, array $args = [])
 	{
-		parent::__construct($path, ' --php -n -d hhvm.log.always_log_unhandled_exceptions=false' . $args); // HHVM issue #3019
+		$args = array_merge(
+			['--php', '-n', '-d', 'hhvm.log.always_log_unhandled_exceptions=false'], // HHVM issue #3019
+			$args
+		);
+
+		parent::__construct($path, $args);
 
 		if (version_compare($this->info->hhvmVersion, '3.3.0', '<')) {
 			throw new \Exception('HHVM below version 3.3.0 is not supported.');

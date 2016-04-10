@@ -143,19 +143,22 @@ XX
 	/** @return void */
 	private function createPhpInterpreter()
 	{
-		$args = '';
+		$args = [];
 		if ($this->options['-c']) {
-			$args .= ' -c ' . Helpers::escapeArg($this->options['-c']);
+			$args[] = '-c';
+			$args[] = $this->options['-c'];
 		} elseif (!$this->options['--info']) {
 			echo "Note: No php.ini is used.\n";
 		}
 
 		if (in_array($this->options['-o'], ['tap', 'junit'])) {
-			$args .= ' -d html_errors=off';
+			$args[] = '-d';
+			$args[] = 'html_errors=off';
 		}
 
 		foreach ($this->options['-d'] as $item) {
-			$args .= ' -d ' . Helpers::escapeArg($item);
+			$args[] = '-d';
+			$args[] = $item;
 		}
 
 		// Is the executable Zend PHP or HHVM?

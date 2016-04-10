@@ -14,9 +14,9 @@ namespace Tester\Runner\Interpreters;
 class ZendPhpDbgInterpreter extends AbstractInterpreter
 {
 
-	public function __construct($path, $args = NULL)
+	public function __construct($path, array $args = [])
 	{
-		parent::__construct($path, ' -qrrb -S cli -n' . $args);
+		parent::__construct($path, array_merge(['-qrrb', '-S', 'cli', '-n'], $args));
 
 		if (version_compare($this->info->version, '7.0.0', '<')) {
 			throw new \Exception('Unable to use phpdbg on PHP < 7.0.0.');

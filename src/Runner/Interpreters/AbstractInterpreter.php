@@ -29,10 +29,10 @@ abstract class AbstractInterpreter implements PhpInterpreter
 	protected $error;
 
 
-	public function __construct($path, $args = NULL)
+	public function __construct($path, array $args = [])
 	{
 		$this->path = Helpers::escapeArg($path);
-		$this->arguments = $args;
+		$this->arguments = ' ' . implode(' ', array_map(['Tester\Helpers', 'escapeArg'], $args));
 
 		$proc = proc_open(
 			"$this->path $this->arguments " . Helpers::escapeArg(__DIR__ . '/../info.php') . ' serialized',

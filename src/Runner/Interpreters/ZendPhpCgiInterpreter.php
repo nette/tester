@@ -14,9 +14,9 @@ namespace Tester\Runner\Interpreters;
 class ZendPhpCgiInterpreter extends AbstractInterpreter
 {
 
-	public function __construct($path, $args = NULL)
+	public function __construct($path, array $args = [])
 	{
-		parent::__construct($path, ' -n' . $args);
+		parent::__construct($path, array_merge(['-n'], $args));
 	}
 
 
