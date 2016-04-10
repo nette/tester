@@ -81,7 +81,7 @@ class HhvmPhpInterpreter implements PhpInterpreter
 	/**
 	 * @return bool
 	 */
-	public function hasXdebug()
+	public function canMeasureCodeCoverage()
 	{
 		return FALSE;
 	}
@@ -99,7 +99,7 @@ class HhvmPhpInterpreter implements PhpInterpreter
 	/**
 	 * @return string
 	 */
-	public function getErrorOutput()
+	public function getStartupError()
 	{
 		return $this->error;
 	}

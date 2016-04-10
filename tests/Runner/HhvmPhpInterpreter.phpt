@@ -13,5 +13,5 @@ $executable = createInterpreter();
 
 Assert::contains(PHP_BINARY, $executable->getCommandLine());
 Assert::same(PHP_VERSION, $executable->getVersion());
-Assert::same(FALSE, $executable->hasXdebug());
+Assert::same(FALSE, $executable->canMeasureCodeCoverage());
 Assert::same(FALSE, $executable->isCgi());
