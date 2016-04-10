@@ -37,8 +37,10 @@ class ZendPhpInterpreter implements PhpInterpreter
 	public function __construct($path, $args = NULL)
 	{
 		$this->path = Helpers::escapeArg($path);
+		$this->arguments = $args;
+
 		$proc = proc_open(
-			"$this->path -n $args -v", // -v must be the last
+			"$this->path -n $this->arguments " . Helpers::escapeArg(__DIR__ . '/info.php') . ' serialized',
 			[['pipe', 'r'], ['pipe', 'w'], ['pipe', 'w']],
 			$pipes,
 			NULL,
@@ -47,19 +49,22 @@ class ZendPhpInterpreter implements PhpInterpreter
 		);
 		$output = stream_get_contents($pipes[1]);
 		$this->error = trim(stream_get_contents($pipes[2]));
+
 		if (proc_close($proc)) {
 			throw new \Exception("Unable to run '$path': " . preg_replace('#[\r\n ]+#', ' ', $this->error));
-		} elseif (!preg_match('#^PHP (\S+).*c(g|l)i#i', $output, $matches)) {
+		}
+
+		$this->cgi = stripos($output, 'cgi') !== FALSE;
+		if ($this->cgi) {
+			list(, $output) = explode("\r\n\r\n", $output, 2);
+		}
+
+		if (!($info = @unserialize($output))) {
 			throw new \Exception("Unable to detect PHP version (output: $output).");
 		}
 
-		$this->version = $matches[1];
-		$this->cgi = strcasecmp($matches[2], 'g') === 0;
-		$this->arguments = $args;
-
-		$job = new Job(__DIR__ . '/info.php', $this, ['xdebug']);
-		$job->run();
-		$this->xdebug = !$job->getExitCode();
+		$this->version = $info->version;
+		$this->xdebug = in_array('xdebug', $info->extensions, TRUE);
 	}
 
 

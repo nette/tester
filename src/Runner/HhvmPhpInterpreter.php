@@ -34,8 +34,10 @@ class HhvmPhpInterpreter implements PhpInterpreter
 	public function __construct($path, $args = NULL)
 	{
 		$this->path = Helpers::escapeArg($path);
+		$this->arguments = ' --php -d hhvm.log.always_log_unhandled_exceptions=false' . $args; // HHVM issue #3019
+
 		$proc = proc_open(
-			"$this->path --php $args -r " . Helpers::escapeArg('echo HHVM_VERSION . "|" . PHP_VERSION;'),
+			"$this->path $this->arguments " . Helpers::escapeArg(__DIR__ . '/info.php' . ' serialized'),
 			[['pipe', 'r'], ['pipe', 'w'], ['pipe', 'w']],
 			$pipes,
 			NULL,
@@ -47,15 +49,15 @@ class HhvmPhpInterpreter implements PhpInterpreter
 
 		if (proc_close($proc)) {
 			throw new \Exception("Unable to run '$path': " . preg_replace('#[\r\n ]+#', ' ', $this->error));
-		} elseif (count($tmp = explode('|', $output)) !== 2) {
+		} elseif (!($info = @unserialize($output))) {
 			throw new \Exception("Unable to detect HHVM version (output: $output).");
 		}
 
-		list($this->version, $this->phpVersion) = $tmp;
+		$this->phpVersion = $info->version;
+		$this->version = $info->hhvmVersion;
 		if (version_compare($this->version, '3.3.0', '<')) {
 			throw new \Exception('HHVM below version 3.3.0 is not supported.');
 		}
-		$this->arguments = ' --php -d hhvm.log.always_log_unhandled_exceptions=false' . ($args ? " $args" : ''); // HHVM issue #3019
 	}
 
 
