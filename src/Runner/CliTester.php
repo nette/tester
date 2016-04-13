@@ -8,9 +8,10 @@
 namespace Tester\Runner;
 
 use Tester\CodeCoverage;
+use Tester\Dumper;
 use Tester\Environment;
 use Tester\Helpers;
-use Tester\Dumper;
+use Tester\Runner\Interpreters;
 
 
 /**
@@ -142,19 +143,22 @@ XX
 	/** @return void */
 	private function createPhpInterpreter()
 	{
-		$args = '';
+		$args = [];
 		if ($this->options['-c']) {
-			$args .= ' -c ' . Helpers::escapeArg($this->options['-c']);
+			$args[] = '-c';
+			$args[] = $this->options['-c'];
 		} elseif (!$this->options['--info']) {
 			echo "Note: No php.ini is used.\n";
 		}
 
 		if (in_array($this->options['-o'], ['tap', 'junit'])) {
-			$args .= ' -d html_errors=off';
+			$args[] = '-d';
+			$args[] = 'html_errors=off';
 		}
 
 		foreach ($this->options['-d'] as $item) {
-			$args .= ' -d ' . Helpers::escapeArg($item);
+			$args[] = '-d';
+			$args[] = $item;
 		}
 
 		// Is the executable Zend PHP or HHVM?
@@ -176,18 +180,17 @@ XX
 		}
 
 		if (preg_match('#HipHop VM#', $output)) {
-			$this->interpreter = new HhvmPhpInterpreter($this->options['-p'], $args);
+			$this->interpreter = new Interpreters\HhvmPhpInterpreter($this->options['-p'], $args);
 		} elseif (strpos($output, 'phpdbg') !== FALSE) {
-			$this->interpreter = new ZendPhpDbgInterpreter($this->options['-p'], $args);
+			$this->interpreter = new Interpreters\ZendPhpDbgInterpreter($this->options['-p'], $args);
+		} elseif (strpos($output, 'cgi') !== FALSE) {
+			$this->interpreter = new Interpreters\ZendPhpCgiInterpreter($this->options['-p'], $args);
 		} else {
-			$this->interpreter = new ZendPhpInterpreter($this->options['-p'], $args);
+			$this->interpreter = new Interpreters\ZendPhpCliInterpreter($this->options['-p'], $args);
 		}
 
-		if ($this->interpreter->getErrorOutput()) {
-			echo Dumper::color('red', 'PHP startup error: ' . $this->interpreter->getErrorOutput()) . "\n";
-			if ($this->interpreter->isCgi()) {
-				echo "(note that PHP CLI generates better error messages)\n";
-			}
+		if ($error = $this->interpreter->getStartupError()) {
+			echo Dumper::color('red', "PHP startup error: $error") . "\n";
 		}
 	}
 
@@ -230,7 +233,7 @@ XX
 	/** @return string */
 	private function prepareCodeCoverage()
 	{
-		if (!$this->interpreter->hasXdebug()) {
+		if (!$this->interpreter->canMeasureCodeCoverage()) {
 			$alternative = PHP_VERSION_ID >= 70000 ? ' or phpdbg SAPI' : '';
 			throw new \Exception("Code coverage functionality requires Xdebug extension$alternative (used {$this->interpreter->getCommandLine()})");
 		}

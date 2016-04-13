@@ -12,6 +12,12 @@ interface PhpInterpreter
 {
 
 	/**
+	 * @param string
+	 * @param string
+	 */
+	function addPhpIniOption($name, $value = NULL);
+
+	/**
 	 * @return string
 	 */
 	function getCommandLine();
@@ -24,7 +30,7 @@ interface PhpInterpreter
 	/**
 	 * @return bool
 	 */
-	function hasXdebug();
+	function canMeasureCodeCoverage();
 
 	/**
 	 * @return bool
@@ -34,6 +40,17 @@ interface PhpInterpreter
 	/**
 	 * @return string
 	 */
-	function getErrorOutput();
+	function getStartupError();
+
+	/**
+	 * @return string
+	 */
+	function getShortInfo();
+
+	/**
+	 * @param  string
+	 * @return bool
+	 */
+	function hasExtension($name);
 
 }
