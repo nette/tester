@@ -9,7 +9,6 @@ namespace Tester\Runner;
 
 use Tester\CodeCoverage;
 use Tester\Environment;
-use Tester\Helpers;
 use Tester\Dumper;
 
 
@@ -142,19 +141,19 @@ XX
 	/** @return void */
 	private function createPhpInterpreter()
 	{
-		$args = '';
+		$args = [];
 		if ($this->options['-c']) {
-			$args .= ' -c ' . Helpers::escapeArg($this->options['-c']);
+			array_push($args, '-c', $this->options['-c']);
 		} elseif (!$this->options['--info']) {
 			echo "Note: No php.ini is used.\n";
 		}
 
 		if (in_array($this->options['-o'], ['tap', 'junit'])) {
-			$args .= ' -d html_errors=off';
+			array_push($args, '-d', 'html_errors=off');
 		}
 
 		foreach ($this->options['-d'] as $item) {
-			$args .= ' -d ' . Helpers::escapeArg($item);
+			array_push($args, '-d', $item);
 		}
 
 		$this->interpreter = new PhpInterpreter($this->options['-p'], $args);

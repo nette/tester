@@ -15,11 +15,8 @@ use Tester\Helpers;
  */
 class PhpInterpreter
 {
-	/** @var string  PHP arguments */
-	private $arguments;
-
-	/** @var string  PHP executable */
-	private $path;
+	/** @var string */
+	private $commandLine;
 
 	/** @var bool is CGI? */
 	private $cgi;
@@ -31,11 +28,11 @@ class PhpInterpreter
 	private $error;
 
 
-	public function __construct($path, $args = NULL)
+	public function __construct($path, array $args = [])
 	{
-		$this->path = Helpers::escapeArg($path);
+		$this->commandLine = Helpers::escapeArg($path);
 		$proc = @proc_open( // @ is escalated to exception
-			$this->path . ' --version',
+			$this->commandLine . ' --version',
 			[['pipe', 'r'], ['pipe', 'w'], ['pipe', 'w']],
 			$pipes,
 			NULL,
@@ -48,15 +45,16 @@ class PhpInterpreter
 		$output = stream_get_contents($pipes[1]);
 		proc_close($proc);
 
-		$this->arguments = ' -n ' . $args;
+		$args = ' -n ' . implode(' ', array_map(['Tester\Helpers', 'escapeArg'], $args));
 		if (preg_match('#HipHop VM#', $output)) {
-			$this->arguments = ' --php' . $this->arguments . ' -d hhvm.log.always_log_unhandled_exceptions=false'; // HHVM issue #3019
+			$args = ' --php' . $args . ' -d hhvm.log.always_log_unhandled_exceptions=false'; // HHVM issue #3019
 		} elseif (strpos($output, 'phpdbg') !== FALSE) {
-			$this->arguments = ' -qrrb -S cli' . $this->arguments;
+			$args = ' -qrrb -S cli' . $args;
 		}
+		$this->commandLine .= $args;
 
 		$proc = proc_open(
-			"$this->path $this->arguments " . Helpers::escapeArg(__DIR__ . '/info.php') . ' serialized',
+			$this->commandLine . ' ' . Helpers::escapeArg(__DIR__ . '/info.php') . ' serialized',
 			[['pipe', 'r'], ['pipe', 'w'], ['pipe', 'w']],
 			$pipes,
 			NULL,
@@ -92,7 +90,7 @@ class PhpInterpreter
 	 */
 	public function addPhpIniOption($name, $value = NULL)
 	{
-		$this->arguments .= ' -d ' . Helpers::escapeArg($name . ($value === NULL ? '' : "=$value"));
+		$this->commandLine .= ' -d ' . Helpers::escapeArg($name . ($value === NULL ? '' : "=$value"));
 	}
 
 
@@ -101,7 +99,7 @@ class PhpInterpreter
 	 */
 	public function getCommandLine()
 	{
-		return $this->path . $this->arguments;
+		return $this->commandLine;
 	}
 
 
