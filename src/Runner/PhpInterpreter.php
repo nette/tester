@@ -7,39 +7,137 @@
 
 namespace Tester\Runner;
 
+use Tester\Helpers;
 
-interface PhpInterpreter
+
+/**
+ * PHP command-line executable.
+ */
+class PhpInterpreter
 {
+	/** @var string  PHP arguments */
+	private $arguments;
+
+	/** @var string  PHP executable */
+	private $path;
+
+	/** @var bool is CGI? */
+	private $cgi;
+
+	/** @var \stdClass  created by info.php */
+	private $info;
+
+	/** @var string */
+	private $error;
+
+
+	public function __construct($path, $args = NULL)
+	{
+		$this->path = Helpers::escapeArg($path);
+		$proc = @proc_open( // @ is escalated to exception
+			$this->path . ' --version',
+			[['pipe', 'r'], ['pipe', 'w'], ['pipe', 'w']],
+			$pipes,
+			NULL,
+			NULL,
+			['bypass_shell' => TRUE]
+		);
+		if ($proc === FALSE) {
+			throw new \Exception("Cannot run PHP interpreter $path. Use -p option.");
+		}
+		$output = stream_get_contents($pipes[1]);
+		proc_close($proc);
+
+		$this->arguments = ' -n ' . $args;
+		if (preg_match('#HipHop VM#', $output)) {
+			$this->arguments = ' --php' . $this->arguments . ' -d hhvm.log.always_log_unhandled_exceptions=false'; // HHVM issue #3019
+		} elseif (strpos($output, 'phpdbg') !== FALSE) {
+			$this->arguments = ' -qrrb -S cli' . $this->arguments;
+		}
+
+		$proc = proc_open(
+			"$this->path $this->arguments " . Helpers::escapeArg(__DIR__ . '/info.php') . ' serialized',
+			[['pipe', 'r'], ['pipe', 'w'], ['pipe', 'w']],
+			$pipes,
+			NULL,
+			NULL,
+			['bypass_shell' => TRUE]
+		);
+		$output = stream_get_contents($pipes[1]);
+		$this->error = trim(stream_get_contents($pipes[2]));
+		if (proc_close($proc)) {
+			throw new \Exception("Unable to run $path: " . preg_replace('#[\r\n ]+#', ' ', $this->error));
+		}
+
+		$parts = explode("\r\n\r\n", $output, 2);
+		$this->cgi = count($parts) === 2;
+		if (!($this->info = @unserialize($parts[$this->cgi]))) {
+			throw new \Exception("Unable to detect PHP version (output: $output).");
+
+		} elseif ($this->info->hhvmVersion && version_compare($this->info->hhvmVersion, '3.3.0', '<')) {
+			throw new \Exception('HHVM below version 3.3.0 is not supported.');
+
+		} elseif ($this->info->phpDbgVersion && version_compare($this->info->version, '7.0.0', '<')) {
+			throw new \Exception('Unable to use phpdbg on PHP < 7.0.0.');
+
+		} elseif ($this->cgi && $this->error) {
+			$this->error .= "\n(note that PHP CLI generates better error messages)";
+		}
+	}
+
 
 	/**
-	 * @param string
-	 * @param string
+	 * @param  string
+	 * @param  string
 	 */
-	function addPhpIniOption($name, $value = NULL);
+	public function addPhpIniOption($name, $value = NULL)
+	{
+		$this->arguments .= ' -d ' . Helpers::escapeArg($name . ($value === NULL ? '' : "=$value"));
+	}
+
 
 	/**
 	 * @return string
 	 */
-	function getCommandLine();
+	public function getCommandLine()
+	{
+		return $this->path . $this->arguments;
+	}
+
 
 	/**
 	 * @return string
 	 */
-	function getVersion();
+	public function getVersion()
+	{
+		return $this->info->version;
+	}
+
 
 	/**
 	 * @return bool
 	 */
-	function canMeasureCodeCoverage();
+	public function canMeasureCodeCoverage()
+	{
+		return $this->info->canMeasureCodeCoverage;
+	}
+
 
 	/**
 	 * @return bool
 	 */
-	function isCgi();
+	public function isCgi()
+	{
+		return $this->cgi;
+	}
+
 
 	/**
 	 * @return string
 	 */
-	function getStartupError();
+	public function getStartupError()
+	{
+		return $this->error;
+	}
 
 }

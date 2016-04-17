@@ -20,6 +20,7 @@ $info = (object) [
 		(function_exists('php_ini_scanned_files') && strlen($tmp = php_ini_scanned_files())) ? explode(",\n", trim($tmp)) : []
 	),
 	'extensions' => $extensions,
+	'canMeasureCodeCoverage' => $isPhpDbg || (!$isHhvm && in_array('xdebug', $extensions, TRUE)),
 ];
 
 if (isset($_SERVER['argv'][1])) {

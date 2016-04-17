@@ -157,37 +157,10 @@ XX
 			$args .= ' -d ' . Helpers::escapeArg($item);
 		}
 
-		// Is the executable Zend PHP or HHVM?
-		$proc = @proc_open( // @ is escalated to exception
-			$this->options['-p'] . ' --version',
-			[['pipe', 'r'], ['pipe', 'w'], ['pipe', 'w']],
-			$pipes,
-			NULL,
-			NULL,
-			['bypass_shell' => TRUE]
-		);
-		if ($proc === FALSE) {
-			throw new \Exception('Cannot run PHP interpreter ' . $this->options['-p'] . '. Use -p option.');
-		}
-		$output = stream_get_contents($pipes[1]);
-		$error = stream_get_contents($pipes[2]);
-		if (proc_close($proc)) {
-			throw new \Exception("Unable to run '{$this->options['-p']}': " . preg_replace('#[\r\n ]+#', ' ', $error));
-		}
+		$this->interpreter = new PhpInterpreter($this->options['-p'], $args);
 
-		if (preg_match('#HipHop VM#', $output)) {
-			$this->interpreter = new HhvmPhpInterpreter($this->options['-p'], $args);
-		} elseif (strpos($output, 'phpdbg') !== FALSE) {
-			$this->interpreter = new ZendPhpDbgInterpreter($this->options['-p'], $args);
-		} else {
-			$this->interpreter = new ZendPhpInterpreter($this->options['-p'], $args);
-		}
-
-		if ($this->interpreter->getStartupError()) {
-			echo Dumper::color('red', 'PHP startup error: ' . $this->interpreter->getStartupError()) . "\n";
-			if ($this->interpreter->isCgi()) {
-				echo "(note that PHP CLI generates better error messages)\n";
-			}
+		if ($error = $this->interpreter->getStartupError()) {
+			echo Dumper::color('red', "PHP startup error: $error") . "\n";
 		}
 	}
 
