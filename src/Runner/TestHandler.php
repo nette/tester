@@ -113,7 +113,8 @@ class TestHandler
 
 	private function initiatePhpIni($value, PhpInterpreter $interpreter)
 	{
-		$interpreter->arguments .= ' -d ' . Helpers::escapeArg($value);
+		list($name, $value) = explode('=', $value, 2) + [1 => NULL];
+		$interpreter->addPhpIniOption($name, $value);
 	}
 
 

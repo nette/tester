@@ -8,6 +8,7 @@
 namespace Tester\Runner;
 
 use Tester\Environment;
+use Tester\Helpers;
 
 
 /**
@@ -83,7 +84,7 @@ class Job
 		putenv(Environment::COLORS . '=' . (int) Environment::$useColors);
 		$this->proc = proc_open(
 			$this->interpreter->getCommandLine()
-			. ' -n -d register_argc_argv=on ' . \Tester\Helpers::escapeArg($this->file) . ' ' . implode(' ', $this->args),
+			. ' -d register_argc_argv=on ' . Helpers::escapeArg($this->file) . ' ' . implode(' ', $this->args),
 			[
 				['pipe', 'r'],
 				['pipe', 'w'],

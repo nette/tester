@@ -9,7 +9,6 @@ namespace Tester\Runner;
 
 use Tester\CodeCoverage;
 use Tester\Environment;
-use Tester\Helpers;
 use Tester\Dumper;
 
 
@@ -142,52 +141,25 @@ XX
 	/** @return void */
 	private function createPhpInterpreter()
 	{
-		$args = '';
+		$args = [];
 		if ($this->options['-c']) {
-			$args .= ' -c ' . Helpers::escapeArg($this->options['-c']);
+			array_push($args, '-c', $this->options['-c']);
 		} elseif (!$this->options['--info']) {
 			echo "Note: No php.ini is used.\n";
 		}
 
 		if (in_array($this->options['-o'], ['tap', 'junit'])) {
-			$args .= ' -d html_errors=off';
+			array_push($args, '-d', 'html_errors=off');
 		}
 
 		foreach ($this->options['-d'] as $item) {
-			$args .= ' -d ' . Helpers::escapeArg($item);
+			array_push($args, '-d', $item);
 		}
 
-		// Is the executable Zend PHP or HHVM?
-		$proc = @proc_open( // @ is escalated to exception
-			$this->options['-p'] . ' --version',
-			[['pipe', 'r'], ['pipe', 'w'], ['pipe', 'w']],
-			$pipes,
-			NULL,
-			NULL,
-			['bypass_shell' => TRUE]
-		);
-		if ($proc === FALSE) {
-			throw new \Exception('Cannot run PHP interpreter ' . $this->options['-p'] . '. Use -p option.');
-		}
-		$output = stream_get_contents($pipes[1]);
-		$error = stream_get_contents($pipes[2]);
-		if (proc_close($proc)) {
-			throw new \Exception("Unable to run '{$this->options['-p']}': " . preg_replace('#[\r\n ]+#', ' ', $error));
-		}
+		$this->interpreter = new PhpInterpreter($this->options['-p'], $args);
 
-		if (preg_match('#HipHop VM#', $output)) {
-			$this->interpreter = new HhvmPhpInterpreter($this->options['-p'], $args);
-		} elseif (strpos($output, 'phpdbg') !== FALSE) {
-			$this->interpreter = new ZendPhpDbgInterpreter($this->options['-p'], $args);
-		} else {
-			$this->interpreter = new ZendPhpInterpreter($this->options['-p'], $args);
-		}
-
-		if ($this->interpreter->getErrorOutput()) {
-			echo Dumper::color('red', 'PHP startup error: ' . $this->interpreter->getErrorOutput()) . "\n";
-			if ($this->interpreter->isCgi()) {
-				echo "(note that PHP CLI generates better error messages)\n";
-			}
+		if ($error = $this->interpreter->getStartupError()) {
+			echo Dumper::color('red', "PHP startup error: $error") . "\n";
 		}
 	}
 
@@ -230,7 +202,7 @@ XX
 	/** @return string */
 	private function prepareCodeCoverage()
 	{
-		if (!$this->interpreter->hasXdebug()) {
+		if (!$this->interpreter->canMeasureCodeCoverage()) {
 			$alternative = PHP_VERSION_ID >= 70000 ? ' or phpdbg SAPI' : '';
 			throw new \Exception("Code coverage functionality requires Xdebug extension$alternative (used {$this->interpreter->getCommandLine()})");
 		}
