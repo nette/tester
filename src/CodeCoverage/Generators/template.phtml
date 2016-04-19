@@ -35,36 +35,47 @@
 	div.code {
 		background: white;
 		border: 1px dotted silver;
+		padding: .4em 0;
 		display: none;
 		color: #333;
-		position: relative;
 		overflow: auto;
 	}
 
 	code,
 	div.code {
 		font: 13px/1.3 monospace;
-		padding: .4em .7em;
 	}
 
-	div.code div {
+	div.code > div {
+		float: left;
+		min-width: 100%;
+		position: relative;
+	}
+
+	aside {
+		min-width: 100%;
+		position: absolute;
+	}
+
+	aside div {
 		white-space: pre;
+		padding-left: .7em;
 	}
 
-	div.code a {
+	aside a {
 		color: #c0c0c0;
 	}
 
-	div.code a:hover {
+	aside a:hover {
 		color: inherit;
 		font-weight: bold;
 		text-decoration: none;
 	}
 
 	code {
+		display: block;
 		white-space: nowrap;
-		position: absolute;
-		top: 0;
+		position: relative;
 	}
 
 	a {
@@ -139,10 +150,12 @@
 		</table>
 
 		<div class="code" id="F<?= $id ?>">
-		<?php
+		<div>
+			<aside>
+			<?php
 			$code = file_get_contents($info->file);
 			$lineCount = substr_count($code, "\n") + 1;
-			$digits = ceil(log10($lineCount));
+			$digits = ceil(log10($lineCount)) + 1;
 
 			$prevClass = NULL;
 			$closeTag = $buffer = '';
@@ -163,11 +176,15 @@
 			}
 			echo $buffer . $closeTag;
 
-			echo strtr(highlight_string($code, TRUE), [
-				'<code>' => "<code style='left: {$digits}em'>",
+			$code = strtr(highlight_string($code, TRUE), [
+				'<code>' => "<code style='margin-left: {$digits}em'>",
 				'<span style="color: ' => '<span class="',
 			]);
-		?></div>
+			?>
+			</aside>
+			<?= $code ?>
+		</div>
+		</div>
 	</div>
 	<?php endforeach ?>
 
