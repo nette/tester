@@ -114,22 +114,16 @@ class TestCase
 
 
 		if ($this->prevErrorHandler === FALSE) {
-			$me = $this;
-			$handleErrors = & $this->handleErrors;
-			$prev = & $this->prevErrorHandler;
-
-			$prev = set_error_handler(function ($severity) use ($me, & $prev, & $handleErrors) {
-				if ($handleErrors && ($severity & error_reporting()) === $severity) {
-					$handleErrors = FALSE;
-					$rm = new \ReflectionMethod($me, 'tearDown');
-					$rm->setAccessible(TRUE);
+			$this->prevErrorHandler = set_error_handler(function ($severity) {
+				if ($this->handleErrors && ($severity & error_reporting()) === $severity) {
+					$this->handleErrors = FALSE;
 
 					set_error_handler(function() {});  // mute all errors
-					$rm->invoke($me);
+					$this->tearDown();
 					restore_error_handler();
 				}
 
-				return $prev ? call_user_func_array($prev, func_get_args()) : FALSE;
+				return $this->prevErrorHandler ? call_user_func_array($this->prevErrorHandler, func_get_args()) : FALSE;
 			});
 		}
 
