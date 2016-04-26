@@ -32,6 +32,7 @@ class Assert
 		'%i%' => '[+-]?[0-9]+', // signed integer value
 		'%f%' => '[+-]?\.?\d+\.?\d*(?:[Ee][+-]?\d+)?', // floating point number
 		'%h%' => '[0-9a-fA-F]+',// one or more HEX digits
+		'%w%' => '[0-9a-zA-Z_]+',//one or more alphanumeric characters
 		'%ds%' => '[\\\\/]',    // directory separator
 		'%(\[.+\][+*?{},\d]*)%' => '$1', // range
 	];
