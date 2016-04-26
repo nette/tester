@@ -118,8 +118,12 @@ class TestCase
 				if ($this->handleErrors && ($severity & error_reporting()) === $severity) {
 					$this->handleErrors = FALSE;
 
-					set_error_handler(function() {});  // mute all errors
-					$this->tearDown();
+					// mute all errors and exceptions
+					set_error_handler(function() {});
+					try {
+						$this->tearDown();
+					} catch (\Exception $e) {
+					}
 					restore_error_handler();
 				}
 

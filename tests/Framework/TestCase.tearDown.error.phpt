@@ -38,6 +38,4 @@ class Test extends Tester\TestCase
 	}
 }
 
-
-$test = new Test;
-$test->run();
+(new Test)->run();
