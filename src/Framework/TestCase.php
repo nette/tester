@@ -117,14 +117,7 @@ class TestCase
 			$this->prevErrorHandler = set_error_handler(function ($severity) {
 				if ($this->handleErrors && ($severity & error_reporting()) === $severity) {
 					$this->handleErrors = FALSE;
-
-					// mute all errors and exceptions
-					set_error_handler(function() {});
-					try {
-						$this->tearDown();
-					} catch (\Exception $e) {
-					}
-					restore_error_handler();
+					$this->silentTearDown();
 				}
 
 				return $this->prevErrorHandler ? call_user_func_array($this->prevErrorHandler, func_get_args()) : FALSE;
@@ -148,20 +141,14 @@ class TestCase
 					} else {
 						call_user_func_array([$this, $method->getName()], $params);
 					}
-				} catch (\Exception $testException) {
+				} catch (\Exception $e) {
+					$this->handleErrors = FALSE;
+					$this->silentTearDown();
+					throw $e;
 				}
 				$this->handleErrors = FALSE;
 
-				try {
-					$this->tearDown();
-				} catch (\Exception $tearDownException) {
-				}
-
-				if (isset($testException)) {
-					throw $testException;
-				} elseif (isset($tearDownException)) {
-					throw $tearDownException;
-				}
+				$this->tearDown();
 
 			} catch (AssertException $e) {
 				throw $e->setMessage("$e->origMessage in {$method->getName()}(" . (substr(Dumper::toLine($params), 1, -1)) . ')');
@@ -200,6 +187,17 @@ class TestCase
 	 */
 	protected function tearDown()
 	{
+	}
+
+
+	private function silentTearDown()
+	{
+		set_error_handler(function() {});
+		try {
+			$this->tearDown();
+		} catch (\Exception $e) {
+		}
+		restore_error_handler();
 	}
 
 }

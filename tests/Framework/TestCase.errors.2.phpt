@@ -1,7 +1,8 @@
 <?php
 
 /**
- * @outputMatch Test::setUp,Test::testMe,Test::tearDown
+ * @exitCode 255
+ * @outputMatch #^Test::setUp,Test::testMe,Test::tearDown,E_USER_WARNING: testMe\s+in#
  */
 
 require __DIR__ . '/../bootstrap.php';
@@ -16,21 +17,16 @@ class Test extends Tester\TestCase
 		echo __METHOD__ . ',';
 	}
 
-	/** @dataProvider data */
-	public function testMe($arg)
+	public function testMe()
 	{
 		echo __METHOD__ . ',';
-		@trigger_error('MUTED', E_USER_WARNING);
+		trigger_error('testMe', E_USER_WARNING);
 	}
 
 	protected function tearDown()
 	{
-		echo __METHOD__;
-	}
-
-	protected function data()
-	{
-		return [['arg']];
+		echo __METHOD__ . ',';
+		trigger_error('tearDown', E_USER_WARNING);
 	}
 }
 
