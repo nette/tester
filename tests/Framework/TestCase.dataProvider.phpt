@@ -63,7 +63,7 @@ class MyTest extends Tester\TestCase
 
 
 $test = new MyTest;
-$test->run('testSingleDataProvider');
+$test->runTest('testSingleDataProvider');
 Assert::same([
 	'MyTest::dataProvider',
 	['MyTest::testSingleDataProvider', [1, 2]],
@@ -72,7 +72,7 @@ Assert::same([
 
 
 $test = new MyTest;
-$test->run('testMultipleDataProvider');
+$test->runTest('testMultipleDataProvider');
 Assert::same([
 	'MyTest::dataProvider',
 	'MyTest::dataProvider',
@@ -84,7 +84,7 @@ Assert::same([
 
 
 $test = new MyTest;
-$test->run('testIteratorDataProvider');
+$test->runTest('testIteratorDataProvider');
 Assert::same([
 	'MyTest::dataProviderIterator',
 	['MyTest::testIteratorDataProvider', [1, 2]],
@@ -93,7 +93,7 @@ Assert::same([
 
 
 $test = new MyTest;
-$test->run('testFileDataProvider');
+$test->runTest('testFileDataProvider');
 Assert::same([
 	['MyTest::testFileDataProvider', ['1', 'b']],
 	['MyTest::testFileDataProvider', ['a', '2']],
@@ -102,5 +102,5 @@ Assert::same([
 
 Assert::exception(function () {
 	$test = new MyTest;
-	$test->run('testAssertion');
+	$test->runTest('testAssertion');
 }, 'Tester\AssertException', 'FALSE should be TRUE in testAssertion(1, 2)');

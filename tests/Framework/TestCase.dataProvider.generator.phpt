@@ -5,7 +5,6 @@
  */
 
 use Tester\Assert;
-use Tester\Environment;
 
 require __DIR__ . '/../bootstrap.php';
 
@@ -30,7 +29,7 @@ class MyTest extends Tester\TestCase
 
 
 $test = new MyTest;
-$test->run('testDataProviderGenerator');
+$test->runTest('testDataProviderGenerator');
 Assert::same([
 	['MyTest::testDataProviderGenerator', [0]],
 	['MyTest::testDataProviderGenerator', [1]],

@@ -27,9 +27,9 @@ class MyTest extends Tester\TestCase
 $test = new MyTest;
 
 Assert::exception(function () use ($test) {
-	$test->run('testThrowsNoClass');
+	$test->runTest('testThrowsNoClass');
 }, 'Tester\TestCaseException', 'Missing class name in @throws annotation for testThrowsNoClass().');
 
 Assert::exception(function () use ($test) {
-	$test->run('testThrowsMultiple');
+	$test->runTest('testThrowsMultiple');
 }, 'Tester\TestCaseException', 'Annotation @throws for testThrowsMultiple() can be specified only once.');

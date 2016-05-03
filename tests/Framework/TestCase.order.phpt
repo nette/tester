@@ -76,11 +76,11 @@ class FailingTest extends Tester\TestCase
 $test = new FailingTest;
 
 Assert::exception(function () use ($test) {
-	$test->run('testPublic');
+	$test->runTest('testPublic');
 }, 'Tester\AssertException');
 
 Assert::exception(function () use ($test) {
-	$test->run('testPublicStatic');
+	$test->runTest('testPublicStatic');
 }, 'Tester\AssertException');
 
 

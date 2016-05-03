@@ -26,10 +26,10 @@ class InvalidProviderTest extends Tester\TestCase
 
 Assert::exception(function () {
 	$test = new InvalidProviderTest;
-	$test->run('testEmptyProvider');
+	$test->runTest('testEmptyProvider');
 }, 'Tester\TestCaseException', "Data provider invalidDataProvider() doesn't return array or Traversable.");
 
 Assert::exception(function () {
 	$test = new InvalidProviderTest;
-	$test->run('testMissingDataProvider');
+	$test->runTest('testMissingDataProvider');
 }, 'Tester\TestCaseException', 'Method testMissingDataProvider() has arguments, but @dataProvider is missing.');

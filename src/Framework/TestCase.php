@@ -29,18 +29,17 @@ class TestCase
 	 * Runs the test case.
 	 * @return void
 	 */
-	public function run($method = NULL)
+	public function run()
 	{
-		$r = new \ReflectionObject($this);
-		$methods = array_values(preg_grep(self::METHOD_PATTERN, array_map(function (\ReflectionMethod $rm) {
-			return $rm->getName();
-		}, $r->getMethods())));
-
-		if (substr($method, 0, 2) === '--') { // back compatibility
-			$method = NULL;
+		if (func_num_args()) {
+			throw new \LogicException('Calling TestCase::run($method) is deprecated. Use TestCase::runTest($method) instead.');
 		}
 
-		if ($method === NULL && isset($_SERVER['argv']) && ($tmp = preg_filter('#(--method=)?([\w-]+)$#Ai', '$2', $_SERVER['argv']))) {
+		$methods = array_values(preg_grep(self::METHOD_PATTERN, array_map(function (\ReflectionMethod $rm) {
+			return $rm->getName();
+		}, (new \ReflectionObject($this))->getMethods())));
+
+		if (isset($_SERVER['argv']) && ($tmp = preg_filter('#(--method=)?([\w-]+)$#Ai', '$2', $_SERVER['argv']))) {
 			$method = reset($tmp);
 			if ($method === self::LIST_METHODS) {
 				Environment::$checkAssertions = FALSE;
@@ -48,16 +47,12 @@ class TestCase
 				echo '[' . implode(',', $methods) . ']';
 				return;
 			}
-		}
+			$this->runTest($method);
 
-		if ($method === NULL) {
+		} else {
 			foreach ($methods as $method) {
 				$this->runTest($method);
 			}
-		} elseif (in_array($method, $methods, TRUE)) {
-			$this->runTest($method);
-		} else {
-			throw new TestCaseException("Method '$method' does not exist or it is not a testing method.");
 		}
 	}
 
@@ -70,6 +65,12 @@ class TestCase
 	 */
 	public function runTest($method, array $args = NULL)
 	{
+		if (!method_exists($this, $method)) {
+			throw new TestCaseException("Method '$method' does not exist.");
+		} elseif (!preg_match(self::METHOD_PATTERN, $method)) {
+			throw new TestCaseException("Method '$method' is not a testing method.");
+		}
+
 		$method = new \ReflectionMethod($this, $method);
 		if (!$method->isPublic()) {
 			throw new TestCaseException("Method {$method->getName()} is not public. Make it public or rename it.");
