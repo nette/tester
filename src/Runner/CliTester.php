@@ -96,7 +96,7 @@ Usage:
     tester.php [options] [<test file> | <directory>]...
 
 Options:
-    -p <path>                    Specify PHP interpreter to run (default: php-cgi).
+    -p <path>                    Specify PHP interpreter to run (default: php).
     -c <path>                    Look for php.ini file (or look in directory) <path>.
     -l | --log <path>            Write log to file <path>.
     -d <key=value>...            Define INI entry 'key' with value 'val'.
@@ -130,6 +130,10 @@ XX
 			if ($tmp = array_search('--tap', $_SERVER['argv'])) {
 				unset($_SERVER['argv'][$tmp]);
 				$_SERVER['argv'] = array_merge($_SERVER['argv'], ['-o', 'tap']);
+			}
+
+			if (array_search('-p', $_SERVER['argv']) === FALSE) {
+				echo "Note: Default interpreter is CLI since Tester v2.0. It used to be CGI.\n";
 			}
 		}
 
