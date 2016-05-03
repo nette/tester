@@ -101,7 +101,6 @@ test(function () { // argument
 });
 
 
-
 test(function () { // optional argument
 	$cmd = new Cmd('
 		-p [param]
@@ -135,7 +134,6 @@ test(function () { // optional argument
 });
 
 
-
 test(function () { // repeatable argument
 	$cmd = new Cmd('
 		-p [param]...
@@ -146,7 +144,6 @@ test(function () { // repeatable argument
 	Assert::same(['-p' => ['val']], $cmd->parse(explode(' ', '-p val')));
 	Assert::same(['-p' => ['val1', 'val2']], $cmd->parse(explode(' ', '-p val1 -p val2')));
 });
-
 
 
 test(function () { // enumerates
@@ -177,6 +174,34 @@ test(function () { // enumerates
 });
 
 
+test(function () { // parametric enumerates
+	$cmd = new Cmd('
+		-p [a|b|c]
+	', [
+		'-p' => [Cmd::PARAMETRIC_ENUM => ':'],
+	]);
+
+	Assert::same(['-p' => NULL], $cmd->parse([]));
+	Assert::same(['-p' => ['b', 'B']], $cmd->parse(explode(' ', '-p a -p a:A -p b:B')));
+
+	$cmd = new Cmd('
+		-p [a|b|c]
+	', [
+		'-p' => [Cmd::PARAMETRIC_ENUM => ':', Cmd::REPEATABLE => TRUE],
+	]);
+
+	Assert::same(['-p' => []], $cmd->parse([]));
+	Assert::same(['-p' => [['a', NULL], ['a', 'A'], ['b', 'B']]], $cmd->parse(explode(' ', '-p a -p a:A -p b:B')));
+
+	Assert::exception(function () {
+		new Cmd('
+			-p
+		', [
+			'-p' => [Cmd::PARAMETRIC_ENUM => '']
+		]);
+	}, 'InvalidArgumentException', 'CommandLine::PARAMETRIC_ENUM can be used only with CommandLine::ENUM.');
+});
+
 
 test(function () { // realpath
 	$cmd = new Cmd('
@@ -190,7 +215,6 @@ test(function () { // realpath
 	}, 'Exception', "File path 'xyz' not found.");
 	Assert::same(['-p' => __FILE__], $cmd->parse(['-p', __FILE__]));
 });
-
 
 
 test(function () { // positional arguments
@@ -228,7 +252,6 @@ test(function () { // positional arguments
 
 	Assert::same(['pos' => ['default']], $cmd->parse([]));
 });
-
 
 
 test(function () { // errors
