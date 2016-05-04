@@ -23,10 +23,10 @@ class TapPrinter implements Tester\Runner\OutputHandler
 	private $file;
 
 
-	public function __construct(Runner $runner, $file = 'php://output')
+	public function __construct(Runner $runner, $file = NULL)
 	{
 		$this->runner = $runner;
-		$this->file = fopen($file, 'w');
+		$this->file = fopen($file ?: 'php://output', 'w');
 	}
 
 

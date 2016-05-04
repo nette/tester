@@ -20,6 +20,9 @@ class CliTester
 	/** @var array */
 	private $options;
 
+	/** @var string */
+	private $stdout;
+
 	/** @var PhpInterpreter */
 	private $interpreter;
 
@@ -36,7 +39,7 @@ class CliTester
 		Environment::$debugMode = (bool) $this->options['--debug'];
 		if (isset($this->options['--colors'])) {
 			Environment::$useColors = (bool) $this->options['--colors'];
-		} elseif (in_array($this->options['-o'], ['tap', 'junit'])) {
+		} elseif (in_array($this->stdout, ['tap', 'junit'])) {
 			Environment::$useColors = FALSE;
 		}
 
@@ -60,7 +63,7 @@ class CliTester
 
 		$runner = $this->createRunner();
 
-		if ($this->options['-o'] !== NULL) {
+		if ($this->stdout !== NULL) {
 			ob_clean();
 		}
 		ob_end_flush();
@@ -103,7 +106,8 @@ Options:
     -s                           Show information about skipped tests.
     --stop-on-fail               Stop execution upon the first failure.
     -j <num>                     Run <num> jobs in parallel (default: 8).
-    -o <console|tap|junit|none>  Specify output format.
+    -o <console|tap|junit|none>  Specify output format. Repeatable with parameter.
+                                 (e.g. -o junit:output.xml)
     -w | --watch <path>          Watch directory.
     -i | --info                  Show tests environment info and exit.
     --setup <path>               Script for runner setup.
@@ -115,6 +119,7 @@ Options:
 XX
 		, [
 			'-c' => [CommandLine::REALPATH => TRUE],
+			'-o' => [CommandLine::REPEATABLE => TRUE, CommandLine::PARAMETRIC_ENUM => ':'],
 			'--watch' => [CommandLine::REPEATABLE => TRUE, CommandLine::REALPATH => TRUE],
 			'--setup' => [CommandLine::REALPATH => TRUE],
 			'paths' => [CommandLine::REPEATABLE => TRUE, CommandLine::VALUE => getcwd()],
@@ -138,6 +143,16 @@ XX
 		}
 
 		$this->options = $cmd->parse();
+
+		foreach ($this->options['-o'] as $arg) {
+			if ($arg[1] === NULL) {
+				if ($this->stdout !== NULL) {
+					throw new \Exception('Option -o <format> without parameter can be used only once.');
+				}
+				$this->stdout = $arg[0];
+			}
+		}
+
 		return $cmd;
 	}
 
@@ -152,7 +167,7 @@ XX
 			echo "Note: No php.ini is used.\n";
 		}
 
-		if (in_array($this->options['-o'], ['tap', 'junit'])) {
+		if (in_array($this->stdout, ['tap', 'junit'])) {
 			array_push($args, '-d', 'html_errors=off');
 		}
 
@@ -176,16 +191,25 @@ XX
 		$runner->threadCount = max(1, (int) $this->options['-j']);
 		$runner->stopOnFail = $this->options['--stop-on-fail'];
 
-		if ($this->options['-o'] !== 'none') {
-			switch ($this->options['-o']) {
+		if ($this->stdout === NULL) {
+			$runner->outputHandlers[] = new Output\ConsolePrinter($runner, $this->options['-s']);
+		}
+
+		foreach ($this->options['-o'] as $arg) {
+			switch ($arg[0]) {
+				case 'console':
+					$runner->outputHandlers[] = new Output\ConsolePrinter($runner, $this->options['-s'], $arg[1]);
+					break;
 				case 'tap':
-					$runner->outputHandlers[] = new Output\TapPrinter($runner);
+					$runner->outputHandlers[] = new Output\TapPrinter($runner, $arg[1]);
 					break;
 				case 'junit':
-					$runner->outputHandlers[] = new Output\JUnitPrinter($runner);
+					$runner->outputHandlers[] = new Output\JUnitPrinter($runner, $arg[1]);
+					break;
+				case 'none':
 					break;
 				default:
-					$runner->outputHandlers[] = new Output\ConsolePrinter($runner, $this->options['-s']);
+					throw new \LogicException("Undefined output printer '$arg[o]'.'");
 			}
 		}
 

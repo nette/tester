@@ -28,10 +28,10 @@ class JUnitPrinter implements Tester\Runner\OutputHandler
 	/** @var float */
 	private $startTime;
 
-	public function __construct(Runner $runner, $file = 'php://output')
+	public function __construct(Runner $runner, $file = NULL)
 	{
 		$this->runner = $runner;
-		$this->file = fopen($file, 'w');
+		$this->file = fopen($file ?: 'php://output', 'w');
 	}
 
 
