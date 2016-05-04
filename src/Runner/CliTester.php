@@ -99,22 +99,22 @@ Usage:
     tester.php [options] [<test file> | <directory>]...
 
 Options:
-    -p <path>                    Specify PHP interpreter to run (default: php).
-    -c <path>                    Look for php.ini file (or look in directory) <path>.
-    -l | --log <path>            Write log to file <path>.
-    -d <key=value>...            Define INI entry 'key' with value 'val'.
-    -s                           Show information about skipped tests.
-    --stop-on-fail               Stop execution upon the first failure.
-    -j <num>                     Run <num> jobs in parallel (default: 8).
-    -o <console|tap|junit|none>  Specify output format. Repeatable with parameter.
-                                 (e.g. -o junit:output.xml)
-    -w | --watch <path>          Watch directory.
-    -i | --info                  Show tests environment info and exit.
-    --setup <path>               Script for runner setup.
-    --colors [1|0]               Enable or disable colors.
-    --coverage <path>            Generate code coverage report to file.
-    --coverage-src <path>        Path to source code.
-    -h | --help                  This help.
+    -p <path>                Specify PHP interpreter to run (default: php).
+    -c <path>                Look for php.ini file (or look in directory) <path>.
+    -d <key=value>...        Define INI entry 'key' with value 'val'.
+    -s                       Show information about skipped tests.
+    --stop-on-fail           Stop execution upon the first failure.
+    -j <num>                 Run <num> jobs in parallel (default: 8).
+    -o <console|tap|junit|log|none>
+                             Specify output format. Repeatable with parameter.
+                             (e.g. -o junit:output.xml)
+    -w | --watch <path>      Watch directory.
+    -i | --info              Show tests environment info and exit.
+    --setup <path>           Script for runner setup.
+    --colors [1|0]           Enable or disable colors.
+    --coverage <path>        Generate code coverage report to file.
+    --coverage-src <path>    Path to source code.
+    -h | --help              This help.
 
 XX
 		, [
@@ -128,8 +128,12 @@ XX
 		]);
 
 		if (isset($_SERVER['argv'])) {
-			if ($tmp = array_search('-log', $_SERVER['argv'])) {
-				$_SERVER['argv'][$tmp] = '--log';
+			if (($tmp = array_search('-l', $_SERVER['argv']))
+				|| ($tmp = array_search('-log', $_SERVER['argv']))
+				|| ($tmp = array_search('--log', $_SERVER['argv'])))
+			{
+				$_SERVER['argv'][$tmp] = '-o';
+				$_SERVER['argv'][$tmp+1] = 'log:' . $_SERVER['argv'][$tmp+1];
 			}
 
 			if ($tmp = array_search('--tap', $_SERVER['argv'])) {
@@ -206,16 +210,14 @@ XX
 				case 'junit':
 					$runner->outputHandlers[] = new Output\JUnitPrinter($runner, $arg[1]);
 					break;
+				case 'log':
+					$runner->outputHandlers[] = new Output\Logger($runner, $arg[1]);
+					break;
 				case 'none':
 					break;
 				default:
 					throw new \LogicException("Undefined output printer '$arg[o]'.'");
 			}
-		}
-
-		if ($this->options['--log']) {
-			echo "Log: {$this->options['--log']}\n";
-			$runner->outputHandlers[] = new Output\Logger($runner, $this->options['--log']);
 		}
 
 		if ($this->options['--setup']) {
