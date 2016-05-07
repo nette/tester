@@ -251,27 +251,27 @@ class Assert
 	 * Checks assertion.
 	 * @return void
 	 */
-	public static function type($type, $value, $description = NULL)
+	public static function type($expectedType, $actualValue, $description = NULL)
 	{
 		self::$counter++;
-		if (!is_object($type) && !is_string($type)) {
+		if (!is_object($expectedType) && !is_string($expectedType)) {
 			throw new \Exception('Type must be a object or a string.');
 
-		} elseif ($type === 'list') {
-			if (!is_array($value) || ($value && array_keys($value) !== range(0, count($value) - 1))) {
-				self::fail(self::describe("%1 should be $type", $description), $value);
+		} elseif ($expectedType === 'list') {
+			if (!is_array($actualValue) || ($actualValue && array_keys($actualValue) !== range(0, count($actualValue) - 1))) {
+				self::fail(self::describe("%1 should be $expectedType", $description), $actualValue);
 			}
 
-		} elseif (in_array($type, ['array', 'bool', 'callable', 'float',
+		} elseif (in_array($expectedType, ['array', 'bool', 'callable', 'float',
 			'int', 'integer', 'null', 'object', 'resource', 'scalar', 'string'], TRUE)
 		) {
-			if (!call_user_func("is_$type", $value)) {
-				self::fail(self::describe(gettype($value) . " should be $type", $description));
+			if (!call_user_func("is_$expectedType", $actualValue)) {
+				self::fail(self::describe(gettype($actualValue) . " should be $expectedType", $description));
 			}
 
-		} elseif (!$value instanceof $type) {
-			$actual = is_object($value) ? get_class($value) : gettype($value);
-			self::fail(self::describe("$actual should be instance of $type", $description));
+		} elseif (!$actualValue instanceof $expectedType) {
+			$actual = is_object($actualValue) ? get_class($actualValue) : gettype($actualValue);
+			self::fail(self::describe("$actual should be instance of $expectedType", $description));
 		}
 	}
 
