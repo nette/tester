@@ -248,7 +248,11 @@ class Assert
 
 
 	/**
-	 * Checks assertion.
+	 * Checks if input is of expected type
+	 * @param mixed $expectedType Expected type of the tested entity
+	 * @param mixed $actualValue Tested entity
+	 * @param string $description Optional test description
+	 * @throws \Exception
 	 * @return void
 	 */
 	public static function type($expectedType, $actualValue, $description = NULL)
