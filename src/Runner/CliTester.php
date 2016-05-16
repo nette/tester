@@ -119,12 +119,29 @@ Options:
 XX
 		, [
 			'-c' => [CommandLine::REALPATH => TRUE],
-			'-o' => [CommandLine::REPEATABLE => TRUE, CommandLine::PARAMETRIC_ENUM => ':'],
 			'--watch' => [CommandLine::REPEATABLE => TRUE, CommandLine::REALPATH => TRUE],
 			'--setup' => [CommandLine::REALPATH => TRUE],
 			'paths' => [CommandLine::REPEATABLE => TRUE, CommandLine::VALUE => getcwd()],
 			'--debug' => [],
 			'--coverage-src' => [CommandLine::REALPATH => TRUE],
+			'-o' => [
+				CommandLine::REPEATABLE => TRUE,
+				CommandLine::NORMALIZER => function ($arg, array $opt) {
+					list($format, $file) = explode(':', $arg, 2) + [1 => NULL];
+
+					if (!in_array($format, $formats = explode('|', $opt[CommandLine::ARGUMENT]), TRUE)) {
+						throw new \Exception("Value of option -o must be " . implode(', or ', $formats) . ".");
+
+					} elseif ($file === NULL) {
+						if ($this->stdout !== NULL) {
+							throw new \Exception('Option -o <format> without parameter can be used only once.');
+						}
+						$this->stdout = $format;
+					}
+
+					return [$format, $file];
+				},
+			],
 		]);
 
 		if (isset($_SERVER['argv'])) {
@@ -133,7 +150,7 @@ XX
 				|| ($tmp = array_search('--log', $_SERVER['argv'])))
 			{
 				$_SERVER['argv'][$tmp] = '-o';
-				$_SERVER['argv'][$tmp+1] = 'log:' . $_SERVER['argv'][$tmp+1];
+				$_SERVER['argv'][$tmp + 1] = 'log:' . $_SERVER['argv'][$tmp + 1];
 			}
 
 			if ($tmp = array_search('--tap', $_SERVER['argv'])) {
@@ -147,15 +164,6 @@ XX
 		}
 
 		$this->options = $cmd->parse();
-
-		foreach ($this->options['-o'] as $arg) {
-			if ($arg[1] === NULL) {
-				if ($this->stdout !== NULL) {
-					throw new \Exception('Option -o <format> without parameter can be used only once.');
-				}
-				$this->stdout = $arg[0];
-			}
-		}
 
 		return $cmd;
 	}
@@ -216,7 +224,7 @@ XX
 				case 'none':
 					break;
 				default:
-					throw new \LogicException("Undefined output printer '$arg[o]'.'");
+					throw new \LogicException("Undefined output printer '$arg[0]'.'");
 			}
 		}
 

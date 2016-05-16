@@ -17,9 +17,8 @@ class CommandLine
 		ARGUMENT = 'argument',
 		OPTIONAL = 'optional',
 		REPEATABLE = 'repeatable',
-		ENUM = 'enum',
-		PARAMETRIC_ENUM = 'parametric',
 		REALPATH = 'realpath',
+		NORMALIZER = 'normalizer',
 		VALUE = 'default';
 
 	/** @var array[] */
@@ -50,18 +49,13 @@ class CommandLine
 			$name = end($m[1]);
 			$opts = isset($this->options[$name]) ? $this->options[$name] : [];
 			$this->options[$name] = $opts + [
-				self::ARGUMENT => (bool) end($m[2]),
+				self::ARGUMENT => ($tmp = end($m[2])) === '' ? NULL : trim($tmp, '<[]>'),
 				self::OPTIONAL => isset($line[2]) || (substr(end($m[2]), 0, 1) === '[') || isset($opts[self::VALUE]),
 				self::REPEATABLE => (bool) end($m[3]),
-				self::ENUM => count($enums = explode('|', trim(end($m[2]), '<[]>'))) > 1 ? $enums : NULL,
-				self::PARAMETRIC_ENUM => FALSE,
 				self::VALUE => isset($line[2]) ? $line[2] : NULL,
 			];
 			if ($name !== $m[1][0]) {
 				$this->aliases[$m[1][0]] = $name;
-			}
-			if ($this->options[$name][self::PARAMETRIC_ENUM] !== FALSE && !$this->options[$name][self::ENUM]) {
-				throw new \InvalidArgumentException('CommandLine::PARAMETRIC_ENUM can be used only with CommandLine::ENUM.');
 			}
 		}
 
@@ -109,26 +103,14 @@ class CommandLine
 
 			$opt = $this->options[$name];
 
-			if ($arg !== TRUE && empty($opt[self::ARGUMENT])) {
+			if ($arg !== TRUE && $opt[self::ARGUMENT] === NULL) {
 				throw new \Exception("Option $name has not argument.");
 
-			} elseif ($arg === TRUE && !empty($opt[self::ARGUMENT])) {
+			} elseif ($arg === TRUE && $opt[self::ARGUMENT] !== NULL) {
 				if (isset($args[$i]) && $args[$i][0] !== '-') {
 					$arg = $args[$i++];
 				} elseif (empty($opt[self::OPTIONAL])) {
 					throw new \Exception("Option $name requires argument.");
-				}
-			}
-
-			if (!empty($opt[self::ENUM])) {
-				$tmp = $arg;
-				if (!empty($opt[self::PARAMETRIC_ENUM])) {
-					$arg = explode($opt[self::PARAMETRIC_ENUM], $arg, 2) + [1 => NULL];
-					$tmp = $arg[0];
-				}
-
-				if (!in_array($tmp, $opt[self::ENUM], TRUE) && !($opt[self::OPTIONAL] && $tmp === TRUE)) {
-					throw new \Exception("Value of option $name must be " . implode(', or ', $opt[self::ENUM]) . ".");
 				}
 			}
 			$this->checkArg($opt, $arg);
@@ -172,6 +154,9 @@ class CommandLine
 				throw new \Exception("File path '$arg' not found.");
 			}
 			$arg = $path;
+		}
+		if (!empty($opt[self::NORMALIZER])) {
+			$arg = call_user_func($opt[self::NORMALIZER], $arg, $opt);
 		}
 	}
 
