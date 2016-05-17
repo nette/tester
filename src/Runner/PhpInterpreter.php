@@ -69,7 +69,9 @@ class PhpInterpreter
 
 		$parts = explode("\r\n\r\n", $output, 2);
 		$this->cgi = count($parts) === 2;
-		if (!($this->info = @unserialize($parts[$this->cgi]))) {
+		$this->info = @unserialize(strstr($parts[$this->cgi], 'O:8:"stdClass"'));
+		$this->error .= strstr($parts[$this->cgi], 'O:8:"stdClass"', TRUE);
+		if (!$this->info) {
 			throw new \Exception("Unable to detect PHP version (output: $output).");
 
 		} elseif ($this->info->hhvmVersion && version_compare($this->info->hhvmVersion, '3.3.0', '<')) {
