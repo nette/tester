@@ -61,7 +61,7 @@ class TestHandler
 		}
 
 		foreach ($jobsArgs as $args) {
-			$this->runner->addJob(new Job($file, $php, $args));
+			$this->runner->addJob(new Job($file, $php, $args, $this->runner->getEnvironmentVariables()));
 		}
 	}
 

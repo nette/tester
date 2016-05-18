@@ -2,6 +2,7 @@
 
 use Tester\Assert;
 use Tester\Environment;
+use Tester\Runner\Runner;
 use Tester\Runner\Output\JUnitPrinter;
 
 require __DIR__ . '/../bootstrap.php';
@@ -11,11 +12,10 @@ require __DIR__ . '/../../src/Runner/OutputHandler.php';
 require __DIR__ . '/../../src/Runner/Output/JUnitPrinter.php';
 
 
-Environment::$useColors = FALSE;
-$runner = new Tester\Runner\Runner(createInterpreter());
-$printer = new JUnitPrinter($runner);
+$runner = new Runner(createInterpreter());
+$runner->setEnvironmentVariable(Environment::COLORS, 0);
+$runner->outputHandlers[] = new JUnitPrinter($runner);
 $runner->paths[] = __DIR__ . '/cases/*.phptx';
-$runner->outputHandlers[] = $printer;
 ob_start();
 $runner->run();
 $output = ob_get_clean();

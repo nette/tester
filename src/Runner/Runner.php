@@ -40,6 +40,9 @@ class Runner
 	/** @var PhpInterpreter */
 	private $interpreter;
 
+	/** @var array */
+	private $envVars = [];
+
 	/** @var Job[] */
 	private $jobs;
 
@@ -57,6 +60,26 @@ class Runner
 	{
 		$this->interpreter = $interpreter;
 		$this->testHandler = new TestHandler($this);
+	}
+
+
+	/**
+	 * @param  string
+	 * @param  string
+	 * @return void
+	 */
+	public function setEnvironmentVariable($name, $value)
+	{
+		$this->envVars[$name] = $value;
+	}
+
+
+	/**
+	 * @return array
+	 */
+	public function getEnvironmentVariables()
+	{
+		return $this->envVars;
 	}
 
 
