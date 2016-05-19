@@ -7,7 +7,6 @@
 
 namespace Tester\Runner;
 
-use Tester\Environment;
 use Tester\Helpers;
 
 
@@ -35,6 +34,9 @@ class Job
 
 	/** @var string[]  test arguments */
 	private $args;
+
+	/** @var string[]  environment variables for test */
+	private $envVars;
 
 	/** @var string  test output */
 	private $output;
@@ -65,11 +67,12 @@ class Job
 	 * @param  string  test file name
 	 * @return void
 	 */
-	public function __construct($testFile, PhpInterpreter $interpreter, array $args = NULL)
+	public function __construct($testFile, PhpInterpreter $interpreter, array $args = NULL, array $envVars = NULL)
 	{
 		$this->file = (string) $testFile;
 		$this->interpreter = $interpreter;
 		$this->args = (array) $args;
+		$this->envVars = (array) $envVars;
 	}
 
 
@@ -80,8 +83,10 @@ class Job
 	 */
 	public function run($flags = NULL)
 	{
-		putenv(Environment::RUNNER . '=1');
-		putenv(Environment::COLORS . '=' . (int) Environment::$useColors);
+		foreach ($this->envVars as $name => $value) {
+			putenv("$name=$value");
+		}
+
 		$this->proc = proc_open(
 			$this->interpreter->getCommandLine()
 			. ' -d register_argc_argv=on ' . Helpers::escapeArg($this->file) . ' ' . implode(' ', $this->args),
@@ -95,6 +100,10 @@ class Job
 			NULL,
 			['bypass_shell' => TRUE]
 		);
+
+		foreach (array_keys($this->envVars) as $name) {
+			putenv($name);
+		}
 
 		list($stdin, $this->stdout, $stderr) = $pipes;
 		fclose($stdin);
