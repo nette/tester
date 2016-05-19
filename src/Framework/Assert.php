@@ -18,6 +18,7 @@ class Assert
 
 	/** used by match(); in values, each $ followed by number is backreference */
 	public static $patterns = [
+		'%%' => '%',            // one % character
 		'%a%' => '[^\r\n]+',    // one or more of anything except the end of line characters
 		'%a\?%' => '[^\r\n]*',  // zero or more of anything except the end of line characters
 		'%A%' => '.+',          // one or more of anything including the end of line characters
