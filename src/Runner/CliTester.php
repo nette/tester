@@ -61,6 +61,9 @@ class CliTester
 		$runner = $this->createRunner();
 		$runner->setEnvironmentVariable(Environment::RUNNER, 1);
 		$runner->setEnvironmentVariable(Environment::COLORS, (int) Environment::$useColors);
+		if (isset($coverageFile)) {
+			$runner->setEnvironmentVariable(Environment::COVERAGE, $coverageFile);
+		}
 
 		if ($this->options['-o'] !== NULL) {
 			ob_clean();
@@ -74,7 +77,7 @@ class CliTester
 
 		$result = $runner->run();
 
-		if (isset($coverageFile)) {
+		if (isset($coverageFile) && preg_match('#\.(?:html?|xml)\z#', $coverageFile)) {
 			$this->finishCodeCoverage($coverageFile);
 		}
 
@@ -214,11 +217,8 @@ XX
 		}
 		file_put_contents($this->options['--coverage'], '');
 		$file = realpath($this->options['--coverage']);
-		putenv(Environment::COVERAGE . '=' . $file);
 		echo "Code coverage: {$file}\n";
-		if (preg_match('#\.(?:html?|xml)\z#', $file)) {
-			return $file;
-		}
+		return $file;
 	}
 
 
