@@ -486,7 +486,7 @@ class Assert
 			$utf8 = preg_match('#\x80-\x{10FFFF}]#u', $pattern) ? 'u' : '';
 			$patterns = static::$patterns + [
 				'[.\\\\+*?[^$(){|\x00\#]' => '\$0', // preg quoting
-				'[\t ]*\r?\n' => "[\\t ]*\n", // right trim
+				'[\t ]*\r?\n' => '[\t ]*\r?\n', // right trim
 			];
 			$pattern = '#^' . preg_replace_callback('#' . implode('|', array_keys($patterns)) . '#U' . $utf8, function ($m) use ($patterns) {
 				foreach ($patterns as $re => $replacement) {
@@ -496,7 +496,6 @@ class Assert
 					}
 				}
 			}, rtrim($pattern)) . '\s*$#sU' . $utf8;
-			$actual = str_replace("\r\n", "\n", $actual);
 		}
 
 		$res = preg_match($pattern, $actual);
