@@ -417,8 +417,12 @@ class Assert
 		if (!is_string($pattern)) {
 			throw new \Exception('Pattern must be a string.');
 
-		} elseif (!is_scalar($actual) || !self::isMatching($pattern, $actual)) {
-			self::fail(self::describe('%1 should match %2', $description), $actual, rtrim($pattern));
+		} elseif (!is_scalar($actual)) {
+			self::fail(self::describe('%1 should match %2', $description), $actual, $pattern);
+
+		} elseif (!self::isMatching($pattern, $actual)) {
+			list($pattern, $actual) = self::expandMatchingPatterns($pattern, $actual);
+			self::fail(self::describe('%1 should match %2', $description), $actual, $pattern);
 		}
 	}
 
@@ -434,8 +438,12 @@ class Assert
 		if ($pattern === FALSE) {
 			throw new \Exception("Unable to read file '$file'.");
 
-		} elseif (!is_scalar($actual) || !self::isMatching($pattern, $actual)) {
-			self::fail(self::describe('%1 should match %2', $description), $actual, rtrim($pattern));
+		} elseif (!is_scalar($actual)) {
+			self::fail(self::describe('%1 should match %2', $description), $actual, $pattern);
+
+		} elseif (!self::isMatching($pattern, $actual)) {
+			list($pattern, $actual) = self::expandMatchingPatterns($pattern, $actual);
+			self::fail(self::describe('%1 should match %2', $description), $actual, $pattern);
 		}
 	}
 
@@ -475,7 +483,7 @@ class Assert
 	 * @return bool
 	 * @internal
 	 */
-	public static function isMatching($pattern, $actual)
+	public static function isMatching($pattern, $actual, $strict = FALSE)
 	{
 		if (!is_string($pattern) && !is_scalar($actual)) {
 			throw new \Exception('Value and pattern must be strings.');
@@ -483,8 +491,9 @@ class Assert
 
 		$old = ini_set('pcre.backtrack_limit', '10000000');
 
-		if (!preg_match('/^([~#]).+(\1)[imsxUu]*\z/s', $pattern)) {
+		if (!self::isPcre($pattern)) {
 			$utf8 = preg_match('#\x80-\x{10FFFF}]#u', $pattern) ? 'u' : '';
+			$suffix = ($strict ? '\z#sU' : '\s*$#sU') . $utf8;
 			$patterns = static::$patterns + [
 				'[.\\\\+*?[^$(){|\x00\#]' => '\$0', // preg quoting
 				'[\t ]*\r?\n' => '[\t ]*\r?\n', // right trim
@@ -496,7 +505,7 @@ class Assert
 						return $s;
 					}
 				}
-			}, rtrim($pattern)) . '\s*$#sU' . $utf8;
+			}, rtrim($pattern)) . $suffix;
 		}
 
 		$res = preg_match($pattern, $actual);
@@ -505,6 +514,67 @@ class Assert
 			throw new \Exception('Error while executing regular expression. (PREG Error Code ' . preg_last_error() . ')');
 		}
 		return (bool) $res;
+	}
+
+
+	/**
+	 * @return array
+	 * @internal
+	 */
+	public static function expandMatchingPatterns($pattern, $actual)
+	{
+		if (self::isPcre($pattern)) {
+			return [$pattern, $actual];
+		}
+
+		$parts = preg_split('#(%)#', $pattern, -1, PREG_SPLIT_DELIM_CAPTURE);
+		for ($i = count($parts); $i >= 0; $i--) {
+			$patternX = implode(array_slice($parts, 0, $i));
+			$patternY = "$patternX%A?%";
+			if (self::isMatching($patternY, $actual)) {
+				$patternZ = implode(array_slice($parts, $i));
+				break;
+			}
+		}
+
+		foreach (['%A%', '%A?%'] as $greedyPattern) {
+			if (substr($patternX, -strlen($greedyPattern)) === $greedyPattern) {
+				$patternX = substr($patternX, 0, -strlen($greedyPattern));
+				$patternY = "$patternX%A?%";
+				$patternZ = $greedyPattern . $patternZ;
+				break;
+			}
+		}
+
+		$low = 0;
+		$high = strlen($actual);
+		while ($low <= $high) {
+			$mid = ($low + $high) >> 1;
+			if (self::isMatching($patternY, substr($actual, 0, $mid))) {
+				$high = $mid - 1;
+			} else {
+				$low = $mid + 1;
+			}
+		}
+
+		$low = $high + 2;
+		$high = strlen($actual);
+		while ($low <= $high) {
+			$mid = ($low + $high) >> 1;
+			if (!self::isMatching($patternX, substr($actual, 0, $mid), TRUE)) {
+				$high = $mid - 1;
+			} else {
+				$low = $mid + 1;
+			}
+		}
+
+		$actualX = substr($actual, 0, $high);
+		$actualZ = substr($actual, $high);
+
+		return [
+			$actualX . rtrim(preg_replace('#[\t ]*\r?\n#', "\n", $patternZ)),
+			$actualX . rtrim(preg_replace('#[\t ]*\r?\n#', "\n", $actualZ)),
+		];
 	}
 
 
@@ -553,6 +623,16 @@ class Assert
 		}
 
 		return $expected === $actual;
+	}
+
+
+	/**
+	 * @param  string
+	 * @return bool
+	 */
+	private static function isPcre($pattern)
+	{
+		return (bool) preg_match('/^([~#]).+(\1)[imsxUu]*\z/s', $pattern);
 	}
 
 }

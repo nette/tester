@@ -49,10 +49,10 @@ Assert::same([
 	['httpCode.error1.phptx', $cli ? Runner::PASSED : Runner::FAILED, $cli ? NULL : 'Exited with HTTP code 200 (expected 500)'], // @httpCode is ignored in CLI
 	['httpCode.error2.phptx', $cli ? Runner::PASSED : Runner::FAILED, $cli ? NULL : 'Exited with HTTP code 500 (expected 200)'], // @httpCode is ignored in CLI
 	['outputMatch.match.phptx', Runner::PASSED, NULL],
-	['outputMatch.notmatch.phptx', Runner::FAILED, "Failed: output should match '%a%Hello%a%'"],
+	['outputMatch.notmatch.phptx', Runner::FAILED, "Failed: output should match '! World !Hello%a%'"],
 	['outputMatchFile.error.phptx', Runner::FAILED, "Missing matching file '{$path}missing.txt'."],
 	['outputMatchFile.match.phptx', Runner::PASSED, NULL],
-	['outputMatchFile.notmatch.phptx', Runner::FAILED, "Failed: output should match '%a%Hello%a%'"],
+	['outputMatchFile.notmatch.phptx', Runner::FAILED, "Failed: output should match '! World !Hello%a%'"],
 	['phpIni.phptx', Runner::PASSED, NULL],
 	['phpversion.match.phptx', Runner::PASSED, NULL],
 	['phpversion.notmatch.phptx', Runner::SKIPPED, 'Requires PHP < 5.'],

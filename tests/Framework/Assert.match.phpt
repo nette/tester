@@ -41,40 +41,73 @@ $matches = [
 	['%[a-c]+%', 'abc'],
 	['%[]%', '%[]%'],
 	['.\\+*?[^]$(){}=!<>|:-#', '.\\+*?[^]$(){}=!<>|:-#'],
+	['~\d+~', '123'],
+	['#\d+#', '123'],
 ];
 
 $notMatches = [
-	['a', ' a '],
-	['%a%', "a\nb"],
-	['%a%', ''],
-	['%A%', ''],
-	['a%s%b', "a\nb"],
-	['%s?%', 'a'],
-	['a%c%c', 'abbc'],
-	['a%c%c', 'ac'],
-	['a%c%c', "a\nc"],
-	['%d%', ''],
-	['%i%', '-123.5'],
-	['%i%', ''],
-	['%f%', ''],
-	['%h%', 'gh'],
-	['%h%', ''],
-	['%w%', ','],
-	['%w%', ''],
-	['%[a-c]+%', 'Abc'],
+	['', 'a', '', 'a'],
+	['a', ' a ', 'a', ' a'],
+	["a\nb", "a\r\nx", "a\nb", "a\nx"],
+	["a\r\nb", "a\nx", "a\nb", "a\nx"],
+	["a\t \nb", "a\nx", "a\nb", "a\nx"],
+	["a\nb", "a\t \nx", "a\nb", "a\nx"],
+	["a\t\r\n\t ", 'x', 'a', 'x'],
+	['a', "x\t\r\n\t ", 'a', 'x'],
+	['%a%', "a\nb", 'a', "a\nb"],
+	['%a%', '', '%a%', ''],
+	['%A%', '', '%A%', ''],
+	['a%s%b', "a\nb", 'a%s%b', "a\nb"],
+	['%s?%', 'a', '', 'a'],
+	['a%c%c', 'abbc', 'abc', 'abbc'],
+	['a%c%c', 'ac', 'acc', 'ac'],
+	['a%c%c', "a\nc", 'a%c%c', "a\nc"],
+	['%d%', '', '%d%', ''],
+	['%i%', '-123.5', '-123', '-123.5'],
+	['%i%', '', '%i%', ''],
+	['%f%', '', '%f%', ''],
+	['%h%', 'gh', '%h%', 'gh'],
+	['%h%', '', '%h%', ''],
+	['%w%', ',', '%w%', ','],
+	['%w%', '', '%w%', ''],
+	['%[a-c]+%', 'Abc', '%[a-c]+%', 'Abc'],
+	['foo%d%foo', 'foo123baz', 'foo123foo', 'foo123baz'],
+	['foo%d%bar', 'foo123baz', 'foo123bar', 'foo123baz'],
+	['foo%d?%foo', 'foo123baz', 'foo123foo', 'foo123baz'],
+	['foo%d?%bar', 'foo123baz', 'foo123bar', 'foo123baz'],
+	['%a%x', 'abc', 'abcx', 'abc'],
+	['~%d%~', '~123~', '~%d%~', '~123~'],
 ];
 
 foreach ($matches as $case) {
-	list($expected, $value) = $case;
-	Assert::match($expected, $value);
+	list($expected, $actual) = $case;
+	Assert::match($expected, $actual);
 }
 
 foreach ($notMatches as $case) {
-	list($expected, $value) = $case;
-	Assert::exception(function () use ($expected, $value) {
-		Assert::match($expected, $value);
-	}, 'Tester\AssertException', '%A% should match %A%');
+	list($expected, $actual, $expected2, $actual2) = $case;
+	$expected3 = str_replace('%', '%%', $expected2);
+	$actual3 = str_replace('%', '%%', $actual2);
+
+	$ex = Assert::exception(function () use ($expected, $actual) {
+		Assert::match($expected, $actual);
+	}, 'Tester\AssertException', "'$actual3' should match '$expected3'");
+
+	Assert::same($expected2, $ex->expected);
+	Assert::same($actual2, $ex->actual);
 }
+
+
+Assert::same('', Assert::expandMatchingPatterns('', '')[0]);
+Assert::same('abc', Assert::expandMatchingPatterns('abc', 'a')[0]);
+Assert::same('a', Assert::expandMatchingPatterns('%a?%', 'a')[0]);
+Assert::same('123a', Assert::expandMatchingPatterns('%d?%a', '123b')[0]);
+Assert::same('a', Assert::expandMatchingPatterns('a', 'a')[0]);
+Assert::same('ab', Assert::expandMatchingPatterns('ab', 'abc')[0]);
+Assert::same('abcx', Assert::expandMatchingPatterns('%a%x', 'abc')[0]);
+Assert::same('a123c', Assert::expandMatchingPatterns('a%d%c', 'a123x')[0]);
+Assert::same('a%A%b', Assert::expandMatchingPatterns('a%A%b', 'axc')[0]);
+
 
 Assert::exception(function () {
 	Assert::match(NULL, '');

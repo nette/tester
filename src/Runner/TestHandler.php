@@ -202,10 +202,12 @@ class TestHandler
 
 	private function assessOutputMatch(Job $job, $content)
 	{
-		if (!Tester\Assert::isMatching($content, $job->getOutput())) {
-			Dumper::saveOutput($job->getFile(), $job->getOutput(), '.actual');
+		$actual = $job->getOutput();
+		if (!Tester\Assert::isMatching($content, $actual)) {
+			list($content, $actual) = Tester\Assert::expandMatchingPatterns($content, $actual);
+			Dumper::saveOutput($job->getFile(), $actual, '.actual');
 			Dumper::saveOutput($job->getFile(), $content, '.expected');
-			return [Runner::FAILED, 'Failed: output should match ' . Dumper::toLine(rtrim($content))];
+			return [Runner::FAILED, 'Failed: output should match ' . Dumper::toLine($content)];
 		}
 	}
 
