@@ -77,6 +77,27 @@ class Job
 
 
 	/**
+	 * @param  string
+	 * @param  string
+	 * @return void
+	 */
+	public function setEnvironmentVariable($name, $value)
+	{
+		$this->envVars[$name] = $value;
+	}
+
+
+	/**
+	 * @param  string
+	 * @return string
+	 */
+	public function getEnvironmentVariable($name)
+	{
+		return $this->envVars[$name];
+	}
+
+
+	/**
 	 * Runs single test.
 	 * @param  int RUN_ASYNC | RUN_COLLECT_ERRORS
 	 * @return void

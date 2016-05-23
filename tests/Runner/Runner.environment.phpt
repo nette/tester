@@ -6,3 +6,4 @@ use Tester\Environment;
 require __DIR__ . '/../bootstrap.php';
 
 Assert::same('1', getenv(Environment::RUNNER));
+Assert::match('%d%', getenv(Environment::THREAD));

@@ -16,11 +16,14 @@ class Environment
 	/** Should Tester use console colors? */
 	const COLORS = 'NETTE_TESTER_COLORS';
 
-	/** Test is runned by Runner */
+	/** Test is run by Runner */
 	const RUNNER = 'NETTE_TESTER_RUNNER';
 
 	/** Code coverage file */
 	const COVERAGE = 'NETTE_TESTER_COVERAGE';
+
+	/** Thread number when run tests in multi threads */
+	const THREAD = 'NETTE_TESTER_THREAD';
 
 	/** @var bool  used for debugging Tester itself */
 	public static $debugMode = TRUE;

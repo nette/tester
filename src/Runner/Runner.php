@@ -7,7 +7,7 @@
 
 namespace Tester\Runner;
 
-use Tester;
+use Tester\Environment;
 
 
 /**
@@ -102,11 +102,14 @@ class Runner
 		}
 		$this->jobCount = count($this->jobs) + array_sum($this->results);
 
+		$threads = range(1, $this->threadCount);
+
 		$this->installInterruptHandler();
 		while (($this->jobs || $running) && !$this->isInterrupted()) {
-			for ($i = count($running); $this->jobs && $i < $this->threadCount; $i++) {
+			while ($threads && $this->jobs) {
 				$running[] = $job = array_shift($this->jobs);
 				$async = $this->threadCount > 1 && (count($running) + count($this->jobs) > 1);
+				$job->setEnvironmentVariable(Environment::THREAD, array_shift($threads));
 				$job->run($async ? $job::RUN_ASYNC : NULL);
 			}
 
@@ -120,6 +123,7 @@ class Runner
 				}
 
 				if (!$job->isRunning()) {
+					$threads[] = $job->getEnvironmentVariable(Environment::THREAD);
 					$this->testHandler->assess($job);
 					unset($running[$key]);
 				}
