@@ -62,6 +62,17 @@ class Collector
 
 
 	/**
+	 * Flushes all gathered information. Effective only with PHPDBG collector.
+	 */
+	public static function flush()
+	{
+		if (self::isStarted() && self::$collector === 'collectPhpDbg') {
+			self::save();
+		}
+	}
+
+
+	/**
 	 * Saves information about code coverage. Can be called repeatedly to free memory.
 	 * @return void
 	 * @throws \LogicException
@@ -84,10 +95,6 @@ class Collector
 		ftruncate(self::$file, 0);
 		fwrite(self::$file, serialize($coverage));
 		flock(self::$file, LOCK_UN);
-
-		if (self::$collector === 'collectPhpDbg') {
-			phpdbg_start_oplog();
-		}
 	}
 
 
@@ -134,6 +141,7 @@ class Collector
 			$lines = array_fill_keys(array_keys($lines), -1);
 		}
 
+		phpdbg_start_oplog();
 		return [$positive, $negative];
 	}
 
