@@ -33,6 +33,7 @@ class Collector
 	 * Starts gathering the information for code coverage.
 	 * @param  string
 	 * @return void
+	 * @throws \LogicException
 	 */
 	public static function start($file)
 	{
@@ -51,7 +52,7 @@ class Collector
 
 		} else {
 			$alternative = PHP_VERSION_ID >= 70000 ? ' or phpdbg SAPI' : '';
-			throw new \Exception("Code coverage functionality requires Xdebug extension$alternative.");
+			throw new \LogicException("Code coverage functionality requires Xdebug extension$alternative.");
 		}
 
 		register_shutdown_function(function () {
@@ -63,9 +64,14 @@ class Collector
 	/**
 	 * Saves information about code coverage. Can be called repeatedly to free memory.
 	 * @return void
+	 * @throws \LogicException
 	 */
 	public static function save()
 	{
+		if (!self::isStarted()) {
+			throw new \LogicException('Code coverage collector has not been started.');
+		}
+
 		list($positive, $negative) = call_user_func([__CLASS__, self::$collector]);
 
 		flock(self::$file, LOCK_EX);
