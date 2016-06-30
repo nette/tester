@@ -66,6 +66,10 @@ class Collector
 	 */
 	public static function save()
 	{
+		if (!self::isStarted()) {
+			return;
+		}
+
 		list($positive, $negative) = call_user_func([__CLASS__, self::$collector]);
 
 		flock(self::$file, LOCK_EX);
