@@ -71,7 +71,7 @@ class Environment
 			? (bool) getenv(self::COLORS)
 			: ((PHP_SAPI === 'cli' || PHP_SAPI === 'phpdbg')
 				&& ((function_exists('posix_isatty') && posix_isatty(STDOUT))
-					|| getenv('ConEmuANSI') === 'ON' || getenv('ANSICON') !== FALSE) || getenv('term') === 'xterm-256color');
+					|| getenv('ConEmuANSI') === 'ON' || getenv('ANSICON') !== FALSE) || getenv('TERM') === 'xterm-256color');
 
 		ob_start(function ($s) {
 			return self::$useColors ? $s : Dumper::removeColors($s);
