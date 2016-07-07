@@ -110,13 +110,12 @@ Options:
     -p <path>                    Specify PHP interpreter to run (default: php).
     -c <path>                    Look for php.ini file (or look in directory) <path>.
     -C                           Use system-wide php.ini.
-    -l | --log <path>            Write log to file <path>.
     -d <key=value>...            Define INI entry 'key' with value 'value'.
     -s                           Show information about skipped tests.
     --stop-on-fail               Stop execution upon the first failure.
     -j <num>                     Run <num> jobs in parallel (default: 8).
-    -o <console|tap|junit|none>  Specify one or more output formats with optional file name.
-                                 (e.g. -o junit:output.xml)
+    -o <console|tap|junit|log|none>  (e.g. -o junit:output.xml)
+                                 Specify one or more output formats with optional file name.
     -w | --watch <path>          Watch directory.
     -i | --info                  Show tests environment info and exit.
     --setup <path>               Script for runner setup.
@@ -155,8 +154,12 @@ XX
 		]);
 
 		if (isset($_SERVER['argv'])) {
-			if ($tmp = array_search('-log', $_SERVER['argv'], true)) {
-				$_SERVER['argv'][$tmp] = '--log';
+			if (($tmp = array_search('-l', $_SERVER['argv'], true))
+				|| ($tmp = array_search('-log', $_SERVER['argv'], true))
+				|| ($tmp = array_search('--log', $_SERVER['argv'], true))
+			) {
+				$_SERVER['argv'][$tmp] = '-o';
+				$_SERVER['argv'][$tmp + 1] = 'log:' . $_SERVER['argv'][$tmp + 1];
 			}
 
 			if ($tmp = array_search('--tap', $_SERVER['argv'], true)) {
@@ -240,17 +243,16 @@ XX
 					$runner->outputHandlers[] = new Output\JUnitPrinter($file);
 					break;
 
+				case 'log':
+					$runner->outputHandlers[] = new Output\Logger($runner, $file);
+					break;
+
 				case 'none':
 					break;
 
 				default:
 					throw new \LogicException("Undefined output printer '$format'.'");
 			}
-		}
-
-		if ($this->options['--log']) {
-			echo "Log: {$this->options['--log']}\n";
-			$runner->outputHandlers[] = new Output\Logger($runner, $this->options['--log']);
 		}
 
 		if ($this->options['--setup']) {
