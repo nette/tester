@@ -103,7 +103,6 @@ test(function () { // argument
 });
 
 
-
 test(function () { // optional argument
 	$cmd = new Cmd('
 		-p [param]
@@ -137,7 +136,6 @@ test(function () { // optional argument
 });
 
 
-
 test(function () { // repeatable argument
 	$cmd = new Cmd('
 		-p [param]...
@@ -148,7 +146,6 @@ test(function () { // repeatable argument
 	Assert::same(['-p' => ['val']], $cmd->parse(explode(' ', '-p val')));
 	Assert::same(['-p' => ['val1', 'val2']], $cmd->parse(explode(' ', '-p val1 -p val2')));
 });
-
 
 
 test(function () { // enumerates
@@ -179,7 +176,6 @@ test(function () { // enumerates
 });
 
 
-
 test(function () { // realpath
 	$cmd = new Cmd('
 		-p <path>
@@ -193,6 +189,40 @@ test(function () { // realpath
 	Assert::same(['-p' => __FILE__], $cmd->parse(['-p', __FILE__]));
 });
 
+
+test(function () { // normalizer
+	$cmd = new Cmd('
+		-p param
+	', [
+		'-p' => [Cmd::NORMALIZER => function ($arg) {
+			return "$arg-normalized";
+		}],
+	]);
+
+	Assert::same(['-p' => 'val-normalized'], $cmd->parse(explode(' ', '-p val')));
+
+
+	$cmd = new Cmd('
+		-p <a|b>
+	', [
+		'-p' => [Cmd::NORMALIZER => function () {
+			return 'a';
+		}],
+	]);
+
+	Assert::same(['-p' => 'a'], $cmd->parse(explode(' ', '-p xxx')));
+
+
+	$cmd = new Cmd('
+		-p <a|b>
+	', [
+		'-p' => [Cmd::NORMALIZER => function () {
+			return ['a', 'foo'];
+		}],
+	]);
+
+	Assert::same(['-p' => ['a', 'foo']], $cmd->parse(explode(' ', '-p xxx')));
+});
 
 
 test(function () { // positional arguments
@@ -230,7 +260,6 @@ test(function () { // positional arguments
 
 	Assert::same(['pos' => ['default']], $cmd->parse([]));
 });
-
 
 
 test(function () { // errors
