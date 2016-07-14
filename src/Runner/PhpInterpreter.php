@@ -45,13 +45,13 @@ class PhpInterpreter
 		$output = stream_get_contents($pipes[1]);
 		proc_close($proc);
 
-		$args = ' -n ' . implode(' ', array_map(['Tester\Helpers', 'escapeArg'], $args));
+		$args = ' ' . implode(' ', array_map(['Tester\Helpers', 'escapeArg'], $args));
 		if (preg_match('#HipHop VM#', $output)) {
 			$args = ' --php' . $args . ' -d hhvm.log.always_log_unhandled_exceptions=false'; // HHVM issue #3019
 		} elseif (strpos($output, 'phpdbg') !== FALSE) {
 			$args = ' -qrrb -S cli' . $args;
 		}
-		$this->commandLine .= $args;
+		$this->commandLine .= rtrim($args);
 
 		$proc = proc_open(
 			$this->commandLine . ' ' . Helpers::escapeArg(__DIR__ . '/info.php') . ' serialized',

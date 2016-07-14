@@ -103,6 +103,7 @@ Usage:
 Options:
     -p <path>                    Specify PHP interpreter to run (default: php).
     -c <path>                    Look for php.ini file (or look in directory) <path>.
+    -C                           Use system-wide php.ini.
     -l | --log <path>            Write log to file <path>.
     -d <key=value>...            Define INI entry 'key' with value 'val'.
     -s                           Show information about skipped tests.
@@ -150,10 +151,10 @@ XX
 	/** @return void */
 	private function createPhpInterpreter()
 	{
-		$args = [];
+		$args = $this->options['-C'] ? [] : ['-n'];
 		if ($this->options['-c']) {
 			array_push($args, '-c', $this->options['-c']);
-		} elseif (!$this->options['--info']) {
+		} elseif (!$this->options['--info'] && !$this->options['-C']) {
 			echo "Note: No php.ini is used.\n";
 		}
 
