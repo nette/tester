@@ -20,6 +20,7 @@ function createInterpreter()
 {
 	return new PhpInterpreter(
 		PHP_BINARY,
+		FALSE,
 		defined('HHVM_VERSION') ? [] : ['-c', php_ini_loaded_file()]
 	);
 }

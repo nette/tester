@@ -102,7 +102,8 @@ Usage:
 
 Options:
     -p <path>                    Specify PHP interpreter to run (default: php).
-    -c <path>                    Look for php.ini file (or look in directory) <path>.
+    -c <path>                    Look for php.ini file (or look in directory) <path>,
+                                 or use constant 'system' for system-wide php.ini.
     -l | --log <path>            Write log to file <path>.
     -d <key=value>...            Define INI entry 'key' with value 'val'.
     -s                           Show information about skipped tests.
@@ -119,7 +120,7 @@ Options:
 
 XX
 		, [
-			'-c' => [CommandLine::REALPATH => TRUE],
+			'-c' => [CommandLine::REPEATABLE => TRUE],
 			'--watch' => [CommandLine::REPEATABLE => TRUE, CommandLine::REALPATH => TRUE],
 			'--setup' => [CommandLine::REALPATH => TRUE],
 			'paths' => [CommandLine::REPEATABLE => TRUE, CommandLine::VALUE => getcwd()],
@@ -151,9 +152,18 @@ XX
 	private function createPhpInterpreter()
 	{
 		$args = [];
-		if ($this->options['-c']) {
-			array_push($args, '-c', $this->options['-c']);
-		} elseif (!$this->options['--info']) {
+		$keepSystemIni = FALSE;
+		foreach ($this->options['-c'] as $iniFile) {
+			if ($iniFile === 'system') {
+				$keepSystemIni = TRUE;
+			} else {
+				if (!file_exists($iniFile)) {
+					throw new \Exception("File or directory '$iniFile' does not exist.");
+				}
+				array_push($args, '-c', realpath($iniFile));
+			}
+		}
+		if (!count($this->options['-c']) && !$this->options['--info']) {
 			echo "Note: No php.ini is used.\n";
 		}
 
@@ -165,7 +175,7 @@ XX
 			array_push($args, '-d', $item);
 		}
 
-		$this->interpreter = new PhpInterpreter($this->options['-p'], $args);
+		$this->interpreter = new PhpInterpreter($this->options['-p'], $keepSystemIni, $args);
 
 		if ($error = $this->interpreter->getStartupError()) {
 			echo Dumper::color('red', "PHP startup error: $error") . "\n";

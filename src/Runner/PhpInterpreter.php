@@ -28,7 +28,7 @@ class PhpInterpreter
 	private $error;
 
 
-	public function __construct($path, array $args = [])
+	public function __construct($path, $keepSystemIni = FALSE, array $args = [])
 	{
 		$this->commandLine = Helpers::escapeArg($path);
 		$proc = @proc_open( // @ is escalated to exception
@@ -45,7 +45,7 @@ class PhpInterpreter
 		$output = stream_get_contents($pipes[1]);
 		proc_close($proc);
 
-		$args = ' -n ' . implode(' ', array_map(['Tester\Helpers', 'escapeArg'], $args));
+		$args = ($keepSystemIni ? ' ' : ' -n ') . implode(' ', array_map(['Tester\Helpers', 'escapeArg'], $args));
 		if (preg_match('#HipHop VM#', $output)) {
 			$args = ' --php' . $args . ' -d hhvm.log.always_log_unhandled_exceptions=false'; // HHVM issue #3019
 		} elseif (strpos($output, 'phpdbg') !== FALSE) {
