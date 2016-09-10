@@ -2,10 +2,13 @@
 
 use Tester\Assert;
 use Tester\Runner\Runner;
+use Tester\Runner\TestInstance;
+
 
 require __DIR__ . '/../bootstrap.php';
 require __DIR__ . '/../../src/Runner/OutputHandler.php';
 require __DIR__ . '/../../src/Runner/TestHandler.php';
+require __DIR__ . '/../../src/Runner/TestInstance.php';
 require __DIR__ . '/../../src/Runner/Runner.php';
 
 
@@ -13,9 +16,9 @@ class Logger implements Tester\Runner\OutputHandler
 {
 	public $results = [];
 
-	function result($testName, $result, $message)
+	function result(TestInstance $testInstance)
 	{
-		$this->results[] = [basename($testName), $result, $message];
+		$this->results[] = [basename($testInstance->getTestName()), $testInstance->getResult(), $testInstance->getMessage()];
 	}
 
 	function begin() {}

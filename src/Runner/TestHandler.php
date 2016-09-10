@@ -45,7 +45,7 @@ class TestHandler
 			foreach ((array) $annotations[$m[1]] as $value) {
 				$res = $this->$method($value, $php, $file);
 				if ($res && is_int($res[0])) { // [Runner::*, message]
-					$this->runner->writeResult($testName, $res[0], $res[1]);
+					$this->runner->addTestInstance(TestInstance::withResult($file, $testName, $res[0], $res[1]));
 					return;
 				} elseif ($res && $res[1]) { // [param name, values]
 					$tmp = [];
@@ -61,7 +61,8 @@ class TestHandler
 		}
 
 		foreach ($jobsArgs as $args) {
-			$this->runner->addJob(new Job($file, $php, $args, $this->runner->getEnvironmentVariables()));
+			$job = new Job($file, $php, $args, $this->runner->getEnvironmentVariables());
+			$this->runner->addTestInstance(TestInstance::withJob($job, $testName));
 		}
 	}
 
@@ -69,12 +70,10 @@ class TestHandler
 	/**
 	 * @return void
 	 */
-	public function assess(Job $job)
+	public function assess(TestInstance $testInstance)
 	{
-		list($annotations, $testName) = $this->getAnnotations($job->getFile());
-		$testName .= $job->getArguments()
-			? ' [' . implode(' ', preg_replace(['#["\'-]*(.+?)["\']?$#A', '#(.{30}).+#A'], ['$1', '$1...'], $job->getArguments())) . ']'
-			: '';
+		$job = $testInstance->getJob();
+		list($annotations) = $this->getAnnotations($job->getFile());
 		$annotations += [
 			'exitcode' => Job::CODE_OK,
 			'httpcode' => self::HTTP_OK,
@@ -86,12 +85,15 @@ class TestHandler
 			}
 			foreach ((array) $annotations[$m[1]] as $arg) {
 				if ($res = $this->$method($job, $arg)) {
-					$this->runner->writeResult($testName, $res[0], $res[1]);
+					$testInstance->setResult($res[0], $res[1]);
+					$this->runner->writeResult($testInstance);
 					return;
 				}
 			}
 		}
-		$this->runner->writeResult($testName, Runner::PASSED);
+
+		$testInstance->setResult(Runner::PASSED);
+		$this->runner->writeResult($testInstance);
 	}
 
 

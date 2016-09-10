@@ -46,16 +46,17 @@ class ConsolePrinter implements Tester\Runner\OutputHandler
 	}
 
 
-	public function result($testName, $result, $message)
+	public function result(Tester\Runner\TestInstance $testInstance)
 	{
 		$outputs = [
 			Runner::PASSED => '.',
 			Runner::SKIPPED => 's',
 			Runner::FAILED => Dumper::color('white/red', 'F'),
 		];
-		echo $outputs[$result];
+		echo $outputs[$result = $testInstance->getResult()];
+		$testName = trim($testInstance->getTestName() . ' ' . $testInstance->getInstanceName());
 
-		$message = '   ' . str_replace("\n", "\n   ", trim($message)) . "\n\n";
+		$message = '   ' . str_replace("\n", "\n   ", trim($testInstance->getMessage())) . "\n\n";
 		if ($result === Runner::FAILED) {
 			$this->buffer .= Dumper::color('red', "-- FAILED: $testName") . "\n$message";
 		} elseif ($result === Runner::SKIPPED && $this->displaySkipped) {

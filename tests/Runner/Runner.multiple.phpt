@@ -5,6 +5,7 @@ use Tester\Helpers;
 
 require __DIR__ . '/../bootstrap.php';
 require __DIR__ . '/../../src/Runner/TestHandler.php';
+require __DIR__ . '/../../src/Runner/TestInstance.php';
 require __DIR__ . '/../../src/Runner/Runner.php';
 
 
@@ -19,25 +20,27 @@ if (defined('HHVM_VERSION') && version_compare(HHVM_VERSION, '3.4.0-dev', '<')) 
 		$findTests = new ReflectionMethod($runner, 'findTests');
 		$findTests->setAccessible(TRUE);
 
-		$jobs = new ReflectionProperty($runner, 'jobs');
-		$jobs->setAccessible(TRUE);
+		$testInstances = new ReflectionProperty($runner, 'testInstances');
+		$testInstances->setAccessible(TRUE);
 
 		$results->setValue($runner, [$runner::PASSED => 0, $runner::SKIPPED => 0, $runner::FAILED => 0]);
 		$findTests->invokeArgs($runner, [__DIR__ . '/multiple/*.phptx']);
-		return $jobs->getValue($runner);
+		return $testInstances->getValue($runner);
 	});
 
 } else {
 	$tests = Assert::with($runner, function () {
 		$this->results = [self::PASSED => 0, self::SKIPPED => 0, self::FAILED => 0];
 		$this->findTests(__DIR__ . '/multiple/*.phptx');
-		return $this->jobs;
+		return $this->testInstances;
 	});
 }
 
 
-foreach ($tests as $i => $job) {
-	$tests[$i] = [basename($job->getFile()), $job->getArguments()];
+foreach ($tests as $i => $testInstance) {
+	$tests[$i] = $testInstance->getJob()
+		? [basename($testInstance->getJob()->getFile()), $testInstance->getJob()->getArguments()]
+		: [basename($testInstance->getFileName()), $testInstance->getResult()];
 }
 sort($tests);
 
@@ -48,6 +51,7 @@ Assert::same([
 	['dataProvider.multiple.phptx', ['dataprovider' => "bar|$path../../Framework/fixtures/dataprovider.ini", 'multiple' => 1]],
 	['dataProvider.multiple.phptx', ['dataprovider' => "foo|$path../../Framework/fixtures/dataprovider.ini", 'multiple' => 0]],
 	['dataProvider.multiple.phptx', ['dataprovider' => "foo|$path../../Framework/fixtures/dataprovider.ini", 'multiple' => 1]],
+	['dataProvider.optional.phptx', Tester\Runner\Runner::SKIPPED],
 	['dataProvider.phptx', ['dataprovider' => "bar|$path../../Framework/fixtures/dataprovider.ini"]],
 	['dataProvider.phptx', ['dataprovider' => "foo|$path../../Framework/fixtures/dataprovider.ini"]],
 	['dataProvider.query.phptx', ['dataprovider' => "foo 2.2.3|$path../../Framework/fixtures/dataprovider.query.ini"]],
