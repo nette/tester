@@ -51,7 +51,7 @@ class TestHandler
 					$tmp = [];
 					foreach ($res[1] as $val) {
 						foreach ($jobsArgs as $args) {
-							$args[] = Helpers::escapeArg("--$res[0]=$val");
+							$args[$res[0]] = $val;
 							$tmp[] = $args;
 						}
 					}
@@ -143,7 +143,7 @@ class TestHandler
 
 	private function initiateTestCase($foo, PhpInterpreter $interpreter, $file)
 	{
-		$job = new Job($file, $interpreter, [Helpers::escapeArg('--method=' . Tester\TestCase::LIST_METHODS)]);
+		$job = new Job($file, $interpreter, ['method' => Tester\TestCase::LIST_METHODS]);
 		$job->run();
 
 		if (in_array($job->getExitCode(), [Job::CODE_ERROR, Job::CODE_FAIL, Job::CODE_SKIP], TRUE)) {
