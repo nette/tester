@@ -21,7 +21,7 @@ class Logger implements Tester\Runner\OutputHandler
 		$this->results[] = [$testInstance->getResult(), basename($testInstance->getTestName())];
 	}
 
-	function begin() {}
+	function begin(array $testInstances) {}
 	function end() {}
 }
 

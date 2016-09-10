@@ -23,14 +23,17 @@ class TestInstance
 	/** @var string */
 	private $testName;
 
-	/** @var string|NULL */
-	private $instanceName;
+	/** @var array */
+	private $args = [];
 
 	/** @var int */
 	private $result;
 
 	/** @var string|NULL */
 	private $message;
+
+	/** @var float */
+	private $time;
 
 
 	private function __construct()
@@ -49,23 +52,7 @@ class TestInstance
 		$instance->job = $job;
 		$instance->fileName = $job->getFile();
 		$instance->testName = $testName;
-
-		$args = $job->getArguments();
-		$instanceNameParts = [];
-		if ($args && isset($args['method'])) {
-			$instanceNameParts[] = $args['method'];
-		}
-
-		if (isset($args['multiple'])) {
-			$instanceNameParts[] = '#' . $args['multiple'];
-		}
-
-		if (isset($args['dataprovider'])) {
-			$instanceNameParts[] = '(' . $args['dataprovider'] . ')';
-		}
-
-		$instance->instanceName = implode(' ', $instanceNameParts);
-
+		$instance->args = $job->getArguments();
 		return $instance;
 	}
 
@@ -89,16 +76,18 @@ class TestInstance
 
 
 	/**
+	 * @param float $time
 	 * @param int $result
 	 * @param string|NULL $message
 	 * @return TestInstance
 	 */
-	public function setResult($result, $message = NULL)
+	public function setResult($time, $result, $message = NULL)
 	{
 		if ($this->result !== NULL) {
 			throw new \LogicException('Cannot overwrite results of a TestInstance that has already finished.');
 		}
 
+		$this->time = $time;
 		$this->result = $result;
 		$this->message = $message;
 		return $this;
@@ -135,9 +124,31 @@ class TestInstance
 	/**
 	 * @return string|NULL
 	 */
+	public function getMethodName()
+	{
+		return isset($this->args['method']) ? $this->args['method'] : NULL;
+	}
+
+
+	/**
+	 * @return string|NULL
+	 */
 	public function getInstanceName()
 	{
-		return $this->instanceName;
+		$instanceNameParts = [];
+		if (isset($this->args['method'])) {
+			$instanceNameParts[] = $this->args['method'];
+		}
+
+		if (isset($this->args['multiple'])) {
+			$instanceNameParts[] = '#' . $this->args['multiple'];
+		}
+
+		if (isset($this->args['dataprovider'])) {
+			$instanceNameParts[] = '(' . $this->args['dataprovider'] . ')';
+		}
+
+		return implode(' ', $instanceNameParts);
 	}
 
 
@@ -156,6 +167,15 @@ class TestInstance
 	public function getMessage()
 	{
 		return $this->message;
+	}
+
+
+	/**
+	 * @return float
+	 */
+	public function getTime()
+	{
+		return $this->time;
 	}
 
 }

@@ -35,7 +35,7 @@ class JUnitPrinter implements Tester\Runner\OutputHandler
 	}
 
 
-	public function begin()
+	public function begin(array $testInstances)
 	{
 		$this->startTime = microtime(TRUE);
 		fwrite($this->file, "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<testsuites>\n");

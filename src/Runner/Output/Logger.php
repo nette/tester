@@ -30,7 +30,7 @@ class Logger implements Tester\Runner\OutputHandler
 	}
 
 
-	public function begin()
+	public function begin(array $testInstances)
 	{
 		fwrite($this->file, 'PHP ' . $this->runner->getInterpreter()->getVersion()
 			. ' | ' . $this->runner->getInterpreter()->getCommandLine()
