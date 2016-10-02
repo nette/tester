@@ -156,14 +156,15 @@ class Job
 		if (!is_resource($this->stdout)) {
 			return FALSE;
 		}
-		$this->output .= stream_get_contents($this->stdout);
-		if ($this->stderr) {
-			$this->errorOutput .= stream_get_contents($this->stderr);
-		}
 
 		$status = proc_get_status($this->proc);
 		if ($status['running']) {
 			return TRUE;
+		}
+
+		$this->output = stream_get_contents($this->stdout);
+		if ($this->stderr) {
+			$this->errorOutput = stream_get_contents($this->stderr);
 		}
 
 		fclose($this->stdout);
