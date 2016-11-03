@@ -78,11 +78,11 @@ class CloverXMLGenerator extends AbstractGenerator
 
 			$projectMetrics->fileCount++;
 
-			if (isset($this->data[$file])) {
-				$coverageData = $this->data[$file];
-			} else {
+			if (empty($this->data[$file])) {
 				$coverageData = NULL;
 				$this->totalSum += count(file($file, FILE_SKIP_EMPTY_LINES));
+			} else {
+				$coverageData = $this->data[$file];
 			}
 
 			// TODO: split to <package> by namespace?

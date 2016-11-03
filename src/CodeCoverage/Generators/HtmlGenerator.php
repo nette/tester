@@ -74,7 +74,7 @@ class HtmlGenerator extends AbstractGenerator
 			$entry = (string) $entry;
 
 			$coverage = $covered = $total = 0;
-			$loaded = isset($this->data[$entry]);
+			$loaded = !empty($this->data[$entry]);
 			$lines = [];
 			if ($loaded) {
 				$lines = $this->data[$entry];
