@@ -78,6 +78,10 @@ class TestCase
 
 		$info = Helpers::parseDocComment($method->getDocComment()) + ['dataprovider' => NULL, 'throws' => NULL];
 
+		if (isset($info['skip'])) {
+			\Tester\Environment::skip($info['skip']);
+		}
+
 		if ($info['throws'] === '') {
 			throw new TestCaseException("Missing class name in @throws annotation for {$method->getName()}().");
 		} elseif (is_array($info['throws'])) {
