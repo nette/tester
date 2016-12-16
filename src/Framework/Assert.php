@@ -495,7 +495,8 @@ class Assert
 			$utf8 = preg_match('#\x80-\x{10FFFF}]#u', $pattern) ? 'u' : '';
 			$suffix = ($strict ? '\z#sU' : '\s*$#sU') . $utf8;
 			$patterns = static::$patterns + [
-				'[.\\\\+*?[^$(){|\x00\#]' => '\$0', // preg quoting
+				'[.\\\\+*?[^$(){|\#]' => '\$0', // preg quoting
+				'\x00' => '\x00',
 				'[\t ]*\r?\n' => '[\t ]*\r?\n', // right trim
 			];
 			$pattern = '#^' . preg_replace_callback('#' . implode('|', array_keys($patterns)) . '#U' . $utf8, function ($m) use ($patterns) {
@@ -505,7 +506,7 @@ class Assert
 						return $s;
 					}
 				}
-			}, rtrim($pattern)) . $suffix;
+			}, rtrim($pattern, " \t\n\r")) . $suffix;
 		}
 
 		$res = preg_match($pattern, $actual);
