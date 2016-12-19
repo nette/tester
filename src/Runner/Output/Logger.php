@@ -39,15 +39,15 @@ class Logger implements Tester\Runner\OutputHandler
 	}
 
 
-	public function result($testName, $result, $message)
+	public function result(Test $test)
 	{
-		$message = '   ' . str_replace("\n", "\n   ", Tester\Dumper::removeColors(trim($message)));
+		$message = '   ' . str_replace("\n", "\n   ", Tester\Dumper::removeColors(trim($test->message)));
 		$outputs = [
-			Test::PASSED => "-- OK: $testName",
-			Test::SKIPPED => "-- Skipped: $testName\n$message",
-			Test::FAILED => "-- FAILED: $testName\n$message",
+			Test::PASSED => "-- OK: {$test->getName()}",
+			Test::SKIPPED => "-- Skipped: {$test->getName()}\n$message",
+			Test::FAILED => "-- FAILED: {$test->getName()}\n$message",
 		];
-		fwrite($this->file, $outputs[$result] . "\n\n");
+		fwrite($this->file, $outputs[$test->getResult()] . "\n\n");
 	}
 
 
