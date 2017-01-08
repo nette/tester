@@ -347,7 +347,7 @@ class Dumper
 	 */
 	public static function saveOutput($testFile, $content, $suffix = '')
 	{
-		$path = self::$dumpDir . DIRECTORY_SEPARATOR . basename($testFile, '.phpt') . $suffix;
+		$path = self::$dumpDir . DIRECTORY_SEPARATOR . pathinfo($testFile, PATHINFO_FILENAME) . $suffix;
 		if (!preg_match('#/|\w:#A', self::$dumpDir)) {
 			$path = dirname($testFile) . DIRECTORY_SEPARATOR . $path;
 		}

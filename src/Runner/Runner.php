@@ -20,8 +20,6 @@ class Runner
 		SKIPPED = 2,
 		FAILED = 3;
 
-	const TEST_FILE_EXTENSION = 'phpt';
-
 	/** @var string[]  paths to test files/directories */
 	public $paths = [];
 
@@ -151,11 +149,15 @@ class Runner
 			foreach (glob(str_replace('[', '[[]', $path) . '/*', GLOB_ONLYDIR) ?: [] as $dir) {
 				$this->findTests($dir);
 			}
-			$path .= '/*.' . self::TEST_FILE_EXTENSION;
-		}
-		foreach (glob(str_replace('[', '[[]', $path)) ?: [] as $file) {
-			if (is_file($file)) {
-				$this->testHandler->initiate(realpath($file));
+
+			$this->findTests($path . '/*.phpt');
+			$this->findTests($path . '/*Test.php');
+
+		} else {
+			foreach (glob(str_replace('[', '[[]', $path)) ?: [] as $file) {
+				if (is_file($file)) {
+					$this->testHandler->initiate(realpath($file));
+				}
 			}
 		}
 	}
