@@ -17,6 +17,7 @@ class SuccessTest extends Tester\TestCase
 	protected function tearDown()
 	{
 		self::$order[] = __METHOD__;
+		parent::tearDown();
 	}
 
 	public function testPublic()
@@ -56,6 +57,7 @@ class FailingTest extends Tester\TestCase
 	protected function tearDown()
 	{
 		self::$order[] = __METHOD__;
+		parent::tearDown();
 	}
 
 	public function testPublic()

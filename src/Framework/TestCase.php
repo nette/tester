@@ -24,6 +24,9 @@ class TestCase
 	/** @var callable|NULL|FALSE */
 	private $prevErrorHandler = FALSE;
 
+	/** @var bool */
+	private $tearDownCalled;
+
 
 	/**
 	 * Runs the test case.
@@ -149,7 +152,11 @@ class TestCase
 				}
 				$this->handleErrors = FALSE;
 
+				$this->tearDownCalled = FALSE;
 				$this->tearDown();
+				if ($this->tearDownCalled !== TRUE) {
+					throw new TestCaseException(get_class($this) . " doesn't call parents tearDown() method.");
+				}
 
 			} catch (AssertException $e) {
 				throw $e->setMessage("$e->origMessage in {$method->getName()}(" . (substr(Dumper::toLine($params), 1, -1)) . ')');
@@ -188,6 +195,7 @@ class TestCase
 	 */
 	protected function tearDown()
 	{
+		$this->tearDownCalled = TRUE;
 	}
 
 

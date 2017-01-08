@@ -26,6 +26,7 @@ class Test extends Tester\TestCase
 	protected function tearDown()
 	{
 		echo __METHOD__;
+		parent::tearDown();
 	}
 
 	protected function data()
