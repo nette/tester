@@ -65,7 +65,7 @@ class JUnitPrinter implements Tester\Runner\OutputHandler
 		$time = sprintf('%0.1f', microtime(TRUE) - $this->startTime);
 		$output = $this->buffer;
 		$results = $this->runner->getResults();
-		$this->buffer = "\t<testsuite errors=\"{$results[3]}\" skipped=\"{$results[2]}\" tests=\"" . array_sum($results) . "\" time=\"$time\" timestamp=\"" . date('Y-m-d\TH:i:s') . "\">\n";
+		$this->buffer = "\t<testsuite errors=\"{$results[3]}\" skipped=\"{$results[2]}\" tests=\"" . array_sum($results) . "\" time=\"$time\" timestamp=\"" . @date('Y-m-d\TH:i:s') . "\">\n";
 		$this->buffer .= $output;
 		$this->buffer .= "\t</testsuite>";
 
