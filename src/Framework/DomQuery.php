@@ -26,6 +26,11 @@ class DomQuery extends \SimpleXMLElement
 		// parse these elements as void
 		$html = preg_replace('#<(keygen|source|track|wbr)(?=\s|>)((?:"[^"]*"|\'[^\']*\'|[^"\'>])*+)(?<!/)>#', '<$1$2 />', $html);
 
+		// fix parsing of </ inside scripts
+		$html = preg_replace_callback('#(<script(?=\s|>)(?:"[^"]*"|\'[^\']*\'|[^"\'>])*+>)(.*?)(</script>)#', function ($m) {
+			return $m[1] . str_replace('</', '<\/', $m[2]) . $m[3];
+		}, $html);
+
 		$dom = new \DOMDocument();
 		$old = libxml_use_internal_errors(TRUE);
 		libxml_clear_errors();

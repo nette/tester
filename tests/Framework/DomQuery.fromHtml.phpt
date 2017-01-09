@@ -23,3 +23,9 @@ Assert::false($q->has('track footer'));
 
 $q = DomQuery::fromHtml('<audio controls><source src="horse.mp3" type="audio/mpeg"></audio>');
 Assert::true($q->has('source'));
+
+
+$q = DomQuery::fromHtml("<script>var s = '</div>';</script> <br>  <script type='text/javascript'>var s = '</div>';</script>");
+Assert::true($q->has('script'));
+Assert::true($q->has('br'));
+Assert::true($q->has('script[type]'));
