@@ -23,7 +23,8 @@ class DomQuery extends \SimpleXMLElement
 			$html = '<body>' . $html;
 		}
 
-		$html = preg_replace('#<(keygen|source|track|wbr)(?=\s|>)("[^"]*"|\'[^\']*\'|[^"\'>]+)*+(?<!/)>#', '<$1$2 />', $html);
+		// parse these elements as void
+		$html = preg_replace('#<(keygen|source|track|wbr)(?=\s|>)((?:"[^"]*"|\'[^\']*\'|[^"\'>])*+)(?<!/)>#', '<$1$2 />', $html);
 
 		$dom = new \DOMDocument();
 		$old = libxml_use_internal_errors(TRUE);
