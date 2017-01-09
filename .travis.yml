@@ -14,6 +14,8 @@ env:
 matrix:
     allow_failures:
         - php: hhvm
+        - php: 7.0
+          env: COVERAGE=on
 
     exclude:
         - php: hhvm
@@ -21,10 +23,10 @@ matrix:
 
     include:
         - php: 7.0
-          env: TESTER_PHP_BIN=phpdbg COVERAGE="--coverage ./coverage.xml --coverage-src ./src"
+          env: COVERAGE=on
 
 script:
-    - src/tester -p $TESTER_PHP_BIN tests -s $COVERAGE
+    - src/tester -p $TESTER_PHP_BIN tests -s $COVERAGE_ARGS
     - src/tester -p $TESTER_PHP_BIN -o none tests/fail.phptx; if [ $? -eq 0 ]; then echo "tests/fail.phptx SHOULD FAIL"; exit 1; else echo "fail checked"; fi;
     - php code-checker/src/code-checker.php
 
@@ -34,11 +36,12 @@ after_failure:
 
 before_script:
     - travis_retry composer create-project nette/code-checker code-checker ~2.5 --no-interaction
+    - if [ "$COVERAGE" == "on" ]; then TESTER_PHP_BIN=phpdbg; COVERAGE_ARGS="--coverage ./coverage.xml --coverage-src ./src"; fi
 
 after_script:
     # Report Code Coverage
     - >
-      if [ "$COVERAGE" != "" ]; then
+      if [ "$COVERAGE" == "on" ]; then
       wget https://github.com/satooshi/php-coveralls/releases/download/v1.0.1/coveralls.phar
       && php coveralls.phar --verbose --config tests/.coveralls.yml
       || true; fi
