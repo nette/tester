@@ -44,13 +44,13 @@ foreach ($notSame as $case) {
 
 if (PHP_VERSION_ID >= 50405) {
 	$rec = [];
-	$rec[] = & $rec;
+	$rec[] = &$rec;
 	Assert::same($rec, $rec);
 }
 
 Assert::exception(function () {
 	$rec = [];
-	$rec[] = & $rec;
+	$rec[] = &$rec;
 	Assert::same($rec, []);
 }, 'Tester\AssertException');
 

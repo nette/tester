@@ -50,10 +50,10 @@ class Helpers
 		}
 		preg_match_all('#^[ \t\*]*@(\w+)([^\w\r\n].*)?#mi', $content[1], $matches, PREG_SET_ORDER);
 		foreach ($matches as $match) {
-			$ref = & $options[strtolower($match[1])];
+			$ref = &$options[strtolower($match[1])];
 			if (isset($ref)) {
 				$ref = (array) $ref;
-				$ref = & $ref[];
+				$ref = &$ref[];
 			}
 			$ref = isset($match[2]) ? trim($match[2]) : '';
 		}

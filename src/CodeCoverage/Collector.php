@@ -133,11 +133,11 @@ class Collector
 		$positive = phpdbg_end_oplog();
 		$negative = phpdbg_get_executable();
 
-		foreach ($positive as $file => & $lines) {
+		foreach ($positive as $file => &$lines) {
 			$lines = array_fill_keys(array_keys($lines), 1);
 		}
 
-		foreach ($negative as $file => & $lines) {
+		foreach ($negative as $file => &$lines) {
 			$lines = array_fill_keys(array_keys($lines), -1);
 		}
 

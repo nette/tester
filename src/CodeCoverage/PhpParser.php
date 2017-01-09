@@ -79,11 +79,11 @@ class PhpParser
 				case T_TRAIT:
 					if ($name = self::fetch($tokens, T_STRING)) {
 						if ($token[0] === T_CLASS) {
-							$class = & $result->classes[$namespace . $name];
+							$class = &$result->classes[$namespace . $name];
 						} elseif ($token[0] === T_INTERFACE) {
-							$class = & $result->interfaces[$namespace . $name];
+							$class = &$result->interfaces[$namespace . $name];
 						} else {
-							$class = & $result->traits[$namespace . $name];
+							$class = &$result->traits[$namespace . $name];
 						}
 
 						$classLevel = $level + 1;
@@ -108,7 +108,7 @@ class PhpParser
 				case T_FUNCTION:
 					if (($name = self::fetch($tokens, T_STRING)) && !isset($isAbstract)) {
 						if (isset($class) && $level === $classLevel) {
-							$function = & $class->methods[$name];
+							$function = &$class->methods[$name];
 							$function = (object) [
 								'start' => $line,
 								'end' => NULL,
@@ -116,7 +116,7 @@ class PhpParser
 							];
 
 						} else {
-							$function = & $result->functions[$namespace . $name];
+							$function = &$result->functions[$namespace . $name];
 							$function = (object) [
 								'start' => $line,
 								'end' => NULL,
@@ -161,7 +161,7 @@ class PhpParser
 	}
 
 
-	private static function fetch(& $tokens, $take)
+	private static function fetch(&$tokens, $take)
 	{
 		$res = NULL;
 		while ($token = current($tokens)) {

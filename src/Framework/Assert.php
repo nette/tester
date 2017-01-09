@@ -335,7 +335,7 @@ class Assert
 
 		self::$counter++;
 		$expected = is_array($expectedType) ? $expectedType : [[$expectedType, $expectedMessage]];
-		foreach ($expected as & $item) {
+		foreach ($expected as &$item) {
 			list($expectedType, $expectedMessage) = $item;
 			if (is_int($expectedType)) {
 				$item[2] = Helpers::errorTypeToString($expectedType);
@@ -346,7 +346,7 @@ class Assert
 			}
 		}
 
-		set_error_handler(function ($severity, $message, $file, $line) use (& $expected) {
+		set_error_handler(function ($severity, $message, $file, $line) use (&$expected) {
 			if (($severity & error_reporting()) !== $severity) {
 				return;
 			}

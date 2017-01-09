@@ -41,7 +41,7 @@ foreach ($cases as $case) {
 
 
 $arr = [];
-$arr[] = & $arr;
+$arr[] = &$arr;
 Assert::type('list', $arr);
 
 Assert::exception(function () {

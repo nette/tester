@@ -63,7 +63,7 @@ class Dumper
 		} elseif (is_array($var)) {
 			$out = '';
 			$counter = 0;
-			foreach ($var as $k => & $v) {
+			foreach ($var as $k => &$v) {
 				$out .= ($out === '' ? '' : ', ');
 				if (strlen($out) > self::$maxLength) {
 					$out .= '...';
@@ -131,7 +131,7 @@ class Dumper
 	/**
 	 * @return string
 	 */
-	private static function _toPhp(&$var, & $list = [], $level = 0, & $line = 1)
+	private static function _toPhp(&$var, &$list = [], $level = 0, &$line = 1)
 	{
 		if (is_float($var)) {
 			$var = str_replace(',', '.', "$var");
@@ -203,7 +203,7 @@ class Dumper
 			$arr = (array) $var;
 			$space = str_repeat("\t", $level);
 			$class = get_class($var);
-			$used = & $list[spl_object_hash($var)];
+			$used = &$list[spl_object_hash($var)];
 
 			if (empty($arr)) {
 				$out = '';

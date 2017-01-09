@@ -79,7 +79,7 @@ foreach ($notEquals as $case) {
 
 Assert::exception(function () {
 	$rec = [];
-	$rec[] = & $rec;
+	$rec[] = &$rec;
 	Assert::equal($rec, $rec);
 }, 'Exception', 'Nesting level too deep or recursive dependency.');
 

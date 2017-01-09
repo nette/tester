@@ -7,7 +7,7 @@ require __DIR__ . '/../bootstrap.php';
 
 
 $arr = [1, 2, 3];
-$arr[] = & $arr;
+$arr[] = &$arr;
 Assert::match('[
 	1,
 	2,
@@ -17,7 +17,7 @@ Assert::match('[
 
 
 $obj = (object) ['x' => 1, 'y' => 2];
-$obj->z = & $obj;
+$obj->z = &$obj;
 Assert::match("(object) /* #%a% */ [
 	'x' => 1,
 	'y' => 2,
