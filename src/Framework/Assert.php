@@ -298,7 +298,7 @@ class Assert
 			self::fail("$class was expected, but none was thrown");
 
 		} elseif (!$e instanceof $class) {
-			self::fail("$class was expected but got " . get_class($e) . ($e->getMessage() ? " ({$e->getMessage()})" : ''));
+			self::fail("$class was expected but got " . get_class($e) . ($e->getMessage() ? " ({$e->getMessage()})" : ''), NULL, NULL, $e);
 
 		} elseif ($message && !self::isMatching($message, $e->getMessage())) {
 			self::fail("$class with a message matching %2 was expected but got %1", $e->getMessage(), $message);
@@ -452,9 +452,9 @@ class Assert
 	 * Failed assertion
 	 * @return void
 	 */
-	public static function fail($message, $actual = NULL, $expected = NULL)
+	public static function fail($message, $actual = NULL, $expected = NULL, $previous = NULL)
 	{
-		$e = new AssertException($message, $expected, $actual);
+		$e = new AssertException($message, $expected, $actual, $previous);
 		if (self::$onFailure) {
 			call_user_func(self::$onFailure, $e);
 		} else {
