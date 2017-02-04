@@ -65,7 +65,8 @@ class PhpParser
 		);
 
 		$T_TRAIT = PHP_VERSION_ID < 50400 ? -1 : T_TRAIT;
-		while (list(, $token) = each($tokens)) {
+		while ($token = current($tokens)) {
+			next($tokens);
 			if (is_array($token)) {
 				if (PHP_VERSION_ID < 50400 && $token[0] === T_STRING && strcasecmp($token[1], 'trait') === 0) {
 					$token[0] = $T_TRAIT;
