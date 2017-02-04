@@ -64,7 +64,8 @@ class PhpParser
 			'interfaces' => [],
 		];
 
-		while (list(, $token) = each($tokens)) {
+		while ($token = current($tokens)) {
+			next($tokens);
 			if (is_array($token)) {
 				$line = $token[2];
 			}
