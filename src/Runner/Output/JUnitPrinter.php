@@ -35,20 +35,22 @@ class JUnitPrinter implements Tester\Runner\OutputHandler
 	}
 
 
-	public function begin()
+	public function begin(array $testInstances)
 	{
 		$this->startTime = microtime(TRUE);
 		fwrite($this->file, "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<testsuites>\n");
 	}
 
 
-	public function result($testName, $result, $message)
+	public function result(Tester\Runner\TestInstance $testInstance)
 	{
-		$this->buffer .= "\t\t<testcase classname=\"" . htmlspecialchars($testName) . '" name="' . htmlspecialchars($testName) . '"';
+		$testName = $testInstance->getTestName();
+		$instanceName = $testInstance->getInstanceName() ? $testInstance->getInstanceName() : $testName;
+		$this->buffer .= "\t\t<testcase classname=\"" . htmlspecialchars($testName) . '" name="' . htmlspecialchars($instanceName) . '"';
 
-		switch ($result) {
+		switch ($testInstance->getResult()) {
 			case Runner::FAILED:
-				$this->buffer .= ">\n\t\t\t<failure message=\"" . htmlspecialchars($message) . "\"/>\n\t\t</testcase>\n";
+				$this->buffer .= ">\n\t\t\t<failure message=\"" . htmlspecialchars($testInstance->getMessage()) . "\"/>\n\t\t</testcase>\n";
 				break;
 			case Runner::SKIPPED:
 				$this->buffer .= ">\n\t\t\t<skipped/>\n\t\t</testcase>\n";

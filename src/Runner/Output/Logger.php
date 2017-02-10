@@ -30,7 +30,7 @@ class Logger implements Tester\Runner\OutputHandler
 	}
 
 
-	public function begin()
+	public function begin(array $testInstances)
 	{
 		fwrite($this->file, 'PHP ' . $this->runner->getInterpreter()->getVersion()
 			. ' | ' . $this->runner->getInterpreter()->getCommandLine()
@@ -38,15 +38,17 @@ class Logger implements Tester\Runner\OutputHandler
 	}
 
 
-	public function result($testName, $result, $message)
+	public function result(Tester\Runner\TestInstance $testInstance)
 	{
-		$message = '   ' . str_replace("\n", "\n   ", Tester\Dumper::removeColors(trim($message)));
+		$message = '   ' . str_replace("\n", "\n   ", Tester\Dumper::removeColors(trim($testInstance->getMessage())));
+		$testName = trim($testInstance->getTestName() . ' ' . $testInstance->getInstanceName());
+
 		$outputs = [
 			Runner::PASSED => "-- OK: $testName",
 			Runner::SKIPPED => "-- Skipped: $testName\n$message",
 			Runner::FAILED => "-- FAILED: $testName\n$message",
 		];
-		fwrite($this->file, $outputs[$result] . "\n\n");
+		fwrite($this->file, $outputs[$testInstance->getResult()] . "\n\n");
 	}
 
 

@@ -16,9 +16,9 @@ use Tester;
 interface OutputHandler
 {
 
-	function begin();
+	function begin(array $testInstances);
 
-	function result($testName, $result, $message);
+	function result(TestInstance $testInstance);
 
 	function end();
 

@@ -43,8 +43,8 @@ class Runner
 	/** @var array */
 	private $envVars = [];
 
-	/** @var Job[] */
-	private $jobs;
+	/** @var TestInstance[] */
+	private $testInstances;
 
 	/** @var int */
 	private $jobCount;
@@ -91,40 +91,48 @@ class Runner
 	{
 		$this->interrupted = FALSE;
 
-		foreach ($this->outputHandlers as $handler) {
-			$handler->begin();
-		}
-
 		$this->results = [self::PASSED => 0, self::SKIPPED => 0, self::FAILED => 0];
-		$this->jobs = $running = [];
+		$this->testInstances = $running = [];
 		foreach ($this->paths as $path) {
 			$this->findTests($path);
 		}
-		$this->jobCount = count($this->jobs) + array_sum($this->results);
+
+		$this->jobCount = count($this->testInstances);
+
+		foreach ($this->outputHandlers as $handler) {
+			$handler->begin($this->testInstances);
+		}
 
 		$threads = range(1, $this->threadCount);
 
 		$this->installInterruptHandler();
-		while (($this->jobs || $running) && !$this->isInterrupted()) {
-			while ($threads && $this->jobs) {
-				$running[] = $job = array_shift($this->jobs);
-				$async = $this->threadCount > 1 && (count($running) + count($this->jobs) > 1);
-				$job->setEnvironmentVariable(Environment::THREAD, array_shift($threads));
-				$job->run($async ? $job::RUN_ASYNC : NULL);
+		while (($this->testInstances || $running) && !$this->isInterrupted()) {
+			while ($threads && $this->testInstances) {
+				$instance = array_shift($this->testInstances);
+				if ($job = $instance->getJob()) {
+					$running[] = $instance;
+					$async = $this->threadCount > 1 && (count($running) + count($this->testInstances) > 1);
+					$job->setEnvironmentVariable(Environment::THREAD, array_shift($threads));
+					$job->run($async ? $job::RUN_ASYNC : NULL);
+
+				} else {
+					$this->writeResult($instance);
+				}
 			}
 
 			if (count($running) > 1) {
 				usleep(Job::RUN_USLEEP); // stream_select() doesn't work with proc_open()
 			}
 
-			foreach ($running as $key => $job) {
+			foreach ($running as $key => $instance) {
 				if ($this->isInterrupted()) {
 					break 2;
 				}
 
+				$job = $instance->getJob();
 				if (!$job->isRunning()) {
 					$threads[] = $job->getEnvironmentVariable(Environment::THREAD);
-					$this->testHandler->assess($job);
+					$this->testHandler->assess($instance);
 					unset($running[$key]);
 				}
 			}
@@ -162,12 +170,12 @@ class Runner
 
 
 	/**
-	 * Appends new job to queue.
+	 * Appends new test instance to queue.
 	 * @return void
 	 */
-	public function addJob(Job $job)
+	public function addTestInstance(TestInstance $testInstance)
 	{
-		$this->jobs[] = $job;
+		$this->testInstances[] = $testInstance;
 	}
 
 
@@ -185,14 +193,14 @@ class Runner
 	 * Writes to output handlers.
 	 * @return void
 	 */
-	public function writeResult($testName, $result, $message = NULL)
+	public function writeResult(TestInstance $testInstance)
 	{
-		$this->results[$result]++;
+		$this->results[$testInstance->getResult()]++;
 		foreach ($this->outputHandlers as $handler) {
-			$handler->result($testName, $result, $message);
+			$handler->result($testInstance);
 		}
 
-		if ($this->stopOnFail && $result === self::FAILED) {
+		if ($this->stopOnFail && $testInstance->getResult() === self::FAILED) {
 			$this->interrupted = TRUE;
 		}
 	}

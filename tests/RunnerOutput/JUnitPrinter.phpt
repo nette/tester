@@ -7,6 +7,7 @@ use Tester\Runner\Output\JUnitPrinter;
 
 require __DIR__ . '/../bootstrap.php';
 require __DIR__ . '/../../src/Runner/TestHandler.php';
+require __DIR__ . '/../../src/Runner/TestInstance.php';
 require __DIR__ . '/../../src/Runner/Runner.php';
 require __DIR__ . '/../../src/Runner/OutputHandler.php';
 require __DIR__ . '/../../src/Runner/Output/JUnitPrinter.php';

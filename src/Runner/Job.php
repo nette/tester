@@ -62,6 +62,9 @@ class Job
 	/** @var int */
 	private $exitCode = self::CODE_NONE;
 
+	/** @var float */
+	private $time;
+
 
 	/**
 	 * @param  string  test file name
@@ -104,13 +107,15 @@ class Job
 	 */
 	public function run($flags = NULL)
 	{
+		$this->time = microtime(TRUE);
+
 		foreach ($this->envVars as $name => $value) {
 			putenv("$name=$value");
 		}
 
 		$this->proc = proc_open(
 			$this->interpreter->getCommandLine()
-			. ' -d register_argc_argv=on ' . Helpers::escapeArg($this->file) . ' ' . implode(' ', $this->args),
+			. ' -d register_argc_argv=on ' . Helpers::escapeArg($this->file) . ' ' . $this->buildArgumentsList(),
 			[
 				['pipe', 'r'],
 				['pipe', 'w'],
@@ -172,6 +177,7 @@ class Job
 		}
 		$code = proc_close($this->proc);
 		$this->exitCode = $code === self::CODE_NONE ? $status['exitcode'] : $code;
+		$this->time = microtime(TRUE) - $this->time;
 
 		if ($this->interpreter->isCgi() && count($tmp = explode("\r\n\r\n", $this->output, 2)) >= 2) {
 			list($headers, $this->output) = $tmp;
@@ -243,6 +249,36 @@ class Job
 	public function getHeaders()
 	{
 		return $this->headers;
+	}
+
+
+	/**
+	 * Returns how long the job run.
+	 * @return float
+	 */
+	public function getTime()
+	{
+		return $this->time;
+	}
+
+
+	/**
+	 * @return string
+	 */
+	private function buildArgumentsList()
+	{
+		$args = [];
+
+		foreach ($this->args as $key => $arg) {
+			if (is_numeric($key)) {
+				$args[] = Helpers::escapeArg($arg);
+
+			} else {
+				$args[] = Helpers::escapeArg("--$key=$arg");
+			}
+		}
+
+		return implode(' ', $args);
 	}
 
 }

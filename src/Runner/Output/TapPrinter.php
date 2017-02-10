@@ -30,21 +30,23 @@ class TapPrinter implements Tester\Runner\OutputHandler
 	}
 
 
-	public function begin()
+	public function begin(array $testInstances)
 	{
 		fwrite($this->file, "TAP version 13\n");
 	}
 
 
-	public function result($testName, $result, $message)
+	public function result(Tester\Runner\TestInstance $testInstance)
 	{
-		$message = str_replace("\n", "\n# ", trim($message));
+		$message = str_replace("\n", "\n# ", trim($testInstance->getMessage()));
+		$testName = trim($testInstance->getTestName() . ' ' . $testInstance->getInstanceName());
+
 		$outputs = [
 			Runner::PASSED => "ok $testName",
 			Runner::SKIPPED => "ok $testName #skip $message",
 			Runner::FAILED => "not ok $testName\n# $message",
 		];
-		fwrite($this->file, $outputs[$result] . "\n");
+		fwrite($this->file, $outputs[$testInstance->getResult()] . "\n");
 	}
 
 
