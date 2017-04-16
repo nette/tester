@@ -1,6 +1,7 @@
 <?php
 
 use Tester\Assert;
+use Tester\Helpers;
 
 require __DIR__ . '/../bootstrap.php';
 require __DIR__ . '/../../src/Runner/TestHandler.php';
@@ -24,7 +25,7 @@ if (defined('HHVM_VERSION') && version_compare(HHVM_VERSION, '3.4.0-dev', '<')) 
 	});
 
 } else {
-	$jobs = Assert::with($runner, function () {
+	$jobs = Helpers::with($runner, function () {
 		$this->findTests(__DIR__ . '/find-tests/*.phptx');
 		$this->findTests(__DIR__ . '/find-tests');
 		return $this->jobs;
