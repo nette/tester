@@ -44,6 +44,12 @@ class Environment
 	 */
 	public static function setup()
 	{
+		static $alreadySetUp = FALSE;
+		if ($alreadySetUp) {
+			return;
+		}
+		$alreadySetUp = TRUE;
+
 		self::setupErrors();
 		self::setupColors();
 		self::$obLevel = ob_get_level();
