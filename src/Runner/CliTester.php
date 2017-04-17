@@ -54,6 +54,11 @@ class CliTester
 			return;
 		}
 
+		if (isset($this->options['--bootstrap'])) {
+			$exportedPath = var_export($this->options['--bootstrap'], TRUE);
+			$this->interpreter->addPhpIniOption('auto_prepend_file', $exportedPath);
+		}
+
 		if ($this->options['--coverage']) {
 			$coverageFile = $this->prepareCodeCoverage();
 		}
@@ -112,7 +117,8 @@ Options:
     -o <console|tap|junit|none>  Specify output format.
     -w | --watch <path>          Watch directory.
     -i | --info                  Show tests environment info and exit.
-    --setup <path>               Script for runner setup.
+    --setup <path>               Script for test runner setup. (configure Tester)
+    --bootstrap <path>           Script executed before each test (configure test environment)
     --colors [1|0]               Enable or disable colors.
     --coverage <path>            Generate code coverage report to file.
     --coverage-src <path>        Path to source code.
@@ -123,6 +129,7 @@ XX
 			'-c' => [CommandLine::REALPATH => TRUE],
 			'--watch' => [CommandLine::REPEATABLE => TRUE, CommandLine::REALPATH => TRUE],
 			'--setup' => [CommandLine::REALPATH => TRUE],
+			'--bootstrap' => [CommandLine::REALPATH => TRUE],
 			'paths' => [CommandLine::REPEATABLE => TRUE, CommandLine::VALUE => getcwd()],
 			'--debug' => [],
 			'--coverage-src' => [CommandLine::REALPATH => TRUE],
