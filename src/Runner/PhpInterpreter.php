@@ -64,7 +64,7 @@ class PhpInterpreter
 		$output = stream_get_contents($pipes[1]);
 		$this->error = trim(stream_get_contents($pipes[2]));
 		if (proc_close($proc)) {
-			throw new \Exception("Unable to run $path: " . preg_replace('#[\r\n ]+#', ' ', $this->error));
+			throw new \Exception("Unable to run $path: " . preg_replace('#[\r\n ]+#', ' ', $this->error . $output));
 		}
 
 		$parts = explode("\r\n\r\n", $output, 2);
