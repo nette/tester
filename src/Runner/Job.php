@@ -32,20 +32,11 @@ class Job
 	/** @var Test */
 	private $test;
 
-	/** @var string[]  environment variables for test */
-	private $envVars;
-
-	/** @var string  test output */
-	private $output;
-
-	/** @var string|NULL  test error output */
-	private $errorOutput;
-
-	/** @var string[]  output headers */
-	private $headers;
-
 	/** @var PhpInterpreter */
 	private $interpreter;
+
+	/** @var string[]  environment variables for test */
+	private $envVars;
 
 	/** @var resource */
 	private $proc;
@@ -59,12 +50,18 @@ class Job
 	/** @var int */
 	private $exitCode = self::CODE_NONE;
 
+	/** @var string[]  output headers */
+	private $headers;
+
 
 	public function __construct(Test $test, PhpInterpreter $interpreter, array $envVars = NULL)
 	{
 		if ($test->getResult() !== Test::PREPARED) {
 			throw new \LogicException("Test {$test->getName()} already has result {$test->getResult()}.");
 		}
+
+		$test->stdout = '';
+		$test->stderr = '';
 
 		$this->test = $test;
 		$this->interpreter = $interpreter;
@@ -95,7 +92,7 @@ class Job
 
 	/**
 	 * Runs single test.
-	 * @param  int RUN_ASYNC | RUN_COLLECT_ERRORS
+	 * @param  int self::RUN_ASYNC | self::RUN_COLLECT_ERRORS
 	 * @return void
 	 */
 	public function run($flags = NULL)
@@ -161,9 +158,9 @@ class Job
 		if (!is_resource($this->stdout)) {
 			return FALSE;
 		}
-		$this->output .= stream_get_contents($this->stdout);
+		$this->test->stdout .= stream_get_contents($this->stdout);
 		if ($this->stderr) {
-			$this->errorOutput .= stream_get_contents($this->stderr);
+			$this->test->stderr .= stream_get_contents($this->stderr);
 		}
 
 		$status = proc_get_status($this->proc);
@@ -178,18 +175,15 @@ class Job
 		$code = proc_close($this->proc);
 		$this->exitCode = $code === self::CODE_NONE ? $status['exitcode'] : $code;
 
-		if ($this->interpreter->isCgi() && count($tmp = explode("\r\n\r\n", $this->output, 2)) >= 2) {
-			list($headers, $this->output) = $tmp;
+		if ($this->interpreter->isCgi() && count($tmp = explode("\r\n\r\n", $this->test->stdout, 2)) >= 2) {
+			list($headers, $this->test->stdout) = $tmp;
 			foreach (explode("\r\n", $headers) as $header) {
-				$a = strpos($header, ':');
-				if ($a !== FALSE) {
-					$this->headers[trim(substr($header, 0, $a))] = (string) trim(substr($header, $a + 1));
+				$pos = strpos($header, ':');
+				if ($pos !== FALSE) {
+					$this->headers[trim(substr($header, 0, $pos))] = (string) trim(substr($header, $pos + 1));
 				}
 			}
 		}
-
-		$this->test->stdout = $this->output;
-		$this->test->stderr = $this->errorOutput;
 		return FALSE;
 	}
 
