@@ -11,7 +11,10 @@ class C
 	public static function pubS() {}
 	protected static function proS() {}
 	private static function priS() {}
+}
 
+abstract class A
+{
 	abstract function abs();
 	abstract static function absS();
 }

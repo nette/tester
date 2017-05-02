@@ -20,3 +20,5 @@ Assert::equal([
 	'proS' => (object) ['start' => 12, 'end' => 12, 'visibility' => 'protected'],
 	'priS' => (object) ['start' => 13, 'end' => 13, 'visibility' => 'private'],
 ], $parser->parse(file_get_contents(__DIR__ . '/parse/methods.php'))->classes['C']->methods);
+
+Assert::equal([], $parser->parse(file_get_contents(__DIR__ . '/parse/methods.php'))->classes['A']->methods);
