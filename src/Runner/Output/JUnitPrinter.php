@@ -9,6 +9,7 @@ namespace Tester\Runner\Output;
 
 use Tester;
 use Tester\Runner\Runner;
+use Tester\Runner\Test;
 
 
 /**
@@ -47,13 +48,13 @@ class JUnitPrinter implements Tester\Runner\OutputHandler
 		$this->buffer .= "\t\t<testcase classname=\"" . htmlspecialchars($testName) . '" name="' . htmlspecialchars($testName) . '"';
 
 		switch ($result) {
-			case Runner::FAILED:
+			case Test::FAILED:
 				$this->buffer .= ">\n\t\t\t<failure message=\"" . htmlspecialchars($message) . "\"/>\n\t\t</testcase>\n";
 				break;
-			case Runner::SKIPPED:
+			case Test::SKIPPED:
 				$this->buffer .= ">\n\t\t\t<skipped/>\n\t\t</testcase>\n";
 				break;
-			case Runner::PASSED:
+			case Test::PASSED:
 				$this->buffer .= "/>\n";
 				break;
 		}

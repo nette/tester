@@ -9,6 +9,7 @@ namespace Tester\Runner\Output;
 
 use Tester;
 use Tester\Runner\Runner;
+use Tester\Runner\Test;
 
 
 /**
@@ -40,9 +41,9 @@ class TapPrinter implements Tester\Runner\OutputHandler
 	{
 		$message = str_replace("\n", "\n# ", trim($message));
 		$outputs = [
-			Runner::PASSED => "ok $testName",
-			Runner::SKIPPED => "ok $testName #skip $message",
-			Runner::FAILED => "not ok $testName\n# $message",
+			Test::PASSED => "ok $testName",
+			Test::SKIPPED => "ok $testName #skip $message",
+			Test::FAILED => "not ok $testName\n# $message",
 		];
 		fwrite($this->file, $outputs[$result] . "\n");
 	}

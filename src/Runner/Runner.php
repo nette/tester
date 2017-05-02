@@ -15,11 +15,6 @@ use Tester\Environment;
  */
 class Runner
 {
-	const
-		PASSED = 1,
-		SKIPPED = 2,
-		FAILED = 3;
-
 	/** @var string[]  paths to test files/directories */
 	public $paths = [];
 
@@ -93,7 +88,7 @@ class Runner
 			$handler->begin();
 		}
 
-		$this->results = [self::PASSED => 0, self::SKIPPED => 0, self::FAILED => 0];
+		$this->results = [Test::PASSED => 0, Test::SKIPPED => 0, Test::FAILED => 0];
 		$this->jobs = $running = [];
 		foreach ($this->paths as $path) {
 			$this->findTests($path);
@@ -132,7 +127,7 @@ class Runner
 		foreach ($this->outputHandlers as $handler) {
 			$handler->end();
 		}
-		return !$this->results[self::FAILED];
+		return !$this->results[Test::FAILED];
 	}
 
 
@@ -187,14 +182,14 @@ class Runner
 	 * Writes to output handlers.
 	 * @return void
 	 */
-	public function writeResult($testName, $result, $message = NULL)
+	public function writeResult(Test $test)
 	{
-		$this->results[$result]++;
+		$this->results[$test->getResult()]++;
 		foreach ($this->outputHandlers as $handler) {
-			$handler->result($testName, $result, $message);
+			$handler->result($test->getName(30), $test->getResult(), $test->message);
 		}
 
-		if ($this->stopOnFail && $result === self::FAILED) {
+		if ($this->stopOnFail && $test->getResult() === Test::FAILED) {
 			$this->interrupted = TRUE;
 		}
 	}

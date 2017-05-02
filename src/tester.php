@@ -5,6 +5,7 @@
  * Copyright (c) 2009 David Grudl (https://davidgrudl.com)
  */
 
+require __DIR__ . '/Runner/Test.php';
 require __DIR__ . '/Runner/PhpInterpreter.php';
 require __DIR__ . '/Runner/Runner.php';
 require __DIR__ . '/Runner/CliTester.php';

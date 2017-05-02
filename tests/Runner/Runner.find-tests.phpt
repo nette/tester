@@ -3,6 +3,7 @@
 use Tester\Assert;
 
 require __DIR__ . '/../bootstrap.php';
+require __DIR__ . '/../../src/Runner/Test.php';
 require __DIR__ . '/../../src/Runner/TestHandler.php';
 require __DIR__ . '/../../src/Runner/Runner.php';
 

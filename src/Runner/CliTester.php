@@ -48,9 +48,9 @@ class CliTester
 		$this->createPhpInterpreter();
 
 		if ($this->options['--info']) {
-			$job = new Job(__DIR__ . '/info.php', $this->interpreter);
+			$job = new Job(new Test(__DIR__ . '/info.php'), $this->interpreter);
 			$job->run();
-			echo $job->getOutput();
+			echo $job->getTest()->stdout;
 			return;
 		}
 

@@ -29,11 +29,8 @@ class Job
 		RUN_ASYNC = 1,
 		RUN_COLLECT_ERRORS = 2;
 
-	/** @var string  test file */
-	private $file;
-
-	/** @var string[]  test arguments */
-	private $args;
+	/** @var Test */
+	private $test;
 
 	/** @var string[]  environment variables for test */
 	private $envVars;
@@ -63,15 +60,14 @@ class Job
 	private $exitCode = self::CODE_NONE;
 
 
-	/**
-	 * @param  string  test file name
-	 * @return void
-	 */
-	public function __construct($testFile, PhpInterpreter $interpreter, array $args = NULL, array $envVars = NULL)
+	public function __construct(Test $test, PhpInterpreter $interpreter, array $envVars = NULL)
 	{
-		$this->file = (string) $testFile;
+		if ($test->getResult() !== Test::PREPARED) {
+			throw new \LogicException("Test {$test->getName()} already has result {$test->getResult()}.");
+		}
+
+		$this->test = $test;
 		$this->interpreter = $interpreter;
-		$this->args = (array) $args;
 		$this->envVars = (array) $envVars;
 	}
 
@@ -108,16 +104,25 @@ class Job
 			putenv("$name=$value");
 		}
 
+		$args = [];
+		foreach ($this->test->getArguments() as $value) {
+			if (is_array($value)) {
+				$args[] = Helpers::escapeArg("--$value[0]=$value[1]");
+			} else {
+				$args[] = Helpers::escapeArg($value);
+			}
+		}
+
 		$this->proc = proc_open(
 			$this->interpreter->getCommandLine()
-			. ' -d register_argc_argv=on ' . Helpers::escapeArg($this->file) . ' ' . implode(' ', $this->args),
+			. ' -d register_argc_argv=on ' . Helpers::escapeArg($this->test->getFile()) . ' ' . implode(' ', $args),
 			[
 				['pipe', 'r'],
 				['pipe', 'w'],
 				['pipe', 'w'],
 			],
 			$pipes,
-			dirname($this->file),
+			dirname($this->test->getFile()),
 			NULL,
 			['bypass_shell' => TRUE]
 		);
@@ -182,27 +187,19 @@ class Job
 				}
 			}
 		}
+
+		$this->test->stdout = $this->output;
+		$this->test->stderr = $this->errorOutput;
 		return FALSE;
 	}
 
 
 	/**
-	 * Returns test file path.
-	 * @return string
+	 * @return Test
 	 */
-	public function getFile()
+	public function getTest()
 	{
-		return $this->file;
-	}
-
-
-	/**
-	 * Returns script arguments.
-	 * @return string[]
-	 */
-	public function getArguments()
-	{
-		return $this->args;
+		return $this->test;
 	}
 
 
@@ -213,26 +210,6 @@ class Job
 	public function getExitCode()
 	{
 		return $this->exitCode;
-	}
-
-
-	/**
-	 * Returns test output.
-	 * @return string
-	 */
-	public function getOutput()
-	{
-		return $this->output;
-	}
-
-
-	/**
-	 * Returns test error output.
-	 * @return string|NULL
-	 */
-	public function getErrorOutput()
-	{
-		return $this->errorOutput;
 	}
 
 

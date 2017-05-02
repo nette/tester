@@ -9,6 +9,7 @@ namespace Tester\Runner\Output;
 
 use Tester;
 use Tester\Runner\Runner;
+use Tester\Runner\Test;
 
 
 /**
@@ -42,9 +43,9 @@ class Logger implements Tester\Runner\OutputHandler
 	{
 		$message = '   ' . str_replace("\n", "\n   ", Tester\Dumper::removeColors(trim($message)));
 		$outputs = [
-			Runner::PASSED => "-- OK: $testName",
-			Runner::SKIPPED => "-- Skipped: $testName\n$message",
-			Runner::FAILED => "-- FAILED: $testName\n$message",
+			Test::PASSED => "-- OK: $testName",
+			Test::SKIPPED => "-- Skipped: $testName\n$message",
+			Test::FAILED => "-- FAILED: $testName\n$message",
 		];
 		fwrite($this->file, $outputs[$result] . "\n\n");
 	}
@@ -56,10 +57,10 @@ class Logger implements Tester\Runner\OutputHandler
 		$results = $this->runner->getResults();
 		$count = array_sum($results);
 		fwrite($this->file,
-			($results[Runner::FAILED] ? 'FAILURES!' : 'OK')
+			($results[Test::FAILED] ? 'FAILURES!' : 'OK')
 			. " ($jobCount tests"
-			. ($results[Runner::FAILED] ? ", {$results[Runner::FAILED]} failures" : '')
-			. ($results[Runner::SKIPPED] ? ", {$results[Runner::SKIPPED]} skipped" : '')
+			. ($results[Test::FAILED] ? ", {$results[Test::FAILED]} failures" : '')
+			. ($results[Test::SKIPPED] ? ", {$results[Test::SKIPPED]} skipped" : '')
 			. ($jobCount !== $count ? ', ' . ($jobCount - $count) . ' not run' : '')
 			. ')'
 		);
