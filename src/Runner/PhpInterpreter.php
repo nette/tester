@@ -42,6 +42,7 @@ class PhpInterpreter
 		if ($proc === FALSE) {
 			throw new \Exception("Cannot run PHP interpreter $path. Use -p option.");
 		}
+		fclose($pipes[0]);
 		$output = stream_get_contents($pipes[1]);
 		proc_close($proc);
 
