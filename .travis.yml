@@ -28,7 +28,7 @@ matrix:
 script:
     - src/tester -p $TESTER_PHP_BIN tests -s $COVERAGE_ARGS
     - src/tester -p $TESTER_PHP_BIN -o none tests/fail.phptx; if [ $? -eq 0 ]; then echo "tests/fail.phptx SHOULD FAIL"; exit 1; else echo "fail checked"; fi;
-    - php code-checker/src/code-checker.php
+    - php code-checker/src/code-checker.php --no-progress --short-arrays
 
 after_failure:
     # Print *.actual content
