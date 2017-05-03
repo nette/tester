@@ -1,0 +1,24 @@
+<?php
+
+/**
+ * @testCase
+ */
+
+require __DIR__ . '/../../bootstrap.php';
+
+Tester\Environment::$checkAssertions = FALSE;
+Tester\Environment::$useColors = FALSE;
+
+
+class MySkipTest extends Tester\TestCase
+{
+	/**
+	 * @skip
+	 * @skipOthers
+	 */
+	public function testSkip()
+	{
+	}
+}
+
+(new MySkipTest)->run();

@@ -156,15 +156,23 @@ class TestHandler
 			return $test->withResult($job->getExitCode() === Job::CODE_SKIP ? Test::SKIPPED : Test::FAILED, $job->getTest()->stdout);
 		}
 
-		if (!preg_match('#\[([^[]*)]#', strrchr($job->getTest()->stdout, '['), $m)) {
+		if (!preg_match('#(.+)\|(\d+)]#', $job->getTest()->stdout, $m) || ($methods = unserialize(substr($m[1], -$m[2]))) === FALSE) {
 			return $test->withResult(Test::FAILED, "Cannot list TestCase methods in file '{$test->getFile()}'. Do you call TestCase::run() in it?");
-		} elseif (!strlen($m[1])) {
+		}
+
+		if (count($methods) === 0) {
 			return $test->withResult(Test::SKIPPED, "TestCase in file '{$test->getFile()}' does not contain test methods.");
 		}
 
-		return array_map(function ($method) use ($test) {
-			return $test->withArguments(['method' => $method]);
-		}, explode(',', $m[1]));
+		return array_map(function ($state, $method) use ($test) {
+			$test = $test->withArguments(['method' => $method]);
+			if ($state[0] === TestCase::METHOD_RUN) {
+				return $test;
+			} elseif ($state[0] === TestCase::METHOD_SKIP) {
+				return $test->withResult(Test::SKIPPED, $state[1]);
+			}
+			return $test->withResult(Test::FAILED, "Undefined state '$state[0]' for method '$method'."); # TODO: Exception?
+		}, $methods, array_keys($methods));
 	}
 
 

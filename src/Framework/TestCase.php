@@ -15,7 +15,9 @@ class TestCase
 {
 	/** @internal */
 	const LIST_METHODS = 'nette-tester-list-methods',
-		METHOD_PATTERN = '#^test[A-Z0-9_]#';
+		METHOD_PATTERN = '#^test[A-Z0-9_]#',
+		METHOD_RUN = 'RUN',
+		METHOD_SKIP = 'SKIP';
 
 
 	/** @var bool */
@@ -35,23 +37,54 @@ class TestCase
 			throw new \LogicException('Calling TestCase::run($method) is deprecated. Use TestCase::runTest($method) instead.');
 		}
 
-		$methods = array_values(preg_grep(self::METHOD_PATTERN, array_map(function (\ReflectionMethod $rm) {
-			return $rm->getName();
-		}, (new \ReflectionObject($this))->getMethods())));
+		/** @var \ReflectionMethod[] $methods */
+		$methods = array_filter((new \ReflectionObject($this))->getMethods(), function (\ReflectionMethod $rm) {
+			return preg_match(self::METHOD_PATTERN, $rm->getName());
+		});
 
 		if (isset($_SERVER['argv']) && ($tmp = preg_filter('#--method=([\w-]+)$#Ai', '$1', $_SERVER['argv']))) {
 			$method = reset($tmp);
 			if ($method === self::LIST_METHODS) {
 				Environment::$checkAssertions = FALSE;
+
+				$output = $skipOthers = [];
+				foreach ($methods as $rm) {
+					$info = Helpers::parseDocComment($rm->getDocComment());
+					if (isset($info['skipothers'])) {
+						if (isset($info['skip'])) {
+							throw new TestCaseException("Cannot use @skipOthers simultaneously with @skip on '{$rm->getName()}' method.");
+						}
+						$skipOthers[] = $rm->getName();
+					}
+
+					if (isset($info['skip'])) {
+						$output[$rm->getName()] = [self::METHOD_SKIP, $info['skip']];
+					} else {
+						$output[$rm->getName()] = [self::METHOD_RUN];
+					}
+				}
+
+				if ($count = count($skipOthers)) {
+					if ($count > 1) {
+						throw new TestCaseException("The @skipOthers can be used only once, but found on '" . implode("', '", $skipOthers) . "' methods.");
+					}
+					foreach ($output as $method => &$state) {
+						if ($state[0] === self::METHOD_RUN && $method !== $skipOthers[0]) {
+							$state = [self::METHOD_SKIP, "Skipped due to @skipOthers on '$skipOthers[0]' method."];
+						}
+					}
+				}
+
 				header('Content-Type: text/plain');
-				echo '[' . implode(',', $methods) . ']';
+				$output = serialize($output);
+				echo '[' . $output . '|' . strlen($output) . ']';
 				return;
 			}
 			$this->runTest($method);
 
 		} else {
 			foreach ($methods as $method) {
-				$this->runTest($method);
+				$this->runTest($method->getName());
 			}
 		}
 	}
