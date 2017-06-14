@@ -20,6 +20,7 @@ $info = (object) [
 		(function_exists('php_ini_scanned_files') && strlen($tmp = php_ini_scanned_files())) ? explode(",\n", trim($tmp)) : []
 	),
 	'extensions' => $extensions,
+	'tempDir' => sys_get_temp_dir(),
 	'canMeasureCodeCoverage' => $isPhpDbg || (!$isHhvm && in_array('xdebug', $extensions, TRUE)),
 ];
 
@@ -33,9 +34,8 @@ foreach ([
 	'PHP version' . ($isPhpDbg ? '; PHPDBG version' : '') . ($isHhvm ? '; HHVM version' : '')
 		=> "$info->version ($info->sapi)" . ($isPhpDbg ? "; $info->phpDbgVersion" : '') . ($isHhvm ? "; $info->hhvmVersion" : ''),
 	'Loaded php.ini files' => count($info->iniFiles) ? implode(', ', $info->iniFiles) : ($isHhvm ? '(unable to detect under HHVM)' : '(none)'),
+	'PHP temporary directory' => $info->tempDir == '' ? '(empty)' : $info->tempDir,
 	'Loaded extensions' => count($info->extensions) ? implode(', ', $info->extensions) : '(none)',
 ] as $title => $value) {
 	echo "\033[1;32m$title\033[0m:\n$value\n\n";
 }
-
-echo "\n";

@@ -113,6 +113,7 @@ Options:
     -w | --watch <path>          Watch directory.
     -i | --info                  Show tests environment info and exit.
     --setup <path>               Script for runner setup.
+    --temp <path>                Path to temporary directory. Default by sys_get_temp_dir().
     --colors [1|0]               Enable or disable colors.
     --coverage <path>            Generate code coverage report to file.
     --coverage-src <path>        Path to source code.
@@ -123,6 +124,7 @@ XX
 			'-c' => [CommandLine::REALPATH => TRUE],
 			'--watch' => [CommandLine::REPEATABLE => TRUE, CommandLine::REALPATH => TRUE],
 			'--setup' => [CommandLine::REALPATH => TRUE],
+			'--temp' => [CommandLine::REALPATH => TRUE],
 			'paths' => [CommandLine::REPEATABLE => TRUE, CommandLine::VALUE => getcwd()],
 			'--debug' => [],
 			'--coverage-src' => [CommandLine::REALPATH => TRUE],
@@ -144,6 +146,16 @@ XX
 		}
 
 		$this->options = $cmd->parse();
+		if ($this->options['--temp'] === NULL) {
+			if (($temp = sys_get_temp_dir()) === '') {
+				echo "Note: System temporary directory is not set.\n";
+			} elseif (($real = realpath($temp)) === FALSE) {
+				echo "Note: System temporary directory '$temp' does not exist.\n";
+			} else {
+				$this->options['--temp'] = rtrim($real, DIRECTORY_SEPARATOR);
+			}
+		}
+
 		return $cmd;
 	}
 
