@@ -186,7 +186,7 @@ class Runner
 	{
 		$this->results[$test->getResult()]++;
 		foreach ($this->outputHandlers as $handler) {
-			$handler->result($test->getName(30), $test->getResult(), $test->message);
+			$handler->result($test->getSignature(), $test->getResult(), $test->message);
 		}
 
 		if ($this->stopOnFail && $test->getResult() === Test::FAILED) {

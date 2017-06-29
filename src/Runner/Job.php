@@ -57,7 +57,7 @@ class Job
 	public function __construct(Test $test, PhpInterpreter $interpreter, array $envVars = NULL)
 	{
 		if ($test->getResult() !== Test::PREPARED) {
-			throw new \LogicException("Test {$test->getName()} already has result {$test->getResult()}.");
+			throw new \LogicException("Test '{$test->getSignature()}' already has result '{$test->getResult()}'.");
 		}
 
 		$test->stdout = '';

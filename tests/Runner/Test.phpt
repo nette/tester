@@ -20,7 +20,7 @@ test(function() {
 	Assert::same('', $test->stderr);
 	Assert::same('some/Test.phpt', $test->getFile());
 	Assert::same([], $test->getArguments());
-	Assert::same('Test.phpt', $test->getName());
+	Assert::same('some/Test.phpt', $test->getSignature());
 	Assert::false($test->hasResult());
 	Assert::same(Test::PREPARED, $test->getResult());
 });
@@ -30,7 +30,6 @@ test(function() {
 	$test = new Test(__FILE__, 'My test');
 
 	Assert::same('My test', $test->title);
-	Assert::same('My test', $test->getName());
 });
 
 
@@ -52,11 +51,17 @@ test(function() {
 
 	$test = $test->withArguments(['one', 'two' => 1]);
 	Assert::same('My test', $test->title);
-	Assert::same('My test [one two=1]', $test->getName());
+	Assert::match('%a%%ds%Test.phpt one two=1', $test->getSignature());
 
 	$test = $test->withArguments(['one', 'two' => [1, 2], 'three']);
-	Assert::same('My test [one two=1 one two=1 two=2 three]', $test->getName());
-	Assert::same('My test [one ...]', $test->getName(10));
+	Assert::same([
+		'one',
+		['two', '1'],
+		'one',
+		['two', '1'],
+		['two', '2'],
+		'three',
+	], $test->getArguments());
 
 	Assert::exception(function () use ($test) {
 		$test->withResult(Test::PASSED, '')->withArguments([]);

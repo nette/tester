@@ -71,21 +71,15 @@ class Test
 
 
 	/**
-	 * @param  int
 	 * @return string
 	 */
-	public function getName($maxArgsLen = NULL)
+	public function getSignature()
 	{
-		$name = $this->title ?: basename($this->file);
 		$args = implode(' ', array_map(function ($arg) {
 			return is_array($arg) ? "$arg[0]=$arg[1]" : $arg;
 		}, $this->args));
 
-		if ($args && $maxArgsLen !== NULL && $maxArgsLen < strlen(" [$args]")) {
-			$args = substr($args, 0, max(0, $maxArgsLen - 6)) . '...';
-		}
-
-		return $name . ($args ? " [$args]" : '');
+		return $this->file . ($args ? " $args" : '');
 	}
 
 
