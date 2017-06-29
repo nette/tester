@@ -15,9 +15,10 @@ class Test
 {
 	const
 		PREPARED = 0,
-		PASSED = 1,
-		SKIPPED = 2,
-		FAILED = 3;
+		FAILED = 1,
+		PASSED = 2,
+		SKIPPED = 3;
+
 
 	/** @var string|NULL */
 	public $title;

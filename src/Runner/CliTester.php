@@ -194,6 +194,10 @@ XX
 		$runner->threadCount = max(1, (int) $this->options['-j']);
 		$runner->stopOnFail = $this->options['--stop-on-fail'];
 
+		if ($this->options['--temp'] !== NULL) {
+			$runner->setTempDirectory($this->options['--temp']);
+		}
+
 		if ($this->options['-o'] !== 'none') {
 			switch ($this->options['-o']) {
 				case 'tap':

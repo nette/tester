@@ -42,7 +42,7 @@ test(function() {
 
 	Assert::exception(function () use ($test) {
 		$test->withResult(Test::FAILED, 'Foo');
-	}, 'LogicException', "Result of test is already set to 1 with message 'It is done'.");
+	}, 'LogicException', 'Result of test is already set to ' . Test::PASSED . " with message 'It is done'.");
 });
 
 

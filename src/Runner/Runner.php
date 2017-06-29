@@ -48,6 +48,12 @@ class Runner
 	/** @var bool */
 	private $interrupted;
 
+	/** @var string|NULL */
+	private $tempDir;
+
+	/** @var array */
+	private $lastResults = [];
+
 
 	public function __construct(PhpInterpreter $interpreter)
 	{
@@ -77,6 +83,24 @@ class Runner
 
 
 	/**
+	 * @param  string
+	 */
+	public function setTempDirectory($path)
+	{
+		if (!is_dir($path) || !is_writable($path)) {
+			throw new \RuntimeException("Path '$path' is not a writable directory.");
+		}
+
+		$tempDir = realpath($path) . DIRECTORY_SEPARATOR . 'Tester';
+		if (!is_dir($tempDir) && @mkdir($tempDir) === FALSE && !is_dir($tempDir)) {  // @ - directory may exist
+			throw new \RuntimeException("Cannot create '$tempDir' directory.");
+		}
+
+		$this->tempDir = $tempDir;
+	}
+
+
+	/**
 	 * Runs all tests.
 	 * @return bool
 	 */
@@ -94,6 +118,12 @@ class Runner
 			$this->findTests($path);
 		}
 		$this->jobCount = count($this->jobs) + array_sum($this->results);
+
+		if ($this->tempDir) {
+			usort($this->jobs, function (Job $a, Job $b) {
+				return $this->getLastResult($a->getTest()) - $this->getLastResult($b->getTest());
+			});
+		}
 
 		$threads = range(1, $this->threadCount);
 
@@ -189,6 +219,13 @@ class Runner
 			$handler->result($test->getSignature(), $test->getResult(), $test->message);
 		}
 
+		if ($this->tempDir) {
+			$lastResult = &$this->lastResults[$test->getSignature()];
+			if ($lastResult !== $test->getResult()) {
+				file_put_contents($this->getLastResultFilename($test), $lastResult = $test->getResult());
+			}
+		}
+
 		if ($this->stopOnFail && $test->getResult() === Test::FAILED) {
 			$this->interrupted = TRUE;
 		}
@@ -248,6 +285,39 @@ class Runner
 		}
 
 		return $this->interrupted;
+	}
+
+
+	/**
+	 * @return string
+	 */
+	private function getLastResult(Test $test)
+	{
+		$signature = $test->getSignature();
+		if (isset($this->lastResults[$signature])) {
+			return $this->lastResults[$signature];
+		}
+
+		$file = $this->getLastResultFilename($test);
+		if (is_file($file)) {
+			return $this->lastResults[$signature] = file_get_contents($file);
+		}
+
+		return $this->lastResults[$signature] = Test::PREPARED;
+	}
+
+
+	/**
+	 * @return string
+	 */
+	private function getLastResultFilename(Test $test)
+	{
+		return $this->tempDir
+			. DIRECTORY_SEPARATOR
+			. pathinfo($test->getFile(), PATHINFO_FILENAME)
+			. '.'
+			. substr(md5($test->getSignature()), 0, 5)
+			. '.result';
 	}
 
 }
