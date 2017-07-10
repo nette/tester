@@ -1,8 +1,8 @@
 {
 	"name": "nette/tester",
-	"description": "An easy-to-use PHP unit testing framework.",
+	"description": "Nette Tester: enjoyable unit testing in PHP with code coverage reporter. 🍏🍏🍎🍏",
 	"homepage": "https://tester.nette.org",
-	"keywords": ["testing", "unit", "nette"],
+	"keywords": ["testing", "unit", "nette", "phpunit", "code coverage", "xdebug", "phpdbg", "clover", "assertions"],
 	"license": ["BSD-3-Clause", "GPL-2.0", "GPL-3.0"],
 	"authors": [
 		{
