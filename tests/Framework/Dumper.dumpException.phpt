@@ -8,17 +8,17 @@ require __DIR__ . '/../bootstrap.php';
 
 
 $cases = [
-	'Failed: [TRUE] should contain 1' => function () { Assert::contains(1, [true]); },
+	'Failed: [true] should contain 1' => function () { Assert::contains(1, [true]); },
 	"Failed: [''] should not contain ''" => function () { Assert::notContains('', ['']); },
 	'Failed: 1.0 should be equal to 1' => function () { Assert::equal(1, 1.0); },
 	'Failed: 0.33%d% should not be equal to 0.33%d%' => function () { Assert::notEqual(1 / 3, 1 - 2 / 3); },
-	'Failed: NULL should be FALSE' => function () { Assert::false(null); },
-	'Failed: FALSE should be TRUE' => function () { Assert::true(false); },
-	'Failed: 0 should be NULL' => function () { Assert::null(0); },
-	"Failed: ['b' => FALSE, 'a' => TRUE] should be falsey" => function () { Assert::falsey(['b' => false, 'a' => true]); },
+	'Failed: null should be false' => function () { Assert::false(null); },
+	'Failed: false should be true' => function () { Assert::true(false); },
+	'Failed: 0 should be null' => function () { Assert::null(0); },
+	"Failed: ['b' => false, 'a' => true] should be falsey" => function () { Assert::falsey(['b' => false, 'a' => true]); },
 	'Failed: SimpleXMLElement(#%a%) should be truthy' => function () { Assert::truthy(new SimpleXMLElement('<xml></xml>')); },
 	'Failed: stdClass(#%a%) should be stdClass(#%a%)' => function () { Assert::same(new stdClass, new stdClass); },
-	'Failed: NULL should not be NULL' => function () { Assert::notSame(null, null); },
+	'Failed: null should not be null' => function () { Assert::notSame(null, null); },
 	'Failed: boolean should be instance of x' => function () { Assert::type('x', true); },
 	'Failed: resource should be int' => function () { Assert::type('int', fopen(__FILE__, 'r')); },
 	"Failed: 'Hello\\n\nWorld' should match\n    ... 'Hello'" => function () { Assert::match('%a%', "Hello\nWorld"); },

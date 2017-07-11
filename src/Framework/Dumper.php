@@ -29,10 +29,10 @@ class Dumper
 	public static function toLine(mixed $var): string
 	{
 		if (is_bool($var)) {
-			return $var ? 'TRUE' : 'FALSE';
+			return $var ? 'true' : 'false';
 
 		} elseif ($var === null) {
-			return 'NULL';
+			return 'null';
 
 		} elseif (is_int($var)) {
 			return "$var";

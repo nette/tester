@@ -24,7 +24,7 @@ $cases = [
 	['resource', fopen(__FILE__, 'r')],
 	['scalar', 'x'],
 	['string', 'x'],
-	['list', null, 'NULL should be list'],
+	['list', null, 'null should be list'],
 	['list', []],
 	['list', [1]],
 	['list', [4 => 1], '[4 => 1] should be list'],

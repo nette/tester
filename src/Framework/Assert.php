@@ -172,7 +172,7 @@ class Assert
 	{
 		self::$counter++;
 		if ($actual !== true) {
-			self::fail(self::describe('%1 should be TRUE', $description), $actual);
+			self::fail(self::describe('%1 should be true', $description), $actual);
 		}
 	}
 
@@ -184,7 +184,7 @@ class Assert
 	{
 		self::$counter++;
 		if ($actual !== false) {
-			self::fail(self::describe('%1 should be FALSE', $description), $actual);
+			self::fail(self::describe('%1 should be false', $description), $actual);
 		}
 	}
 
@@ -196,7 +196,7 @@ class Assert
 	{
 		self::$counter++;
 		if ($actual !== null) {
-			self::fail(self::describe('%1 should be NULL', $description), $actual);
+			self::fail(self::describe('%1 should be null', $description), $actual);
 		}
 	}
 
@@ -208,7 +208,7 @@ class Assert
 	{
 		self::$counter++;
 		if ($actual === null) {
-			self::fail(self::describe('Value should not be NULL', $description));
+			self::fail(self::describe('Value should not be null', $description));
 		}
 	}
 

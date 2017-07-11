@@ -8,9 +8,9 @@ use Tester\Dumper;
 require __DIR__ . '/../bootstrap.php';
 
 
-Assert::match('NULL', Dumper::toLine(null));
-Assert::match('TRUE', Dumper::toLine(true));
-Assert::match('FALSE', Dumper::toLine(false));
+Assert::match('null', Dumper::toLine(null));
+Assert::match('true', Dumper::toLine(true));
+Assert::match('false', Dumper::toLine(false));
 Assert::match('0', Dumper::toLine(0));
 Assert::match('1', Dumper::toLine(1));
 Assert::match('0.0', Dumper::toLine(0.0));
