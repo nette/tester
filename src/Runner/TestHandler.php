@@ -116,6 +116,16 @@ class TestHandler
 	}
 
 
+	private function initiatePhpExtension(Test $test, $value, PhpInterpreter $interpreter)
+	{
+		foreach (preg_split('#[\s,]+#', $value) as $extension) {
+			if (!$interpreter->hasExtension($extension)) {
+				return $test->withResult(Test::SKIPPED, "Requires PHP extension $extension.");
+			}
+		}
+	}
+
+
 	private function initiatePhpIni(Test $test, $pair, PhpInterpreter $interpreter)
 	{
 		list($name, $value) = explode('=', $pair, 2) + [1 => NULL];

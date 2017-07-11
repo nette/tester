@@ -1,0 +1,7 @@
+<?php
+
+/**
+ * @phpExtension core, DATE
+ * @phpExtension Foo
+ * @phpExtension Reflection
+ */

@@ -62,6 +62,8 @@ Assert::same([
 	['outputMatchFile.error.phptx', Test::FAILED, "Missing matching file '{$path}missing.txt'."],
 	['outputMatchFile.match.phptx', Test::PASSED, NULL],
 	['outputMatchFile.notmatch.phptx', Test::FAILED, "Failed: output should match '! World !Hello%a%'"],
+	['phpExtension.match.phptx', Test::PASSED, NULL],
+	['phpExtension.notmatch.phptx', Test::SKIPPED, 'Requires PHP extension Foo.'],
 	['phpIni.phptx', Test::PASSED, NULL],
 	['phpVersion.match.phptx', Test::PASSED, NULL],
 	['phpVersion.notmatch.phptx', Test::SKIPPED, 'Requires PHP < 5.'],
