@@ -139,7 +139,10 @@ class Dumper
 			return strpos($var, '.') === false ? $var . '.0' : $var;
 
 		} elseif (is_bool($var)) {
-			return $var ? 'TRUE' : 'FALSE';
+			return $var ? 'true' : 'false';
+
+		} elseif ($var === null) {
+			return 'null';
 
 		} elseif (is_string($var) && (preg_match('#[^\x09\x20-\x7E\xA0-\x{10FFFF}]#u', $var) || preg_last_error())) {
 			static $table;
