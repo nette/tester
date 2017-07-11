@@ -14,9 +14,9 @@ class Test
 }
 
 
-Assert::match('NULL', Dumper::toPhp(null));
-Assert::match('TRUE', Dumper::toPhp(true));
-Assert::match('FALSE', Dumper::toPhp(false));
+Assert::match('null', Dumper::toPhp(null));
+Assert::match('true', Dumper::toPhp(true));
+Assert::match('false', Dumper::toPhp(false));
 Assert::match('0', Dumper::toPhp(0));
 Assert::match('1', Dumper::toPhp(1));
 Assert::match('0.0', Dumper::toPhp(0.0));
@@ -44,7 +44,7 @@ Assert::match("(object) /* #%a% */ [
 ]", Dumper::toPhp((object) ['a' => 'b']));
 
 Assert::match("Test::__set_state(/* #%a% */ [
-	'x' => [10, NULL],
+	'x' => [10, null],
 	'y' => 'hello',
 	'z' => 30.0,
 ])", Dumper::toPhp(new Test));
