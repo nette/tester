@@ -79,7 +79,7 @@ class FileMock
 			self::$files[$path] = '';
 		}
 
-		$this->content = & self::$files[$path];
+		$this->content = &self::$files[$path];
 		$this->appendMode = $m[1] === 'a';
 		$this->readingPos = 0;
 		$this->writingPos = $this->appendMode ? strlen($this->content) : 0;

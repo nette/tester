@@ -193,7 +193,7 @@ class TestCase
 
 	private function silentTearDown()
 	{
-		set_error_handler(function() {});
+		set_error_handler(function () {});
 		try {
 			$this->tearDown();
 		} catch (\Exception $e) {

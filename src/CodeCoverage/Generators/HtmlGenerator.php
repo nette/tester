@@ -13,18 +13,18 @@ namespace Tester\CodeCoverage\Generators;
  */
 class HtmlGenerator extends AbstractGenerator
 {
-	/** @var string */
-	private $title;
-
-	/** @var array */
-	private $files = [];
-
 	/** @var array */
 	public static $classes = [
 		self::CODE_TESTED => 't', // tested
 		self::CODE_UNTESTED => 'u', // untested
 		self::CODE_DEAD => 'dead', // dead code
 	];
+
+	/** @var string */
+	private $title;
+
+	/** @var array */
+	private $files = [];
 
 
 	/**

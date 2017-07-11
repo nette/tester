@@ -36,7 +36,7 @@ class CliTester
 		Environment::$debugMode = (bool) $this->options['--debug'];
 		if (isset($this->options['--colors'])) {
 			Environment::$useColors = (bool) $this->options['--colors'];
-		} elseif (in_array($this->options['-o'], ['tap', 'junit'])) {
+		} elseif (in_array($this->options['-o'], ['tap', 'junit'], TRUE)) {
 			Environment::$useColors = FALSE;
 		}
 
@@ -96,7 +96,7 @@ class CliTester
 
 XX;
 
-		$cmd = new CommandLine(<<<XX
+		$cmd = new CommandLine(<<<'XX'
 Usage:
     tester.php [options] [<test file> | <directory>]...
 
@@ -131,16 +131,16 @@ XX
 		]);
 
 		if (isset($_SERVER['argv'])) {
-			if ($tmp = array_search('-log', $_SERVER['argv'])) {
+			if ($tmp = array_search('-log', $_SERVER['argv'], TRUE)) {
 				$_SERVER['argv'][$tmp] = '--log';
 			}
 
-			if ($tmp = array_search('--tap', $_SERVER['argv'])) {
+			if ($tmp = array_search('--tap', $_SERVER['argv'], TRUE)) {
 				unset($_SERVER['argv'][$tmp]);
 				$_SERVER['argv'] = array_merge($_SERVER['argv'], ['-o', 'tap']);
 			}
 
-			if (array_search('-p', $_SERVER['argv']) === FALSE) {
+			if (array_search('-p', $_SERVER['argv'], TRUE) === FALSE) {
 				echo "Note: Default interpreter is CLI since Tester v2.0. It used to be CGI.\n";
 			}
 		}
@@ -170,7 +170,7 @@ XX
 			echo "Note: No php.ini is used.\n";
 		}
 
-		if (in_array($this->options['-o'], ['tap', 'junit'])) {
+		if (in_array($this->options['-o'], ['tap', 'junit'], TRUE)) {
 			array_push($args, '-d', 'html_errors=off');
 		}
 
@@ -243,7 +243,7 @@ XX
 	private function finishCodeCoverage($file)
 	{
 		if (!in_array($this->options['-o'], ['none', 'tap', 'junit'], TRUE)) {
-			echo "Generating code coverage report... ";
+			echo 'Generating code coverage report... ';
 		}
 		if (pathinfo($file, PATHINFO_EXTENSION) === 'xml') {
 			$generator = new CodeCoverage\Generators\CloverXMLGenerator($file, $this->options['--coverage-src']);

@@ -116,7 +116,7 @@ class CommandLine
 			}
 
 			if (!empty($opt[self::ENUM]) && !in_array($arg, $opt[self::ENUM], TRUE) && !($opt[self::OPTIONAL] && $arg === TRUE)) {
-				throw new \Exception("Value of option $name must be " . implode(', or ', $opt[self::ENUM]) . ".");
+				throw new \Exception("Value of option $name must be " . implode(', or ', $opt[self::ENUM]) . '.');
 			}
 			$this->checkArg($opt, $arg);
 

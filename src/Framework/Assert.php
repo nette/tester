@@ -32,8 +32,8 @@ class Assert
 		'%d\?%' => '[0-9]*',    // zero or more digits
 		'%i%' => '[+-]?[0-9]+', // signed integer value
 		'%f%' => '[+-]?\.?\d+\.?\d*(?:[Ee][+-]?\d+)?', // floating point number
-		'%h%' => '[0-9a-fA-F]+',// one or more HEX digits
-		'%w%' => '[0-9a-zA-Z_]+',//one or more alphanumeric characters
+		'%h%' => '[0-9a-fA-F]+', // one or more HEX digits
+		'%w%' => '[0-9a-zA-Z_]+', //one or more alphanumeric characters
 		'%ds%' => '[\\\\/]',    // directory separator
 		'%(\[.+\][+*?{},\d]*)%' => '$1', // range
 	];
@@ -264,7 +264,7 @@ class Assert
 			}
 
 		} elseif (in_array($type, ['array', 'bool', 'callable', 'float',
-			'int', 'integer', 'null', 'object', 'resource', 'scalar', 'string'], TRUE)
+			'int', 'integer', 'null', 'object', 'resource', 'scalar', 'string', ], TRUE)
 		) {
 			if (!call_user_func("is_$type", $value)) {
 				self::fail(self::describe(gettype($value) . " should be $type", $description));
@@ -291,8 +291,8 @@ class Assert
 		$e = NULL;
 		try {
 			call_user_func($function);
-		} catch (\Throwable $e) {
 		} catch (\Exception $e) {
+		} catch (\Throwable $e) {
 		}
 		if ($e === NULL) {
 			self::fail("$class was expected, but none was thrown");

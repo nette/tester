@@ -11,7 +11,7 @@ require __DIR__ . '/../../src/Runner/Test.php';
 require __DIR__ . '/../bootstrap.php';
 
 
-test(function() {
+test(function () {
 	$test = new Test('some/Test.phpt');
 
 	Assert::null($test->title);
@@ -26,14 +26,14 @@ test(function() {
 });
 
 
-test(function() {
+test(function () {
 	$test = new Test(__FILE__, 'My test');
 
 	Assert::same('My test', $test->title);
 });
 
 
-test(function() {
+test(function () {
 	$test = (new Test(__FILE__, 'My test'))->withResult(Test::PASSED, 'It is done');
 
 	Assert::true($test->hasResult());
@@ -46,7 +46,7 @@ test(function() {
 });
 
 
-test(function() {
+test(function () {
 	$test = new Test(__FILE__, 'My test');
 
 	$test = $test->withArguments(['one', 'two' => 1]);

@@ -16,18 +16,18 @@ class Logger implements Tester\Runner\OutputHandler
 	public $results = [];
 
 
-	function result($testName, $result, $message)
+	public function result($testName, $result, $message)
 	{
 		$this->results[] = [$result, basename($testName)];
 	}
 
 
-	function begin()
+	public function begin()
 	{
 	}
 
 
-	function end()
+	public function end()
 	{
 	}
 }

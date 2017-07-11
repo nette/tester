@@ -21,14 +21,14 @@ ob_start();
 $runner->run();
 $output = ob_get_clean();
 
-$expected = <<<XML
+$expected = <<<'XML'
 <?xml version="1.0" encoding="UTF-8"?>
 <testsuites>
 	<testsuite errors="1" skipped="1" tests="3" time="%a%" timestamp="%a%">
 		<testcase classname="%a%%ds%RunnerOutput%ds%cases%ds%fail.phptx" name="%a%%ds%RunnerOutput%ds%cases%ds%fail.phptx">
 			<failure message="Failed: STOP
 
-in RunnerOutput%ds%cases%ds%fail.phptx(4) Tester\\Assert::fail('STOP');"/>
+in RunnerOutput%ds%cases%ds%fail.phptx(4) Tester\Assert::fail('STOP');"/>
 		</testcase>
 		<testcase classname="%a%%ds%RunnerOutput%ds%cases%ds%pass.phptx" name="%a%%ds%RunnerOutput%ds%cases%ds%pass.phptx"/>
 		<testcase classname="%a%%ds%RunnerOutput%ds%cases%ds%skip.phptx" name="%a%%ds%RunnerOutput%ds%cases%ds%skip.phptx">

@@ -5,7 +5,7 @@
 	<meta name="robots" content="noindex,noarchive">
 	<meta name="generator" content="Nette Tester">
 
-	<title><?= $title ? htmlSpecialChars("$title - ") : ''; ?>Code coverage</title>
+	<title><?= $title ? htmlspecialchars("$title - ") : ''; ?>Code coverage</title>
 
 	<style type="text/css">
 	html {
@@ -137,7 +137,7 @@
 </head>
 
 <body>
-	<h1><?= $title ? htmlSpecialChars("$title - ") : ''; ?>Code coverage <?= round($coveredPercent) ?>&nbsp;%</h1>
+	<h1><?= $title ? htmlspecialchars("$title - ") : ''; ?>Code coverage <?= round($coveredPercent) ?>&nbsp;%</h1>
 
 	<?php foreach ($files as $id => $info): ?>
 	<div>

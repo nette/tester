@@ -73,7 +73,7 @@ class ConsolePrinter implements Tester\Runner\OutputHandler
 		echo !$jobCount ? "No tests found\n" :
 			"\n\n" . $this->buffer . "\n"
 			. ($results[Test::FAILED] ? Dumper::color('white/red') . 'FAILURES!' : Dumper::color('white/green') . 'OK')
-			. " ($jobCount test" . ($jobCount > 1 ? 's' : '') . ", "
+			. " ($jobCount test" . ($jobCount > 1 ? 's' : '') . ', '
 			. ($results[Test::FAILED] ? $results[Test::FAILED] . ' failure' . ($results[Test::FAILED] > 1 ? 's' : '') . ', ' : '')
 			. ($results[Test::SKIPPED] ? $results[Test::SKIPPED] . ' skipped, ' : '')
 			. ($jobCount !== $count ? ($jobCount - $count) . ' not run, ' : '')

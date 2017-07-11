@@ -8,7 +8,7 @@ throw new \Exception('This file must not be loaded.');
  */
 class NeverLoaded
 {
-	function f()
+	public function f()
 	{
 		echo 'FOO';
 		echo 'BAR';

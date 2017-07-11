@@ -59,7 +59,7 @@ class Dumper
 			} elseif (strlen($var) > self::$maxLength) {
 				$var = substr($var, 0, self::$maxLength) . '...';
 			}
-			return (preg_match('#[^\x09\x0A\x0D\x20-\x7E\xA0-\x{10FFFF}]#u', $var) || preg_last_error() ? '"' . strtr($var, $table) . '"' : "'$var'");
+			return preg_match('#[^\x09\x0A\x0D\x20-\x7E\xA0-\x{10FFFF}]#u', $var) || preg_last_error() ? '"' . strtr($var, $table) . '"' : "'$var'";
 
 		} elseif (is_array($var)) {
 			$out = '';
@@ -279,7 +279,7 @@ class Dumper
 				for ($i = 0; $i < strlen($actual) && isset($expected[$i]) && $actual[$i] === $expected[$i]; $i++);
 				for (; $i && $i < count($actual) && $actual[$i - 1] >= "\x80" && $actual[$i] >= "\x80" && $actual[$i] < "\xC0"; $i--);
 				$i = max(0, min(
-					$i - intval(self::$maxLength / 3), // try to display 1/3 of shorter string
+					$i - (int) (self::$maxLength / 3), // try to display 1/3 of shorter string
 					max(strlen($actual), strlen($expected)) - self::$maxLength + 3 // 3 = length of ...
 				));
 				if ($i) {
