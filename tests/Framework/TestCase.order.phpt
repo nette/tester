@@ -9,26 +9,29 @@ class SuccessTest extends Tester\TestCase
 {
 	public static $order;
 
+
 	protected function setUp()
 	{
 		self::$order[] = __METHOD__;
 	}
+
 
 	protected function tearDown()
 	{
 		self::$order[] = __METHOD__;
 	}
 
+
 	public function testPublic()
 	{
 		self::$order[] = __METHOD__;
 	}
 
+
 	public static function testPublicStatic()
 	{
 		self::$order[] = __METHOD__;
 	}
-
 }
 
 (new SuccessTest)->run();
@@ -48,15 +51,18 @@ class FailingTest extends Tester\TestCase
 {
 	public static $order;
 
+
 	protected function setUp()
 	{
 		self::$order[] = __METHOD__;
 	}
 
+
 	protected function tearDown()
 	{
 		self::$order[] = __METHOD__;
 	}
+
 
 	public function testPublic()
 	{
@@ -64,12 +70,12 @@ class FailingTest extends Tester\TestCase
 		Assert::fail('STOP');
 	}
 
+
 	public static function testPublicStatic()
 	{
 		self::$order[] = __METHOD__;
 		Assert::fail('STOP');
 	}
-
 }
 
 

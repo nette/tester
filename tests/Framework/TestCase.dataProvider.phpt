@@ -9,6 +9,7 @@ class MyTest extends Tester\TestCase
 {
 	public $order;
 
+
 	public function dataProvider()
 	{
 		$this->order[] = __METHOD__;
@@ -17,6 +18,7 @@ class MyTest extends Tester\TestCase
 			[3, 4],
 		];
 	}
+
 
 	public function dataProviderIterator()
 	{
@@ -27,11 +29,13 @@ class MyTest extends Tester\TestCase
 		]);
 	}
 
+
 	/** @dataProvider dataProvider */
 	public function testSingleDataProvider($a, $b)
 	{
 		$this->order[] = [__METHOD__, func_get_args()];
 	}
+
 
 	/**
 	 * @dataProvider dataProvider
@@ -42,17 +46,20 @@ class MyTest extends Tester\TestCase
 		$this->order[] = [__METHOD__, func_get_args()];
 	}
 
+
 	/** @dataProvider dataProviderIterator */
 	public function testIteratorDataProvider($a, $b)
 	{
 		$this->order[] = [__METHOD__, func_get_args()];
 	}
 
+
 	/** @dataProvider ../Framework/fixtures/dataprovider.query.ini != foo */
 	public function testFileDataProvider($a = 'a', $b = 'b')
 	{
 		$this->order[] = [__METHOD__, func_get_args()];
 	}
+
 
 	/** @dataProvider dataProvider */
 	public function testAssertion()

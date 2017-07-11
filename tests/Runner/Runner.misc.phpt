@@ -14,13 +14,21 @@ class Logger implements Tester\Runner\OutputHandler
 {
 	public $results = [];
 
+
 	function result($testName, $result, $message)
 	{
 		$this->results[basename($testName)] = $result;
 	}
 
-	function begin() {}
-	function end() {}
+
+	function begin()
+	{
+	}
+
+
+	function end()
+	{
+	}
 }
 
 Assert::false(getenv('TesterEnvVar'));

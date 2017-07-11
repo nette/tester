@@ -8,8 +8,8 @@
 namespace Tester\Runner;
 
 use Tester\CodeCoverage;
-use Tester\Environment;
 use Tester\Dumper;
+use Tester\Environment;
 
 
 /**
@@ -277,5 +277,4 @@ XX
 			sleep(2);
 		}
 	}
-
 }

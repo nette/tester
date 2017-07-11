@@ -53,5 +53,4 @@ class TapPrinter implements Tester\Runner\OutputHandler
 	{
 		fwrite($this->file, '1..' . array_sum($this->runner->getResults()));
 	}
-
 }

@@ -176,5 +176,4 @@ class PhpParser
 		}
 		return $res;
 	}
-
 }

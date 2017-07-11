@@ -21,6 +21,7 @@ class Test extends Tester\TestCase
 		}
 	}
 
+
 	protected function data()
 	{
 		return [[1], [2]];

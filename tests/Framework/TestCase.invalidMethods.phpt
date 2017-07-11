@@ -11,14 +11,15 @@ class MyTest extends Tester\TestCase
 	{
 	}
 
+
 	private function testPrivate()
 	{
 	}
 
+
 	public function notTesting()
 	{
 	}
-
 }
 
 

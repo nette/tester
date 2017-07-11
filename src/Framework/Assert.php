@@ -635,5 +635,4 @@ class Assert
 	{
 		return (bool) preg_match('/^([~#]).+(\1)[imsxUu]*\z/s', $pattern);
 	}
-
 }

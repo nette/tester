@@ -104,5 +104,4 @@ class HtmlGenerator extends AbstractGenerator
 			];
 		}
 	}
-
 }

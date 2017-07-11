@@ -16,6 +16,7 @@ class Test extends Tester\TestCase
 		echo __METHOD__ . ',';
 	}
 
+
 	/** @dataProvider data */
 	public function testMe($arg)
 	{
@@ -23,10 +24,12 @@ class Test extends Tester\TestCase
 		@trigger_error('MUTED', E_USER_WARNING);
 	}
 
+
 	protected function tearDown()
 	{
 		echo __METHOD__;
 	}
+
 
 	protected function data()
 	{

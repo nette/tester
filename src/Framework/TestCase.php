@@ -200,7 +200,6 @@ class TestCase
 		}
 		restore_error_handler();
 	}
-
 }
 
 

@@ -14,6 +14,7 @@ class MyTest extends Tester\TestCase
 	{
 	}
 
+
 	/**
 	 * @throws Exception
 	 * @throws Exception
@@ -21,7 +22,6 @@ class MyTest extends Tester\TestCase
 	public function testThrowsMultiple()
 	{
 	}
-
 }
 
 $test = new MyTest;

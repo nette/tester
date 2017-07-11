@@ -110,8 +110,7 @@ class TestHandler
 	private function initiatePhpVersion(Test $test, $version, PhpInterpreter $interpreter)
 	{
 		if (preg_match('#^(<=|<|==|=|!=|<>|>=|>)?\s*(.+)#', $version, $matches)
-			&& version_compare($matches[2], $interpreter->getVersion(), $matches[1] ?: '>='))
-		{
+			&& version_compare($matches[2], $interpreter->getVersion(), $matches[1] ?: '>=')) {
 			return $test->withResult(Test::SKIPPED, "Requires PHP $version.");
 		}
 	}
@@ -227,5 +226,4 @@ class TestHandler
 			. implode(DIRECTORY_SEPARATOR, array_slice(explode(DIRECTORY_SEPARATOR, $file), -3));
 		return [$annotations, $testName];
 	}
-
 }

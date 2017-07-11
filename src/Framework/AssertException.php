@@ -38,5 +38,4 @@ class AssertException extends \Exception
 		]);
 		return $this;
 	}
-
 }

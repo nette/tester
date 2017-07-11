@@ -2,8 +2,8 @@
 
 use Tester\Assert;
 use Tester\Environment;
-use Tester\Runner\Runner;
 use Tester\Runner\Output\JUnitPrinter;
+use Tester\Runner\Runner;
 
 require __DIR__ . '/../bootstrap.php';
 require __DIR__ . '/../../src/Runner/Test.php';

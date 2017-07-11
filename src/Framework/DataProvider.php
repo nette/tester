@@ -121,5 +121,4 @@ class DataProvider
 		}
 		return [dirname($file) . DIRECTORY_SEPARATOR . $m[2], $m[3], (bool) $m[1]];
 	}
-
 }

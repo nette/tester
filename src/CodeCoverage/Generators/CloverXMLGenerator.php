@@ -14,7 +14,6 @@ use Tester\CodeCoverage\PhpParser;
 
 class CloverXMLGenerator extends AbstractGenerator
 {
-
 	private static $metricAttributesMap = [
 		'packageCount' => 'packages',
 		'fileCount' => 'files',
@@ -221,5 +220,4 @@ class CloverXMLGenerator extends AbstractGenerator
 			$element->setAttribute(self::$metricAttributesMap[$name], $value);
 		}
 	}
-
 }

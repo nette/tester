@@ -17,10 +17,12 @@ class MyTest extends Tester\TestCase
 		throw new Exception;
 	}
 
+
 	/** @throws Exception */
 	public function testThrowsButDont()
 	{
 	}
+
 
 	/** @throws Exception  With message */
 	public function testThrowsMessage()
@@ -28,11 +30,13 @@ class MyTest extends Tester\TestCase
 		throw new Exception('With message');
 	}
 
+
 	/** @throws Exception */
 	public function testFailAssertPass()
 	{
 		Assert::fail('failed');
 	}
+
 
 	/** @throws MyException */
 	public function testThrowsBadClass()
@@ -40,11 +44,13 @@ class MyTest extends Tester\TestCase
 		throw new Exception;
 	}
 
+
 	/** @throws Exception  With message */
 	public function testThrowsBadMessage()
 	{
 		throw new Exception('Bad message');
 	}
+
 
 	/** @throws E_NOTICE */
 	public function testNotice()
@@ -52,11 +58,13 @@ class MyTest extends Tester\TestCase
 		$a++;
 	}
 
+
 	/** @throws E_NOTICE  Undefined variable: a */
 	public function testNoticeMessage()
 	{
 		$a++;
 	}
+
 
 	/** @throws E_WARNING */
 	public function testBadError()
@@ -64,11 +72,13 @@ class MyTest extends Tester\TestCase
 		$a++;
 	}
 
+
 	/** @throws E_NOTICE  With message */
 	public function testNoticeBadMessage()
 	{
 		$a++;
 	}
+
 
 	// Without @throws
 	public function testWithoutThrows()
@@ -76,10 +86,12 @@ class MyTest extends Tester\TestCase
 		throw new Exception;
 	}
 
+
 	public function dataProvider()
 	{
 		return [[1]];
 	}
+
 
 	/**
 	 * @dataprovider dataProvider
@@ -88,7 +100,6 @@ class MyTest extends Tester\TestCase
 	public function testThrowsWithDataprovider($x)
 	{
 	}
-
 }
 
 

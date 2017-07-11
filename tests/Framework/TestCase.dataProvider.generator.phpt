@@ -13,12 +13,14 @@ class MyTest extends Tester\TestCase
 {
 	public $order;
 
+
 	public function dataProvider()
 	{
 		for ($i = 0; $i < 4; $i++) {
 			yield [$i];
 		}
 	}
+
 
 	/** @dataProvider dataProvider */
 	public function testDataProviderGenerator($a)

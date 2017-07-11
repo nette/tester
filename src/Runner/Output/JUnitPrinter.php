@@ -29,6 +29,7 @@ class JUnitPrinter implements Tester\Runner\OutputHandler
 	/** @var float */
 	private $startTime;
 
+
 	public function __construct(Runner $runner, $file = 'php://output')
 	{
 		$this->runner = $runner;
@@ -72,5 +73,4 @@ class JUnitPrinter implements Tester\Runner\OutputHandler
 
 		fwrite($this->file, $this->buffer . "\n</testsuites>\n");
 	}
-
 }

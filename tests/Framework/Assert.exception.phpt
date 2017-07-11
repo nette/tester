@@ -27,7 +27,7 @@ Assert::exception(function () {
 }, 'Tester\AssertException', 'Exception was expected, but none was thrown');
 
 $e = Assert::exception(function () use (&$inner) {
-	Assert::exception(function () use (&$inner)  {
+	Assert::exception(function () use (&$inner) {
 		throw $inner = new Exception('message');
 	}, 'UnknownException');
 }, 'Tester\AssertException', 'UnknownException was expected but got Exception (message)');

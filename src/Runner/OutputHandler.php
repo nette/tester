@@ -15,11 +15,9 @@ use Tester;
  */
 interface OutputHandler
 {
-
 	function begin();
 
 	function result($testName, $result, $message);
 
 	function end();
-
 }

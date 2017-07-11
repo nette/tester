@@ -15,6 +15,7 @@ function test(\Closure $function)
 	$function();
 }
 
+
 /** @return PhpInterpreter */
 function createInterpreter()
 {

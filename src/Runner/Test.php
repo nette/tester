@@ -140,5 +140,4 @@ class Test
 		$me->message = $message;
 		return $me;
 	}
-
 }

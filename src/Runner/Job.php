@@ -215,5 +215,4 @@ class Job
 	{
 		return $this->headers;
 	}
-
 }

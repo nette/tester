@@ -161,5 +161,4 @@ class PhpInterpreter
 	{
 		return in_array(strtolower($name), array_map('strtolower', $this->info->extensions), TRUE);
 	}
-
 }

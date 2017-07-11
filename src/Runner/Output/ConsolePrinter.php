@@ -81,5 +81,4 @@ class ConsolePrinter implements Tester\Runner\OutputHandler
 
 		$this->buffer = NULL;
 	}
-
 }

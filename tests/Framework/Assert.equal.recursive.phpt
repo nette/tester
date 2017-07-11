@@ -139,7 +139,6 @@ class RecursionTest extends Tester\TestCase
 		$o3->c = $o1;
 		Assert::equal($o1, $o2);
 	}
-
 }
 
 (new RecursionTest)->run();

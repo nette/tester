@@ -119,5 +119,4 @@ abstract class AbstractGenerator
 
 
 	abstract protected function renderSelf();
-
 }

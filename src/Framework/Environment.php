@@ -198,5 +198,4 @@ class Environment
 	{
 		while (ob_get_level() > self::$obLevel && @ob_end_flush()); // @ may be not removable
 	}
-
 }

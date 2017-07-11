@@ -15,13 +15,21 @@ class Logger implements Tester\Runner\OutputHandler
 {
 	public $results = [];
 
+
 	function result($testName, $result, $message)
 	{
 		$this->results[] = [$result, basename($testName)];
 	}
 
-	function begin() {}
-	function end() {}
+
+	function begin()
+	{
+	}
+
+
+	function end()
+	{
+	}
 }
 
 $interpreter = createInterpreter();

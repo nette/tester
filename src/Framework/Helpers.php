@@ -89,5 +89,4 @@ class Helpers
 			? '"' . str_replace('"', '""', $s) . '"'
 			: escapeshellarg($s);
 	}
-
 }

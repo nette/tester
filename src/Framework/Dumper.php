@@ -18,6 +18,7 @@ class Dumper
 	public static $dumpDir = 'output';
 	public static $maxPathSegments = 3;
 
+
 	/**
 	 * Dumps information about a variable in readable format.
 	 * @param  mixed  variable to dump
@@ -381,5 +382,4 @@ class Dumper
 	{
 		return preg_replace('#\033\[[\d;]+m#', '', $s);
 	}
-
 }

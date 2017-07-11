@@ -319,5 +319,4 @@ class Runner
 			. substr(md5($test->getSignature()), 0, 5)
 			. '.result';
 	}
-
 }

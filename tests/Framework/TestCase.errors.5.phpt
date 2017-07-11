@@ -17,11 +17,13 @@ class Test extends Tester\TestCase
 		echo __METHOD__ . ',';
 	}
 
+
 	public function testMe()
 	{
 		echo __METHOD__ . ',';
 		throw new Exception('testMe');
 	}
+
 
 	protected function tearDown()
 	{

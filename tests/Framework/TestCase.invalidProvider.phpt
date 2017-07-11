@@ -7,20 +7,20 @@ require __DIR__ . '/../bootstrap.php';
 
 class InvalidProviderTest extends Tester\TestCase
 {
-
 	public function invalidDataProvider()
 	{
 	}
+
 
 	/** @dataProvider invalidDataProvider */
 	public function testEmptyProvider()
 	{
 	}
 
+
 	public function testMissingDataProvider($a)
 	{
 	}
-
 }
 
 

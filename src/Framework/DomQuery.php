@@ -142,5 +142,4 @@ class DomQuery extends \SimpleXMLElement
 		}
 		return $xpath;
 	}
-
 }

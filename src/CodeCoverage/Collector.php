@@ -144,5 +144,4 @@ class Collector
 		phpdbg_start_oplog();
 		return [$positive, $negative];
 	}
-
 }

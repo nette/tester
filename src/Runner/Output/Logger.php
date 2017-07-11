@@ -65,5 +65,4 @@ class Logger implements Tester\Runner\OutputHandler
 			. ')'
 		);
 	}
-
 }

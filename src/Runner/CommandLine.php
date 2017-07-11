@@ -167,5 +167,4 @@ class CommandLine
 	{
 		return !isset($_SERVER['argv']) || count($_SERVER['argv']) < 2;
 	}
-
 }
