@@ -18,8 +18,14 @@ function test(\Closure $function)
 /** @return PhpInterpreter */
 function createInterpreter()
 {
-	return new PhpInterpreter(
-		PHP_BINARY,
-		defined('HHVM_VERSION') ? ['-n'] : ['-n', '-c', php_ini_loaded_file()]
-	);
+	$args = [];
+	if (defined('HHVM_VERSION') || !strlen(php_ini_scanned_files())) {
+		$args[] = '-n';
+	}
+
+	if (php_ini_loaded_file()) {
+		array_push($args, '-c', php_ini_loaded_file());
+	}
+
+	return new PhpInterpreter(PHP_BINARY, $args);
 }
