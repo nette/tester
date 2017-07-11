@@ -63,7 +63,7 @@ Assert::same([
 	['outputMatchFile.match.phptx', Test::PASSED, NULL],
 	['outputMatchFile.notmatch.phptx', Test::FAILED, "Failed: output should match '! World !Hello%a%'"],
 	['phpIni.phptx', Test::PASSED, NULL],
-	['phpversion.match.phptx', Test::PASSED, NULL],
-	['phpversion.notmatch.phptx', Test::SKIPPED, 'Requires PHP < 5.'],
+	['phpVersion.match.phptx', Test::PASSED, NULL],
+	['phpVersion.notmatch.phptx', Test::SKIPPED, 'Requires PHP < 5.'],
 	['skip.phptx', Test::SKIPPED, ''],
 ], $logger->results);
