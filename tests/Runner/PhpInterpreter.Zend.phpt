@@ -5,9 +5,6 @@ use Tester\Environment;
 
 require __DIR__ . '/../bootstrap.php';
 
-if (defined('HHVM_VERSION')) {
-	Environment::skip('Test requires PHP binary.');
-}
 
 $interpreter = createInterpreter();
 

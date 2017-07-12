@@ -19,10 +19,9 @@ function test(\Closure $function)
 /** @return PhpInterpreter */
 function createInterpreter()
 {
-	$args = [];
-	if (defined('HHVM_VERSION') || !strlen((string) php_ini_scanned_files())) {
-		$args[] = '-n';
-	}
+	$args = strlen((string) php_ini_scanned_files())
+		? []
+		: ['-n'];
 
 	if (php_ini_loaded_file()) {
 		array_push($args, '-c', php_ini_loaded_file());

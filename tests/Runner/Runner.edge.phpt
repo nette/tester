@@ -40,7 +40,7 @@ $cli = PHP_SAPI === 'cli';
 $bug62725 = $cli && PHP_VERSION_ID <= 50406;
 Assert::same($bug62725 ? [Test::PASSED, NULL] : [Test::FAILED, 'Exited with error code 231 (expected 0)'], $logger->results['shutdown.exitCode.a.phptx']);
 
-$bug65275 = !defined('HHVM_VERSION') && $cli;
+$bug65275 = $cli;
 Assert::same($bug65275 ? [Test::FAILED, 'Exited with error code 231 (expected 0)'] : [Test::PASSED, NULL], $logger->results['shutdown.exitCode.b.phptx']);
 
 Assert::same([Test::SKIPPED, 'just skipping'], $logger->results['skip.phptx']);

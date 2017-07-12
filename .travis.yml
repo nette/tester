@@ -5,7 +5,6 @@ php:
     - 5.6
     - 7.0
     - 7.1
-    - hhvm
 
 env:
     - TESTER_PHP_BIN=php
@@ -13,13 +12,8 @@ env:
 
 matrix:
     allow_failures:
-        - php: hhvm
         - php: 7.0
           env: COVERAGE=on
-
-    exclude:
-        - php: hhvm
-          env: TESTER_PHP_BIN=php-cgi
 
     include:
         - php: 7.0

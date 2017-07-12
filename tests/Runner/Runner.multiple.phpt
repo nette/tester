@@ -11,30 +11,11 @@ require __DIR__ . '/../../src/Runner/Runner.php';
 
 $runner = new Tester\Runner\Runner(createInterpreter());
 
-if (defined('HHVM_VERSION') && version_compare(HHVM_VERSION, '3.4.0-dev', '<')) {
-	$jobs = call_user_func(function () use ($runner) {
-		// Workaround for missing Closure::bindTo()
-		$results = new ReflectionProperty($runner, 'results');
-		$results->setAccessible(TRUE);
-
-		$findTests = new ReflectionMethod($runner, 'findTests');
-		$findTests->setAccessible(TRUE);
-
-		$jobs = new ReflectionProperty($runner, 'jobs');
-		$jobs->setAccessible(TRUE);
-
-		$results->setValue($runner, [Test::PASSED => 0, Test::SKIPPED => 0, Test::FAILED => 0]);
-		$findTests->invokeArgs($runner, [__DIR__ . '/multiple/*.phptx']);
-		return $jobs->getValue($runner);
-	});
-
-} else {
-	$jobs = Assert::with($runner, function () {
-		$this->results = [Test::PASSED => 0, Test::SKIPPED => 0, Test::FAILED => 0];
-		$this->findTests(__DIR__ . '/multiple/*.phptx');
-		return $this->jobs;
-	});
-}
+$jobs = Assert::with($runner, function () {
+	$this->results = [Test::PASSED => 0, Test::SKIPPED => 0, Test::FAILED => 0];
+	$this->findTests(__DIR__ . '/multiple/*.phptx');
+	return $this->jobs;
+});
 
 
 /** @var Tester\Runner\Job[] $jobs */

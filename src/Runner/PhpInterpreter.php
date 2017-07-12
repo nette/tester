@@ -47,9 +47,7 @@ class PhpInterpreter
 		proc_close($proc);
 
 		$args = ' ' . implode(' ', array_map(['Tester\Helpers', 'escapeArg'], $args));
-		if (preg_match('#HipHop VM#', $output)) {
-			$args = ' --php' . $args . ' -d hhvm.log.always_log_unhandled_exceptions=false'; // HHVM issue #3019
-		} elseif (strpos($output, 'phpdbg') !== FALSE) {
+		if (strpos($output, 'phpdbg') !== FALSE) {
 			$args = ' -qrrb -S cli' . $args;
 		}
 		$this->commandLine .= rtrim($args);
@@ -74,9 +72,6 @@ class PhpInterpreter
 		$this->error .= strstr($parts[$this->cgi], 'O:8:"stdClass"', TRUE);
 		if (!$this->info) {
 			throw new \Exception("Unable to detect PHP version (output: $output).");
-
-		} elseif ($this->info->hhvmVersion && version_compare($this->info->hhvmVersion, '3.3.0', '<')) {
-			throw new \Exception('HHVM below version 3.3.0 is not supported.');
 
 		} elseif ($this->info->phpDbgVersion && version_compare($this->info->version, '7.0.0', '<')) {
 			throw new \Exception('Unable to use phpdbg on PHP < 7.0.0.');
@@ -148,8 +143,7 @@ class PhpInterpreter
 	public function getShortInfo()
 	{
 		return "PHP {$this->info->version} ({$this->info->sapi})"
-			. ($this->info->phpDbgVersion ? "; PHPDBG {$this->info->phpDbgVersion}" : '')
-			. ($this->info->hhvmVersion ? "; HHVM {$this->info->hhvmVersion}" : '');
+			. ($this->info->phpDbgVersion ? "; PHPDBG {$this->info->phpDbgVersion}" : '');
 	}
 
 
