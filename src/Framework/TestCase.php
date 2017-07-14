@@ -83,7 +83,7 @@ class TestCase
 		} elseif (is_array($info['throws'])) {
 			throw new TestCaseException("Annotation @throws for {$method->getName()}() can be specified only once.");
 		} else {
-			$throws = preg_split('#\s+#', $info['throws'], 2) + [null, null];
+			$throws = preg_split('#\s+#', $info['throws'], 2);
 		}
 
 		$data = [];
@@ -135,7 +135,7 @@ class TestCase
 					if ($info['throws']) {
 						$e = Assert::error(function () use ($method, $params) {
 							call_user_func_array([$this, $method->getName()], $params);
-						}, $throws[0], $throws[1]);
+						}, ...$throws);
 						if ($e instanceof AssertException) {
 							throw $e;
 						}
