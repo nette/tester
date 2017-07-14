@@ -277,7 +277,7 @@ class Dumper
 
 			if ((is_string($actual) && is_string($expected))) {
 				for ($i = 0; $i < strlen($actual) && isset($expected[$i]) && $actual[$i] === $expected[$i]; $i++);
-				for (; $i && $i < count($actual) && $actual[$i - 1] >= "\x80" && $actual[$i] >= "\x80" && $actual[$i] < "\xC0"; $i--);
+				for (; $i && $i < strlen($actual) && $actual[$i - 1] >= "\x80" && $actual[$i] >= "\x80" && $actual[$i] < "\xC0"; $i--);
 				$i = max(0, min(
 					$i - (int) (self::$maxLength / 3), // try to display 1/3 of shorter string
 					max(strlen($actual), strlen($expected)) - self::$maxLength + 3 // 3 = length of ...
