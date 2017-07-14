@@ -277,7 +277,7 @@ class Dumper
 			if ((is_string($actual) && is_string($expected))) {
 				for ($i = 0; $i < strlen($actual) && isset($expected[$i]) && $actual[$i] === $expected[$i]; $i++);
 				$i = max(0, min($i, max(strlen($actual), strlen($expected)) - self::$maxLength));
-				for (; $i && $i < count($actual) && $actual[$i - 1] >= "\x80" && $actual[$i] >= "\x80" && $actual[$i] < "\xC0"; $i--);
+				for (; $i && $i < strlen($actual) && $actual[$i - 1] >= "\x80" && $actual[$i] >= "\x80" && $actual[$i] < "\xC0"; $i--);
 				if ($i) {
 					$expected = substr_replace($expected, '...', 0, $i);
 					$actual = substr_replace($actual, '...', 0, $i);
