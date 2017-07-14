@@ -86,9 +86,9 @@ class Environment
 	public static function setupErrors()
 	{
 		error_reporting(E_ALL | E_STRICT);
-		ini_set('display_errors', TRUE);
-		ini_set('html_errors', FALSE);
-		ini_set('log_errors', FALSE);
+		ini_set('display_errors', '1');
+		ini_set('html_errors', '0');
+		ini_set('log_errors', '0');
 
 		set_exception_handler([__CLASS__, 'handleException']);
 

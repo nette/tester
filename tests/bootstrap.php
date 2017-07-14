@@ -20,7 +20,7 @@ function test(\Closure $function)
 function createInterpreter()
 {
 	$args = [];
-	if (defined('HHVM_VERSION') || !strlen(php_ini_scanned_files())) {
+	if (defined('HHVM_VERSION') || !strlen((string) php_ini_scanned_files())) {
 		$args[] = '-n';
 	}
 

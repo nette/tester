@@ -362,7 +362,7 @@ class Dumper
 	 * Applies color to string.
 	 * @return string
 	 */
-	public static function color($color = NULL, $s = NULL)
+	public static function color($color = '', $s = NULL)
 	{
 		static $colors = [
 			'black' => '0;30', 'gray' => '1;30', 'silver' => '0;37', 'white' => '1;37',

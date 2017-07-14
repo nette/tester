@@ -485,7 +485,7 @@ class Assert
 	 */
 	public static function isMatching($pattern, $actual, $strict = FALSE)
 	{
-		if (!is_string($pattern) && !is_scalar($actual)) {
+		if (!is_string($pattern) || !is_scalar($actual)) {
 			throw new \Exception('Value and pattern must be strings.');
 		}
 
@@ -509,7 +509,7 @@ class Assert
 			}, rtrim($pattern, " \t\n\r")) . $suffix;
 		}
 
-		$res = preg_match($pattern, $actual);
+		$res = preg_match($pattern, (string) $actual);
 		ini_set('pcre.backtrack_limit', $old);
 		if ($res === FALSE || preg_last_error()) {
 			throw new \Exception('Error while executing regular expression. (PREG Error Code ' . preg_last_error() . ')');

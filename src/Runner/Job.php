@@ -137,9 +137,9 @@ class Job
 		}
 
 		if ($flags & self::RUN_ASYNC) {
-			stream_set_blocking($this->stdout, 0); // on Windows does not work with proc_open()
+			stream_set_blocking($this->stdout, FALSE); // on Windows does not work with proc_open()
 			if ($this->stderr) {
-				stream_set_blocking($this->stderr, 0);
+				stream_set_blocking($this->stderr, FALSE);
 			}
 		} else {
 			while ($this->isRunning()) {

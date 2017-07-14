@@ -42,7 +42,7 @@ class CloverXMLGenerator extends AbstractGenerator
 
 	protected function renderSelf()
 	{
-		$time = time();
+		$time = (string) time();
 		$parser = new PhpParser;
 
 		$doc = new DOMDocument;
@@ -129,9 +129,9 @@ class CloverXMLGenerator extends AbstractGenerator
 
 				// Line type can be 'method' but Xdebug does not report such lines as executed.
 				$elLine = $elFile->appendChild($doc->createElement('line'));
-				$elLine->setAttribute('num', $line);
+				$elLine->setAttribute('num', (string) $line);
 				$elLine->setAttribute('type', 'stmt');
-				$elLine->setAttribute('count', max(0, $count));
+				$elLine->setAttribute('count', (string) max(0, $count));
 
 				$this->totalSum++;
 				$this->coveredSum += $count > 0 ? 1 : 0;
@@ -217,7 +217,7 @@ class CloverXMLGenerator extends AbstractGenerator
 	private static function setMetricAttributes(DOMElement $element, \stdClass $metrics)
 	{
 		foreach ($metrics as $name => $value) {
-			$element->setAttribute(self::$metricAttributesMap[$name], $value);
+			$element->setAttribute(self::$metricAttributesMap[$name], (string) $value);
 		}
 	}
 }

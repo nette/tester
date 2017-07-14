@@ -20,7 +20,7 @@ class DataProvider
 	 * @return array
 	 * @throws \Exception
 	 */
-	public static function load($file, $query = NULL)
+	public static function load($file, $query = '')
 	{
 		if (!is_file($file)) {
 			throw new \Exception("Missing data-provider file '$file'.");
@@ -70,7 +70,7 @@ class DataProvider
 		foreach ($queryParts as $queryPart) {
 			list(, $operator, $operand) = $queryPart;
 			$operator = isset($replaces[$operator]) ? $replaces[$operator] : $operator;
-			$token = array_shift($tokens);
+			$token = (string) array_shift($tokens);
 			$res = preg_match('#^[0-9.]+\z#', $token)
 				? version_compare($token, $operand, $operator)
 				: self::compare($token, $operator, $operand);

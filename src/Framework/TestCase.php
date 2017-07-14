@@ -76,7 +76,7 @@ class TestCase
 			throw new TestCaseException("Method {$method->getName()} is not public. Make it public or rename it.");
 		}
 
-		$info = Helpers::parseDocComment($method->getDocComment()) + ['dataprovider' => NULL, 'throws' => NULL];
+		$info = Helpers::parseDocComment((string) $method->getDocComment()) + ['dataprovider' => NULL, 'throws' => NULL];
 
 		if ($info['throws'] === '') {
 			throw new TestCaseException("Missing class name in @throws annotation for {$method->getName()}().");

@@ -22,7 +22,7 @@ class AssertException extends \Exception
 
 	public function __construct($message, $expected, $actual, $previous = NULL)
 	{
-		parent::__construct(NULL, NULL, $previous);
+		parent::__construct('', 0, $previous);
 		$this->expected = $expected;
 		$this->actual = $actual;
 		$this->setMessage($message);
