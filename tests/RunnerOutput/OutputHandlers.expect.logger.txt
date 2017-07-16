@@ -1,0 +1,55 @@
+%a% | %a% | 1 threads
+
+-- FAILED: %a%01-basic.fail.phptx
+   Multi
+   line
+   stdout.Failed:
+
+   in %a%01-basic.fail.phptx(7) Tester\Assert::fail('');
+
+-- OK: %a%01-basic.pass.phptx
+
+-- Skipped: %a%01-basic.skip.phptx
+
+
+-- FAILED: %a%02-title.fail.phptx
+   Multi
+   line
+   stdout.Failed:
+
+   in %a%02-title.fail.phptx(11) Tester\Assert::fail('');
+
+-- OK: %a%02-title.pass.phptx
+
+-- Skipped: %a%02-title.skip.phptx
+
+
+-- FAILED: %a%03-message.fail.phptx
+   Multi
+   line
+   stdout.Failed: Multi
+   line
+   message.
+
+   in %a%03-message.fail.phptx(7) Tester\Assert::fail("Multi\nline\nmessage.");
+
+-- Skipped: %a%03-message.skip.phptx
+   Multi
+   line
+   message.
+
+-- FAILED: %a%04-args.fail.phptx dataprovider=thisIsAVeryVeryVeryLongArgumentNameToTestHowOutputHandlersDealWithItsLengthInTheirOutputFormatting|%a%provider.ini
+   Multi
+   line
+   stdout.Failed:
+
+   in %a%04-args.fail.phptx(11) Tester\Assert::fail('');
+
+-- OK: %a%04-args.pass.phptx dataprovider=thisIsAVeryVeryVeryLongArgumentNameToTestHowOutputHandlersDealWithItsLengthInTheirOutputFormatting|%a%provider.ini
+
+-- Skipped: %a%04-args.skip.phptx dataprovider=thisIsAVeryVeryVeryLongArgumentNameToTestHowOutputHandlersDealWithItsLengthInTheirOutputFormatting|%a%provider.ini
+   Multi
+   line
+   message.
+
+FAILURES! (11 tests, 4 failures, 4 skipped)

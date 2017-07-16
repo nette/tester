@@ -1,0 +1,11 @@
+<?php
+
+/**
+ * @dataProvider provider.ini
+ */
+
+require __DIR__ . '/../../bootstrap.php';
+
+echo "Multi\nline\nstdout.";
+
+Tester\Assert::fail('');

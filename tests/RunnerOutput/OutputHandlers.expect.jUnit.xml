@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites>
+	<testsuite errors="4" skipped="3" tests="11" time="%a%" timestamp="%a%">
+		<testcase classname="%a%01-basic.fail.phptx" name="%a%01-basic.fail.phptx">
+			<failure message="Multi
+line
+stdout.Failed:
+
+in %a%01-basic.fail.phptx(7) Tester\Assert::fail('');"/>
+		</testcase>
+		<testcase classname="%a%01-basic.pass.phptx" name="%a%01-basic.pass.phptx"/>
+		<testcase classname="%a%01-basic.skip.phptx" name="%a%01-basic.skip.phptx">
+			<skipped/>
+		</testcase>
+		<testcase classname="%a%02-title.fail.phptx" name="%a%02-title.fail.phptx">
+			<failure message="Multi
+line
+stdout.Failed:
+
+in %a%02-title.fail.phptx(11) Tester\Assert::fail('');"/>
+		</testcase>
+		<testcase classname="%a%02-title.pass.phptx" name="%a%02-title.pass.phptx"/>
+		<testcase classname="%a%02-title.skip.phptx" name="%a%02-title.skip.phptx">
+			<skipped/>
+		</testcase>
+		<testcase classname="%a%03-message.fail.phptx" name="%a%03-message.fail.phptx">
+			<failure message="Multi
+line
+stdout.Failed: Multi
+line
+message.
+
+in %a%03-message.fail.phptx(7) Tester\Assert::fail(&quot;Multi\nline\nmessage.&quot;);"/>
+		</testcase>
+		<testcase classname="%a%03-message.skip.phptx" name="%a%03-message.skip.phptx">
+			<skipped/>
+		</testcase>
+		<testcase classname="%a%04-args.fail.phptx dataprovider=thisIsAVeryVeryVeryLongArgumentNameToTestHowOutputHandlersDealWithItsLengthInTheirOutputFormatting|%a%provider.ini" name="%a%04-args.fail.phptx dataprovider=thisIsAVeryVeryVeryLongArgumentNameToTestHowOutputHandlersDealWithItsLengthInTheirOutputFormatting|%a%provider.ini">
+			<failure message="Multi
+line
+stdout.Failed:
+
+in %a%04-args.fail.phptx(11) Tester\Assert::fail('');"/>
+		</testcase>
+		<testcase classname="%a%04-args.pass.phptx dataprovider=thisIsAVeryVeryVeryLongArgumentNameToTestHowOutputHandlersDealWithItsLengthInTheirOutputFormatting|%a%provider.ini" name="%a%04-args.pass.phptx dataprovider=thisIsAVeryVeryVeryLongArgumentNameToTestHowOutputHandlersDealWithItsLengthInTheirOutputFormatting|%a%provider.ini"/>
+		<testcase classname="%a%04-args.skip.phptx dataprovider=thisIsAVeryVeryVeryLongArgumentNameToTestHowOutputHandlersDealWithItsLengthInTheirOutputFormatting|%a%provider.ini" name="%a%04-args.skip.phptx dataprovider=thisIsAVeryVeryVeryLongArgumentNameToTestHowOutputHandlersDealWithItsLengthInTheirOutputFormatting|%a%provider.ini">
+			<skipped/>
+		</testcase>
+	</testsuite>
+</testsuites>

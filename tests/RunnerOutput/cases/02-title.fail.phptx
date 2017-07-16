@@ -1,0 +1,11 @@
+<?php
+
+/**
+ * TEST: Title for output handlers
+ */
+
+require __DIR__ . '/../../bootstrap.php';
+
+echo "Multi\nline\nstdout.";
+
+Tester\Assert::fail('');

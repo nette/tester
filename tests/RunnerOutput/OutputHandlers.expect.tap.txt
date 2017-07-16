@@ -1,0 +1,39 @@
+TAP version 13
+not ok %a%01-basic.fail.phptx
+# Multi
+# line
+# stdout.Failed:
+#
+# in %a%01-basic.fail.phptx(7) Tester\Assert::fail('');
+ok %a%01-basic.pass.phptx
+ok %a%01-basic.skip.phptx #skip
+not ok %a%02-title.fail.phptx
+# Multi
+# line
+# stdout.Failed:
+#
+# in %a%02-title.fail.phptx(11) Tester\Assert::fail('');
+ok %a%02-title.pass.phptx
+ok %a%02-title.skip.phptx #skip
+not ok %a%03-message.fail.phptx
+# Multi
+# line
+# stdout.Failed: Multi
+# line
+# message.
+#
+# in %a%03-message.fail.phptx(7) Tester\Assert::fail("Multi\nline\nmessage.");
+ok %a%03-message.skip.phptx #skip Multi
+# line
+# message.
+not ok %a%04-args.fail.phptx dataprovider=thisIsAVeryVeryVeryLongArgumentNameToTestHowOutputHandlersDealWithItsLengthInTheirOutputFormatting|%a%provider.ini
+# Multi
+# line
+# stdout.Failed:
+#
+# in %a%04-args.fail.phptx(11) Tester\Assert::fail('');
+ok %a%04-args.pass.phptx dataprovider=thisIsAVeryVeryVeryLongArgumentNameToTestHowOutputHandlersDealWithItsLengthInTheirOutputFormatting|%a%provider.ini
+ok %a%04-args.skip.phptx dataprovider=thisIsAVeryVeryVeryLongArgumentNameToTestHowOutputHandlersDealWithItsLengthInTheirOutputFormatting|%a%provider.ini #skip Multi
+# line
+# message.
+1..11
