@@ -20,10 +20,10 @@ class Test
 		SKIPPED = 3;
 
 
-	/** @var string|NULL */
+	/** @var string|null */
 	public $title;
 
-	/** @var string|NULL */
+	/** @var string|null */
 	public $message;
 
 	/** @var string */
@@ -46,7 +46,7 @@ class Test
 	 * @param  string
 	 * @param  string
 	 */
-	public function __construct($file, $title = NULL)
+	public function __construct($file, $title = null)
 	{
 		$this->file = $file;
 		$this->title = $title;

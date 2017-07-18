@@ -58,7 +58,7 @@ test(function () use ($interpreter) {
 test(function () use ($interpreter) {
 	$runner = new Runner($interpreter);
 	$runner->outputHandlers[] = $logger = new Logger;
-	$runner->stopOnFail = TRUE;
+	$runner->stopOnFail = true;
 	$runner->paths = [
 		__DIR__ . '/stop-on-fail/init-fail.phptx',
 		__DIR__ . '/stop-on-fail/pass.phptx',
@@ -75,7 +75,7 @@ test(function () use ($interpreter) {
 test(function () use ($interpreter) {
 	$runner = new Runner($interpreter);
 	$runner->outputHandlers[] = $logger = new Logger;
-	$runner->stopOnFail = TRUE;
+	$runner->stopOnFail = true;
 	$runner->paths = [
 		__DIR__ . '/stop-on-fail/runtime-fail.phptx',
 		__DIR__ . '/stop-on-fail/pass.phptx',

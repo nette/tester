@@ -31,7 +31,7 @@ class CloverXMLGenerator extends AbstractGenerator
 	];
 
 
-	public function __construct($file, $source = NULL)
+	public function __construct($file, $source = null)
 	{
 		if (!extension_loaded('dom')) {
 			throw new \LogicException('CloverXML generator requires DOM extension to be loaded.');
@@ -46,7 +46,7 @@ class CloverXMLGenerator extends AbstractGenerator
 		$parser = new PhpParser;
 
 		$doc = new DOMDocument;
-		$doc->formatOutput = TRUE;
+		$doc->formatOutput = true;
 
 		$elCoverage = $doc->appendChild($doc->createElement('coverage'));
 		$elCoverage->setAttribute('generated', $time);
@@ -78,7 +78,7 @@ class CloverXMLGenerator extends AbstractGenerator
 			$projectMetrics->fileCount++;
 
 			if (empty($this->data[$file])) {
-				$coverageData = NULL;
+				$coverageData = null;
 				$this->totalSum += count(file($file, FILE_SKIP_EMPTY_LINES));
 			} else {
 				$coverageData = $this->data[$file];
@@ -107,7 +107,7 @@ class CloverXMLGenerator extends AbstractGenerator
 
 			foreach (array_merge($code->classes, $code->traits) as $name => $info) { // TODO: interfaces?
 				$elClass = $elFile->appendChild($doc->createElement('class'));
-				if (($tmp = strrpos($name, '\\')) === FALSE) {
+				if (($tmp = strrpos($name, '\\')) === false) {
 					$elClass->setAttribute('name', $name);
 				} else {
 					$elClass->setAttribute('namespace', substr($name, 0, $tmp));
@@ -150,7 +150,7 @@ class CloverXMLGenerator extends AbstractGenerator
 	/**
 	 * @return \stdClass
 	 */
-	private function calculateClassMetrics(\stdClass $info, array $coverageData = NULL)
+	private function calculateClassMetrics(\stdClass $info, array $coverageData = null)
 	{
 		$stats = (object) [
 			'methodCount' => count($info->methods),
@@ -159,8 +159,8 @@ class CloverXMLGenerator extends AbstractGenerator
 			'coveredStatementCount' => 0,
 			'conditionalCount' => 0,
 			'coveredConditionalCount' => 0,
-			'elementCount' => NULL,
-			'coveredElementCount' => NULL,
+			'elementCount' => null,
+			'coveredElementCount' => null,
 		];
 
 		foreach ($info->methods as $name => $methodInfo) {
@@ -168,7 +168,7 @@ class CloverXMLGenerator extends AbstractGenerator
 
 			$stats->statementCount += $lineCount;
 
-			if ($coverageData !== NULL) {
+			if ($coverageData !== null) {
 				$stats->coveredMethodCount += $lineCount === $coveredLineCount ? 1 : 0;
 				$stats->coveredStatementCount += $coveredLineCount;
 			}
@@ -184,12 +184,12 @@ class CloverXMLGenerator extends AbstractGenerator
 	/**
 	 * @return array
 	 */
-	private static function analyzeMethod(\stdClass $info, array $coverageData = NULL)
+	private static function analyzeMethod(\stdClass $info, array $coverageData = null)
 	{
 		$count = 0;
 		$coveredCount = 0;
 
-		if ($coverageData === NULL) { // Never loaded file
+		if ($coverageData === null) { // Never loaded file
 			$count = max(1, $info->end - $info->start - 2);
 		} else {
 			for ($i = $info->start; $i <= $info->end; $i++) {

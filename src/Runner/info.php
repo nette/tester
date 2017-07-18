@@ -9,17 +9,17 @@ $extensions = get_loaded_extensions();
 natcasesort($extensions);
 
 $info = (object) [
-	'binary' => defined('PHP_BINARY') ? PHP_BINARY : NULL,
+	'binary' => defined('PHP_BINARY') ? PHP_BINARY : null,
 	'version' => PHP_VERSION,
-	'phpDbgVersion' => $isPhpDbg ? PHPDBG_VERSION : NULL,
+	'phpDbgVersion' => $isPhpDbg ? PHPDBG_VERSION : null,
 	'sapi' => PHP_SAPI,
 	'iniFiles' => array_merge(
-		($tmp = php_ini_loaded_file()) === FALSE ? [] : [$tmp],
+		($tmp = php_ini_loaded_file()) === false ? [] : [$tmp],
 		(function_exists('php_ini_scanned_files') && strlen($tmp = (string) php_ini_scanned_files())) ? explode(",\n", trim($tmp)) : []
 	),
 	'extensions' => $extensions,
 	'tempDir' => sys_get_temp_dir(),
-	'canMeasureCodeCoverage' => $isPhpDbg || in_array('xdebug', $extensions, TRUE),
+	'canMeasureCodeCoverage' => $isPhpDbg || in_array('xdebug', $extensions, true),
 ];
 
 if (isset($_SERVER['argv'][1])) {

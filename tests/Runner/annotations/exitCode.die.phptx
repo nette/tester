@@ -5,7 +5,7 @@
  */
 
 require __DIR__ . '/../../bootstrap.php';
-Tester\Environment::$checkAssertions = FALSE;
+Tester\Environment::$checkAssertions = false;
 
 
 die(231);

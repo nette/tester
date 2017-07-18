@@ -27,7 +27,7 @@ class Dumper
 	public static function toLine($var)
 	{
 		static $table;
-		if ($table === NULL) {
+		if ($table === null) {
 			foreach (array_merge(range("\x00", "\x1F"), range("\x7F", "\xFF")) as $ch) {
 				$table[$ch] = '\x' . str_pad(dechex(ord($ch)), 2, '0', STR_PAD_LEFT);
 			}
@@ -40,7 +40,7 @@ class Dumper
 		if (is_bool($var)) {
 			return $var ? 'TRUE' : 'FALSE';
 
-		} elseif ($var === NULL) {
+		} elseif ($var === null) {
 			return 'NULL';
 
 		} elseif (is_int($var)) {
@@ -48,10 +48,10 @@ class Dumper
 
 		} elseif (is_float($var)) {
 			if (!is_finite($var)) {
-				return str_replace('.0', '', var_export($var, TRUE)); // workaround for PHP 7.0.2
+				return str_replace('.0', '', var_export($var, true)); // workaround for PHP 7.0.2
 			}
 			$var = str_replace(',', '.', "$var");
-			return strpos($var, '.') === FALSE ? $var . '.0' : $var; // workaround for PHP < 7.0.2
+			return strpos($var, '.') === false ? $var . '.0' : $var; // workaround for PHP < 7.0.2
 
 		} elseif (is_string($var)) {
 			if (preg_match('#^(.{' . self::$maxLength . '}).#su', $var, $m)) {
@@ -136,14 +136,14 @@ class Dumper
 	{
 		if (is_float($var)) {
 			$var = str_replace(',', '.', "$var");
-			return strpos($var, '.') === FALSE ? $var . '.0' : $var;
+			return strpos($var, '.') === false ? $var . '.0' : $var;
 
 		} elseif (is_bool($var)) {
 			return $var ? 'TRUE' : 'FALSE';
 
 		} elseif (is_string($var) && (preg_match('#[^\x09\x20-\x7E\xA0-\x{10FFFF}]#u', $var) || preg_last_error())) {
 			static $table;
-			if ($table === NULL) {
+			if ($table === null) {
 				foreach (array_merge(range("\x00", "\x1F"), range("\x7F", "\xFF")) as $ch) {
 					$table[$ch] = '\x' . str_pad(dechex(ord($ch)), 2, '0', STR_PAD_LEFT);
 				}
@@ -160,8 +160,8 @@ class Dumper
 			$space = str_repeat("\t", $level);
 
 			static $marker;
-			if ($marker === NULL) {
-				$marker = uniqid("\x00", TRUE);
+			if ($marker === null) {
+				$marker = uniqid("\x00", true);
 			}
 			if (empty($var)) {
 				$out = '';
@@ -172,7 +172,7 @@ class Dumper
 			} else {
 				$out = "\n$space";
 				$outShort = '';
-				$var[$marker] = TRUE;
+				$var[$marker] = true;
 				$oldLine = $line;
 				$line++;
 				$counter = 0;
@@ -186,7 +186,7 @@ class Dumper
 					}
 				}
 				unset($var[$marker]);
-				if (strpos($outShort, "\n") === FALSE && strlen($outShort) < self::$maxLength) {
+				if (strpos($outShort, "\n") === false && strlen($outShort) < self::$maxLength) {
 					$line = $oldLine;
 					$out = $outShort;
 				}
@@ -237,7 +237,7 @@ class Dumper
 			return '/* resource ' . get_resource_type($var) . ' */';
 
 		} else {
-			$res = var_export($var, TRUE);
+			$res = var_export($var, true);
 			$line += substr_count($res, "\n");
 			return $res;
 		}
@@ -253,7 +253,7 @@ class Dumper
 		$trace = $e->getTrace();
 		array_splice($trace, 0, $e instanceof \ErrorException ? 1 : 0, [['file' => $e->getFile(), 'line' => $e->getLine()]]);
 
-		$testFile = NULL;
+		$testFile = null;
 		foreach (array_reverse($trace) as $item) {
 			if (isset($item['file'])) { // in case of shutdown handler, we want to skip inner-code blocks and debugging calls
 				$testFile = $item['file'];
@@ -311,12 +311,12 @@ class Dumper
 			. (isset($stored) ? 'diff ' . Helpers::escapeArg($stored[0]) . ' ' . Helpers::escapeArg($stored[1]) . "\n\n" : '');
 
 		foreach ($trace as $item) {
-			$item += ['file' => NULL, 'class' => NULL, 'type' => NULL, 'function' => NULL];
+			$item += ['file' => null, 'class' => null, 'type' => null, 'function' => null];
 			if ($e instanceof AssertException && $item['file'] === __DIR__ . DIRECTORY_SEPARATOR . 'Assert.php') {
 				continue;
 			}
 			$line = $item['class'] === 'Tester\Assert' && method_exists($item['class'], $item['function'])
-				&& strpos($tmp = file($item['file'])[$item['line'] - 1], "::$item[function](") ? $tmp : NULL;
+				&& strpos($tmp = file($item['file'])[$item['line'] - 1], "::$item[function](") ? $tmp : null;
 
 			$s .= 'in '
 				. ($item['file']
@@ -362,19 +362,19 @@ class Dumper
 	 * Applies color to string.
 	 * @return string
 	 */
-	public static function color($color = '', $s = NULL)
+	public static function color($color = '', $s = null)
 	{
 		static $colors = [
 			'black' => '0;30', 'gray' => '1;30', 'silver' => '0;37', 'white' => '1;37',
 			'navy' => '0;34', 'blue' => '1;34', 'green' => '0;32', 'lime' => '1;32',
 			'teal' => '0;36', 'aqua' => '1;36', 'maroon' => '0;31', 'red' => '1;31',
 			'purple' => '0;35', 'fuchsia' => '1;35', 'olive' => '0;33', 'yellow' => '1;33',
-			NULL => '0',
+			null => '0',
 		];
 		$c = explode('/', $color);
 		return "\033["
 			. str_replace(';', "m\033[", $colors[$c[0]] . (empty($c[1]) ? '' : ';4' . substr($colors[$c[1]], -1)))
-			. 'm' . $s . ($s === NULL ? '' : "\033[0m");
+			. 'm' . $s . ($s === null ? '' : "\033[0m");
 	}
 
 

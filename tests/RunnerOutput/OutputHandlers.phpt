@@ -23,8 +23,8 @@ require __DIR__ . '/../../src/Runner/Output/TapPrinter.php';
 
 $runner = new Runner(createInterpreter());
 $runner->paths[] = __DIR__ . '/cases/*.phptx';
-$runner->outputHandlers[] = new Output\ConsolePrinter($runner, FALSE, $console = FileMock::create(''));
-$runner->outputHandlers[] = new Output\ConsolePrinter($runner, TRUE, $consoleWithSkipped = FileMock::create(''));
+$runner->outputHandlers[] = new Output\ConsolePrinter($runner, false, $console = FileMock::create(''));
+$runner->outputHandlers[] = new Output\ConsolePrinter($runner, true, $consoleWithSkipped = FileMock::create(''));
 $runner->outputHandlers[] = new Output\JUnitPrinter($runner, $jUnit = FileMock::create(''));
 $runner->outputHandlers[] = new Output\Logger($runner, $logger = FileMock::create(''));
 $runner->outputHandlers[] = new Output\TapPrinter($runner, $tap = FileMock::create(''));

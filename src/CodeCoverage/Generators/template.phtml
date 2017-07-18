@@ -157,7 +157,7 @@
 			$lineCount = substr_count($code, "\n") + 1;
 			$digits = ceil(log10($lineCount)) + 1;
 
-			$prevClass = NULL;
+			$prevClass = null;
 			$closeTag = $buffer = '';
 			for ($i = 1; $i < $lineCount; $i++) {
 				$class = isset($info->lines[$i]) && isset($classes[$info->lines[$i]])
@@ -176,7 +176,7 @@
 			}
 			echo $buffer . $closeTag;
 
-			$code = strtr(highlight_string($code, TRUE), [
+			$code = strtr(highlight_string($code, true), [
 				'<code>' => "<code style='margin-left: {$digits}em'>",
 				'<span style="color: ' => '<span class="',
 			]);

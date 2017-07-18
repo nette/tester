@@ -6,7 +6,7 @@
 
 require __DIR__ . '/../bootstrap.php';
 
-Tester\Environment::$useColors = FALSE;
+Tester\Environment::$useColors = false;
 
 
 class Test extends Tester\TestCase

@@ -64,7 +64,7 @@ class MyTest extends Tester\TestCase
 	/** @dataProvider dataProvider */
 	public function testAssertion()
 	{
-		Assert::true(FALSE);
+		Assert::true(false);
 	}
 }
 

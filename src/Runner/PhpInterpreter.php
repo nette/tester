@@ -35,11 +35,11 @@ class PhpInterpreter
 			$this->commandLine . ' --version',
 			[['pipe', 'r'], ['pipe', 'w'], ['pipe', 'w']],
 			$pipes,
-			NULL,
-			NULL,
-			['bypass_shell' => TRUE]
+			null,
+			null,
+			['bypass_shell' => true]
 		);
-		if ($proc === FALSE) {
+		if ($proc === false) {
 			throw new \Exception("Cannot run PHP interpreter $path. Use -p option.");
 		}
 		fclose($pipes[0]);
@@ -47,7 +47,7 @@ class PhpInterpreter
 		proc_close($proc);
 
 		$args = ' ' . implode(' ', array_map(['Tester\Helpers', 'escapeArg'], $args));
-		if (strpos($output, 'phpdbg') !== FALSE) {
+		if (strpos($output, 'phpdbg') !== false) {
 			$args = ' -qrrb -S cli' . $args;
 		}
 		$this->commandLine .= rtrim($args);
@@ -56,9 +56,9 @@ class PhpInterpreter
 			$this->commandLine . ' ' . Helpers::escapeArg(__DIR__ . '/info.php') . ' serialized',
 			[['pipe', 'r'], ['pipe', 'w'], ['pipe', 'w']],
 			$pipes,
-			NULL,
-			NULL,
-			['bypass_shell' => TRUE]
+			null,
+			null,
+			['bypass_shell' => true]
 		);
 		$output = stream_get_contents($pipes[1]);
 		$this->error = trim(stream_get_contents($pipes[2]));
@@ -69,7 +69,7 @@ class PhpInterpreter
 		$parts = explode("\r\n\r\n", $output, 2);
 		$this->cgi = count($parts) === 2;
 		$this->info = @unserialize(strstr($parts[$this->cgi], 'O:8:"stdClass"'));
-		$this->error .= strstr($parts[$this->cgi], 'O:8:"stdClass"', TRUE);
+		$this->error .= strstr($parts[$this->cgi], 'O:8:"stdClass"', true);
 		if (!$this->info) {
 			throw new \Exception("Unable to detect PHP version (output: $output).");
 
@@ -86,9 +86,9 @@ class PhpInterpreter
 	 * @param  string
 	 * @param  string
 	 */
-	public function addPhpIniOption($name, $value = NULL)
+	public function addPhpIniOption($name, $value = null)
 	{
-		$this->commandLine .= ' -d ' . Helpers::escapeArg($name . ($value === NULL ? '' : "=$value"));
+		$this->commandLine .= ' -d ' . Helpers::escapeArg($name . ($value === null ? '' : "=$value"));
 	}
 
 
@@ -153,6 +153,6 @@ class PhpInterpreter
 	 */
 	public function hasExtension($name)
 	{
-		return in_array(strtolower($name), array_map('strtolower', $this->info->extensions), TRUE);
+		return in_array(strtolower($name), array_map('strtolower', $this->info->extensions), true);
 	}
 }

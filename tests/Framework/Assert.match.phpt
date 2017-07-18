@@ -111,7 +111,7 @@ Assert::same('a%A%b', Assert::expandMatchingPatterns('a%A%b', 'axc')[0]);
 
 
 Assert::exception(function () {
-	Assert::match(NULL, '');
+	Assert::match(null, '');
 }, 'Exception', 'Pattern must be a string.');
 
 

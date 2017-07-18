@@ -9,7 +9,7 @@ class TestCaseTest extends Tester\TestCase
 {
 	public function testAssertion()
 	{
-		Assert::true(FALSE);
+		Assert::true(false);
 	}
 }
 

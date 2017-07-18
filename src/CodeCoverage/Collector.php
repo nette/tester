@@ -25,7 +25,7 @@ class Collector
 	 */
 	public static function isStarted()
 	{
-		return self::$file !== NULL;
+		return self::$file !== null;
 	}
 
 

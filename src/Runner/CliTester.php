@@ -24,7 +24,7 @@ class CliTester
 	private $interpreter;
 
 
-	/** @return int|NULL */
+	/** @return int|null */
 	public function run()
 	{
 		Environment::setupColors();
@@ -36,8 +36,8 @@ class CliTester
 		Environment::$debugMode = (bool) $this->options['--debug'];
 		if (isset($this->options['--colors'])) {
 			Environment::$useColors = (bool) $this->options['--colors'];
-		} elseif (in_array($this->options['-o'], ['tap', 'junit'], TRUE)) {
-			Environment::$useColors = FALSE;
+		} elseif (in_array($this->options['-o'], ['tap', 'junit'], true)) {
+			Environment::$useColors = false;
 		}
 
 		if ($cmd->isEmpty() || $this->options['--help']) {
@@ -65,7 +65,7 @@ class CliTester
 			$runner->setEnvironmentVariable(Environment::COVERAGE, $coverageFile);
 		}
 
-		if ($this->options['-o'] !== NULL) {
+		if ($this->options['-o'] !== null) {
 			ob_clean();
 		}
 		ob_end_flush();
@@ -121,35 +121,35 @@ Options:
 
 XX
 		, [
-			'-c' => [CommandLine::REALPATH => TRUE],
-			'--watch' => [CommandLine::REPEATABLE => TRUE, CommandLine::REALPATH => TRUE],
-			'--setup' => [CommandLine::REALPATH => TRUE],
-			'--temp' => [CommandLine::REALPATH => TRUE],
-			'paths' => [CommandLine::REPEATABLE => TRUE, CommandLine::VALUE => getcwd()],
+			'-c' => [CommandLine::REALPATH => true],
+			'--watch' => [CommandLine::REPEATABLE => true, CommandLine::REALPATH => true],
+			'--setup' => [CommandLine::REALPATH => true],
+			'--temp' => [CommandLine::REALPATH => true],
+			'paths' => [CommandLine::REPEATABLE => true, CommandLine::VALUE => getcwd()],
 			'--debug' => [],
-			'--coverage-src' => [CommandLine::REALPATH => TRUE],
+			'--coverage-src' => [CommandLine::REALPATH => true],
 		]);
 
 		if (isset($_SERVER['argv'])) {
-			if ($tmp = array_search('-log', $_SERVER['argv'], TRUE)) {
+			if ($tmp = array_search('-log', $_SERVER['argv'], true)) {
 				$_SERVER['argv'][$tmp] = '--log';
 			}
 
-			if ($tmp = array_search('--tap', $_SERVER['argv'], TRUE)) {
+			if ($tmp = array_search('--tap', $_SERVER['argv'], true)) {
 				unset($_SERVER['argv'][$tmp]);
 				$_SERVER['argv'] = array_merge($_SERVER['argv'], ['-o', 'tap']);
 			}
 
-			if (array_search('-p', $_SERVER['argv'], TRUE) === FALSE) {
+			if (array_search('-p', $_SERVER['argv'], true) === false) {
 				echo "Note: Default interpreter is CLI since Tester v2.0. It used to be CGI.\n";
 			}
 		}
 
 		$this->options = $cmd->parse();
-		if ($this->options['--temp'] === NULL) {
+		if ($this->options['--temp'] === null) {
 			if (($temp = sys_get_temp_dir()) === '') {
 				echo "Note: System temporary directory is not set.\n";
-			} elseif (($real = realpath($temp)) === FALSE) {
+			} elseif (($real = realpath($temp)) === false) {
 				echo "Note: System temporary directory '$temp' does not exist.\n";
 			} else {
 				$this->options['--temp'] = rtrim($real, DIRECTORY_SEPARATOR);
@@ -170,7 +170,7 @@ XX
 			echo "Note: No php.ini is used.\n";
 		}
 
-		if (in_array($this->options['-o'], ['tap', 'junit'], TRUE)) {
+		if (in_array($this->options['-o'], ['tap', 'junit'], true)) {
 			array_push($args, '-d', 'html_errors=off');
 		}
 
@@ -194,7 +194,7 @@ XX
 		$runner->threadCount = max(1, (int) $this->options['-j']);
 		$runner->stopOnFail = $this->options['--stop-on-fail'];
 
-		if ($this->options['--temp'] !== NULL) {
+		if ($this->options['--temp'] !== null) {
 			$runner->setTempDirectory($this->options['--temp']);
 		}
 
@@ -242,7 +242,7 @@ XX
 	/** @return void */
 	private function finishCodeCoverage($file)
 	{
-		if (!in_array($this->options['-o'], ['none', 'tap', 'junit'], TRUE)) {
+		if (!in_array($this->options['-o'], ['none', 'tap', 'junit'], true)) {
 			echo 'Generating code coverage report... ';
 		}
 		if (pathinfo($file, PATHINFO_EXTENSION) === 'xml') {
@@ -260,7 +260,7 @@ XX
 	{
 		$prev = [];
 		$counter = 0;
-		while (TRUE) {
+		while (true) {
 			$state = [];
 			foreach ($this->options['--watch'] as $directory) {
 				foreach (new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($directory)) as $file) {

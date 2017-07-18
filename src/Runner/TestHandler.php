@@ -50,7 +50,7 @@ class TestHandler
 				$prepared = [];
 				foreach ($tests as $test) {
 					$res = $this->$method($test, $value, $php);
-					if ($res === NULL) {
+					if ($res === null) {
 						$prepared[] = $test;
 					} else {
 						foreach (is_array($res) ? $res : [$res] as $testVariety) {
@@ -90,7 +90,7 @@ class TestHandler
 			}
 
 			foreach ((array) $annotations[$m[1]] as $arg) {
-				/** @var Test|NULL $res */
+				/** @var Test|null $res */
 				if ($res = $this->$method($job, $arg)) {
 					$this->runner->writeResult($res);
 					return;
@@ -128,7 +128,7 @@ class TestHandler
 
 	private function initiatePhpIni(Test $test, $pair, PhpInterpreter $interpreter)
 	{
-		list($name, $value) = explode('=', $pair, 2) + [1 => NULL];
+		list($name, $value) = explode('=', $pair, 2) + [1 => null];
 		$interpreter->addPhpIniOption($name, $value);
 	}
 
@@ -161,7 +161,7 @@ class TestHandler
 		$job = new Job($test->withArguments(['method' => TestCase::LIST_METHODS]), $interpreter);
 		$job->run();
 
-		if (in_array($job->getExitCode(), [Job::CODE_ERROR, Job::CODE_FAIL, Job::CODE_SKIP], TRUE)) {
+		if (in_array($job->getExitCode(), [Job::CODE_ERROR, Job::CODE_FAIL, Job::CODE_SKIP], true)) {
 			return $test->withResult($job->getExitCode() === Job::CODE_SKIP ? Test::SKIPPED : Test::FAILED, $job->getTest()->stdout);
 		}
 

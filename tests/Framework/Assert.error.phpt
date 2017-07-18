@@ -73,5 +73,5 @@ Assert::error(function () {
 
 
 Assert::exception(function () {
-	Assert::error(function () {}, NULL);
+	Assert::error(function () {}, null);
 }, 'Exception', 'Error type must be E_* constant.');

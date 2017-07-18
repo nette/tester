@@ -17,7 +17,7 @@ class Test extends Tester\TestCase
 			set_error_handler(function () {});
 		} else {
 			@trigger_error('MUTED', E_USER_WARNING);
-			Assert::true(TRUE);
+			Assert::true(true);
 		}
 	}
 
