@@ -14,7 +14,7 @@ $same = [
 
 $notSame = [
 	[1, 1.0],
-	[['a' => TRUE, 'b' => FALSE], ['b' => FALSE, 'a' => TRUE]],
+	[['a' => true, 'b' => false], ['b' => false, 'a' => true]],
 	[['a', 'b'], ['b', 'a']],
 	[['a', 'b'], [1 => 'b', 0 => 'a']],
 	[new stdClass, new stdClass],

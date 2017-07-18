@@ -40,7 +40,7 @@ class FileMock
 	/**
 	 * @return string  file name
 	 */
-	public static function create($content, $extension = NULL)
+	public static function create($content, $extension = null)
 	{
 		self::register();
 
@@ -53,7 +53,7 @@ class FileMock
 
 	public static function register()
 	{
-		if (!in_array(self::PROTOCOL, stream_get_wrappers(), TRUE)) {
+		if (!in_array(self::PROTOCOL, stream_get_wrappers(), true)) {
 			stream_wrapper_register(self::PROTOCOL, __CLASS__);
 		}
 	}
@@ -65,15 +65,15 @@ class FileMock
 			// Windows: failed to open stream: Bad file descriptor
 			// Linux: failed to open stream: Illegal seek
 			$this->warning("failed to open stream: Invalid mode '$mode'");
-			return FALSE;
+			return false;
 
 		} elseif ($m[1] === 'x' && isset(self::$files[$path])) {
 			$this->warning('failed to open stream: File exists');
-			return FALSE;
+			return false;
 
 		} elseif ($m[1] === 'r' && !isset(self::$files[$path])) {
 			$this->warning('failed to open stream: No such file or directory');
-			return FALSE;
+			return false;
 
 		} elseif ($m[1] === 'w' || $m[1] === 'x') {
 			self::$files[$path] = '';
@@ -87,7 +87,7 @@ class FileMock
 		$this->isReadable = isset($m[2]) || $m[1] === 'r';
 		$this->isWritable = isset($m[2]) || $m[1] !== 'r';
 
-		return TRUE;
+		return true;
 	}
 
 
@@ -141,9 +141,9 @@ class FileMock
 		if ($offset >= 0) {
 			$this->readingPos = $offset;
 			$this->writingPos = $this->appendMode ? $this->writingPos : $offset;
-			return TRUE;
+			return true;
 		} else {
-			return FALSE;
+			return false;
 		}
 	}
 
@@ -151,12 +151,12 @@ class FileMock
 	public function stream_truncate($size)
 	{
 		if (!$this->isWritable) {
-			return FALSE;
+			return false;
 		}
 
 		$this->content = substr(str_pad($this->content, $size, "\x00"), 0, $size);
 		$this->writingPos = $this->appendMode ? $size : $this->writingPos;
-		return TRUE;
+		return true;
 	}
 
 
@@ -170,13 +170,13 @@ class FileMock
 	{
 		return isset(self::$files[$path])
 			? ['mode' => 0100666, 'size' => strlen(self::$files[$path])]
-			: FALSE;
+			: false;
 	}
 
 
 	public function stream_lock($operation)
 	{
-		return FALSE;
+		return false;
 	}
 
 
@@ -184,11 +184,11 @@ class FileMock
 	{
 		if (isset(self::$files[$path])) {
 			unset(self::$files[$path]);
-			return TRUE;
+			return true;
 		}
 
 		$this->warning('No such file');
-		return FALSE;
+		return false;
 	}
 
 

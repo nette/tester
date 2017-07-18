@@ -8,15 +8,15 @@ require __DIR__ . '/../bootstrap.php';
 
 class Test
 {
-	public $x = [10, NULL];
+	public $x = [10, null];
 	private $y = 'hello';
 	protected $z = 30.0;
 }
 
 
-Assert::match('NULL', Dumper::toPhp(NULL));
-Assert::match('TRUE', Dumper::toPhp(TRUE));
-Assert::match('FALSE', Dumper::toPhp(FALSE));
+Assert::match('NULL', Dumper::toPhp(null));
+Assert::match('TRUE', Dumper::toPhp(true));
+Assert::match('FALSE', Dumper::toPhp(false));
 Assert::match('0', Dumper::toPhp(0));
 Assert::match('1', Dumper::toPhp(1));
 Assert::match('0.0', Dumper::toPhp(0.0));
@@ -38,7 +38,7 @@ Assert::match('[
 ]', Dumper::toPhp([1, 'hello', "\r" => [], [1, 2], [1 => 1, 2, 3, 4, 5, 6, 7, 'abcdefgh']]));
 
 Assert::match('/* resource stream */', Dumper::toPhp(fopen(__FILE__, 'r')));
-Assert::match('(object) /* #%a% */ []', Dumper::toPhp((object) NULL));
+Assert::match('(object) /* #%a% */ []', Dumper::toPhp((object) null));
 Assert::match("(object) /* #%a% */ [
 	'a' => 'b',
 ]", Dumper::toPhp((object) ['a' => 'b']));

@@ -51,7 +51,7 @@ class PhpParser
 	{
 		$tokens = @token_get_all($code); // @ - source code can be written in newer PHP
 
-		$level = $classLevel = $functionLevel = NULL;
+		$level = $classLevel = $functionLevel = null;
 		$namespace = '';
 		$line = 1;
 
@@ -90,7 +90,7 @@ class PhpParser
 						$classLevel = $level + 1;
 						$class = (object) [
 							'start' => $line,
-							'end' => NULL,
+							'end' => null,
 							'methods' => [],
 						];
 					}
@@ -103,7 +103,7 @@ class PhpParser
 					break;
 
 				case T_ABSTRACT:
-					$isAbstract = TRUE;
+					$isAbstract = true;
 					break;
 
 				case T_FUNCTION:
@@ -112,7 +112,7 @@ class PhpParser
 							$function = &$class->methods[$name];
 							$function = (object) [
 								'start' => $line,
-								'end' => NULL,
+								'end' => null,
 								'visibility' => isset($visibility) ? $visibility : 'public',
 							];
 
@@ -120,7 +120,7 @@ class PhpParser
 							$function = &$result->functions[$namespace . $name];
 							$function = (object) [
 								'start' => $line,
-								'end' => NULL,
+								'end' => null,
 							];
 						}
 						$functionLevel = $level + 1;
@@ -164,12 +164,12 @@ class PhpParser
 
 	private static function fetch(&$tokens, $take)
 	{
-		$res = NULL;
+		$res = null;
 		while ($token = current($tokens)) {
 			list($token, $s) = is_array($token) ? $token : [$token, $token];
-			if (in_array($token, (array) $take, TRUE)) {
+			if (in_array($token, (array) $take, true)) {
 				$res .= $s;
-			} elseif (!in_array($token, [T_DOC_COMMENT, T_WHITESPACE, T_COMMENT], TRUE)) {
+			} elseif (!in_array($token, [T_DOC_COMMENT, T_WHITESPACE, T_COMMENT], true)) {
 				break;
 			}
 			next($tokens);

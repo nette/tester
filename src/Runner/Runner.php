@@ -28,7 +28,7 @@ class Runner
 	public $outputHandlers = [];
 
 	/** @var bool */
-	public $stopOnFail = FALSE;
+	public $stopOnFail = false;
 
 	/** @var PhpInterpreter */
 	private $interpreter;
@@ -48,7 +48,7 @@ class Runner
 	/** @var bool */
 	private $interrupted;
 
-	/** @var string|NULL */
+	/** @var string|null */
 	private $tempDir;
 
 	/** @var array */
@@ -92,7 +92,7 @@ class Runner
 		}
 
 		$tempDir = realpath($path) . DIRECTORY_SEPARATOR . 'Tester';
-		if (!is_dir($tempDir) && @mkdir($tempDir) === FALSE && !is_dir($tempDir)) {  // @ - directory may exist
+		if (!is_dir($tempDir) && @mkdir($tempDir) === false && !is_dir($tempDir)) {  // @ - directory may exist
 			throw new \RuntimeException("Cannot create '$tempDir' directory.");
 		}
 
@@ -106,7 +106,7 @@ class Runner
 	 */
 	public function run()
 	{
-		$this->interrupted = FALSE;
+		$this->interrupted = false;
 
 		foreach ($this->outputHandlers as $handler) {
 			$handler->begin();
@@ -133,7 +133,7 @@ class Runner
 				$running[] = $job = array_shift($this->jobs);
 				$async = $this->threadCount > 1 && (count($running) + count($this->jobs) > 1);
 				$job->setEnvironmentVariable(Environment::THREAD, array_shift($threads));
-				$job->run($async ? $job::RUN_ASYNC : NULL);
+				$job->run($async ? $job::RUN_ASYNC : null);
 			}
 
 			if (count($running) > 1) {
@@ -166,7 +166,7 @@ class Runner
 	 */
 	private function findTests($path)
 	{
-		if (strpbrk($path, '*?') === FALSE && !file_exists($path)) {
+		if (strpbrk($path, '*?') === false && !file_exists($path)) {
 			throw new \InvalidArgumentException("File or directory '$path' not found.");
 		}
 
@@ -227,7 +227,7 @@ class Runner
 		}
 
 		if ($this->stopOnFail && $test->getResult() === Test::FAILED) {
-			$this->interrupted = TRUE;
+			$this->interrupted = true;
 		}
 	}
 
@@ -258,7 +258,7 @@ class Runner
 		if (extension_loaded('pcntl')) {
 			pcntl_signal(SIGINT, function () {
 				pcntl_signal(SIGINT, SIG_DFL);
-				$this->interrupted = TRUE;
+				$this->interrupted = true;
 			});
 		}
 	}

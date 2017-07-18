@@ -38,8 +38,8 @@ class DataProvider
 			}
 
 		} else {
-			$data = @parse_ini_file($file, TRUE); // @ is escalated to exception
-			if ($data === FALSE) {
+			$data = @parse_ini_file($file, true); // @ is escalated to exception
+			if ($data === false) {
 				throw new \Exception("Cannot parse data-provider file '$file'.");
 			}
 		}
@@ -75,10 +75,10 @@ class DataProvider
 				? version_compare($token, $operand, $operator)
 				: self::compare($token, $operator, $operand);
 			if (!$res) {
-				return FALSE;
+				return false;
 			}
 		}
-		return TRUE;
+		return true;
 	}
 
 

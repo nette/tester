@@ -38,7 +38,7 @@ abstract class AbstractGenerator
 	 * @param  string  path to coverage.dat file
 	 * @param  string  path to covered source file or directory
 	 */
-	public function __construct($file, $source = NULL)
+	public function __construct($file, $source = null)
 	{
 		if (!is_file($file)) {
 			throw new \Exception("File '$file' is missing.");
@@ -69,7 +69,7 @@ abstract class AbstractGenerator
 	}
 
 
-	public function render($file = NULL)
+	public function render($file = null)
 	{
 		$handle = $file ? @fopen($file, 'w') : STDOUT; // @ is escalated to exception
 		if (!$handle) {
@@ -113,7 +113,7 @@ abstract class AbstractGenerator
 
 		return new \CallbackFilterIterator($iterator, function (\SplFileInfo $file) {
 			return $file->getBasename()[0] !== '.'  // . or .. or .gitignore
-				&& in_array($file->getExtension(), $this->acceptFiles, TRUE);
+				&& in_array($file->getExtension(), $this->acceptFiles, true);
 		});
 	}
 

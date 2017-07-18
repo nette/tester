@@ -5,9 +5,9 @@ use Tester\Assert;
 require __DIR__ . '/../bootstrap.php';
 
 
-Assert::false(FALSE);
+Assert::false(false);
 
-$notFalse = [TRUE, 0, 1, NULL, 'FALSE'];
+$notFalse = [true, 0, 1, null, 'FALSE'];
 
 foreach ($notFalse as $value) {
 	Assert::exception(function () use ($value) {

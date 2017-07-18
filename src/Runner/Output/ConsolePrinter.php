@@ -22,7 +22,7 @@ class ConsolePrinter implements Tester\Runner\OutputHandler
 	private $runner;
 
 	/** @var bool  display skipped tests information? */
-	private $displaySkipped = FALSE;
+	private $displaySkipped = false;
 
 	/** @var resource */
 	private $file;
@@ -34,7 +34,7 @@ class ConsolePrinter implements Tester\Runner\OutputHandler
 	private $time;
 
 
-	public function __construct(Runner $runner, $displaySkipped = FALSE, $file = 'php://output')
+	public function __construct(Runner $runner, $displaySkipped = false, $file = 'php://output')
 	{
 		$this->runner = $runner;
 		$this->displaySkipped = $displaySkipped;
@@ -44,7 +44,7 @@ class ConsolePrinter implements Tester\Runner\OutputHandler
 
 	public function begin()
 	{
-		$this->time = -microtime(TRUE);
+		$this->time = -microtime(true);
 		fwrite($this->file, $this->runner->getInterpreter()->getShortInfo()
 			. ' | ' . $this->runner->getInterpreter()->getCommandLine()
 			. " | {$this->runner->threadCount} thread" . ($this->runner->threadCount > 1 ? 's' : '') . "\n\n");
@@ -81,8 +81,8 @@ class ConsolePrinter implements Tester\Runner\OutputHandler
 			. ($results[Test::FAILED] ? $results[Test::FAILED] . ' failure' . ($results[Test::FAILED] > 1 ? 's' : '') . ', ' : '')
 			. ($results[Test::SKIPPED] ? $results[Test::SKIPPED] . ' skipped, ' : '')
 			. ($jobCount !== $count ? ($jobCount - $count) . ' not run, ' : '')
-			. sprintf('%0.1f', $this->time + microtime(TRUE)) . ' seconds)' . Dumper::color() . "\n");
+			. sprintf('%0.1f', $this->time + microtime(true)) . ' seconds)' . Dumper::color() . "\n");
 
-		$this->buffer = NULL;
+		$this->buffer = null;
 	}
 }

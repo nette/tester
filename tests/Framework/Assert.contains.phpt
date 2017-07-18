@@ -14,7 +14,7 @@ $contains = [
 
 $notContains = [
 	['2', 'a1'],
-	['1', [TRUE]],
+	['1', [true]],
 ];
 
 foreach ($contains as $case) {

@@ -42,12 +42,12 @@ Assert::null($e->getPrevious());
 
 Assert::exception(function () {
 	throw new Exception('Text', 42);
-}, 'Exception', NULL, 42);
+}, 'Exception', null, 42);
 
 $e = Assert::exception(function () {
 	Assert::exception(function () {
 		throw new Exception('Text', 1);
-	}, 'Exception', NULL, 42);
+	}, 'Exception', null, 42);
 }, 'Tester\AssertException', 'Exception with a code 42 was expected but got 1');
 Assert::null($e->getPrevious());
 

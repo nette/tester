@@ -19,7 +19,7 @@ class DomQuery extends \SimpleXMLElement
 	 */
 	public static function fromHtml($html)
 	{
-		if (strpos($html, '<') === FALSE) {
+		if (strpos($html, '<') === false) {
 			$html = '<body>' . $html;
 		}
 
@@ -32,7 +32,7 @@ class DomQuery extends \SimpleXMLElement
 		}, $html);
 
 		$dom = new \DOMDocument();
-		$old = libxml_use_internal_errors(TRUE);
+		$old = libxml_use_internal_errors(true);
 		libxml_clear_errors();
 		$dom->loadHTML($html);
 		$errors = libxml_get_errors();

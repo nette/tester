@@ -29,7 +29,7 @@ usort($sorted, function ($a, $b) {
 	return strcmp($a->getAttribute('name'), $b->getAttribute('name'));
 });
 foreach ($files as $file) {
-	$file->parentNode->replaceChild(array_shift($sorted)->cloneNode(TRUE), $file);
+	$file->parentNode->replaceChild(array_shift($sorted)->cloneNode(true), $file);
 }
 $xml = $dom->saveXML();
 

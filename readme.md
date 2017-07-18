@@ -87,15 +87,15 @@ This table shows all assertions (class `Assert` means `Tester\Assert`):
 - `Assert::contains($needle, string $haystack)` - Reports an error if $needle is not a substring of $haystack.
 - `Assert::notContains($needle, array $haystack)` - Reports an error if $needle is an element of $haystack.
 - `Assert::notContains($needle, string $haystack)` - Reports an error if $needle is a substring of $haystack.
-- `Assert::true($value)` - Reports an error if $value is not TRUE.
-- `Assert::false($value)` - Reports an error if $value is not FALSE.
+- `Assert::true($value)` - Reports an error if $value is not true.
+- `Assert::false($value)` - Reports an error if $value is not false.
 - `Assert::truthy($value)` - Reports an error if $value is not truthy.
 - `Assert::falsey($value)` - Reports an error if $value is not falsey.
-- `Assert::null($value)` - Reports an error if $value is not NULL.
+- `Assert::null($value)` - Reports an error if $value is not null.
 - `Assert::nan($value)` - Reports an error if $value is not NAN.
 - `Assert::type($type, $value)` -  Reports an error if the variable $value is not of PHP or class type $type.
-- `Assert::exception($closure, $class, $message = NULL, $code = NULL)` -  Checks if the function throws exception.
-- `Assert::error($closure, $level, $message = NULL)` -  Checks if the function $closure throws PHP warning/notice/error.
+- `Assert::exception($closure, $class, $message = null, $code = null)` -  Checks if the function throws exception.
+- `Assert::error($closure, $level, $message = null)` -  Checks if the function $closure throws PHP warning/notice/error.
 - `Assert::noError($closure)` -  Checks that the function $closure does not throw PHP warning/notice/error or exception.
 - `Assert::match($pattern, $value)` - Compares result using regular expression or mask.
 - `Assert::matchFile($file, $value)` - Compares result using regular expression or mask sorted in file.
@@ -106,7 +106,7 @@ Testing exceptions:
 ```php
 Assert::exception(function () {
 	$h = new Greeting;
-	$h->say(NULL);
+	$h->say(null);
 }, 'InvalidArgumentException', 'Invalid name.');
 ```
 

@@ -6,9 +6,9 @@ use Tester\Dumper;
 require __DIR__ . '/../bootstrap.php';
 
 
-Assert::match('NULL', Dumper::toLine(NULL));
-Assert::match('TRUE', Dumper::toLine(TRUE));
-Assert::match('FALSE', Dumper::toLine(FALSE));
+Assert::match('NULL', Dumper::toLine(null));
+Assert::match('TRUE', Dumper::toLine(true));
+Assert::match('FALSE', Dumper::toLine(false));
 Assert::match('0', Dumper::toLine(0));
 Assert::match('1', Dumper::toLine(1));
 Assert::match('0.0', Dumper::toLine(0.0));

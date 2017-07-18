@@ -19,10 +19,10 @@ class TestCase
 
 
 	/** @var bool */
-	private $handleErrors = FALSE;
+	private $handleErrors = false;
 
-	/** @var callable|NULL|FALSE */
-	private $prevErrorHandler = FALSE;
+	/** @var callable|null|false */
+	private $prevErrorHandler = false;
 
 
 	/**
@@ -42,7 +42,7 @@ class TestCase
 		if (isset($_SERVER['argv']) && ($tmp = preg_filter('#--method=([\w-]+)$#Ai', '$1', $_SERVER['argv']))) {
 			$method = reset($tmp);
 			if ($method === self::LIST_METHODS) {
-				Environment::$checkAssertions = FALSE;
+				Environment::$checkAssertions = false;
 				header('Content-Type: text/plain');
 				echo '[' . implode(',', $methods) . ']';
 				return;
@@ -63,7 +63,7 @@ class TestCase
 	 * @param  array  test method parameters (dataprovider bypass)
 	 * @return void
 	 */
-	public function runTest($method, array $args = NULL)
+	public function runTest($method, array $args = null)
 	{
 		if (!method_exists($this, $method)) {
 			throw new TestCaseException("Method '$method' does not exist.");
@@ -76,21 +76,21 @@ class TestCase
 			throw new TestCaseException("Method {$method->getName()} is not public. Make it public or rename it.");
 		}
 
-		$info = Helpers::parseDocComment((string) $method->getDocComment()) + ['dataprovider' => NULL, 'throws' => NULL];
+		$info = Helpers::parseDocComment((string) $method->getDocComment()) + ['dataprovider' => null, 'throws' => null];
 
 		if ($info['throws'] === '') {
 			throw new TestCaseException("Missing class name in @throws annotation for {$method->getName()}().");
 		} elseif (is_array($info['throws'])) {
 			throw new TestCaseException("Annotation @throws for {$method->getName()}() can be specified only once.");
 		} else {
-			$throws = preg_split('#\s+#', $info['throws'], 2) + [NULL, NULL];
+			$throws = preg_split('#\s+#', $info['throws'], 2) + [null, null];
 		}
 
 		$data = [];
-		if ($args === NULL) {
+		if ($args === null) {
 			$defaultParams = [];
 			foreach ($method->getParameters() as $param) {
-				$defaultParams[$param->getName()] = $param->isDefaultValueAvailable() ? $param->getDefaultValue() : NULL;
+				$defaultParams[$param->getName()] = $param->isDefaultValueAvailable() ? $param->getDefaultValue() : null;
 			}
 
 			foreach ((array) $info['dataprovider'] as $provider) {
@@ -114,14 +114,14 @@ class TestCase
 		}
 
 
-		if ($this->prevErrorHandler === FALSE) {
+		if ($this->prevErrorHandler === false) {
 			$this->prevErrorHandler = set_error_handler(function ($severity) {
 				if ($this->handleErrors && ($severity & error_reporting()) === $severity) {
-					$this->handleErrors = FALSE;
+					$this->handleErrors = false;
 					$this->silentTearDown();
 				}
 
-				return $this->prevErrorHandler ? call_user_func_array($this->prevErrorHandler, func_get_args()) : FALSE;
+				return $this->prevErrorHandler ? call_user_func_array($this->prevErrorHandler, func_get_args()) : false;
 			});
 		}
 
@@ -130,7 +130,7 @@ class TestCase
 			try {
 				$this->setUp();
 
-				$this->handleErrors = TRUE;
+				$this->handleErrors = true;
 				try {
 					if ($info['throws']) {
 						$e = Assert::error(function () use ($method, $params) {
@@ -143,11 +143,11 @@ class TestCase
 						call_user_func_array([$this, $method->getName()], $params);
 					}
 				} catch (\Exception $e) {
-					$this->handleErrors = FALSE;
+					$this->handleErrors = false;
 					$this->silentTearDown();
 					throw $e;
 				}
-				$this->handleErrors = FALSE;
+				$this->handleErrors = false;
 
 				$this->tearDown();
 
@@ -163,7 +163,7 @@ class TestCase
 	 */
 	protected function getData($provider)
 	{
-		if (strpos($provider, '.') === FALSE) {
+		if (strpos($provider, '.') === false) {
 			return $this->$provider();
 		} else {
 			$rc = new \ReflectionClass($this);

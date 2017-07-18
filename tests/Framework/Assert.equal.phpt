@@ -31,7 +31,7 @@ $equals = [
 	['1', '1'],
 	[['1'], ['1']],
 	[['a', 'b'], [1 => 'b', 0 => 'a']],
-	[['a' => TRUE, 'b' => FALSE], ['b' => FALSE, 'a' => TRUE]],
+	[['a' => true, 'b' => false], ['b' => false, 'a' => true]],
 	[new stdClass, new stdClass],
 	[[new stdClass], [new stdClass]],
 	[$float1, $float2],

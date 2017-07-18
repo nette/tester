@@ -54,7 +54,7 @@ class Job
 	private $headers;
 
 
-	public function __construct(Test $test, PhpInterpreter $interpreter, array $envVars = NULL)
+	public function __construct(Test $test, PhpInterpreter $interpreter, array $envVars = null)
 	{
 		if ($test->getResult() !== Test::PREPARED) {
 			throw new \LogicException("Test '{$test->getSignature()}' already has result '{$test->getResult()}'.");
@@ -95,7 +95,7 @@ class Job
 	 * @param  int self::RUN_ASYNC | self::RUN_COLLECT_ERRORS
 	 * @return void
 	 */
-	public function run($flags = NULL)
+	public function run($flags = null)
 	{
 		foreach ($this->envVars as $name => $value) {
 			putenv("$name=$value");
@@ -120,8 +120,8 @@ class Job
 			],
 			$pipes,
 			dirname($this->test->getFile()),
-			NULL,
-			['bypass_shell' => TRUE]
+			null,
+			['bypass_shell' => true]
 		);
 
 		foreach (array_keys($this->envVars) as $name) {
@@ -137,9 +137,9 @@ class Job
 		}
 
 		if ($flags & self::RUN_ASYNC) {
-			stream_set_blocking($this->stdout, FALSE); // on Windows does not work with proc_open()
+			stream_set_blocking($this->stdout, false); // on Windows does not work with proc_open()
 			if ($this->stderr) {
-				stream_set_blocking($this->stderr, FALSE);
+				stream_set_blocking($this->stderr, false);
 			}
 		} else {
 			while ($this->isRunning()) {
@@ -156,7 +156,7 @@ class Job
 	public function isRunning()
 	{
 		if (!is_resource($this->stdout)) {
-			return FALSE;
+			return false;
 		}
 		$this->test->stdout .= stream_get_contents($this->stdout);
 		if ($this->stderr) {
@@ -165,7 +165,7 @@ class Job
 
 		$status = proc_get_status($this->proc);
 		if ($status['running']) {
-			return TRUE;
+			return true;
 		}
 
 		fclose($this->stdout);
@@ -179,12 +179,12 @@ class Job
 			list($headers, $this->test->stdout) = $tmp;
 			foreach (explode("\r\n", $headers) as $header) {
 				$pos = strpos($header, ':');
-				if ($pos !== FALSE) {
+				if ($pos !== false) {
 					$this->headers[trim(substr($header, 0, $pos))] = (string) trim(substr($header, $pos + 1));
 				}
 			}
 		}
-		return FALSE;
+		return false;
 	}
 
 

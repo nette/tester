@@ -7,7 +7,7 @@ require __DIR__ . '/../bootstrap.php';
 
 Assert::nan(NAN);
 
-$notNan = [FALSE, 0, NULL, '', 'NAN'];
+$notNan = [false, 0, null, '', 'NAN'];
 
 foreach ($notNan as $value) {
 	Assert::exception(function () use ($value) {

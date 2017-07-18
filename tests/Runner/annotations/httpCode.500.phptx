@@ -5,7 +5,7 @@
  */
 
 require __DIR__ . '/../../bootstrap.php';
-Tester\Environment::$checkAssertions = FALSE;
+Tester\Environment::$checkAssertions = false;
 
 
-header('HTTP', TRUE, 500);
+header('HTTP', true, 500);

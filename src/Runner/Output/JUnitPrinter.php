@@ -39,7 +39,7 @@ class JUnitPrinter implements Tester\Runner\OutputHandler
 
 	public function begin()
 	{
-		$this->startTime = microtime(TRUE);
+		$this->startTime = microtime(true);
 		fwrite($this->file, "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<testsuites>\n");
 	}
 
@@ -64,7 +64,7 @@ class JUnitPrinter implements Tester\Runner\OutputHandler
 
 	public function end()
 	{
-		$time = sprintf('%0.1f', microtime(TRUE) - $this->startTime);
+		$time = sprintf('%0.1f', microtime(true) - $this->startTime);
 		$output = $this->buffer;
 		$results = $this->runner->getResults();
 		$this->buffer = "\t<testsuite errors=\"{$results[3]}\" skipped=\"{$results[2]}\" tests=\"" . array_sum($results) . "\" time=\"$time\" timestamp=\"" . @date('Y-m-d\TH:i:s') . "\">\n";

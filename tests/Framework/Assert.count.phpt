@@ -20,7 +20,7 @@ Assert::exception(function () {
 
 // test not countable values
 Assert::exception(function () {
-	Assert::count(1, NULL);
+	Assert::count(1, null);
 }, 'Tester\AssertException', 'NULL should be array or countable object');
 
 Assert::exception(function () {

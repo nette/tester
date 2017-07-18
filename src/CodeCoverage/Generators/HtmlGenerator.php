@@ -32,7 +32,7 @@ class HtmlGenerator extends AbstractGenerator
 	 * @param  string  path to source file/directory
 	 * @param  string
 	 */
-	public function __construct($file, $source = NULL, $title = NULL)
+	public function __construct($file, $source = null, $title = null)
 	{
 		parent::__construct($file, $source);
 		$this->title = $title;
@@ -100,7 +100,7 @@ class HtmlGenerator extends AbstractGenerator
 				'lines' => $lines,
 				'coverage' => $coverage,
 				'total' => $total,
-				'class' => $light ? 'light' : ($loaded ? NULL : 'not-loaded'),
+				'class' => $light ? 'light' : ($loaded ? null : 'not-loaded'),
 			];
 		}
 	}
