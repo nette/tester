@@ -109,8 +109,7 @@ test(function () {
 		'c+' => ['ABC', 'ABC'],
 	];
 
-	foreach ($cases as $mode => $case) {
-		list($contents, $readOut) = $case;
+	foreach ($cases as $mode => list($contents, $readOut)) {
 		$file = $mode[0] === 'x' ? "mock://none-$mode" : FileMock::create('ABC');
 
 		$f = fopen($file, $mode);
@@ -138,8 +137,7 @@ test(function () {
 		'c+' => ['_BC', '_BC'],
 	];
 
-	foreach ($cases as $mode => $case) {
-		list($contents, $readOut) = $case;
+	foreach ($cases as $mode => list($contents, $readOut)) {
 		$file = $mode[0] === 'x' ? "mock://none-$mode" : FileMock::create('ABC');
 
 		$f = fopen($file, $mode);

@@ -33,7 +33,7 @@ foreach ($cases as $case) {
 	if ($message) {
 		Assert::exception(function () use ($type, $value) {
 			Assert::type($type, $value);
-		}, 'Tester\AssertException', $message);
+		}, Tester\AssertException::class, $message);
 	} else {
 		Assert::type($type, $value);
 	}
@@ -46,4 +46,4 @@ Assert::type('list', $arr);
 
 Assert::exception(function () {
 	Assert::type('int', 'string', 'Custom description');
-}, 'Tester\AssertException', 'Custom description: string should be int');
+}, Tester\AssertException::class, 'Custom description: string should be int');

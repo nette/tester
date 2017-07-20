@@ -82,12 +82,12 @@ test(function () { // complex
 test(function () { // pseudoclass
 	Assert::exception(function () {
 		DomQuery::css2xpath('a:first-child');
-	}, 'InvalidArgumentException');
+	}, InvalidArgumentException::class);
 });
 
 
 test(function () { // adjacent sibling combinator
 	Assert::exception(function () {
 		DomQuery::css2xpath('div + span');
-	}, 'InvalidArgumentException');
+	}, InvalidArgumentException::class);
 });

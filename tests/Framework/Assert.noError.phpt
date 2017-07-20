@@ -13,11 +13,11 @@ Assert::exception(function () {
 	Assert::noError(function () {
 		$a++;
 	});
-}, 'Tester\AssertException', 'Generated more errors than expected: E_NOTICE %a%');
+}, Tester\AssertException::class, 'Generated more errors than expected: E_NOTICE %a%');
 
 
 Assert::exception(function () {
 	Assert::noError(function () {
 		throw new \Exception('Unexpected');
 	});
-}, 'Exception', 'Unexpected');
+}, Exception::class, 'Unexpected');

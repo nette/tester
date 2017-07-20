@@ -50,43 +50,37 @@ $notEquals = [
 	[1, 1.0],
 	[INF, -INF],
 	[['a', 'b'], ['b', 'a']],
+	[NAN, NAN],
 ];
 
-if (!defined('PHP_WINDOWS_VERSION_BUILD')) {
-	$notEquals[] = [NAN, NAN];
-}
 
 
-foreach ($equals as $case) {
-	list($expected, $value) = $case;
-
+foreach ($equals as list($expected, $value)) {
 	Assert::equal($expected, $value);
 
 	Assert::exception(function () use ($expected, $value) {
 		Assert::notEqual($expected, $value);
-	}, 'Tester\AssertException', '%a% should not be equal to %a%');
+	}, Tester\AssertException::class, '%a% should not be equal to %a%');
 }
 
-foreach ($notEquals as $case) {
-	list($expected, $value) = $case;
-
-	Assert::notEqual($case[0], $case[1]);
+foreach ($notEquals as list($expected, $value)) {
+	Assert::notEqual($expected, $value);
 
 	Assert::exception(function () use ($expected, $value) {
 		Assert::equal($expected, $value);
-	}, 'Tester\AssertException', '%a% should be equal to %a%');
+	}, Tester\AssertException::class, '%a% should be equal to %a%');
 }
 
 Assert::exception(function () {
 	$rec = [];
 	$rec[] = &$rec;
 	Assert::equal($rec, $rec);
-}, 'Exception', 'Nesting level too deep or recursive dependency.');
+}, Exception::class, 'Nesting level too deep or recursive dependency.');
 
 Assert::exception(function () {
 	Assert::equal(true, false, 'Custom description');
-}, 'Tester\AssertException', 'Custom description: %a% should be equal to %a%');
+}, Tester\AssertException::class, 'Custom description: %a% should be equal to %a%');
 
 Assert::exception(function () {
 	Assert::notEqual(true, true, 'Custom description');
-}, 'Tester\AssertException', 'Custom description: %a% should not be equal to %a%');
+}, Tester\AssertException::class, 'Custom description: %a% should not be equal to %a%');

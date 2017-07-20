@@ -100,7 +100,7 @@ class Environment
 		});
 
 		register_shutdown_function(function () {
-			Assert::$onFailure = [__CLASS__, 'handleException']; // note that Runner is unable to catch this errors in CLI & PHP 5.4.0 - 5.4.6 due PHP bug #62725
+			Assert::$onFailure = [__CLASS__, 'handleException'];
 
 			$error = error_get_last();
 			register_shutdown_function(function () use ($error) {

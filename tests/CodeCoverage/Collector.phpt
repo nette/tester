@@ -23,7 +23,7 @@ Assert::true(CodeCoverage\Collector::isStarted());
 
 Assert::exception(function () use ($outputFile) {
 	CodeCoverage\Collector::start($outputFile);
-}, 'LogicException', 'Code coverage collector has been already started.');
+}, LogicException::class, 'Code coverage collector has been already started.');
 
 $content = file_get_contents($outputFile);
 Assert::same('', $content);

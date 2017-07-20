@@ -27,9 +27,7 @@ Assert::match("'Iñtërnâtiônàlizætiøn'", Dumper::toLine("I\xc3\xb1t\xc3\xa
 Assert::match('resource(stream)', Dumper::toLine(fopen(__FILE__, 'r')));
 Assert::match('stdClass(#%a%)', Dumper::toLine((object) [1, 2]));
 Assert::match('DateTime(2014-02-13 12:34:56 +0300)(#%a%)', Dumper::toLine(new DateTime('2014-02-13 12:34:56 +0300')));
-if (PHP_VERSION_ID >= 50500) {
-	Assert::match('DateTimeImmutable(2014-02-13 12:34:56 +0300)(#%a%)', Dumper::toLine(new DateTimeImmutable('2014-02-13 12:34:56 +0300')));
-}
+Assert::match('DateTimeImmutable(2014-02-13 12:34:56 +0300)(#%a%)', Dumper::toLine(new DateTimeImmutable('2014-02-13 12:34:56 +0300')));
 
 Assert::match('[]', Dumper::toLine([]));
 Assert::match("[1, 2, 3, 4, 'x']", Dumper::toLine([1, 2, 3, 4, 'x']));

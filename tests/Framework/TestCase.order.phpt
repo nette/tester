@@ -83,11 +83,11 @@ $test = new FailingTest;
 
 Assert::exception(function () use ($test) {
 	$test->runTest('testPublic');
-}, 'Tester\AssertException');
+}, Tester\AssertException::class);
 
 Assert::exception(function () use ($test) {
 	$test->runTest('testPublicStatic');
-}, 'Tester\AssertException');
+}, Tester\AssertException::class);
 
 
 Assert::same([

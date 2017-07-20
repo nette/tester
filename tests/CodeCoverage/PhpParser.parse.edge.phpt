@@ -26,17 +26,15 @@ Assert::equal([
 ], $parsed->classes['C']->methods);
 
 
-if (PHP_VERSION_ID >= 50500) {
-	// The '::CLASS' construct
-	Assert::equal((object) [
-		'linesOfCode' => 1,
-		'linesOfComments' => 0,
-		'functions' => [],
-		'classes' => [
-			'A' => (object) ['start' => 1, 'end' => 1, 'methods' => []],
-			'B' => (object) ['start' => 1, 'end' => 1, 'methods' => []],
-		],
-		'traits' => [],
-		'interfaces' => [],
-	], $parser->parse('<?php class A {}  echo A::CLASS;  class B {}'));
-}
+// The '::class' construct
+Assert::equal((object) [
+	'linesOfCode' => 1,
+	'linesOfComments' => 0,
+	'functions' => [],
+	'classes' => [
+		'A' => (object) ['start' => 1, 'end' => 1, 'methods' => []],
+		'B' => (object) ['start' => 1, 'end' => 1, 'methods' => []],
+	],
+	'traits' => [],
+	'interfaces' => [],
+], $parser->parse('<?php class A {}  echo A::class;  class B {}'));

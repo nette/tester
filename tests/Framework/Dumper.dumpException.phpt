@@ -27,6 +27,6 @@ $cases = [
 ];
 
 foreach ($cases as $message => $closure) {
-	$e = Assert::exception($closure, 'Tester\AssertException');
+	$e = Assert::exception($closure, Tester\AssertException::class);
 	Assert::match($message . "\n%A%", Tester\Dumper::removeColors(Tester\Dumper::dumpException($e)));
 }

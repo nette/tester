@@ -35,5 +35,5 @@ foreach ([
 	'PHP temporary directory' => $info->tempDir == '' ? '(empty)' : $info->tempDir,
 	'Loaded extensions' => count($info->extensions) ? implode(', ', $info->extensions) : '(none)',
 ] as $title => $value) {
-	echo "\033[1;32m$title\033[0m:\n$value\n\n";
+	echo "\e[1;32m$title\e[0m:\n$value\n\n";
 }

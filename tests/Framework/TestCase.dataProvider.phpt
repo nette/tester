@@ -110,4 +110,4 @@ Assert::same([
 Assert::exception(function () {
 	$test = new MyTest;
 	$test->runTest('testAssertion');
-}, 'Tester\AssertException', 'FALSE should be TRUE in testAssertion(1, 2)');
+}, Tester\AssertException::class, 'FALSE should be TRUE in testAssertion(1, 2)');

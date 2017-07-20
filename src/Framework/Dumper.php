@@ -375,14 +375,14 @@ class Dumper
 			null => '0',
 		];
 		$c = explode('/', $color);
-		return "\033["
-			. str_replace(';', "m\033[", $colors[$c[0]] . (empty($c[1]) ? '' : ';4' . substr($colors[$c[1]], -1)))
-			. 'm' . $s . ($s === null ? '' : "\033[0m");
+		return "\e["
+			. str_replace(';', "m\e[", $colors[$c[0]] . (empty($c[1]) ? '' : ';4' . substr($colors[$c[1]], -1)))
+			. 'm' . $s . ($s === null ? '' : "\e[0m");
 	}
 
 
 	public static function removeColors($s)
 	{
-		return preg_replace('#\033\[[\d;]+m#', '', $s);
+		return preg_replace('#\e\[[\d;]+m#', '', $s);
 	}
 }

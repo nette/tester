@@ -42,7 +42,7 @@ test(function () {
 
 	Assert::exception(function () use ($test) {
 		$test->withResult(Test::FAILED, 'Foo');
-	}, 'LogicException', 'Result of test is already set to ' . Test::PASSED . " with message 'It is done'.");
+	}, LogicException::class, 'Result of test is already set to ' . Test::PASSED . " with message 'It is done'.");
 });
 
 
@@ -65,5 +65,5 @@ test(function () {
 
 	Assert::exception(function () use ($test) {
 		$test->withResult(Test::PASSED, '')->withArguments([]);
-	}, 'LogicException', 'Cannot change arguments of test which already has a result.');
+	}, LogicException::class, 'Cannot change arguments of test which already has a result.');
 });

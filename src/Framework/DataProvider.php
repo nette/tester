@@ -67,8 +67,7 @@ class DataProvider
 		static $replaces = ['' => '=', '=>' => '>=', '=<' => '<='];
 		$tokens = preg_split('#\s+#', $input);
 		preg_match_all('#\s*,?\s*(<=|=<|<|==|=|!=|<>|>=|=>|>)?\s*([^\s,]+)#A', $query, $queryParts, PREG_SET_ORDER);
-		foreach ($queryParts as $queryPart) {
-			list(, $operator, $operand) = $queryPart;
+		foreach ($queryParts as list(, $operator, $operand)) {
 			$operator = isset($replaces[$operator]) ? $replaces[$operator] : $operator;
 			$token = (string) array_shift($tokens);
 			$res = preg_match('#^[0-9.]+\z#', $token)
