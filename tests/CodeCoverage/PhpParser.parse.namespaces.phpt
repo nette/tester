@@ -11,7 +11,7 @@ $parser = new CodeCoverage\PhpParser;
 
 
 test(function () use ($parser) {
-	$parsed = $parser->parse(file_get_contents(__DIR__ . '/parse/namespaces.none.php'));
+	$parsed = $parser->parse(file_get_contents(__DIR__ . '/fixtures.parse/namespaces.none.php'));
 
 	Assert::equal([
 		'f' => (object) ['start' => 3, 'end' => 3],
@@ -32,7 +32,7 @@ test(function () use ($parser) {
 
 
 test(function () use ($parser) {
-	$parsed = $parser->parse(file_get_contents(__DIR__ . '/parse/namespaces.php'));
+	$parsed = $parser->parse(file_get_contents(__DIR__ . '/fixtures.parse/namespaces.php'));
 
 	Assert::equal([
 		'N\f' => (object) ['start' => 5, 'end' => 5],
@@ -57,7 +57,7 @@ test(function () use ($parser) {
 
 
 test(function () use ($parser) {
-	$parsed = $parser->parse(file_get_contents(__DIR__ . '/parse/namespaces.braces.php'));
+	$parsed = $parser->parse(file_get_contents(__DIR__ . '/fixtures.parse/namespaces.braces.php'));
 
 	Assert::equal([
 		'f' => (object) ['start' => 4, 'end' => 4],

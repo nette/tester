@@ -9,7 +9,7 @@ require __DIR__ . '/../../src/CodeCoverage/Generators/AbstractGenerator.php';
 require __DIR__ . '/../../src/CodeCoverage/Generators/CloverXMLGenerator.php';
 
 
-$coveredDir = __DIR__ . DIRECTORY_SEPARATOR . 'clover';
+$coveredDir = __DIR__ . DIRECTORY_SEPARATOR . 'fixtures.clover';
 
 $coverageData = Tester\FileMock::create(serialize([
 	$coveredDir . DIRECTORY_SEPARATOR . 'Logger.php' => array_map('intval', preg_filter(

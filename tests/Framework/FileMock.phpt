@@ -14,18 +14,18 @@ Assert::contains('mock', stream_get_wrappers());
 // Opening non-existing
 test(function () {
 	$cases = [
-		'r'  => $tmp = [
+		'r' => $tmp = [
 			[E_USER_WARNING, 'fopen(mock://none): failed to open stream: No such file or directory'],
 			[E_WARNING, 'fopen(mock://none): failed to open stream: "Tester\FileMock::stream_open" call failed'],
 		],
 		'r+' => $tmp,
-		'w'  => [],
+		'w' => [],
 		'w+' => [],
-		'a'  => [],
+		'a' => [],
 		'a+' => [],
-		'x'  => [],
+		'x' => [],
 		'x+' => [],
-		'c'  => [],
+		'c' => [],
 		'c+' => [],
 	];
 
@@ -45,18 +45,18 @@ test(function () {
 	FileMock::$files = [];
 
 	$cases = [
-		'r'  => [],
+		'r' => [],
 		'r+' => [],
-		'w'  => [],
+		'w' => [],
 		'w+' => [],
-		'a'  => [],
+		'a' => [],
 		'a+' => [],
-		'x'  => $tmp = [
+		'x' => $tmp = [
 			[E_USER_WARNING, 'fopen(mock://%i%.): failed to open stream: File exists'],
 			[E_WARNING, 'fopen(mock://%i%.): failed to open stream: "Tester\FileMock::stream_open" call failed'],
 		],
 		'x+' => $tmp,
-		'c'  => [],
+		'c' => [],
 		'c+' => [],
 	];
 
@@ -73,15 +73,15 @@ test(function () {
 	FileMock::$files = [];
 
 	$cases = [
-		'r'  => 0,
+		'r' => 0,
 		'r+' => 0,
-		'w'  => 0,
+		'w' => 0,
 		'w+' => 0,
-		'a'  => 0,
+		'a' => 0,
 		'a+' => 0,
-		'x'  => 0,
+		'x' => 0,
 		'x+' => 0,
-		'c'  => 0,
+		'c' => 0,
 		'c+' => 0,
 	];
 
@@ -97,15 +97,15 @@ test(function () {
 	FileMock::$files = [];
 
 	$cases = [
-		'r'  => ['ABC', 'ABC'],
+		'r' => ['ABC', 'ABC'],
 		'r+' => ['ABC', 'ABC'],
-		'w'  => ['', ''],
+		'w' => ['', ''],
 		'w+' => ['', ''],
-		'a'  => ['ABC', ''],
+		'a' => ['ABC', ''],
 		'a+' => ['ABC', 'ABC'],
-		'x'  => ['', ''],
+		'x' => ['', ''],
 		'x+' => ['', ''],
-		'c'  => ['ABC', ''],
+		'c' => ['ABC', ''],
 		'c+' => ['ABC', 'ABC'],
 	];
 
@@ -126,15 +126,15 @@ test(function () {
 	FileMock::$files = [];
 
 	$cases = [
-		'r'  => ['ABC', 'ABC'],
+		'r' => ['ABC', 'ABC'],
 		'r+' => ['_BC', '_BC'],
-		'w'  => ['_', ''],
+		'w' => ['_', ''],
 		'w+' => ['_', '_'],
-		'a'  => ['ABC_', ''],
+		'a' => ['ABC_', ''],
 		'a+' => ['ABC_', 'ABC_'],
-		'x'  => ['_', ''],
+		'x' => ['_', ''],
 		'x+' => ['_', '_'],
-		'c'  => ['_BC', ''],
+		'c' => ['_BC', ''],
 		'c+' => ['_BC', '_BC'],
 	];
 

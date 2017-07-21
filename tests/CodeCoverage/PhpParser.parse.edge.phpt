@@ -8,7 +8,7 @@ require __DIR__ . '/../../src/CodeCoverage/PhpParser.php';
 
 
 $parser = new CodeCoverage\PhpParser;
-$parsed = $parser->parse(file_get_contents(__DIR__ . '/parse/edge.php'));
+$parsed = $parser->parse(file_get_contents(__DIR__ . '/fixtures.parse/edge.php'));
 
 Assert::equal([
 	'foo' => (object) [

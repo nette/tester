@@ -21,4 +21,4 @@ Assert::equal((object) [
 		'fComment' => (object) ['start' => 33, 'end' => 36, 'visibility' => 'public'],
 		'fDoc' => (object) ['start' => 38, 'end' => 41, 'visibility' => 'public'],
 	],
-], $parser->parse(file_get_contents(__DIR__ . '/parse/lines.php'))->classes['C']);
+], $parser->parse(file_get_contents(__DIR__ . '/fixtures.parse/lines.php'))->classes['C']);

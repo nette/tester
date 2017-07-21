@@ -1,7 +1,6 @@
 <?php
 
 use Tester\Assert;
-use Tester\Environment;
 
 require __DIR__ . '/../bootstrap.php';
 
