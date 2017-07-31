@@ -44,13 +44,13 @@ class JUnitPrinter implements Tester\Runner\OutputHandler
 	}
 
 
-	public function result($testName, $result, $message)
+	public function finish(Test $test)
 	{
-		$this->buffer .= "\t\t<testcase classname=\"" . htmlspecialchars($testName) . '" name="' . htmlspecialchars($testName) . '"';
+		$this->buffer .= "\t\t<testcase classname=\"" . htmlspecialchars($test->getSignature()) . '" name="' . htmlspecialchars($test->getSignature()) . '"';
 
-		switch ($result) {
+		switch ($test->getResult()) {
 			case Test::FAILED:
-				$this->buffer .= ">\n\t\t\t<failure message=\"" . htmlspecialchars($message) . "\"/>\n\t\t</testcase>\n";
+				$this->buffer .= ">\n\t\t\t<failure message=\"" . htmlspecialchars($test->message) . "\"/>\n\t\t</testcase>\n";
 				break;
 			case Test::SKIPPED:
 				$this->buffer .= ">\n\t\t\t<skipped/>\n\t\t</testcase>\n";

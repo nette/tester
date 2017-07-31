@@ -37,15 +37,15 @@ class TapPrinter implements Tester\Runner\OutputHandler
 	}
 
 
-	public function result($testName, $result, $message)
+	public function finish(Test $test)
 	{
-		$message = str_replace("\n", "\n# ", trim($message));
+		$message = str_replace("\n", "\n# ", trim($test->message));
 		$outputs = [
-			Test::PASSED => "ok $testName",
-			Test::SKIPPED => "ok $testName #skip $message",
-			Test::FAILED => "not ok $testName\n# $message",
+			Test::PASSED => "ok {$test->getSignature()}",
+			Test::SKIPPED => "ok {$test->getSignature()} #skip $message",
+			Test::FAILED => "not ok {$test->getSignature()}\n# $message",
 		];
-		fwrite($this->file, $outputs[$result] . "\n");
+		fwrite($this->file, $outputs[$test->getResult()] . "\n");
 	}
 
 

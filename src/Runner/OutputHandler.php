@@ -17,7 +17,7 @@ interface OutputHandler
 {
 	function begin();
 
-	function result($testName, $result, $message);
+	function finish(Test $test);
 
 	function end();
 }

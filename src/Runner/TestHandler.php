@@ -56,7 +56,7 @@ class TestHandler
 						foreach (is_array($res) ? $res : [$res] as $testVariety) {
 							/** @var Test $testVariety */
 							if ($testVariety->hasResult()) {
-								$this->runner->writeResult($testVariety);
+								$this->runner->finishTest($testVariety);
 							} else {
 								$prepared[] = $testVariety;
 							}
@@ -92,12 +92,12 @@ class TestHandler
 			foreach ((array) $annotations[$m[1]] as $arg) {
 				/** @var Test|null $res */
 				if ($res = $this->$method($job, $arg)) {
-					$this->runner->writeResult($res);
+					$this->runner->finishTest($res);
 					return;
 				}
 			}
 		}
-		$this->runner->writeResult($test->withResult(Test::PASSED, $test->message));
+		$this->runner->finishTest($test->withResult(Test::PASSED, $test->message));
 	}
 
 

@@ -212,11 +212,11 @@ class Runner
 	 * Writes to output handlers.
 	 * @return void
 	 */
-	public function writeResult(Test $test)
+	public function finishTest(Test $test)
 	{
 		$this->results[$test->getResult()]++;
 		foreach ($this->outputHandlers as $handler) {
-			$handler->result($test->getSignature(), $test->getResult(), $test->message);
+			$handler->finish(clone $test);
 		}
 
 		if ($this->tempDir) {
