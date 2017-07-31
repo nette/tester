@@ -44,6 +44,11 @@ class JUnitPrinter implements Tester\Runner\OutputHandler
 	}
 
 
+	public function prepare(Test $test)
+	{
+	}
+
+
 	public function finish(Test $test)
 	{
 		$this->buffer .= "\t\t<testcase classname=\"" . htmlspecialchars($test->getSignature()) . '" name="' . htmlspecialchars($test->getSignature()) . '"';

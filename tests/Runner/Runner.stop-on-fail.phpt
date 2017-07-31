@@ -16,6 +16,11 @@ class Logger implements Tester\Runner\OutputHandler
 	public $results = [];
 
 
+	public function prepare(Test $test)
+	{
+	}
+
+
 	public function finish(Test $test)
 	{
 		$this->results[] = [$test->getResult(), basename($test->getFile())];

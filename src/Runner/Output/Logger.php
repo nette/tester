@@ -39,6 +39,11 @@ class Logger implements Tester\Runner\OutputHandler
 	}
 
 
+	public function prepare(Test $test)
+	{
+	}
+
+
 	public function finish(Test $test)
 	{
 		$message = '   ' . str_replace("\n", "\n   ", Tester\Dumper::removeColors(trim($test->message)));

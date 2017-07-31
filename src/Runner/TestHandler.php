@@ -56,6 +56,7 @@ class TestHandler
 						foreach (is_array($res) ? $res : [$res] as $testVariety) {
 							/** @var Test $testVariety */
 							if ($testVariety->hasResult()) {
+								$this->runner->prepareTest($testVariety);
 								$this->runner->finishTest($testVariety);
 							} else {
 								$prepared[] = $testVariety;
@@ -68,6 +69,7 @@ class TestHandler
 		}
 
 		foreach ($tests as $test) {
+			$this->runner->prepareTest($test);
 			$this->runner->addJob(new Job($test, $php, $this->runner->getEnvironmentVariables()));
 		}
 	}

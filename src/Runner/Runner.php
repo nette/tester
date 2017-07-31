@@ -209,6 +209,17 @@ class Runner
 
 
 	/**
+	 * @return void
+	 */
+	public function prepareTest(Test $test)
+	{
+		foreach ($this->outputHandlers as $handler) {
+			$handler->prepare(clone $test);
+		}
+	}
+
+
+	/**
 	 * Writes to output handlers.
 	 * @return void
 	 */

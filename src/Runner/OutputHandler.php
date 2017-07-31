@@ -17,6 +17,8 @@ interface OutputHandler
 {
 	function begin();
 
+	function prepare(Test $test);
+
 	function finish(Test $test);
 
 	function end();

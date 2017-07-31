@@ -51,6 +51,11 @@ class ConsolePrinter implements Tester\Runner\OutputHandler
 	}
 
 
+	public function prepare(Test $test)
+	{
+	}
+
+
 	public function finish(Test $test)
 	{
 		$outputs = [
