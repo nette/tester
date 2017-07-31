@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <testsuites>
-	<testsuite errors="4" skipped="3" tests="11" time="%a%" timestamp="%a%">
+	<testsuite errors="4" skipped="4" tests="11" time="%a%" timestamp="%a%">
 		<testcase classname="%a%01-basic.fail.phptx" name="%a%01-basic.fail.phptx">
 			<failure message="Multi
 line
