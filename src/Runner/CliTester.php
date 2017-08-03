@@ -201,10 +201,10 @@ XX
 		if ($this->options['-o'] !== 'none') {
 			switch ($this->options['-o']) {
 				case 'tap':
-					$runner->outputHandlers[] = new Output\TapPrinter($runner);
+					$runner->outputHandlers[] = new Output\TapPrinter;
 					break;
 				case 'junit':
-					$runner->outputHandlers[] = new Output\JUnitPrinter($runner);
+					$runner->outputHandlers[] = new Output\JUnitPrinter;
 					break;
 				default:
 					$runner->outputHandlers[] = new Output\ConsolePrinter($runner, $this->options['-s']);

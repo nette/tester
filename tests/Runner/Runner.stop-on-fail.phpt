@@ -50,7 +50,7 @@ test(function () use ($interpreter) {
 		__DIR__ . '/stop-on-fail/pass.phptx',
 	];
 
-	Assert::notSame(0, $runner->run());
+	Assert::false($runner->run());
 	Assert::same([
 		[Test::FAILED, 'init-fail.phptx'],
 		[Test::FAILED, 'runtime-fail.phptx'],
@@ -69,7 +69,7 @@ test(function () use ($interpreter) {
 		__DIR__ . '/stop-on-fail/pass.phptx',
 	];
 
-	Assert::notSame(0, $runner->run());
+	Assert::false($runner->run());
 	Assert::same([
 		[Test::FAILED, 'init-fail.phptx'],
 	], $logger->results);
@@ -86,7 +86,7 @@ test(function () use ($interpreter) {
 		__DIR__ . '/stop-on-fail/pass.phptx',
 	];
 
-	Assert::notSame(0, $runner->run());
+	Assert::false($runner->run());
 	Assert::same([
 		[Test::FAILED, 'runtime-fail.phptx'],
 	], $logger->results);

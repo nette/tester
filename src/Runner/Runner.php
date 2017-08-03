@@ -39,17 +39,14 @@ class Runner
 	/** @var Job[] */
 	private $jobs;
 
-	/** @var int */
-	private $jobCount;
-
-	/** @var array */
-	private $results;
-
 	/** @var bool */
 	private $interrupted;
 
 	/** @var string|null */
 	private $tempDir;
+
+	/** @var bool */
+	private $result;
 
 	/** @var array */
 	private $lastResults = [];
@@ -106,18 +103,17 @@ class Runner
 	 */
 	public function run()
 	{
+		$this->result = true;
 		$this->interrupted = false;
 
 		foreach ($this->outputHandlers as $handler) {
 			$handler->begin();
 		}
 
-		$this->results = [Test::PASSED => 0, Test::SKIPPED => 0, Test::FAILED => 0];
 		$this->jobs = $running = [];
 		foreach ($this->paths as $path) {
 			$this->findTests($path);
 		}
-		$this->jobCount = count($this->jobs) + array_sum($this->results);
 
 		if ($this->tempDir) {
 			usort($this->jobs, function (Job $a, Job $b) {
@@ -157,7 +153,8 @@ class Runner
 		foreach ($this->outputHandlers as $handler) {
 			$handler->end();
 		}
-		return !$this->results[Test::FAILED];
+
+		return $this->result;
 	}
 
 
@@ -199,16 +196,6 @@ class Runner
 
 
 	/**
-	 * Get count of jobs.
-	 * @return int
-	 */
-	public function getJobCount()
-	{
-		return $this->jobCount;
-	}
-
-
-	/**
 	 * @return void
 	 */
 	public function prepareTest(Test $test)
@@ -225,7 +212,8 @@ class Runner
 	 */
 	public function finishTest(Test $test)
 	{
-		$this->results[$test->getResult()]++;
+		$this->result = $this->result && ($test->getResult() !== Test::FAILED);
+
 		foreach ($this->outputHandlers as $handler) {
 			$handler->finish(clone $test);
 		}
@@ -249,15 +237,6 @@ class Runner
 	public function getInterpreter()
 	{
 		return $this->interpreter;
-	}
-
-
-	/**
-	 * @return array
-	 */
-	public function getResults()
-	{
-		return $this->results;
 	}
 
 

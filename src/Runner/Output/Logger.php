@@ -23,6 +23,12 @@ class Logger implements Tester\Runner\OutputHandler
 	/** @var resource */
 	private $file;
 
+	/** @var int */
+	private $count;
+
+	/** @var array */
+	private $results;
+
 
 	public function __construct(Runner $runner, $file = 'php://output')
 	{
@@ -33,6 +39,12 @@ class Logger implements Tester\Runner\OutputHandler
 
 	public function begin()
 	{
+		$this->count = 0;
+		$this->results = [
+			Test::PASSED => 0,
+			Test::SKIPPED => 0,
+			Test::FAILED => 0,
+		];
 		fwrite($this->file, 'PHP ' . $this->runner->getInterpreter()->getVersion()
 			. ' | ' . $this->runner->getInterpreter()->getCommandLine()
 			. " | {$this->runner->threadCount} threads\n\n");
@@ -41,11 +53,13 @@ class Logger implements Tester\Runner\OutputHandler
 
 	public function prepare(Test $test)
 	{
+		$this->count++;
 	}
 
 
 	public function finish(Test $test)
 	{
+		$this->results[$test->getResult()]++;
 		$message = '   ' . str_replace("\n", "\n   ", Tester\Dumper::removeColors(trim($test->message)));
 		$outputs = [
 			Test::PASSED => "-- OK: {$test->getSignature()}",
@@ -58,15 +72,13 @@ class Logger implements Tester\Runner\OutputHandler
 
 	public function end()
 	{
-		$jobCount = $this->runner->getJobCount();
-		$results = $this->runner->getResults();
-		$count = array_sum($results);
+		$run = array_sum($this->results);
 		fwrite($this->file,
-			($results[Test::FAILED] ? 'FAILURES!' : 'OK')
-			. " ($jobCount tests"
-			. ($results[Test::FAILED] ? ", {$results[Test::FAILED]} failures" : '')
-			. ($results[Test::SKIPPED] ? ", {$results[Test::SKIPPED]} skipped" : '')
-			. ($jobCount !== $count ? ', ' . ($jobCount - $count) . ' not run' : '')
+			($this->results[Test::FAILED] ? 'FAILURES!' : 'OK')
+			. " ($this->count tests"
+			. ($this->results[Test::FAILED] ? ", {$this->results[Test::FAILED]} failures" : '')
+			. ($this->results[Test::SKIPPED] ? ", {$this->results[Test::SKIPPED]} skipped" : '')
+			. ($this->count !== $run ? ', ' . ($this->count - $run) . ' not run' : '')
 			. ')'
 		);
 	}

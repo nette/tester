@@ -33,6 +33,12 @@ class ConsolePrinter implements Tester\Runner\OutputHandler
 	/** @var float */
 	private $time;
 
+	/** @var int */
+	private $count;
+
+	/** @var array */
+	private $results;
+
 
 	public function __construct(Runner $runner, $displaySkipped = false, $file = 'php://output')
 	{
@@ -44,6 +50,12 @@ class ConsolePrinter implements Tester\Runner\OutputHandler
 
 	public function begin()
 	{
+		$this->count = 0;
+		$this->results = [
+			Test::PASSED => 0,
+			Test::SKIPPED => 0,
+			Test::FAILED => 0,
+		];
 		$this->time = -microtime(true);
 		fwrite($this->file, $this->runner->getInterpreter()->getShortInfo()
 			. ' | ' . $this->runner->getInterpreter()->getCommandLine()
@@ -53,11 +65,13 @@ class ConsolePrinter implements Tester\Runner\OutputHandler
 
 	public function prepare(Test $test)
 	{
+		$this->count++;
 	}
 
 
 	public function finish(Test $test)
 	{
+		$this->results[$test->getResult()]++;
 		$outputs = [
 			Test::PASSED => '.',
 			Test::SKIPPED => 's',
@@ -76,16 +90,14 @@ class ConsolePrinter implements Tester\Runner\OutputHandler
 
 	public function end()
 	{
-		$jobCount = $this->runner->getJobCount();
-		$results = $this->runner->getResults();
-		$count = array_sum($results);
-		fwrite($this->file, !$jobCount ? "No tests found\n" :
+		$run = array_sum($this->results);
+		fwrite($this->file, !$this->count ? "No tests found\n" :
 			"\n\n" . $this->buffer . "\n"
-			. ($results[Test::FAILED] ? Dumper::color('white/red') . 'FAILURES!' : Dumper::color('white/green') . 'OK')
-			. " ($jobCount test" . ($jobCount > 1 ? 's' : '') . ', '
-			. ($results[Test::FAILED] ? $results[Test::FAILED] . ' failure' . ($results[Test::FAILED] > 1 ? 's' : '') . ', ' : '')
-			. ($results[Test::SKIPPED] ? $results[Test::SKIPPED] . ' skipped, ' : '')
-			. ($jobCount !== $count ? ($jobCount - $count) . ' not run, ' : '')
+			. ($this->results[Test::FAILED] ? Dumper::color('white/red') . 'FAILURES!' : Dumper::color('white/green') . 'OK')
+			. " ($this->count test" . ($this->count > 1 ? 's' : '') . ', '
+			. ($this->results[Test::FAILED] ? $this->results[Test::FAILED] . ' failure' . ($this->results[Test::FAILED] > 1 ? 's' : '') . ', ' : '')
+			. ($this->results[Test::SKIPPED] ? $this->results[Test::SKIPPED] . ' skipped, ' : '')
+			. ($this->count !== $run ? ($this->count - $run) . ' not run, ' : '')
 			. sprintf('%0.1f', $this->time + microtime(true)) . ' seconds)' . Dumper::color() . "\n");
 
 		$this->buffer = null;

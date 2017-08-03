@@ -8,7 +8,6 @@
 namespace Tester\Runner\Output;
 
 use Tester;
-use Tester\Runner\Runner;
 use Tester\Runner\Test;
 
 
@@ -17,22 +16,26 @@ use Tester\Runner\Test;
  */
 class TapPrinter implements Tester\Runner\OutputHandler
 {
-	/** @var Runner */
-	private $runner;
-
 	/** @var resource */
 	private $file;
 
+	/** @var array */
+	private $results;
 
-	public function __construct(Runner $runner, $file = 'php://output')
+
+	public function __construct($file = 'php://output')
 	{
-		$this->runner = $runner;
 		$this->file = fopen($file, 'w');
 	}
 
 
 	public function begin()
 	{
+		$this->results = [
+			Test::PASSED => 0,
+			Test::SKIPPED => 0,
+			Test::FAILED => 0,
+		];
 		fwrite($this->file, "TAP version 13\n");
 	}
 
@@ -44,6 +47,7 @@ class TapPrinter implements Tester\Runner\OutputHandler
 
 	public function finish(Test $test)
 	{
+		$this->results[$test->getResult()]++;
 		$message = str_replace("\n", "\n# ", trim($test->message));
 		$outputs = [
 			Test::PASSED => "ok {$test->getSignature()}",
@@ -56,6 +60,6 @@ class TapPrinter implements Tester\Runner\OutputHandler
 
 	public function end()
 	{
-		fwrite($this->file, '1..' . array_sum($this->runner->getResults()));
+		fwrite($this->file, '1..' . array_sum($this->results));
 	}
 }

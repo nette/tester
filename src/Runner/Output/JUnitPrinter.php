@@ -8,7 +8,6 @@
 namespace Tester\Runner\Output;
 
 use Tester;
-use Tester\Runner\Runner;
 use Tester\Runner\Test;
 
 
@@ -17,9 +16,6 @@ use Tester\Runner\Test;
  */
 class JUnitPrinter implements Tester\Runner\OutputHandler
 {
-	/** @var Runner */
-	private $runner;
-
 	/** @var resource */
 	private $file;
 
@@ -29,16 +25,23 @@ class JUnitPrinter implements Tester\Runner\OutputHandler
 	/** @var float */
 	private $startTime;
 
+	/** @var array */
+	private $results;
 
-	public function __construct(Runner $runner, $file = 'php://output')
+
+	public function __construct($file = 'php://output')
 	{
-		$this->runner = $runner;
 		$this->file = fopen($file, 'w');
 	}
 
 
 	public function begin()
 	{
+		$this->results = [
+			Test::PASSED => 0,
+			Test::SKIPPED => 0,
+			Test::FAILED => 0,
+		];
 		$this->startTime = microtime(true);
 		fwrite($this->file, "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<testsuites>\n");
 	}
@@ -51,6 +54,7 @@ class JUnitPrinter implements Tester\Runner\OutputHandler
 
 	public function finish(Test $test)
 	{
+		$this->results[$test->getResult()]++;
 		$this->buffer .= "\t\t<testcase classname=\"" . htmlspecialchars($test->getSignature()) . '" name="' . htmlspecialchars($test->getSignature()) . '"';
 
 		switch ($test->getResult()) {
@@ -71,8 +75,7 @@ class JUnitPrinter implements Tester\Runner\OutputHandler
 	{
 		$time = sprintf('%0.1f', microtime(true) - $this->startTime);
 		$output = $this->buffer;
-		$results = $this->runner->getResults();
-		$this->buffer = "\t<testsuite errors=\"{$results[Test::FAILED]}\" skipped=\"{$results[Test::SKIPPED]}\" tests=\"" . array_sum($results) . "\" time=\"$time\" timestamp=\"" . @date('Y-m-d\TH:i:s') . "\">\n";
+		$this->buffer = "\t<testsuite errors=\"{$this->results[Test::FAILED]}\" skipped=\"{$this->results[Test::SKIPPED]}\" tests=\"" . array_sum($this->results) . "\" time=\"$time\" timestamp=\"" . @date('Y-m-d\TH:i:s') . "\">\n";
 		$this->buffer .= $output;
 		$this->buffer .= "\t</testsuite>";
 
