@@ -234,8 +234,7 @@ class TestHandler
 	private function getAnnotations($file)
 	{
 		$annotations = Helpers::parseDocComment(file_get_contents($file));
-		$testName = (isset($annotations[0]) ? preg_replace('#^TEST:\s*#i', '', $annotations[0]) . ' | ' : '')
-			. implode(DIRECTORY_SEPARATOR, array_slice(explode(DIRECTORY_SEPARATOR, $file), -3));
-		return [$annotations, $testName];
+		$testTitle = isset($annotations[0]) ? preg_replace('#^TEST:\s*#i', '', $annotations[0]) : null;
+		return [$annotations, $testTitle];
 	}
 }
