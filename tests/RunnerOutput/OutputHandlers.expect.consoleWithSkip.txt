@@ -2,27 +2,27 @@
 
 F.sF.sFsF.s
 
--- FAILED: %a%01-basic.fail.phptx
+-- FAILED: %a?%01-basic.fail.phptx
    Multi
    line
    stdout.Failed:
 
    in %a%01-basic.fail.phptx(7) Tester\Assert::fail('');
 
--- Skipped: %a%01-basic.skip.phptx
+-- Skipped: %a?%01-basic.skip.phptx
 
 
--- FAILED: %a%02-title.fail.phptx
+-- FAILED: Title for output handlers | 02-title.fail.phptx
    Multi
    line
    stdout.Failed:
 
    in %a%02-title.fail.phptx(11) Tester\Assert::fail('');
 
--- Skipped: %a%02-title.skip.phptx
+-- Skipped: Title for output handlers | 02-title.skip.phptx
 
 
--- FAILED: %a%03-message.fail.phptx
+-- FAILED: 03-message.fail.phptx
    Multi
    line
    stdout.Failed: Multi
@@ -31,19 +31,19 @@ F.sF.sFsF.s
 
    in %a%03-message.fail.phptx(7) Tester\Assert::fail("Multi\nline\nmessage.");
 
--- Skipped: %a%03-message.skip.phptx
+-- Skipped: 03-message.skip.phptx
    Multi
    line
    message.
 
--- FAILED: %a%04-args.fail.phptx dataprovider=thisIsAVeryVeryVeryLongArgumentNameToTestHowOutputHandlersDealWithItsLengthInTheirOutputFormatting|%a%provider.ini
+-- FAILED: 04-args.fail.phptx dataprovider=thisIsAVeryVeryVeryLongArgumentNameToTestHowOutputHandlersDealWithItsLengthInTheirOutputFormatting|%a%provider.ini
    Multi
    line
    stdout.Failed:
 
    in %a%04-args.fail.phptx(11) Tester\Assert::fail('');
 
--- Skipped: %a%04-args.skip.phptx dataprovider=thisIsAVeryVeryVeryLongArgumentNameToTestHowOutputHandlersDealWithItsLengthInTheirOutputFormatting|%a%provider.ini
+-- Skipped: 04-args.skip.phptx dataprovider=thisIsAVeryVeryVeryLongArgumentNameToTestHowOutputHandlersDealWithItsLengthInTheirOutputFormatting|%a%provider.ini
    Multi
    line
    message.

@@ -39,6 +39,9 @@ class ConsolePrinter implements Tester\Runner\OutputHandler
 	/** @var array */
 	private $results;
 
+	/** @var string */
+	private $baseDir;
+
 
 	public function __construct(Runner $runner, $displaySkipped = false, $file = 'php://output')
 	{
@@ -51,6 +54,7 @@ class ConsolePrinter implements Tester\Runner\OutputHandler
 	public function begin()
 	{
 		$this->count = 0;
+		$this->baseDir = null;
 		$this->results = [
 			Test::PASSED => 0,
 			Test::SKIPPED => 0,
@@ -65,6 +69,23 @@ class ConsolePrinter implements Tester\Runner\OutputHandler
 
 	public function prepare(Test $test)
 	{
+		if ($this->baseDir === null) {
+			$this->baseDir = dirname($test->getFile()) . DIRECTORY_SEPARATOR;
+		} elseif (strpos($test->getFile(), $this->baseDir) !== 0) {
+			$common = array_intersect_assoc(
+				explode(DIRECTORY_SEPARATOR, $this->baseDir),
+				explode(DIRECTORY_SEPARATOR, $test->getFile())
+			);
+			$this->baseDir = '';
+			$prev = 0;
+			foreach ($common as $i => $part) {
+				if ($i !== $prev++) {
+					break;
+				}
+				$this->baseDir .= $part . DIRECTORY_SEPARATOR;
+			}
+		}
+
 		$this->count++;
 	}
 
@@ -79,11 +100,12 @@ class ConsolePrinter implements Tester\Runner\OutputHandler
 		];
 		fwrite($this->file, $outputs[$test->getResult()]);
 
+		$title = ($test->title ? "$test->title | " : '') . substr($test->getSignature(), strlen($this->baseDir));
 		$message = '   ' . str_replace("\n", "\n   ", trim($test->message)) . "\n\n";
 		if ($test->getResult() === Test::FAILED) {
-			$this->buffer .= Dumper::color('red', "-- FAILED: {$test->getSignature()}") . "\n$message";
+			$this->buffer .= Dumper::color('red', "-- FAILED: $title") . "\n$message";
 		} elseif ($test->getResult() === Test::SKIPPED && $this->displaySkipped) {
-			$this->buffer .= "-- Skipped: {$test->getSignature()}\n$message";
+			$this->buffer .= "-- Skipped: $title\n$message";
 		}
 	}
 
