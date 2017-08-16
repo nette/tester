@@ -173,6 +173,27 @@ class Environment
 
 
 	/**
+	 * Removes keyword final from source codes.
+	 * @return void
+	 */
+	public static function bypassFinals()
+	{
+		FileMutator::addMutator(function ($code) {
+			if (strpos($code, 'final') !== false) {
+				$tokens = token_get_all($code);
+				$code = '';
+				foreach ($tokens as $token) {
+					$code .= is_array($token)
+						? ($token[0] === T_FINAL ? '' : $token[1])
+						: $token;
+				}
+			}
+			return $code;
+		});
+	}
+
+
+	/**
 	 * Loads data according to the file annotation or specified by Tester\Runner\TestHandler::initiateDataProvider()
 	 * @return array
 	 */

@@ -1,12 +1,11 @@
 <?php
 
 use Tester\Assert;
-use Tester\FileMutator;
 
 require __DIR__ . '/../bootstrap.php';
 
 
-FileMutator::register();
+Tester\Environment::bypassFinals();
 
 require __DIR__ . '/fixtures/final.class.php';
 

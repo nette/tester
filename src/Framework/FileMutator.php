@@ -13,25 +13,23 @@ namespace Tester;
  */
 class FileMutator
 {
+	const PROTOCOL = 'file';
+
 	/** @var resource|null */
 	public $context;
 
 	/** @var resource|null */
 	private $handle;
 
-	/** @var callable */
-	private static $mutator = [__CLASS__, 'mutateFinals'];
+	/** @var callable[] */
+	private static $mutators = [];
 
 
-	/**
-	 * Registers file:// protocol.
-	 * @return bool
-	 */
-	public static function register(callable $mutator = null)
+	public static function addMutator(callable $mutator)
 	{
-		self::$mutator = $mutator ?: [__CLASS__, 'mutateFinals'];
-		stream_wrapper_unregister('file');
-		return stream_wrapper_register('file', __CLASS__);
+		self::$mutators[] = $mutator;
+		stream_wrapper_unregister(self::PROTOCOL);
+		stream_wrapper_register(self::PROTOCOL, __CLASS__);
 	}
 
 
@@ -133,8 +131,11 @@ class FileMutator
 			if ($content === false) {
 				return false;
 			} else {
+				foreach (self::$mutators as $mutator) {
+					$content = call_user_func($mutator, $content);
+				}
 				$this->handle = tmpfile();
-				$this->native('fwrite', $this->handle, call_user_func(self::$mutator, $content));
+				$this->native('fwrite', $this->handle, $content);
 				$this->native('fseek', $this->handle, 0);
 				return true;
 			}
@@ -202,29 +203,10 @@ class FileMutator
 
 	private function native($func)
 	{
-		stream_wrapper_restore('file');
+		stream_wrapper_restore(self::PROTOCOL);
 		$res = call_user_func_array($func, array_slice(func_get_args(), 1));
-		self::register(self::$mutator);
+		stream_wrapper_unregister(self::PROTOCOL);
+		stream_wrapper_register(self::PROTOCOL, __CLASS__);
 		return $res;
 	}
-
-
-	/**
-	 * @param  string
-	 * @return string
-	 */
-	private static function mutateFinals($code)
-	{
-		if (strpos($code, 'final') === false) {
-			return $code;
-		}
-		$res = '';
-		foreach (token_get_all($code) as $token) {
-			$res .= is_array($token)
-				? ($token[0] === T_FINAL ? '' : $token[1])
-				: $token;
-		}
-		return $res;
-	}
-
 }
