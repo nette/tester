@@ -80,20 +80,22 @@ class Runner
 
 
 	/**
-	 * @param  string
+	 * @param  string|null
 	 */
 	public function setTempDirectory($path)
 	{
-		if (!is_dir($path) || !is_writable($path)) {
-			throw new \RuntimeException("Path '$path' is not a writable directory.");
+		if ($path !== null) {
+			if (!is_dir($path) || !is_writable($path)) {
+				throw new \RuntimeException("Path '$path' is not a writable directory.");
+			}
+
+			$path = realpath($path) . DIRECTORY_SEPARATOR . 'Tester';
+			if (!is_dir($path) && @mkdir($path) === false && !is_dir($path)) {  // @ - directory may exist
+				throw new \RuntimeException("Cannot create '$path' directory.");
+			}
 		}
 
-		$tempDir = realpath($path) . DIRECTORY_SEPARATOR . 'Tester';
-		if (!is_dir($tempDir) && @mkdir($tempDir) === false && !is_dir($tempDir)) {  // @ - directory may exist
-			throw new \RuntimeException("Cannot create '$tempDir' directory.");
-		}
-
-		$this->tempDir = $tempDir;
+		$this->tempDir = $path;
 	}
 
 
