@@ -38,9 +38,9 @@ class Logger implements Tester\Runner\OutputHandler
 	}
 }
 
-$interpreter = createInterpreter();
-$interpreter->addPhpIniOption('display_errors', 'on');
-$interpreter->addPhpIniOption('html_errors', 'off');
+$interpreter = createInterpreter()
+	->withPhpIniOption('display_errors', 'on')
+	->withPhpIniOption('html_errors', 'off');
 
 $runner = new Runner($interpreter);
 $runner->paths[] = __DIR__ . '/multiple-fails/*.phptx';

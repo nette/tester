@@ -37,7 +37,7 @@ class TestHandler
 	public function initiate($file)
 	{
 		list($annotations, $title) = $this->getAnnotations($file);
-		$php = clone $this->runner->getInterpreter();
+		$php = $this->runner->getInterpreter();
 
 		$tests = [new Test($file, $title)];
 		foreach (get_class_methods($this) as $method) {
@@ -128,10 +128,10 @@ class TestHandler
 	}
 
 
-	private function initiatePhpIni(Test $test, $pair, PhpInterpreter $interpreter)
+	private function initiatePhpIni(Test $test, $pair, PhpInterpreter &$interpreter)
 	{
 		list($name, $value) = explode('=', $pair, 2) + [1 => null];
-		$interpreter->addPhpIniOption($name, $value);
+		$interpreter = $interpreter->withPhpIniOption($name, $value);
 	}
 
 
