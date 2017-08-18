@@ -14,9 +14,9 @@ namespace Tester;
 class TestCase
 {
 	/** @internal */
-	const LIST_METHODS = 'nette-tester-list-methods',
+	const
+		LIST_METHODS = 'nette-tester-list-methods',
 		METHOD_PATTERN = '#^test[A-Z0-9_]#';
-
 
 	/** @var bool */
 	private $handleErrors = false;

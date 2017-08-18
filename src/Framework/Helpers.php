@@ -13,7 +13,6 @@ namespace Tester;
  */
 class Helpers
 {
-
 	/**
 	 * Purges directory.
 	 * @param  string

@@ -13,7 +13,6 @@ namespace Tester;
  */
 class DataProvider
 {
-
 	/**
 	 * @param  string  path to data provider file
 	 * @param  string  filtering condition
