@@ -95,7 +95,7 @@ class Job
 	 * @param  int self::RUN_ASYNC | self::RUN_COLLECT_ERRORS
 	 * @return void
 	 */
-	public function run($flags = null)
+	public function run($flags = 0)
 	{
 		foreach ($this->envVars as $name => $value) {
 			putenv("$name=$value");

@@ -201,7 +201,7 @@ class Runner
 	public function prepareTest(Test $test)
 	{
 		foreach ($this->outputHandlers as $handler) {
-			$handler->prepare(clone $test);
+			$handler->prepare($test);
 		}
 	}
 
@@ -215,7 +215,7 @@ class Runner
 		$this->result = $this->result && ($test->getResult() !== Test::FAILED);
 
 		foreach ($this->outputHandlers as $handler) {
-			$handler->finish(clone $test);
+			$handler->finish($test);
 		}
 
 		if ($this->tempDir) {

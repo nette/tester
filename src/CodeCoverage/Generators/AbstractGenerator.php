@@ -19,7 +19,7 @@ abstract class AbstractGenerator
 		CODE_TESTED = 1;
 
 	/** @var array */
-	public $acceptFiles = ['php', 'phpc', 'phpt', 'phtml'];
+	public $acceptFiles = ['php', 'phpt', 'phtml'];
 
 	/** @var array */
 	protected $data;
@@ -103,7 +103,7 @@ abstract class AbstractGenerator
 
 
 	/**
-	 * @return \CallbackFilterIterator
+	 * @return \Iterator
 	 */
 	protected function getSourceIterator()
 	{

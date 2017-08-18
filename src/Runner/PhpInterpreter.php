@@ -85,7 +85,7 @@ class PhpInterpreter
 	/**
 	 * @param  string
 	 * @param  string
-	 * @return self
+	 * @return static
 	 */
 	public function withPhpIniOption($name, $value = null)
 	{
