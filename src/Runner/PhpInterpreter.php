@@ -85,10 +85,13 @@ class PhpInterpreter
 	/**
 	 * @param  string
 	 * @param  string
+	 * @return static
 	 */
-	public function addPhpIniOption($name, $value = null)
+	public function withPhpIniOption($name, $value = null)
 	{
-		$this->commandLine .= ' -d ' . Helpers::escapeArg($name . ($value === null ? '' : "=$value"));
+		$me = clone $this;
+		$me->commandLine .= ' -d ' . Helpers::escapeArg($name . ($value === null ? '' : "=$value"));
+		return $me;
 	}
 
 
