@@ -159,7 +159,7 @@ class TestCase
 
 
 	/**
-	 * @return array
+	 * @return mixed
 	 */
 	protected function getData($provider)
 	{

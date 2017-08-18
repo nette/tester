@@ -207,7 +207,7 @@ XX
 					$runner->outputHandlers[] = new Output\JUnitPrinter;
 					break;
 				default:
-					$runner->outputHandlers[] = new Output\ConsolePrinter($runner, $this->options['-s']);
+					$runner->outputHandlers[] = new Output\ConsolePrinter($runner, (bool) $this->options['-s']);
 			}
 		}
 

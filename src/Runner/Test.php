@@ -126,7 +126,7 @@ class Test
 
 	/**
 	 * @param  int
-	 * @param  string
+	 * @param  string|null
 	 * @return static
 	 */
 	public function withResult($result, $message)

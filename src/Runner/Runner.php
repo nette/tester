@@ -131,7 +131,7 @@ class Runner
 				$running[] = $job = array_shift($this->jobs);
 				$async = $this->threadCount > 1 && (count($running) + count($this->jobs) > 1);
 				$job->setEnvironmentVariable(Environment::THREAD, array_shift($threads));
-				$job->run($async ? $job::RUN_ASYNC : null);
+				$job->run($async ? $job::RUN_ASYNC : 0);
 			}
 
 			if (count($running) > 1) {
@@ -203,7 +203,7 @@ class Runner
 	public function prepareTest(Test $test)
 	{
 		foreach ($this->outputHandlers as $handler) {
-			$handler->prepare(clone $test);
+			$handler->prepare($test);
 		}
 	}
 
@@ -217,7 +217,7 @@ class Runner
 		$this->result = $this->result && ($test->getResult() !== Test::FAILED);
 
 		foreach ($this->outputHandlers as $handler) {
-			$handler->finish(clone $test);
+			$handler->finish($test);
 		}
 
 		if ($this->tempDir) {
