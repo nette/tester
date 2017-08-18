@@ -13,7 +13,6 @@ namespace Tester;
  */
 class DomQuery extends \SimpleXMLElement
 {
-
 	/**
 	 * @return DomQuery
 	 */
