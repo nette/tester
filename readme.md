@@ -22,7 +22,7 @@ php composer.phar require --dev nette/tester
 ```
 
 Nette Tester requires PHP 5.6.0 or later. Collecting and processing
-code coverage information depends on Xdebug.
+code coverage information depends on Xdebug, or PHPDBG.
 
 
 Writing Tests
@@ -53,7 +53,7 @@ use Tester\Assert;
 $h = new Greeting;
 
 // use an assertion function to test say()
-Assert::same( 'Hello John', $h->say('John') );
+Assert::same('Hello John', $h->say('John'));
 ```
 
 Thats' all!
@@ -66,7 +66,7 @@ Now we run tests from command-line using the `tester` command:
 |_   _/ __)( __/_   _/ __)| _ )
   |_| \___ /___) |_| \___ |_|_\  v2.0.x
 
-PHP 5.6.0 | "php-cgi" -n | 8 threads
+PHP 5.6.0 | php -n | 8 threads
 .
 OK (1 tests, 0 skipped, 0.0 seconds)
 ```
@@ -107,7 +107,7 @@ Testing exceptions:
 Assert::exception(function () {
 	$h = new Greeting;
 	$h->say(null);
-}, 'InvalidArgumentException', 'Invalid name.');
+}, InvalidArgumentException::class, 'Invalid name.');
 ```
 
 Testing PHP errors, warnings or notices:
@@ -138,8 +138,8 @@ tester -j 1
 ```
 
 How do you find code that is not yet tested? Use Code-Coverage Analysis. This feature
-requires you have installed [Xdebug](http://xdebug.org/) in `php.ini`. This will
-generate nice HTML report in `coverage.html`.
+requires you have installed [Xdebug](https://xdebug.org/) in `php.ini`, or you are
+using PHPDBG. This will generate nice HTML report in `coverage.html`.
 
 ```
 tester . -c php.ini --coverage coverage.html --coverage-src /my/source/codes
@@ -162,8 +162,8 @@ same as the CSS selectors:
 ```php
 $dom = Tester\DomQuery::fromHtml($html);
 
-Assert::true( $dom->has('input[name="username"]') );
-Assert::true( $dom->has('input[name="password"]') );
+Assert::true($dom->has('input[name="username"]'));
+Assert::true($dom->has('input[name="password"]'));
 ```
 
 For more inspiration see how [Nette Tester tests itself](https://github.com/nette/tester/tree/master/tests).
@@ -182,8 +182,9 @@ Usage:
     tester.php [options] [<test file> | <directory>]...
 
 Options:
-    -p <path>                    Specify PHP executable to run (default: php-cgi).
+    -p <path>                    Specify PHP interpreter to run (default: php).
     -c <path>                    Look for php.ini file (or look in directory) <path>.
+    -C                           Use system-wide php.ini.
     -l | --log <path>            Write log to file <path>.
     -d <key=value>...            Define INI entry 'key' with value 'val'.
     -s                           Show information about skipped tests.
@@ -193,6 +194,7 @@ Options:
     -w | --watch <path>          Watch directory.
     -i | --info                  Show tests environment info and exit.
     --setup <path>               Script for runner setup.
+    --temp <path>                Path to temporary directory. Default by sys_get_temp_dir().
     --colors [1|0]               Enable or disable colors.
     --coverage <path>            Generate code coverage report to file.
     --coverage-src <path>        Path to source code.
