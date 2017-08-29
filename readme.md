@@ -2,10 +2,10 @@
 ===============================================================
 
 [![Downloads this Month](https://img.shields.io/packagist/dm/nette/tester.svg)](https://packagist.org/packages/nette/tester)
-[![Build Status](https://travis-ci.org/nette/tester.svg?branch=master)](https://travis-ci.org/nette/tester)
-[![Build Status Windows](https://ci.appveyor.com/api/projects/status/github/nette/tester?branch=master&svg=true)](https://ci.appveyor.com/project/dg/tester/branch/master)
+[![Build Status](https://travis-ci.org/nette/tester.svg?branch=v1.x)](https://travis-ci.org/nette/tester)
+[![Build Status Windows](https://ci.appveyor.com/api/projects/status/github/nette/tester?branch=v1.x&svg=true)](https://ci.appveyor.com/project/dg/tester/branch/v1.x)
 [![Latest Stable Version](https://poser.pugx.org/nette/tester/v/stable)](https://github.com/nette/tester/releases)
-[![License](https://img.shields.io/badge/license-New%20BSD-blue.svg)](https://github.com/nette/tester/blob/master/license.md)
+[![License](https://img.shields.io/badge/license-New%20BSD-blue.svg)](https://github.com/nette/tester/blob/v1.x/license.md)
 
 Nette Tester is a productive and enjoyable unit testing framework. It's used by
 the [Nette Framework](https://nette.org) and is capable of testing any PHP code.
@@ -166,7 +166,7 @@ Assert::true( $dom->has('input[name="username"]') );
 Assert::true( $dom->has('input[name="password"]') );
 ```
 
-For more inspiration see how [Nette Tester tests itself](https://github.com/nette/tester/tree/master/tests).
+For more inspiration see how [Nette Tester tests itself](https://github.com/nette/tester/tree/v1.x/tests).
 
 
 Running tests
