@@ -1,5 +1,5 @@
 [Nette Tester](https://tester.nette.org): enjoyable unit testing
-===============================================================
+================================================================
 
 [![Downloads this Month](https://img.shields.io/packagist/dm/nette/tester.svg)](https://packagist.org/packages/nette/tester)
 [![Build Status](https://travis-ci.org/nette/tester.svg?branch=master)](https://travis-ci.org/nette/tester)
@@ -7,21 +7,29 @@
 [![Latest Stable Version](https://poser.pugx.org/nette/tester/v/stable)](https://github.com/nette/tester/releases)
 [![License](https://img.shields.io/badge/license-New%20BSD-blue.svg)](https://github.com/nette/tester/blob/master/license.md)
 
+
+Introduction
+------------
+
 Nette Tester is a productive and enjoyable unit testing framework. It's used by
 the [Nette Framework](https://nette.org) and is capable of testing any PHP code.
+
+Documentation is available on the [Nette Tester website](https://tester.nette.org).
+Read the [blog](https://blog.nette.org/category/tester/) for new information.
 
 
 Installation
 ------------
 
-The best way how to install is to [download a latest package](https://github.com/nette/tester/releases)
-or use a Composer:
+The recommended way to install Nette Tester is through Composer:
 
 ```
-php composer.phar require --dev nette/tester
+composer require nette/tester --dev
 ```
 
-Nette Tester requires PHP 5.6.0 or later. Collecting and processing
+Alternatively, you can download the [tester.phar](https://github.com/nette/tester/releases) file.
+
+Nette Tester requires PHP 5.6.0 and supports PHP up to 7.2. Collecting and processing
 code coverage information depends on Xdebug, or PHPDBG.
 
 
@@ -73,6 +81,7 @@ OK (1 tests, 0 skipped, 0.0 seconds)
 
 Nette Tester prints dot for successful test, F for failed test
 and S when the test has been skipped.
+
 
 Assertions
 ----------
