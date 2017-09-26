@@ -19,7 +19,6 @@ class Test
 		PASSED = 2,
 		SKIPPED = 3;
 
-
 	/** @var string|null */
 	public $title;
 
