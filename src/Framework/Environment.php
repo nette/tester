@@ -139,8 +139,11 @@ class Environment
 	public static function skip($message = '')
 	{
 		self::$checkAssertions = false;
-		echo "\nSkipped:\n$message\n";
-		die(Runner\Job::CODE_SKIP);
+
+		if (\getenv(self::RUNNER)) {
+			echo "\nSkipped:\n$message\n";
+			die(Runner\Job::CODE_SKIP);
+		}
 	}
 
 
