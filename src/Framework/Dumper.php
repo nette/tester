@@ -258,46 +258,11 @@ class Dumper
 		}
 
 		if ($e instanceof AssertException) {
-			$expected = $e->expected;
-			$actual = $e->actual;
-
-			if (is_object($expected) || is_array($expected) || (is_string($expected) && strlen($expected) > self::$maxLength)
-				|| is_object($actual) || is_array($actual) || (is_string($actual) && strlen($actual) > self::$maxLength)
-			) {
-				$args = isset($_SERVER['argv'][1])
-					? '.[' . implode(' ', preg_replace(['#^-*(.{1,20}).*#i', '#[^=a-z0-9. -]+#i'], ['$1', '-'], array_slice($_SERVER['argv'], 1))) . ']'
-					: '';
-				$stored[] = self::saveOutput($testFile, $expected, $args . '.expected');
-				$stored[] = self::saveOutput($testFile, $actual, $args . '.actual');
+			$stored = [];
+			$message = self::storeAssertDiff($e, $testFile, $stored);
+			if (count($stored) !== 2) {
+				unset($stored);
 			}
-
-			if ((is_string($actual) && is_string($expected))) {
-				for ($i = 0; $i < strlen($actual) && isset($expected[$i]) && $actual[$i] === $expected[$i]; $i++);
-				for (; $i && $i < strlen($actual) && $actual[$i - 1] >= "\x80" && $actual[$i] >= "\x80" && $actual[$i] < "\xC0"; $i--);
-				$i = max(0, min(
-					$i - (int) (self::$maxLength / 3), // try to display 1/3 of shorter string
-					max(strlen($actual), strlen($expected)) - self::$maxLength + 3 // 3 = length of ...
-				));
-				if ($i) {
-					$expected = substr_replace($expected, '...', 0, $i);
-					$actual = substr_replace($actual, '...', 0, $i);
-				}
-			}
-
-			$message = 'Failed: ' . $e->origMessage;
-			if (((is_string($actual) && is_string($expected)) || (is_array($actual) && is_array($expected)))
-				&& preg_match('#^(.*)(%\d)(.*)(%\d.*)\z#s', $message, $m)
-			) {
-				if (($delta = strlen($m[1]) - strlen($m[3])) >= 3) {
-					$message = "$m[1]$m[2]\n" . str_repeat(' ', $delta - 3) . "...$m[3]$m[4]";
-				} else {
-					$message = "$m[1]$m[2]$m[3]\n" . str_repeat(' ', strlen($m[1]) - 4) . "... $m[4]";
-				}
-			}
-			$message = strtr($message, [
-				'%1' => self::color('yellow') . self::toLine($actual) . self::color('white'),
-				'%2' => self::color('yellow') . self::toLine($expected) . self::color('white'),
-			]);
 		} else {
 			$message = ($e instanceof \ErrorException ? Helpers::errorTypeToString($e->getSeverity()) : get_class($e))
 				. ': ' . preg_replace('#[\x00-\x09\x0B-\x1F]+#', ' ', $e->getMessage());
@@ -334,6 +299,59 @@ class Dumper
 			$s .= "\n(previous) " . static::dumpException($e->getPrevious());
 		}
 		return $s;
+	}
+
+
+	/**
+	 * @param AssertException $assertException
+	 * @param string          $testFile
+	 * @param string[]        $storedFile
+	 *
+	 * @return string
+	 */
+	public static function storeAssertDiff(AssertException $assertException, $testFile, array &$storedFile)
+	{
+		$expected = $assertException->expected;
+		$actual = $assertException->actual;
+
+		if (is_object($expected) || is_array($expected) || (is_string($expected) && strlen($expected) > self::$maxLength)
+			|| is_object($actual) || is_array($actual) || (is_string($actual) && strlen($actual) > self::$maxLength)
+		) {
+			$args = isset($_SERVER['argv'][1])
+				? '.[' . implode(' ', preg_replace(['#^-*(.{1,20}).*#i', '#[^=a-z0-9. -]+#i'], ['$1', '-'], array_slice($_SERVER['argv'], 1))) . ']'
+				: '';
+			$storedFile[] = self::saveOutput($testFile, $expected, $args . '.expected');
+			$storedFile[] = self::saveOutput($testFile, $actual, $args . '.actual');
+		}
+
+		if ((is_string($actual) && is_string($expected))) {
+			for ($i = 0; $i < strlen($actual) && isset($expected[$i]) && $actual[$i] === $expected[$i]; $i++) ;
+			for (; $i && $i < strlen($actual) && $actual[$i - 1] >= "\x80" && $actual[$i] >= "\x80" && $actual[$i] < "\xC0"; $i--) ;
+			$i = max(0, min(
+				$i - (int) (self::$maxLength / 3), // try to display 1/3 of shorter string
+				max(strlen($actual), strlen($expected)) - self::$maxLength + 3 // 3 = length of ...
+			));
+			if ($i) {
+				$expected = substr_replace($expected, '...', 0, $i);
+				$actual = substr_replace($actual, '...', 0, $i);
+			}
+		}
+
+		$message = 'Failed: ' . $assertException->origMessage;
+		if (((is_string($actual) && is_string($expected)) || (is_array($actual) && is_array($expected)))
+			&& preg_match('#^(.*)(%\d)(.*)(%\d.*)\z#s', $message, $m)
+		) {
+			if (($delta = strlen($m[1]) - strlen($m[3])) >= 3) {
+				$message = "$m[1]$m[2]\n" . str_repeat(' ', $delta - 3) . "...$m[3]$m[4]";
+			} else {
+				$message = "$m[1]$m[2]$m[3]\n" . str_repeat(' ', strlen($m[1]) - 4) . "... $m[4]";
+			}
+		}
+
+		return strtr($message, [
+			'%1' => self::color('yellow') . self::toLine($actual) . self::color('white'),
+			'%2' => self::color('yellow') . self::toLine($expected) . self::color('white'),
+		]);
 	}
 
 
