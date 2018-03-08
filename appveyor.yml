@@ -12,48 +12,56 @@ install:
     - IF EXIST c:\php\53 (SET PHP=0) ELSE (SET PHP=1)
     - IF %PHP%==1 mkdir c:\php\53
     - IF %PHP%==1 cd c:\php\53
-    - IF %PHP%==1 appveyor DownloadFile http://windows.php.net/downloads/releases/archives/php-5.3.29-Win32-VC9-x86.zip
-    - IF %PHP%==1 7z x php-5.3.29-Win32-VC9-x86.zip >nul
+    - IF %PHP%==1 curl https://windows.php.net/downloads/releases/archives/php-5.3.29-Win32-VC9-x86.zip --output php.zip
+    - IF %PHP%==1 7z x php.zip >nul
     - IF %PHP%==1 del /Q *.zip
 
     # Install PHP 5.4
     - IF EXIST c:\php\54 (SET PHP=0) ELSE (SET PHP=1)
     - IF %PHP%==1 mkdir c:\php\54
     - IF %PHP%==1 cd c:\php\54
-    - IF %PHP%==1 appveyor DownloadFile http://windows.php.net/downloads/releases/archives/php-5.4.44-Win32-VC9-x86.zip
-    - IF %PHP%==1 7z x php-5.4.44-Win32-VC9-x86.zip >nul
+    - IF %PHP%==1 curl https://windows.php.net/downloads/releases/archives/php-5.4.45-Win32-VC9-x86.zip --output php.zip
+    - IF %PHP%==1 7z x php.zip >nul
     - IF %PHP%==1 del /Q *.zip
 
     # Install PHP 5.5
     - IF EXIST c:\php\55 (SET PHP=0) ELSE (SET PHP=1)
     - IF %PHP%==1 mkdir c:\php\55
     - IF %PHP%==1 cd c:\php\55
-    - IF %PHP%==1 appveyor DownloadFile http://windows.php.net/downloads/releases/archives/php-5.5.32-Win32-VC11-x86.zip
-    - IF %PHP%==1 7z x php-5.5.32-Win32-VC11-x86.zip >nul
+    - IF %PHP%==1 curl https://windows.php.net/downloads/releases/archives/php-5.5.38-Win32-VC11-x86.zip --output php.zip
+    - IF %PHP%==1 7z x php.zip >nul
     - IF %PHP%==1 del /Q *.zip
 
     # Install PHP 5.6
     - IF EXIST c:\php\56 (SET PHP=0) ELSE (SET PHP=1)
     - IF %PHP%==1 mkdir c:\php\56
     - IF %PHP%==1 cd c:\php\56
-    - IF %PHP%==1 appveyor DownloadFile http://windows.php.net/downloads/releases/archives/php-5.6.18-Win32-VC11-x86.zip
-    - IF %PHP%==1 7z x php-5.6.18-Win32-VC11-x86.zip >nul
+    - IF %PHP%==1 curl https://windows.php.net/downloads/releases/archives/php-5.6.30-Win32-VC11-x86.zip --output php.zip
+    - IF %PHP%==1 7z x php.zip >nul
     - IF %PHP%==1 del /Q *.zip
 
     # Install PHP 7.0
     - IF EXIST c:\php\70 (SET PHP=0) ELSE (SET PHP=1)
     - IF %PHP%==1 mkdir c:\php\70
     - IF %PHP%==1 cd c:\php\70
-    - IF %PHP%==1 appveyor DownloadFile http://windows.php.net/downloads/releases/archives/php-7.0.3-Win32-VC14-x86.zip
-    - IF %PHP%==1 7z x php-7.0.3-Win32-VC14-x86.zip >nul
+    - IF %PHP%==1 curl https://windows.php.net/downloads/releases/archives/php-7.0.29-Win32-VC14-x64.zip --output php.zip
+    - IF %PHP%==1 7z x php.zip >nul
     - IF %PHP%==1 del /Q *.zip
 
-    # Install PHP 7.0 x64
-    - IF EXIST c:\php\70x64 (SET PHP=0) ELSE (SET PHP=1)
-    - IF %PHP%==1 mkdir c:\php\70x64
-    - IF %PHP%==1 cd c:\php\70x64
-    - IF %PHP%==1 appveyor DownloadFile http://windows.php.net/downloads/releases/archives/php-7.0.3-Win32-VC14-x64.zip
-    - IF %PHP%==1 7z x php-7.0.3-Win32-VC14-x64.zip >nul
+    # Install PHP 7.1
+    - IF EXIST c:\php\71 (SET PHP=0) ELSE (SET PHP=1)
+    - IF %PHP%==1 mkdir c:\php\71
+    - IF %PHP%==1 cd c:\php\71
+    - IF %PHP%==1 curl https://windows.php.net/downloads/releases/archives/php-7.1.6-Win32-VC14-x64.zip --output php.zip
+    - IF %PHP%==1 7z x php.zip >nul
+    - IF %PHP%==1 del /Q *.zip
+
+    # Install PHP 7.2
+    - IF EXIST c:\php\72 (SET PHP=0) ELSE (SET PHP=1)
+    - IF %PHP%==1 mkdir c:\php\72
+    - IF %PHP%==1 cd c:\php\72
+    - IF %PHP%==1 curl https://windows.php.net/downloads/releases/archives/php-7.2.2-Win32-VC15-x64.zip --output php.zip
+    - IF %PHP%==1 7z x php.zip >nul
     - IF %PHP%==1 del /Q *.zip
 
     - cd c:\projects\tester
@@ -75,6 +83,10 @@ test_script:
     - c:\php\70\php src\tester tests -s -p c:\php\70\php-cgi
     - c:\php\70\php src\tester tests -s -p c:\php\70\phpdbg
 
-    - c:\php\70x64\php src\tester tests -s -p c:\php\70x64\php
-    - c:\php\70x64\php src\tester tests -s -p c:\php\70x64\php-cgi
-    - c:\php\70x64\php src\tester tests -s -p c:\php\70x64\phpdbg
+    - c:\php\71\php src\tester tests -s -p c:\php\71\php
+    - c:\php\71\php src\tester tests -s -p c:\php\71\php-cgi
+    - c:\php\71\php src\tester tests -s -p c:\php\71\phpdbg
+
+    - c:\php\72\php src\tester tests -s -p c:\php\72\php
+    - c:\php\72\php src\tester tests -s -p c:\php\72\php-cgi
+    - c:\php\72\php src\tester tests -s -p c:\php\72\phpdbg
