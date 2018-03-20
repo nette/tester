@@ -21,7 +21,7 @@ $notSame = [
 	[[new stdClass], [new stdClass]],
 ];
 
-foreach ($same as list($expected, $value)) {
+foreach ($same as [$expected, $value]) {
 	Assert::same($expected, $value);
 
 	Assert::exception(function () use ($expected, $value) {
@@ -29,7 +29,7 @@ foreach ($same as list($expected, $value)) {
 	}, Tester\AssertException::class, '%a% should not be %a%');
 }
 
-foreach ($notSame as list($expected, $value)) {
+foreach ($notSame as [$expected, $value]) {
 	Assert::notSame($expected, $value);
 
 	Assert::exception(function () use ($expected, $value) {

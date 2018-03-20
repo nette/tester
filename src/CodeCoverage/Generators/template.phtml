@@ -160,10 +160,7 @@
 			$prevClass = null;
 			$closeTag = $buffer = '';
 			for ($i = 1; $i < $lineCount; $i++) {
-				$class = isset($info->lines[$i]) && isset($classes[$info->lines[$i]])
-					? $classes[$info->lines[$i]]
-					: '';
-
+				$class = $classes[$info->lines[$i]] ?? '';
 				if ($class !== $prevClass) {
 					echo rtrim($buffer) . $closeTag;
 					$buffer = '';

@@ -118,7 +118,7 @@ class PhpParser
 							$function = (object) [
 								'start' => $line,
 								'end' => null,
-								'visibility' => isset($visibility) ? $visibility : 'public',
+								'visibility' => $visibility ?? 'public',
 							];
 
 						} else {
@@ -171,7 +171,7 @@ class PhpParser
 	{
 		$res = null;
 		while ($token = current($tokens)) {
-			list($token, $s) = is_array($token) ? $token : [$token, $token];
+			[$token, $s] = is_array($token) ? $token : [$token, $token];
 			if (in_array($token, (array) $take, true)) {
 				$res .= $s;
 			} elseif (!in_array($token, [T_DOC_COMMENT, T_WHITESPACE, T_COMMENT], true)) {

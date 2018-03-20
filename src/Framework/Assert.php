@@ -14,7 +14,7 @@ namespace Tester;
 class Assert
 {
 	/** used by equal() for comparing floats */
-	const EPSILON = 1e-10;
+	private const EPSILON = 1e-10;
 
 	/** used by match(); in values, each $ followed by number is backreference */
 	public static $patterns = [
@@ -266,7 +266,7 @@ class Assert
 		} elseif (in_array($type, ['array', 'bool', 'callable', 'float',
 			'int', 'integer', 'null', 'object', 'resource', 'scalar', 'string', ], true)
 		) {
-			if (!call_user_func("is_$type", $value)) {
+			if (!("is_$type")($value)) {
 				self::fail(self::describe(gettype($value) . " should be $type", $description));
 			}
 
@@ -290,7 +290,7 @@ class Assert
 		self::$counter++;
 		$e = null;
 		try {
-			call_user_func($function);
+			$function();
 		} catch (\Throwable $e) {
 		}
 		if ($e === null) {
@@ -352,7 +352,7 @@ class Assert
 			}
 
 			$errorStr = Helpers::errorTypeToString($severity) . ($message ? " ($message)" : '');
-			list($expectedType, $expectedMessage, $expectedTypeStr) = array_shift($expected);
+			[$expectedType, $expectedMessage, $expectedTypeStr] = array_shift($expected);
 			if ($expectedType === null) {
 				self::fail("Generated more errors than expected: $errorStr was generated in file $file on line $line");
 
@@ -366,7 +366,7 @@ class Assert
 
 		reset($expected);
 		try {
-			call_user_func($function);
+			$function();
 			restore_error_handler();
 		} catch (\Exception $e) {
 			restore_error_handler();
@@ -421,7 +421,7 @@ class Assert
 			self::fail(self::describe('%1 should match %2', $description), $actual, $pattern);
 
 		} elseif (!self::isMatching($pattern, $actual)) {
-			list($pattern, $actual) = self::expandMatchingPatterns($pattern, $actual);
+			[$pattern, $actual] = self::expandMatchingPatterns($pattern, $actual);
 			self::fail(self::describe('%1 should match %2', $description), $actual, $pattern);
 		}
 	}
@@ -442,7 +442,7 @@ class Assert
 			self::fail(self::describe('%1 should match %2', $description), $actual, $pattern);
 
 		} elseif (!self::isMatching($pattern, $actual)) {
-			list($pattern, $actual) = self::expandMatchingPatterns($pattern, $actual);
+			[$pattern, $actual] = self::expandMatchingPatterns($pattern, $actual);
 			self::fail(self::describe('%1 should match %2', $description), $actual, $pattern);
 		}
 	}
@@ -456,7 +456,7 @@ class Assert
 	{
 		$e = new AssertException($message, $expected, $actual, $previous);
 		if (self::$onFailure) {
-			call_user_func(self::$onFailure, $e);
+			(self::$onFailure)($e);
 		} else {
 			throw $e;
 		}

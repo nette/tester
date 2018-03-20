@@ -14,16 +14,16 @@ namespace Tester;
 class Environment
 {
 	/** Should Tester use console colors? */
-	const COLORS = 'NETTE_TESTER_COLORS';
+	public const COLORS = 'NETTE_TESTER_COLORS';
 
 	/** Test is run by Runner */
-	const RUNNER = 'NETTE_TESTER_RUNNER';
+	public const RUNNER = 'NETTE_TESTER_RUNNER';
 
 	/** Code coverage file */
-	const COVERAGE = 'NETTE_TESTER_COVERAGE';
+	public const COVERAGE = 'NETTE_TESTER_COVERAGE';
 
 	/** Thread number when run tests in multi threads */
-	const THREAD = 'NETTE_TESTER_THREAD';
+	public const THREAD = 'NETTE_TESTER_THREAD';
 
 	/** @var bool  used for debugging Tester itself */
 	public static $debugMode = true;
@@ -200,7 +200,7 @@ class Environment
 	public static function loadData()
 	{
 		if (isset($_SERVER['argv']) && ($tmp = preg_filter('#--dataprovider=(.*)#Ai', '$1', $_SERVER['argv']))) {
-			list($query, $file) = explode('|', reset($tmp), 2);
+			[$query, $file] = explode('|', reset($tmp), 2);
 
 		} else {
 			$annotations = self::getTestAnnotations();
@@ -208,7 +208,7 @@ class Environment
 				throw new \Exception('Missing annotation @dataProvider.');
 			}
 			$provider = (array) $annotations['dataprovider'];
-			list($file, $query) = DataProvider::parseAnnotation($provider[0], $annotations['file']);
+			[$file, $query] = DataProvider::parseAnnotation($provider[0], $annotations['file']);
 		}
 		$data = DataProvider::load($file, $query);
 		return reset($data);

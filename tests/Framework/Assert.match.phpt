@@ -80,11 +80,11 @@ $notMatches = [
 	['~%d%~', '~123~', '~%d%~', '~123~'],
 ];
 
-foreach ($matches as list($expected, $actual)) {
+foreach ($matches as [$expected, $actual]) {
 	Assert::match($expected, $actual);
 }
 
-foreach ($notMatches as list($expected, $actual, $expected2, $actual2)) {
+foreach ($notMatches as [$expected, $actual, $expected2, $actual2]) {
 	$expected3 = str_replace('%', '%%', $expected2);
 	$actual3 = str_replace('%', '%%', $actual2);
 

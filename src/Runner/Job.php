@@ -15,7 +15,7 @@ use Tester\Helpers;
  */
 class Job
 {
-	const
+	public const
 		CODE_NONE = -1,
 		CODE_OK = 0,
 		CODE_SKIP = 177,
@@ -23,9 +23,9 @@ class Job
 		CODE_ERROR = 255;
 
 	/** waiting time between process activity check in microseconds */
-	const RUN_USLEEP = 10000;
+	public const RUN_USLEEP = 10000;
 
-	const
+	public const
 		RUN_ASYNC = 1,
 		RUN_COLLECT_ERRORS = 2;
 
@@ -128,7 +128,7 @@ class Job
 			putenv($name);
 		}
 
-		list($stdin, $this->stdout, $stderr) = $pipes;
+		[$stdin, $this->stdout, $stderr] = $pipes;
 		fclose($stdin);
 		if ($flags & self::RUN_COLLECT_ERRORS) {
 			$this->stderr = $stderr;
@@ -176,7 +176,7 @@ class Job
 		$this->exitCode = $code === self::CODE_NONE ? $status['exitcode'] : $code;
 
 		if ($this->interpreter->isCgi() && count($tmp = explode("\r\n\r\n", $this->test->stdout, 2)) >= 2) {
-			list($headers, $this->test->stdout) = $tmp;
+			[$headers, $this->test->stdout] = $tmp;
 			foreach (explode("\r\n", $headers) as $header) {
 				$pos = strpos($header, ':');
 				if ($pos !== false) {

@@ -164,7 +164,7 @@ class CloverXMLGenerator extends AbstractGenerator
 		];
 
 		foreach ($info->methods as $name => $methodInfo) {
-			list($lineCount, $coveredLineCount) = $this->analyzeMethod($methodInfo, $coverageData);
+			[$lineCount, $coveredLineCount] = $this->analyzeMethod($methodInfo, $coverageData);
 
 			$stats->statementCount += $lineCount;
 

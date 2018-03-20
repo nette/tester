@@ -13,7 +13,7 @@ namespace Tester;
  */
 class FileMutator
 {
-	const PROTOCOL = 'file';
+	private const PROTOCOL = 'file';
 
 	/** @var resource|null */
 	public $context;
@@ -133,7 +133,7 @@ class FileMutator
 				return false;
 			} else {
 				foreach (self::$mutators as $mutator) {
-					$content = call_user_func($mutator, $content);
+					$content = $mutator($content);
 				}
 				$this->handle = tmpfile();
 				$this->native('fwrite', $this->handle, $content);
@@ -208,7 +208,7 @@ class FileMutator
 	private function native($func)
 	{
 		stream_wrapper_restore(self::PROTOCOL);
-		$res = call_user_func_array($func, array_slice(func_get_args(), 1));
+		$res = $func(...array_slice(func_get_args(), 1));
 		stream_wrapper_unregister(self::PROTOCOL);
 		stream_wrapper_register(self::PROTOCOL, __CLASS__);
 		return $res;

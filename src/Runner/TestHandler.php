@@ -18,7 +18,7 @@ use Tester\TestCase;
  */
 class TestHandler
 {
-	const HTTP_OK = 200;
+	private const HTTP_OK = 200;
 
 	/** @var Runner */
 	private $runner;
@@ -36,7 +36,7 @@ class TestHandler
 	 */
 	public function initiate($file)
 	{
-		list($annotations, $title) = $this->getAnnotations($file);
+		[$annotations, $title] = $this->getAnnotations($file);
 		$php = $this->runner->getInterpreter();
 
 		$tests = [new Test($file, $title)];
@@ -130,7 +130,7 @@ class TestHandler
 
 	private function initiatePhpIni(Test $test, $pair, PhpInterpreter &$interpreter)
 	{
-		list($name, $value) = explode('=', $pair, 2) + [1 => null];
+		[$name, $value] = explode('=', $pair, 2) + [1 => null];
 		$interpreter = $interpreter->withPhpIniOption($name, $value);
 	}
 
@@ -138,7 +138,7 @@ class TestHandler
 	private function initiateDataProvider(Test $test, $provider)
 	{
 		try {
-			list($dataFile, $query, $optional) = Tester\DataProvider::parseAnnotation($provider, $test->getFile());
+			[$dataFile, $query, $optional] = Tester\DataProvider::parseAnnotation($provider, $test->getFile());
 			$data = Tester\DataProvider::load($dataFile, $query);
 		} catch (\Exception $e) {
 			return $test->withResult(empty($optional) ? Test::FAILED : Test::SKIPPED, $e->getMessage());
@@ -201,7 +201,7 @@ class TestHandler
 			return;
 		}
 		$headers = $job->getHeaders();
-		$actual = isset($headers['Status']) ? (int) $headers['Status'] : self::HTTP_OK;
+		$actual = (int) ($headers['Status'] ?? self::HTTP_OK);
 		$code = (int) $code;
 		if ($code && $code !== $actual) {
 			return $job->getTest()->withResult(Test::FAILED, "Exited with HTTP code $actual (expected $code)");
@@ -223,7 +223,7 @@ class TestHandler
 	{
 		$actual = $job->getTest()->stdout;
 		if (!Tester\Assert::isMatching($content, $actual)) {
-			list($content, $actual) = Tester\Assert::expandMatchingPatterns($content, $actual);
+			[$content, $actual] = Tester\Assert::expandMatchingPatterns($content, $actual);
 			Dumper::saveOutput($job->getTest()->getFile(), $actual, '.actual');
 			Dumper::saveOutput($job->getTest()->getFile(), $content, '.expected');
 			return $job->getTest()->withResult(Test::FAILED, 'Failed: output should match ' . Dumper::toLine($content));
