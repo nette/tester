@@ -1,9 +1,5 @@
 <?php
 
-/**
- * @phpversion 7
- */
-
 use Tester\Assert;
 use Tester\Dumper;
 

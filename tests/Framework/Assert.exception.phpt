@@ -15,11 +15,9 @@ Assert::exception(function () {
 	throw new Exception('Text 123');
 }, Exception::class, 'Text %d%');
 
-if (PHP_VERSION_ID >= 70000) {
-	Assert::exception(function () {
-		eval('*');
-	}, Error::class, 'syntax error%a%');
-}
+Assert::exception(function () {
+	eval('*');
+}, Error::class, 'syntax error%a%');
 
 Assert::exception(function () {
 	Assert::exception(function () {

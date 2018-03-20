@@ -17,13 +17,8 @@ test(function () {
 	Assert::same($test, $job->getTest());
 	Assert::same(231, $job->getExitCode());
 
-	if (defined('PHPDBG_VERSION') && PHP_VERSION_ID === 70000) { // bug #71056
-		Assert::same('Args: one, --two=1, three, --two=2+stderr1+stdout+stderr2', $job->getTest()->stdout);
-		Assert::same('', $job->getTest()->stdout);
-	} else {
-		Assert::same('Args: one, --two=1, three, --two=2+stdout', $job->getTest()->stdout);
-		Assert::same('+stderr1+stderr2', $job->getTest()->stderr);
-	}
+	Assert::same('Args: one, --two=1, three, --two=2+stdout', $job->getTest()->stdout);
+	Assert::same('+stderr1+stderr2', $job->getTest()->stderr);
 
 	if (PHP_SAPI !== 'cli') {
 		Assert::contains('Nette Tester', $job->getHeaders());

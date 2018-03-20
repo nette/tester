@@ -42,7 +42,7 @@ class Collector
 		}
 		self::$file = fopen($file, 'c+');
 
-		if (defined('PHPDBG_VERSION') && PHP_VERSION_ID >= 70000) {
+		if (defined('PHPDBG_VERSION')) {
 			phpdbg_start_oplog();
 			self::$collector = 'collectPhpDbg';
 
@@ -51,8 +51,7 @@ class Collector
 			self::$collector = 'collectXdebug';
 
 		} else {
-			$alternative = PHP_VERSION_ID >= 70000 ? ' or phpdbg SAPI' : '';
-			throw new \LogicException("Code coverage functionality requires Xdebug extension$alternative.");
+			throw new \LogicException('Code coverage functionality requires Xdebug extension or phpdbg SAPI.');
 		}
 
 		register_shutdown_function(function () {

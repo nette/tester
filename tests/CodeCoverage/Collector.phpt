@@ -7,7 +7,7 @@ use Tester\FileMock;
 require __DIR__ . '/../bootstrap.php';
 
 
-if (!extension_loaded('xdebug') && (!defined('PHPDBG_VERSION') || PHP_VERSION_ID < 70000)) {
+if (!extension_loaded('xdebug') && (!defined('PHPDBG_VERSION'))) {
 	Tester\Environment::skip('Requires Xdebug or phpdbg SAPI.');
 }
 

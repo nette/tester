@@ -50,11 +50,7 @@ class Dumper
 			return "$var";
 
 		} elseif (is_float($var)) {
-			if (!is_finite($var)) {
-				return str_replace('.0', '', var_export($var, true)); // workaround for PHP 7.0.2
-			}
-			$var = str_replace(',', '.', "$var");
-			return strpos($var, '.') === false ? $var . '.0' : $var; // workaround for PHP < 7.0.2
+			return var_export($var, true);
 
 		} elseif (is_string($var)) {
 			if (preg_match('#^(.{' . self::$maxLength . '}).#su', $var, $m)) {
@@ -204,7 +200,7 @@ class Dumper
 			return "/* Closure defined in file {$rc->getFileName()} on line {$rc->getStartLine()} */";
 
 		} elseif (is_object($var)) {
-			if (PHP_VERSION_ID >= 70000 && ($rc = new \ReflectionObject($var)) && $rc->isAnonymous()) {
+			if (($rc = new \ReflectionObject($var))->isAnonymous()) {
 				return "/* Anonymous class defined in file {$rc->getFileName()} on line {$rc->getStartLine()} */";
 			}
 			$arr = (array) $var;
