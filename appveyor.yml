@@ -8,22 +8,6 @@ init:
     - SET ANSICON=121x90 (121x90)
 
 install:
-    # Install PHP 5.6
-    - IF EXIST c:\php\56 (SET PHP=0) ELSE (SET PHP=1)
-    - IF %PHP%==1 mkdir c:\php\56
-    - IF %PHP%==1 cd c:\php\56
-    - IF %PHP%==1 curl https://windows.php.net/downloads/releases/archives/php-5.6.30-Win32-VC11-x86.zip --output php.zip
-    - IF %PHP%==1 7z x php.zip >nul
-    - IF %PHP%==1 del /Q *.zip
-
-    # Install PHP 7.0
-    - IF EXIST c:\php\70 (SET PHP=0) ELSE (SET PHP=1)
-    - IF %PHP%==1 mkdir c:\php\70
-    - IF %PHP%==1 cd c:\php\70
-    - IF %PHP%==1 curl https://windows.php.net/downloads/releases/archives/php-7.0.20-Win32-VC14-x86.zip --output php.zip
-    - IF %PHP%==1 7z x php.zip >nul
-    - IF %PHP%==1 del /Q *.zip
-
     # Install PHP 7.1
     - IF EXIST c:\php\71 (SET PHP=0) ELSE (SET PHP=1)
     - IF %PHP%==1 mkdir c:\php\71
@@ -43,13 +27,6 @@ install:
     - cd c:\projects\tester
 
 test_script:
-    - c:\php\56\php src\tester tests -s -p c:\php\56\php
-    - c:\php\56\php src\tester tests -s -p c:\php\56\php-cgi
-
-    - c:\php\70\php src\tester tests -s -p c:\php\70\php
-    - c:\php\70\php src\tester tests -s -p c:\php\70\php-cgi
-    - c:\php\70\php src\tester tests -s -p c:\php\70\phpdbg
-
     - c:\php\71\php src\tester tests -s -p c:\php\71\php
     - c:\php\71\php src\tester tests -s -p c:\php\71\php-cgi
     - c:\php\71\php src\tester tests -s -p c:\php\71\phpdbg
