@@ -217,9 +217,9 @@ XX
 		}
 
 		if ($this->options['--setup']) {
-			call_user_func(function () use ($runner) {
+			(function () use ($runner) {
 				require func_get_arg(0);
-			}, $this->options['--setup']);
+			})($this->options['--setup']);
 		}
 		return $runner;
 	}

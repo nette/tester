@@ -13,7 +13,7 @@ namespace Tester;
  */
 class FileMock
 {
-	const PROTOCOL = 'mock';
+	private const PROTOCOL = 'mock';
 
 	/** @var string[] */
 	public static $files = [];

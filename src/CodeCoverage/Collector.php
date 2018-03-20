@@ -82,7 +82,7 @@ class Collector
 			throw new \LogicException('Code coverage collector has not been started.');
 		}
 
-		list($positive, $negative) = call_user_func([__CLASS__, self::$collector]);
+		[$positive, $negative] = [__CLASS__, self::$collector]();
 
 		flock(self::$file, LOCK_EX);
 		fseek(self::$file, 0);

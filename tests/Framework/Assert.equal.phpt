@@ -55,7 +55,7 @@ $notEquals = [
 
 
 
-foreach ($equals as list($expected, $value)) {
+foreach ($equals as [$expected, $value]) {
 	Assert::equal($expected, $value);
 
 	Assert::exception(function () use ($expected, $value) {
@@ -63,7 +63,7 @@ foreach ($equals as list($expected, $value)) {
 	}, Tester\AssertException::class, '%a% should not be equal to %a%');
 }
 
-foreach ($notEquals as list($expected, $value)) {
+foreach ($notEquals as [$expected, $value]) {
 	Assert::notEqual($expected, $value);
 
 	Assert::exception(function () use ($expected, $value) {

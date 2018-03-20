@@ -13,7 +13,7 @@ namespace Tester\Runner;
  */
 class Test
 {
-	const
+	public const
 		PREPARED = 0,
 		FAILED = 1,
 		PASSED = 2,

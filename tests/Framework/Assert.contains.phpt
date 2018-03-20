@@ -17,7 +17,7 @@ $notContains = [
 	['1', [true]],
 ];
 
-foreach ($contains as list($expected, $value)) {
+foreach ($contains as [$expected, $value]) {
 	Assert::contains($expected, $value);
 
 	Assert::exception(function () use ($expected, $value) {
@@ -25,7 +25,7 @@ foreach ($contains as list($expected, $value)) {
 	}, Tester\AssertException::class, '%a% should not contain %a%');
 }
 
-foreach ($notContains as list($expected, $value)) {
+foreach ($notContains as [$expected, $value]) {
 	Assert::notContains($expected, $value);
 
 	Assert::exception(function () use ($expected, $value) {

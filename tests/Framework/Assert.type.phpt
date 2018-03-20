@@ -29,7 +29,7 @@ $cases = [
 ];
 
 foreach ($cases as $case) {
-	@list($type, $value, $message) = $case;
+	@[$type, $value, $message] = $case;
 	if ($message) {
 		Assert::exception(function () use ($type, $value) {
 			Assert::type($type, $value);

@@ -14,7 +14,7 @@ namespace Tester;
 class TestCase
 {
 	/** @internal */
-	const
+	public const
 		LIST_METHODS = 'nette-tester-list-methods',
 		METHOD_PATTERN = '#^test[A-Z0-9_]#';
 
@@ -121,7 +121,7 @@ class TestCase
 					$this->silentTearDown();
 				}
 
-				return $this->prevErrorHandler ? call_user_func_array($this->prevErrorHandler, func_get_args()) : false;
+				return $this->prevErrorHandler ? ($this->prevErrorHandler)(...func_get_args()) : false;
 			});
 		}
 
@@ -131,16 +131,17 @@ class TestCase
 				$this->setUp();
 
 				$this->handleErrors = true;
+				$params = array_values($params);
 				try {
 					if ($info['throws']) {
 						$e = Assert::error(function () use ($method, $params) {
-							call_user_func_array([$this, $method->getName()], $params);
+							[$this, $method->getName()](...$params);
 						}, ...$throws);
 						if ($e instanceof AssertException) {
 							throw $e;
 						}
 					} else {
-						call_user_func_array([$this, $method->getName()], $params);
+						[$this, $method->getName()](...$params);
 					}
 				} catch (\Exception $e) {
 					$this->handleErrors = false;
@@ -167,7 +168,7 @@ class TestCase
 			return $this->$provider();
 		} else {
 			$rc = new \ReflectionClass($this);
-			list($file, $query) = DataProvider::parseAnnotation($provider, $rc->getFileName());
+			[$file, $query] = DataProvider::parseAnnotation($provider, $rc->getFileName());
 			return DataProvider::load($file, $query);
 		}
 	}

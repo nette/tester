@@ -13,7 +13,7 @@ namespace Tester\CodeCoverage\Generators;
  */
 abstract class AbstractGenerator
 {
-	const
+	protected const
 		CODE_DEAD = -2,
 		CODE_UNTESTED = -1,
 		CODE_TESTED = 1;
