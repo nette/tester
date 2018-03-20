@@ -31,7 +31,7 @@ class CloverXMLGenerator extends AbstractGenerator
 	];
 
 
-	public function __construct($file, $source = null)
+	public function __construct(string $file, string $source = null)
 	{
 		if (!extension_loaded('dom')) {
 			throw new \LogicException('CloverXML generator requires DOM extension to be loaded.');
@@ -40,7 +40,7 @@ class CloverXMLGenerator extends AbstractGenerator
 	}
 
 
-	protected function renderSelf()
+	protected function renderSelf(): void
 	{
 		$time = (string) time();
 		$parser = new PhpParser;
@@ -147,10 +147,7 @@ class CloverXMLGenerator extends AbstractGenerator
 	}
 
 
-	/**
-	 * @return \stdClass
-	 */
-	private function calculateClassMetrics(\stdClass $info, array $coverageData = null)
+	private function calculateClassMetrics(\stdClass $info, array $coverageData = null): \stdClass
 	{
 		$stats = (object) [
 			'methodCount' => count($info->methods),
@@ -181,10 +178,7 @@ class CloverXMLGenerator extends AbstractGenerator
 	}
 
 
-	/**
-	 * @return array
-	 */
-	private static function analyzeMethod(\stdClass $info, array $coverageData = null)
+	private static function analyzeMethod(\stdClass $info, array $coverageData = null): array
 	{
 		$count = 0;
 		$coveredCount = 0;
@@ -206,7 +200,7 @@ class CloverXMLGenerator extends AbstractGenerator
 	}
 
 
-	private static function appendMetrics(\stdClass $summary, \stdClass $add)
+	private static function appendMetrics(\stdClass $summary, \stdClass $add): void
 	{
 		foreach ($add as $name => $value) {
 			$summary->{$name} += $value;
@@ -214,7 +208,7 @@ class CloverXMLGenerator extends AbstractGenerator
 	}
 
 
-	private static function setMetricAttributes(DOMElement $element, \stdClass $metrics)
+	private static function setMetricAttributes(DOMElement $element, \stdClass $metrics): void
 	{
 		foreach ($metrics as $name => $value) {
 			$element->setAttribute(self::$metricAttributesMap[$name], (string) $value);

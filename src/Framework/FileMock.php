@@ -40,7 +40,7 @@ class FileMock
 	/**
 	 * @return string  file name
 	 */
-	public static function create($content = '', $extension = null)
+	public static function create(string $content = '', string $extension = null): string
 	{
 		self::register();
 
@@ -51,7 +51,7 @@ class FileMock
 	}
 
 
-	public static function register()
+	public static function register(): void
 	{
 		if (!in_array(self::PROTOCOL, stream_get_wrappers(), true)) {
 			stream_wrapper_register(self::PROTOCOL, __CLASS__);
@@ -59,7 +59,7 @@ class FileMock
 	}
 
 
-	public function stream_open($path, $mode)
+	public function stream_open(string $path, string $mode): bool
 	{
 		if (!preg_match('#^([rwaxc]).*?(\+)?#', $mode, $m)) {
 			// Windows: failed to open stream: Bad file descriptor
@@ -91,7 +91,7 @@ class FileMock
 	}
 
 
-	public function stream_read($length)
+	public function stream_read(int $length): string
 	{
 		if (!$this->isReadable) {
 			return '';
@@ -104,7 +104,7 @@ class FileMock
 	}
 
 
-	public function stream_write($data)
+	public function stream_write(string $data): int
 	{
 		if (!$this->isWritable) {
 			return 0;
@@ -119,19 +119,19 @@ class FileMock
 	}
 
 
-	public function stream_tell()
+	public function stream_tell(): int
 	{
 		return $this->readingPos;
 	}
 
 
-	public function stream_eof()
+	public function stream_eof(): bool
 	{
 		return $this->readingPos >= strlen($this->content);
 	}
 
 
-	public function stream_seek($offset, $whence)
+	public function stream_seek(int $offset, int $whence): bool
 	{
 		if ($whence === SEEK_CUR) {
 			$offset += $this->readingPos;
@@ -148,7 +148,7 @@ class FileMock
 	}
 
 
-	public function stream_truncate($size)
+	public function stream_truncate(int $size): bool
 	{
 		if (!$this->isWritable) {
 			return false;
@@ -160,13 +160,13 @@ class FileMock
 	}
 
 
-	public function stream_stat()
+	public function stream_stat(): array
 	{
 		return ['mode' => 0100666, 'size' => strlen($this->content)];
 	}
 
 
-	public function url_stat($path, $flags)
+	public function url_stat(string $path, int $flags)
 	{
 		return isset(self::$files[$path])
 			? ['mode' => 0100666, 'size' => strlen(self::$files[$path])]
@@ -174,13 +174,13 @@ class FileMock
 	}
 
 
-	public function stream_lock($operation)
+	public function stream_lock(int $operation): bool
 	{
 		return false;
 	}
 
 
-	public function unlink($path)
+	public function unlink(string $path): bool
 	{
 		if (isset(self::$files[$path])) {
 			unset(self::$files[$path]);
@@ -192,7 +192,7 @@ class FileMock
 	}
 
 
-	private function warning($message)
+	private function warning(string $message): void
 	{
 		$bt = debug_backtrace(0, 3);
 		if (isset($bt[2]['function'])) {

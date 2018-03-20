@@ -16,8 +16,7 @@ function test(\Closure $function)
 }
 
 
-/** @return PhpInterpreter */
-function createInterpreter()
+function createInterpreter(): PhpInterpreter
 {
 	$args = strlen((string) php_ini_scanned_files())
 		? []

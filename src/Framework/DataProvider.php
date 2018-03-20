@@ -16,10 +16,9 @@ class DataProvider
 	/**
 	 * @param  string  path to data provider file
 	 * @param  string  filtering condition
-	 * @return array
 	 * @throws \Exception
 	 */
-	public static function load($file, $query = '')
+	public static function load(string $file, string $query = ''): array
 	{
 		if (!is_file($file)) {
 			throw new \Exception("Missing data-provider file '$file'.");
@@ -59,9 +58,8 @@ class DataProvider
 	/**
 	 * @param  string  tested subject
 	 * @param  string  condition
-	 * @return bool
 	 */
-	public static function testQuery($input, $query)
+	public static function testQuery(string $input, string $query): bool
 	{
 		static $replaces = ['' => '=', '=>' => '>=', '=<' => '<='];
 		$tokens = preg_split('#\s+#', $input);
@@ -80,7 +78,7 @@ class DataProvider
 	}
 
 
-	private static function compare($l, $operator, $r)
+	private static function compare($l, string $operator, $r): bool
 	{
 		switch ($operator) {
 		case '>':
@@ -107,12 +105,9 @@ class DataProvider
 
 	/**
 	 * @internal
-	 * @param  string
-	 * @param  string
-	 * @return array
 	 * @throws \Exception
 	 */
-	public static function parseAnnotation($annotation, $file)
+	public static function parseAnnotation(string $annotation, string $file): array
 	{
 		if (!preg_match('#^(\??)\s*([^,\s]+)\s*,?\s*(\S.*)?()#', $annotation, $m)) {
 			throw new \Exception("Invalid @dataProvider value '$annotation'.");

@@ -43,7 +43,7 @@ class ConsolePrinter implements Tester\Runner\OutputHandler
 	private $baseDir;
 
 
-	public function __construct(Runner $runner, $displaySkipped = false, $file = 'php://output')
+	public function __construct(Runner $runner, bool $displaySkipped = false, string $file = 'php://output')
 	{
 		$this->runner = $runner;
 		$this->displaySkipped = $displaySkipped;
@@ -51,7 +51,7 @@ class ConsolePrinter implements Tester\Runner\OutputHandler
 	}
 
 
-	public function begin()
+	public function begin(): void
 	{
 		$this->count = 0;
 		$this->baseDir = null;
@@ -67,7 +67,7 @@ class ConsolePrinter implements Tester\Runner\OutputHandler
 	}
 
 
-	public function prepare(Test $test)
+	public function prepare(Test $test): void
 	{
 		if ($this->baseDir === null) {
 			$this->baseDir = dirname($test->getFile()) . DIRECTORY_SEPARATOR;
@@ -90,7 +90,7 @@ class ConsolePrinter implements Tester\Runner\OutputHandler
 	}
 
 
-	public function finish(Test $test)
+	public function finish(Test $test): void
 	{
 		$this->results[$test->getResult()]++;
 		$outputs = [
@@ -110,7 +110,7 @@ class ConsolePrinter implements Tester\Runner\OutputHandler
 	}
 
 
-	public function end()
+	public function end(): void
 	{
 		$run = array_sum($this->results);
 		fwrite($this->file, !$this->count ? "No tests found\n" :

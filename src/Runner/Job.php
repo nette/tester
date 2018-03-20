@@ -69,22 +69,13 @@ class Job
 	}
 
 
-	/**
-	 * @param  string
-	 * @param  string
-	 * @return void
-	 */
-	public function setEnvironmentVariable($name, $value)
+	public function setEnvironmentVariable(string $name, string $value): void
 	{
 		$this->envVars[$name] = $value;
 	}
 
 
-	/**
-	 * @param  string
-	 * @return string
-	 */
-	public function getEnvironmentVariable($name)
+	public function getEnvironmentVariable(string $name): string
 	{
 		return $this->envVars[$name];
 	}
@@ -93,9 +84,8 @@ class Job
 	/**
 	 * Runs single test.
 	 * @param  int self::RUN_ASYNC | self::RUN_COLLECT_ERRORS
-	 * @return void
 	 */
-	public function run($flags = 0)
+	public function run(int $flags = 0): void
 	{
 		foreach ($this->envVars as $name => $value) {
 			putenv("$name=$value");
@@ -151,9 +141,8 @@ class Job
 
 	/**
 	 * Checks if the test is still running.
-	 * @return bool
 	 */
-	public function isRunning()
+	public function isRunning(): bool
 	{
 		if (!is_resource($this->stdout)) {
 			return false;
@@ -188,10 +177,7 @@ class Job
 	}
 
 
-	/**
-	 * @return Test
-	 */
-	public function getTest()
+	public function getTest(): Test
 	{
 		return $this->test;
 	}
@@ -199,9 +185,8 @@ class Job
 
 	/**
 	 * Returns exit code.
-	 * @return int
 	 */
-	public function getExitCode()
+	public function getExitCode(): int
 	{
 		return $this->exitCode;
 	}
@@ -211,7 +196,7 @@ class Job
 	 * Returns output headers.
 	 * @return string[]
 	 */
-	public function getHeaders()
+	public function getHeaders(): array
 	{
 		return $this->headers;
 	}

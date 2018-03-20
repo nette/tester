@@ -27,15 +27,14 @@ class TestCase
 
 	/**
 	 * Runs the test case.
-	 * @return void
 	 */
-	public function run()
+	public function run(): void
 	{
 		if (func_num_args()) {
 			throw new \LogicException('Calling TestCase::run($method) is deprecated. Use TestCase::runTest($method) instead.');
 		}
 
-		$methods = array_values(preg_grep(self::METHOD_PATTERN, array_map(function (\ReflectionMethod $rm) {
+		$methods = array_values(preg_grep(self::METHOD_PATTERN, array_map(function (\ReflectionMethod $rm): string {
 			return $rm->getName();
 		}, (new \ReflectionObject($this))->getMethods())));
 
@@ -61,9 +60,8 @@ class TestCase
 	 * Runs the test method.
 	 * @param  string  test method name
 	 * @param  array  test method parameters (dataprovider bypass)
-	 * @return void
 	 */
-	public function runTest($method, array $args = null)
+	public function runTest(string $method, array $args = null): void
 	{
 		if (!method_exists($this, $method)) {
 			throw new TestCaseException("Method '$method' does not exist.");
@@ -115,7 +113,7 @@ class TestCase
 
 
 		if ($this->prevErrorHandler === false) {
-			$this->prevErrorHandler = set_error_handler(function ($severity) {
+			$this->prevErrorHandler = set_error_handler(function (int $severity) {
 				if ($this->handleErrors && ($severity & error_reporting()) === $severity) {
 					$this->handleErrors = false;
 					$this->silentTearDown();
@@ -162,7 +160,7 @@ class TestCase
 	/**
 	 * @return mixed
 	 */
-	protected function getData($provider)
+	protected function getData(string $provider)
 	{
 		if (strpos($provider, '.') === false) {
 			return $this->$provider();
@@ -192,7 +190,7 @@ class TestCase
 	}
 
 
-	private function silentTearDown()
+	private function silentTearDown(): void
 	{
 		set_error_handler(function () {});
 		try {

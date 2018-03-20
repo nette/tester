@@ -19,9 +19,6 @@ namespace Tester\CodeCoverage;
 class PhpParser
 {
 	/**
-	 * @param  string  PHP code to analyze
-	 * @return \stdClass
-	 *
 	 * Returned structure is:
 	 *     stdClass {
 	 *         linesOfCode: int,
@@ -52,7 +49,7 @@ class PhpParser
 	 *         visibility: public|protected|private
 	 *     }
 	 */
-	public function parse($code)
+	public function parse(string $code): \stdClass
 	{
 		$tokens = @token_get_all($code); // @ - source code can be written in newer PHP
 
@@ -167,7 +164,7 @@ class PhpParser
 	}
 
 
-	private static function fetch(&$tokens, $take)
+	private static function fetch(array &$tokens, $take): ?string
 	{
 		$res = null;
 		while ($token = current($tokens)) {

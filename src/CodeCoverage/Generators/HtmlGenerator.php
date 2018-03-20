@@ -30,16 +30,15 @@ class HtmlGenerator extends AbstractGenerator
 	/**
 	 * @param  string  path to coverage.dat file
 	 * @param  string  path to source file/directory
-	 * @param  string
 	 */
-	public function __construct($file, $source = null, $title = null)
+	public function __construct(string $file, string $source = null, string $title = null)
 	{
 		parent::__construct($file, $source);
 		$this->title = $title;
 	}
 
 
-	protected function renderSelf()
+	protected function renderSelf(): void
 	{
 		$this->setupHighlight();
 		$this->parse();
@@ -53,7 +52,7 @@ class HtmlGenerator extends AbstractGenerator
 	}
 
 
-	private function setupHighlight()
+	private function setupHighlight(): void
 	{
 		ini_set('highlight.comment', 'hc');
 		ini_set('highlight.default', 'hd');
@@ -63,7 +62,7 @@ class HtmlGenerator extends AbstractGenerator
 	}
 
 
-	private function parse()
+	private function parse(): void
 	{
 		if (count($this->files) > 0) {
 			return;

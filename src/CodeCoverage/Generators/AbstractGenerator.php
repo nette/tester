@@ -38,7 +38,7 @@ abstract class AbstractGenerator
 	 * @param  string  path to coverage.dat file
 	 * @param  string  path to covered source file or directory
 	 */
-	public function __construct($file, $source = null)
+	public function __construct(string $file, string $source = null)
 	{
 		if (!is_file($file)) {
 			throw new \Exception("File '$file' is missing.");
@@ -69,14 +69,14 @@ abstract class AbstractGenerator
 	}
 
 
-	public function render($file = null)
+	public function render(string $file = null): void
 	{
 		$handle = $file ? @fopen($file, 'w') : STDOUT; // @ is escalated to exception
 		if (!$handle) {
 			throw new \Exception("Unable to write to file '$file'.");
 		}
 
-		ob_start(function ($buffer) use ($handle) { fwrite($handle, $buffer); }, 4096);
+		ob_start(function (string $buffer) use ($handle) { fwrite($handle, $buffer); }, 4096);
 		try {
 			$this->renderSelf();
 		} catch (\Exception $e) {
@@ -93,25 +93,19 @@ abstract class AbstractGenerator
 	}
 
 
-	/**
-	 * @return float
-	 */
-	public function getCoveredPercent()
+	public function getCoveredPercent(): float
 	{
 		return $this->totalSum ? $this->coveredSum * 100 / $this->totalSum : 0;
 	}
 
 
-	/**
-	 * @return \Iterator
-	 */
-	protected function getSourceIterator()
+	protected function getSourceIterator(): \Iterator
 	{
 		$iterator = is_dir($this->source)
 			? new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($this->source))
 			: new \ArrayIterator([new \SplFileInfo($this->source)]);
 
-		return new \CallbackFilterIterator($iterator, function (\SplFileInfo $file) {
+		return new \CallbackFilterIterator($iterator, function (\SplFileInfo $file): bool {
 			return $file->getBasename()[0] !== '.'  // . or .. or .gitignore
 				&& in_array($file->getExtension(), $this->acceptFiles, true);
 		});

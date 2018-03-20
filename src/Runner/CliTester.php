@@ -24,8 +24,7 @@ class CliTester
 	private $interpreter;
 
 
-	/** @return int|null */
-	public function run()
+	public function run(): ?int
 	{
 		Environment::setupColors();
 		Environment::setupErrors();
@@ -42,7 +41,7 @@ class CliTester
 
 		if ($cmd->isEmpty() || $this->options['--help']) {
 			$cmd->help();
-			return;
+			return null;
 		}
 
 		$this->createPhpInterpreter();
@@ -51,7 +50,7 @@ class CliTester
 			$job = new Job(new Test(__DIR__ . '/info.php'), $this->interpreter);
 			$job->run();
 			echo $job->getTest()->stdout;
-			return;
+			return null;
 		}
 
 		if ($this->options['--coverage']) {
@@ -72,7 +71,7 @@ class CliTester
 
 		if ($this->options['--watch']) {
 			$this->watch($runner);
-			return;
+			return null;
 		}
 
 		$result = $runner->run();
@@ -85,8 +84,7 @@ class CliTester
 	}
 
 
-	/** @return CommandLine */
-	private function loadOptions()
+	private function loadOptions(): CommandLine
 	{
 		echo <<<'XX'
  _____ ___  ___ _____ ___  ___
@@ -160,8 +158,7 @@ XX
 	}
 
 
-	/** @return void */
-	private function createPhpInterpreter()
+	private function createPhpInterpreter(): void
 	{
 		$args = $this->options['-C'] ? [] : ['-n'];
 		if ($this->options['-c']) {
@@ -186,8 +183,7 @@ XX
 	}
 
 
-	/** @return Runner */
-	private function createRunner()
+	private function createRunner(): Runner
 	{
 		$runner = new Runner($this->interpreter);
 		$runner->paths = $this->options['paths'];
@@ -225,8 +221,7 @@ XX
 	}
 
 
-	/** @return string */
-	private function prepareCodeCoverage()
+	private function prepareCodeCoverage(): string
 	{
 		if (!$this->interpreter->canMeasureCodeCoverage()) {
 			throw new \Exception("Code coverage functionality requires Xdebug extension or phpdbg SAPI (used {$this->interpreter->getCommandLine()})");
@@ -238,8 +233,7 @@ XX
 	}
 
 
-	/** @return void */
-	private function finishCodeCoverage($file)
+	private function finishCodeCoverage(string $file): void
 	{
 		if (!in_array($this->options['-o'], ['none', 'tap', 'junit'], true)) {
 			echo 'Generating code coverage report... ';
@@ -254,8 +248,7 @@ XX
 	}
 
 
-	/** @return void */
-	private function watch(Runner $runner)
+	private function watch(Runner $runner): void
 	{
 		$prev = [];
 		$counter = 0;

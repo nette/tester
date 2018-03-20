@@ -13,10 +13,7 @@ namespace Tester;
  */
 class DomQuery extends \SimpleXMLElement
 {
-	/**
-	 * @return DomQuery
-	 */
-	public static function fromHtml($html)
+	public static function fromHtml(string $html): self
 	{
 		if (strpos($html, '<') === false) {
 			$html = '<body>' . $html;
@@ -26,7 +23,7 @@ class DomQuery extends \SimpleXMLElement
 		$html = preg_replace('#<(keygen|source|track|wbr)(?=\s|>)((?:"[^"]*"|\'[^\']*\'|[^"\'>])*+)(?<!/)>#', '<$1$2 />', $html);
 
 		// fix parsing of </ inside scripts
-		$html = preg_replace_callback('#(<script(?=\s|>)(?:"[^"]*"|\'[^\']*\'|[^"\'>])*+>)(.*?)(</script>)#s', function ($m) {
+		$html = preg_replace_callback('#(<script(?=\s|>)(?:"[^"]*"|\'[^\']*\'|[^"\'>])*+>)(.*?)(</script>)#s', function (array $m): string {
 			return $m[1] . str_replace('</', '<\/', $m[2]) . $m[3];
 		}, $html);
 
@@ -48,10 +45,7 @@ class DomQuery extends \SimpleXMLElement
 	}
 
 
-	/**
-	 * @return DomQuery
-	 */
-	public static function fromXml($xml)
+	public static function fromXml(string $xml): self
 	{
 		return simplexml_load_string($xml, __CLASS__);
 	}
@@ -61,7 +55,7 @@ class DomQuery extends \SimpleXMLElement
 	 * Returns array of descendants filtered by a selector.
 	 * @return DomQuery[]
 	 */
-	public function find($selector)
+	public function find(string $selector): array
 	{
 		return $this->xpath(self::css2xpath($selector));
 	}
@@ -69,9 +63,8 @@ class DomQuery extends \SimpleXMLElement
 
 	/**
 	 * Check the current document against a selector.
-	 * @return bool
 	 */
-	public function has($selector)
+	public function has(string $selector): bool
 	{
 		return (bool) $this->find($selector);
 	}
@@ -79,9 +72,8 @@ class DomQuery extends \SimpleXMLElement
 
 	/**
 	 * Transforms CSS expression to XPath.
-	 * @return string
 	 */
-	public static function css2xpath($css)
+	public static function css2xpath(string $css): string
 	{
 		$xpath = '//*';
 		preg_match_all('/

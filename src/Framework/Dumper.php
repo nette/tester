@@ -25,9 +25,8 @@ class Dumper
 	/**
 	 * Dumps information about a variable in readable format.
 	 * @param  mixed  variable to dump
-	 * @return string
 	 */
-	public static function toLine($var)
+	public static function toLine($var): string
 	{
 		static $table;
 		if ($table === null) {
@@ -93,9 +92,8 @@ class Dumper
 	/**
 	 * Formats object to line.
 	 * @param  object
-	 * @return string
 	 */
-	private static function objectToLine($object)
+	private static function objectToLine($object): string
 	{
 		$line = get_class($object);
 		if ($object instanceof \DateTime || $object instanceof \DateTimeInterface) {
@@ -109,9 +107,8 @@ class Dumper
 	/**
 	 * Dumps variable in PHP format.
 	 * @param  mixed  variable to dump
-	 * @return string
 	 */
-	public static function toPhp($var)
+	public static function toPhp($var): string
 	{
 		return self::_toPhp($var);
 	}
@@ -120,18 +117,14 @@ class Dumper
 	/**
 	 * Returns object's stripped hash.
 	 * @param  object
-	 * @return string
 	 */
-	private static function hash($object)
+	private static function hash($object): string
 	{
 		return '#' . substr(md5(spl_object_hash($object)), 0, 4);
 	}
 
 
-	/**
-	 * @return string
-	 */
-	private static function _toPhp(&$var, &$list = [], $level = 0, &$line = 1)
+	private static function _toPhp(&$var, array &$list = [], int $level = 0, int &$line = 1): string
 	{
 		if (is_float($var)) {
 			$var = str_replace(',', '.', "$var");
@@ -247,10 +240,9 @@ class Dumper
 
 
 	/**
-	 * @param  \Throwable
 	 * @internal
 	 */
-	public static function dumpException($e)
+	public static function dumpException(\Throwable $e): string
 	{
 		$trace = $e->getTrace();
 		array_splice($trace, 0, $e instanceof \ErrorException ? 1 : 0, [['file' => $e->getFile(), 'line' => $e->getLine()]]);
@@ -345,10 +337,9 @@ class Dumper
 
 	/**
 	 * Dumps data to folder 'output'.
-	 * @return string
 	 * @internal
 	 */
-	public static function saveOutput($testFile, $content, $suffix = '')
+	public static function saveOutput(string $testFile, $content, string $suffix = ''): string
 	{
 		$path = self::$dumpDir . DIRECTORY_SEPARATOR . pathinfo($testFile, PATHINFO_FILENAME) . $suffix;
 		if (!preg_match('#/|\w:#A', self::$dumpDir)) {
@@ -362,9 +353,8 @@ class Dumper
 
 	/**
 	 * Applies color to string.
-	 * @return string
 	 */
-	public static function color($color = '', $s = null)
+	public static function color(string $color = '', string $s = null): string
 	{
 		static $colors = [
 			'black' => '0;30', 'gray' => '1;30', 'silver' => '0;37', 'white' => '1;37',
@@ -380,7 +370,7 @@ class Dumper
 	}
 
 
-	public static function removeColors($s)
+	public static function removeColors(string $s): string
 	{
 		return preg_replace('#\e\[[\d;]+m#', '', $s);
 	}
