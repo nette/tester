@@ -41,21 +41,14 @@ class Test
 	private $args = [];
 
 
-	/**
-	 * @param  string
-	 * @param  string
-	 */
-	public function __construct($file, $title = null)
+	public function __construct(string $file, string $title = null)
 	{
 		$this->file = $file;
 		$this->title = $title;
 	}
 
 
-	/**
-	 * @return string
-	 */
-	public function getFile()
+	public function getFile(): string
 	{
 		return $this->file;
 	}
@@ -64,18 +57,15 @@ class Test
 	/**
 	 * @return string[]|string[][]
 	 */
-	public function getArguments()
+	public function getArguments(): array
 	{
 		return $this->args;
 	}
 
 
-	/**
-	 * @return string
-	 */
-	public function getSignature()
+	public function getSignature(): string
 	{
-		$args = implode(' ', array_map(function ($arg) {
+		$args = implode(' ', array_map(function ($arg): string {
 			return is_array($arg) ? "$arg[0]=$arg[1]" : $arg;
 		}, $this->args));
 
@@ -83,29 +73,22 @@ class Test
 	}
 
 
-	/**
-	 * @return int
-	 */
-	public function getResult()
+	public function getResult(): int
 	{
 		return $this->result;
 	}
 
 
-	/**
-	 * @return bool
-	 */
-	public function hasResult()
+	public function hasResult(): bool
 	{
 		return $this->result !== self::PREPARED;
 	}
 
 
 	/**
-	 * @param  array $args
 	 * @return static
 	 */
-	public function withArguments(array $args)
+	public function withArguments(array $args): self
 	{
 		if ($this->hasResult()) {
 			throw new \LogicException('Cannot change arguments of test which already has a result.');
@@ -124,11 +107,9 @@ class Test
 
 
 	/**
-	 * @param  int
-	 * @param  string|null
 	 * @return static
 	 */
-	public function withResult($result, $message)
+	public function withResult(int $result, ?string $message): self
 	{
 		if ($this->hasResult()) {
 			throw new \LogicException("Result of test is already set to $this->result with message '$this->message'.");

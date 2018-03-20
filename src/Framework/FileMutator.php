@@ -25,7 +25,7 @@ class FileMutator
 	private static $mutators = [];
 
 
-	public static function addMutator(callable $mutator)
+	public static function addMutator(callable $mutator): void
 	{
 		self::$mutators[] = $mutator;
 		stream_wrapper_unregister(self::PROTOCOL);
@@ -33,13 +33,13 @@ class FileMutator
 	}
 
 
-	public function dir_closedir()
+	public function dir_closedir(): void
 	{
 		closedir($this->handle);
 	}
 
 
-	public function dir_opendir($path, $options)
+	public function dir_opendir(string $path, int $options): bool
 	{
 		$this->handle = $this->native('opendir', $path, $this->context);
 		return (bool) $this->handle;
@@ -52,61 +52,61 @@ class FileMutator
 	}
 
 
-	public function dir_rewinddir()
+	public function dir_rewinddir(): bool
 	{
-		return rewinddir($this->handle);
+		return (bool) rewinddir($this->handle);
 	}
 
 
-	public function mkdir($path, $mode, $options)
+	public function mkdir(string $path, int $mode, int $options): bool
 	{
 		return $this->native('mkdir', $path, $mode, false, $this->context);
 	}
 
 
-	public function rename($pathFrom, $pathTo)
+	public function rename(string $pathFrom, string $pathTo): bool
 	{
 		return $this->native('rename', $pathFrom, $pathTo, $this->context);
 	}
 
 
-	public function rmdir($path, $options)
+	public function rmdir(string $path, int $options): bool
 	{
 		return $this->native('rmdir', $path, $this->context);
 	}
 
 
-	public function stream_cast($castAs)
+	public function stream_cast(int $castAs)
 	{
 		return $this->handle;
 	}
 
 
-	public function stream_close()
+	public function stream_close(): void
 	{
 		fclose($this->handle);
 	}
 
 
-	public function stream_eof()
+	public function stream_eof(): bool
 	{
 		return feof($this->handle);
 	}
 
 
-	public function stream_flush()
+	public function stream_flush(): bool
 	{
 		return fflush($this->handle);
 	}
 
 
-	public function stream_lock($operation)
+	public function stream_lock(int $operation): bool
 	{
 		return flock($this->handle, $operation);
 	}
 
 
-	public function stream_metadata($path, $option, $value)
+	public function stream_metadata(string $path, int $option, $value): bool
 	{
 		switch ($option) {
 			case STREAM_META_TOUCH:
@@ -121,10 +121,11 @@ class FileMutator
 			case STREAM_META_ACCESS:
 				return $this->native('chmod', $path, $value);
 		}
+		return false;
 	}
 
 
-	public function stream_open($path, $mode, $options, &$openedPath)
+	public function stream_open(string $path, string $mode, int $options, ?string &$openedPath): bool
 	{
 		$usePath = (bool) ($options & STREAM_USE_PATH);
 		if (pathinfo($path, PATHINFO_EXTENSION) === 'php') {
@@ -149,19 +150,19 @@ class FileMutator
 	}
 
 
-	public function stream_read($count)
+	public function stream_read(int $count)
 	{
 		return fread($this->handle, $count);
 	}
 
 
-	public function stream_seek($offset, $whence = SEEK_SET)
+	public function stream_seek(int $offset, int $whence = SEEK_SET): bool
 	{
 		return fseek($this->handle, $offset, $whence) === 0;
 	}
 
 
-	public function stream_set_option($option, $arg1, $arg2)
+	public function stream_set_option(int $option, int $arg1, int $arg2)
 	{
 	}
 
@@ -172,31 +173,31 @@ class FileMutator
 	}
 
 
-	public function stream_tell()
+	public function stream_tell(): int
 	{
 		return ftell($this->handle);
 	}
 
 
-	public function stream_truncate($newSize)
+	public function stream_truncate(int $newSize): bool
 	{
 		return ftruncate($this->handle, $newSize);
 	}
 
 
-	public function stream_write($data)
+	public function stream_write(string $data): int
 	{
 		return fwrite($this->handle, $data);
 	}
 
 
-	public function unlink($path)
+	public function unlink(string $path): bool
 	{
 		return $this->native('unlink', $path);
 	}
 
 
-	public function url_stat($path, $flags)
+	public function url_stat(string $path, int $flags)
 	{
 		$func = $flags & STREAM_URL_STAT_LINK ? 'lstat' : 'stat';
 		return $flags & STREAM_URL_STAT_QUIET
@@ -205,7 +206,7 @@ class FileMutator
 	}
 
 
-	private function native($func)
+	private function native(string $func)
 	{
 		stream_wrapper_restore(self::PROTOCOL);
 		$res = $func(...array_slice(func_get_args(), 1));

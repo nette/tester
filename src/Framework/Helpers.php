@@ -15,10 +15,8 @@ class Helpers
 {
 	/**
 	 * Purges directory.
-	 * @param  string
-	 * @return void
 	 */
-	public static function purge($dir)
+	public static function purge(string $dir): void
 	{
 		if (!is_dir($dir)) {
 			mkdir($dir);
@@ -35,10 +33,9 @@ class Helpers
 
 	/**
 	 * Parse phpDoc comment.
-	 * @return array
 	 * @internal
 	 */
-	public static function parseDocComment($s)
+	public static function parseDocComment(string $s): array
 	{
 		$options = [];
 		if (!preg_match('#^/\*\*(.*?)\*/#ms', $s, $content)) {
@@ -63,7 +60,7 @@ class Helpers
 	/**
 	 * @internal
 	 */
-	public static function errorTypeToString($type)
+	public static function errorTypeToString(int $type): string
 	{
 		$consts = get_defined_constants(true);
 		foreach ($consts['Core'] as $name => $val) {
@@ -76,9 +73,8 @@ class Helpers
 
 	/**
 	 * Escape a string to be used as a shell argument.
-	 * @return string
 	 */
-	public static function escapeArg($s)
+	public static function escapeArg(string $s): string
 	{
 		if (preg_match('#^[a-z0-9._=/:-]+\z#i', $s)) {
 			return $s;

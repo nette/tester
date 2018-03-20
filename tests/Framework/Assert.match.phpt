@@ -110,7 +110,7 @@ Assert::same('a%A%b', Assert::expandMatchingPatterns('a%A%b', 'axc')[0]);
 
 Assert::exception(function () {
 	Assert::match(null, '');
-}, Exception::class, 'Pattern must be a string.');
+}, TypeError::class);
 
 
 Assert::matchFile(__DIR__ . '/Assert.matchFile.txt', '! Hello !');

@@ -59,30 +59,19 @@ class Runner
 	}
 
 
-	/**
-	 * @param  string
-	 * @param  string
-	 * @return void
-	 */
-	public function setEnvironmentVariable($name, $value)
+	public function setEnvironmentVariable(string $name, string $value): void
 	{
 		$this->envVars[$name] = $value;
 	}
 
 
-	/**
-	 * @return array
-	 */
-	public function getEnvironmentVariables()
+	public function getEnvironmentVariables(): array
 	{
 		return $this->envVars;
 	}
 
 
-	/**
-	 * @param  string|null
-	 */
-	public function setTempDirectory($path)
+	public function setTempDirectory(?string $path): void
 	{
 		if ($path !== null) {
 			if (!is_dir($path) || !is_writable($path)) {
@@ -101,9 +90,8 @@ class Runner
 
 	/**
 	 * Runs all tests.
-	 * @return bool
 	 */
-	public function run()
+	public function run(): bool
 	{
 		$this->result = true;
 		$this->interrupted = false;
@@ -118,7 +106,7 @@ class Runner
 		}
 
 		if ($this->tempDir) {
-			usort($this->jobs, function (Job $a, Job $b) {
+			usort($this->jobs, function (Job $a, Job $b): int {
 				return $this->getLastResult($a->getTest()) - $this->getLastResult($b->getTest());
 			});
 		}
@@ -160,10 +148,7 @@ class Runner
 	}
 
 
-	/**
-	 * @return void
-	 */
-	private function findTests($path)
+	private function findTests(string $path): void
 	{
 		if (strpbrk($path, '*?') === false && !file_exists($path)) {
 			throw new \InvalidArgumentException("File or directory '$path' not found.");
@@ -189,18 +174,14 @@ class Runner
 
 	/**
 	 * Appends new job to queue.
-	 * @return void
 	 */
-	public function addJob(Job $job)
+	public function addJob(Job $job): void
 	{
 		$this->jobs[] = $job;
 	}
 
 
-	/**
-	 * @return void
-	 */
-	public function prepareTest(Test $test)
+	public function prepareTest(Test $test): void
 	{
 		foreach ($this->outputHandlers as $handler) {
 			$handler->prepare($test);
@@ -210,9 +191,8 @@ class Runner
 
 	/**
 	 * Writes to output handlers.
-	 * @return void
 	 */
-	public function finishTest(Test $test)
+	public function finishTest(Test $test): void
 	{
 		$this->result = $this->result && ($test->getResult() !== Test::FAILED);
 
@@ -233,19 +213,13 @@ class Runner
 	}
 
 
-	/**
-	 * @return PhpInterpreter
-	 */
-	public function getInterpreter()
+	public function getInterpreter(): PhpInterpreter
 	{
 		return $this->interpreter;
 	}
 
 
-	/**
-	 * @return void
-	 */
-	private function installInterruptHandler()
+	private function installInterruptHandler(): void
 	{
 		if (extension_loaded('pcntl')) {
 			pcntl_signal(SIGINT, function () {
@@ -256,10 +230,7 @@ class Runner
 	}
 
 
-	/**
-	 * @return void
-	 */
-	private function removeInterruptHandler()
+	private function removeInterruptHandler(): void
 	{
 		if (extension_loaded('pcntl')) {
 			pcntl_signal(SIGINT, SIG_DFL);
@@ -267,10 +238,7 @@ class Runner
 	}
 
 
-	/**
-	 * @return bool
-	 */
-	private function isInterrupted()
+	private function isInterrupted(): bool
 	{
 		if (extension_loaded('pcntl')) {
 			pcntl_signal_dispatch();
@@ -280,10 +248,7 @@ class Runner
 	}
 
 
-	/**
-	 * @return string
-	 */
-	private function getLastResult(Test $test)
+	private function getLastResult(Test $test): int
 	{
 		$signature = $test->getSignature();
 		if (isset($this->lastResults[$signature])) {
@@ -299,10 +264,7 @@ class Runner
 	}
 
 
-	/**
-	 * @return string
-	 */
-	private function getLastResultFilename(Test $test)
+	private function getLastResultFilename(Test $test): string
 	{
 		return $this->tempDir
 			. DIRECTORY_SEPARATOR

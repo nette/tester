@@ -30,11 +30,7 @@ class TestHandler
 	}
 
 
-	/**
-	 * @param  string
-	 * @return void
-	 */
-	public function initiate($file)
+	public function initiate(string $file): void
 	{
 		[$annotations, $title] = $this->getAnnotations($file);
 		$php = $this->runner->getInterpreter();
@@ -75,10 +71,7 @@ class TestHandler
 	}
 
 
-	/**
-	 * @return void
-	 */
-	public function assess(Job $job)
+	public function assess(Job $job): void
 	{
 		$test = $job->getTest();
 		$annotations = $this->getAnnotations($test->getFile())[0] += [
@@ -103,39 +96,41 @@ class TestHandler
 	}
 
 
-	private function initiateSkip(Test $test, $message)
+	private function initiateSkip(Test $test, string $message): Test
 	{
 		return $test->withResult(Test::SKIPPED, $message);
 	}
 
 
-	private function initiatePhpVersion(Test $test, $version, PhpInterpreter $interpreter)
+	private function initiatePhpVersion(Test $test, string $version, PhpInterpreter $interpreter): ?Test
 	{
 		if (preg_match('#^(<=|<|==|=|!=|<>|>=|>)?\s*(.+)#', $version, $matches)
 			&& version_compare($matches[2], $interpreter->getVersion(), $matches[1] ?: '>=')) {
 			return $test->withResult(Test::SKIPPED, "Requires PHP $version.");
 		}
+		return null;
 	}
 
 
-	private function initiatePhpExtension(Test $test, $value, PhpInterpreter $interpreter)
+	private function initiatePhpExtension(Test $test, string $value, PhpInterpreter $interpreter): ?Test
 	{
 		foreach (preg_split('#[\s,]+#', $value) as $extension) {
 			if (!$interpreter->hasExtension($extension)) {
 				return $test->withResult(Test::SKIPPED, "Requires PHP extension $extension.");
 			}
 		}
+		return null;
 	}
 
 
-	private function initiatePhpIni(Test $test, $pair, PhpInterpreter &$interpreter)
+	private function initiatePhpIni(Test $test, string $pair, PhpInterpreter &$interpreter): void
 	{
 		[$name, $value] = explode('=', $pair, 2) + [1 => null];
 		$interpreter = $interpreter->withPhpIniOption($name, $value);
 	}
 
 
-	private function initiateDataProvider(Test $test, $provider)
+	private function initiateDataProvider(Test $test, string $provider)
 	{
 		try {
 			[$dataFile, $query, $optional] = Tester\DataProvider::parseAnnotation($provider, $test->getFile());
@@ -150,7 +145,7 @@ class TestHandler
 	}
 
 
-	private function initiateMultiple(Test $test, $count)
+	private function initiateMultiple(Test $test, $count): array
 	{
 		return array_map(function ($i) use ($test) {
 			return $test->withArguments(['multiple' => $i]);
@@ -179,7 +174,7 @@ class TestHandler
 	}
 
 
-	private function assessExitCode(Job $job, $code)
+	private function assessExitCode(Job $job, $code): ?Test
 	{
 		$code = (int) $code;
 		if ($job->getExitCode() === Job::CODE_SKIP) {
@@ -192,24 +187,25 @@ class TestHandler
 			$message = $job->getExitCode() !== Job::CODE_FAIL ? "Exited with error code {$job->getExitCode()} (expected $code)" : '';
 			return $job->getTest()->withResult(Test::FAILED, trim($message . "\n" . $job->getTest()->stdout));
 		}
+		return null;
 	}
 
 
-	private function assessHttpCode(Job $job, $code)
+	private function assessHttpCode(Job $job, $code): ?Test
 	{
 		if (!$this->runner->getInterpreter()->isCgi()) {
-			return;
+			return null;
 		}
 		$headers = $job->getHeaders();
 		$actual = (int) ($headers['Status'] ?? self::HTTP_OK);
 		$code = (int) $code;
-		if ($code && $code !== $actual) {
-			return $job->getTest()->withResult(Test::FAILED, "Exited with HTTP code $actual (expected $code)");
-		}
+		return $code && $code !== $actual
+			? $job->getTest()->withResult(Test::FAILED, "Exited with HTTP code $actual (expected $code)")
+			: null;
 	}
 
 
-	private function assessOutputMatchFile(Job $job, $file)
+	private function assessOutputMatchFile(Job $job, string $file): ?Test
 	{
 		$file = dirname($job->getTest()->getFile()) . DIRECTORY_SEPARATOR . $file;
 		if (!is_file($file)) {
@@ -219,7 +215,7 @@ class TestHandler
 	}
 
 
-	private function assessOutputMatch(Job $job, $content)
+	private function assessOutputMatch(Job $job, string $content): ?Test
 	{
 		$actual = $job->getTest()->stdout;
 		if (!Tester\Assert::isMatching($content, $actual)) {
@@ -228,10 +224,11 @@ class TestHandler
 			Dumper::saveOutput($job->getTest()->getFile(), $content, '.expected');
 			return $job->getTest()->withResult(Test::FAILED, 'Failed: output should match ' . Dumper::toLine($content));
 		}
+		return null;
 	}
 
 
-	private function getAnnotations($file)
+	private function getAnnotations(string $file): array
 	{
 		$annotations = Helpers::parseDocComment(file_get_contents($file));
 		$testTitle = isset($annotations[0]) ? preg_replace('#^TEST:\s*#i', '', $annotations[0]) : null;

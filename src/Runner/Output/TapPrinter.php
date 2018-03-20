@@ -23,13 +23,13 @@ class TapPrinter implements Tester\Runner\OutputHandler
 	private $results;
 
 
-	public function __construct($file = 'php://output')
+	public function __construct(string $file = 'php://output')
 	{
 		$this->file = fopen($file, 'w');
 	}
 
 
-	public function begin()
+	public function begin(): void
 	{
 		$this->results = [
 			Test::PASSED => 0,
@@ -40,12 +40,12 @@ class TapPrinter implements Tester\Runner\OutputHandler
 	}
 
 
-	public function prepare(Test $test)
+	public function prepare(Test $test): void
 	{
 	}
 
 
-	public function finish(Test $test)
+	public function finish(Test $test): void
 	{
 		$this->results[$test->getResult()]++;
 		$message = str_replace("\n", "\n# ", trim((string) $test->message));
@@ -58,7 +58,7 @@ class TapPrinter implements Tester\Runner\OutputHandler
 	}
 
 
-	public function end()
+	public function end(): void
 	{
 		fwrite($this->file, '1..' . array_sum($this->results));
 	}

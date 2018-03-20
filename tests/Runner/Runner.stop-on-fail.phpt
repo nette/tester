@@ -16,23 +16,23 @@ class Logger implements Tester\Runner\OutputHandler
 	public $results = [];
 
 
-	public function prepare(Test $test)
+	public function prepare(Test $test): void
 	{
 	}
 
 
-	public function finish(Test $test)
+	public function finish(Test $test): void
 	{
 		$this->results[] = [$test->getResult(), basename($test->getFile())];
 	}
 
 
-	public function begin()
+	public function begin(): void
 	{
 	}
 
 
-	public function end()
+	public function end(): void
 	{
 	}
 }

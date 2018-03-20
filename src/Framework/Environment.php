@@ -40,9 +40,8 @@ class Environment
 
 	/**
 	 * Configures testing environment.
-	 * @return void
 	 */
-	public static function setup()
+	public static function setup(): void
 	{
 		self::setupErrors();
 		self::setupColors();
@@ -63,9 +62,8 @@ class Environment
 
 	/**
 	 * Configures colored output.
-	 * @return void
 	 */
-	public static function setupColors()
+	public static function setupColors(): void
 	{
 		self::$useColors = getenv(self::COLORS) !== false
 			? (bool) getenv(self::COLORS)
@@ -73,7 +71,7 @@ class Environment
 				&& ((function_exists('posix_isatty') && posix_isatty(STDOUT))
 					|| getenv('ConEmuANSI') === 'ON' || getenv('ANSICON') !== false) || getenv('TERM') === 'xterm-256color');
 
-		ob_start(function ($s) {
+		ob_start(function (string $s): string {
 			return self::$useColors ? $s : Dumper::removeColors($s);
 		}, 1, PHP_OUTPUT_HANDLER_FLUSHABLE);
 	}
@@ -81,9 +79,8 @@ class Environment
 
 	/**
 	 * Configures PHP error handling.
-	 * @return void
 	 */
-	public static function setupErrors()
+	public static function setupErrors(): void
 	{
 		error_reporting(E_ALL);
 		ini_set('display_errors', '1');
@@ -92,7 +89,7 @@ class Environment
 
 		set_exception_handler([__CLASS__, 'handleException']);
 
-		set_error_handler(function ($severity, $message, $file, $line) {
+		set_error_handler(function (int $severity, string $message, string $file, int $line) {
 			if (in_array($severity, [E_RECOVERABLE_ERROR, E_USER_ERROR], true) || ($severity & error_reporting()) === $severity) {
 				self::handleException(new \ErrorException($message, 0, $severity, $file, $line));
 			}
@@ -120,10 +117,9 @@ class Environment
 
 
 	/**
-	 * @param  \Throwable
 	 * @internal
 	 */
-	public static function handleException($e)
+	public static function handleException(\Throwable $e): void
 	{
 		self::removeOutputBuffers();
 		self::$checkAssertions = false;
@@ -134,9 +130,8 @@ class Environment
 
 	/**
 	 * Skips this test.
-	 * @return void
 	 */
-	public static function skip($message = '')
+	public static function skip(string $message = ''): void
 	{
 		self::$checkAssertions = false;
 		echo "\nSkipped:\n$message\n";
@@ -146,11 +141,9 @@ class Environment
 
 	/**
 	 * Locks the parallel tests.
-	 * @param  string
-	 * @param  string  lock store directory
-	 * @return void
+	 * @param  string $path  lock store directory
 	 */
-	public static function lock($name = '', $path = '')
+	public static function lock(string $name = '', string $path = ''): void
 	{
 		static $locks;
 		$file = "$path/lock-" . md5($name);
@@ -162,9 +155,8 @@ class Environment
 
 	/**
 	 * Returns current test annotations.
-	 * @return array
 	 */
-	public static function getTestAnnotations()
+	public static function getTestAnnotations(): array
 	{
 		$trace = debug_backtrace();
 		$file = $trace[count($trace) - 1]['file'];
@@ -174,11 +166,10 @@ class Environment
 
 	/**
 	 * Removes keyword final from source codes.
-	 * @return void
 	 */
-	public static function bypassFinals()
+	public static function bypassFinals(): void
 	{
-		FileMutator::addMutator(function ($code) {
+		FileMutator::addMutator(function (string $code): string {
 			if (strpos($code, 'final') !== false) {
 				$tokens = token_get_all($code);
 				$code = '';
@@ -195,9 +186,8 @@ class Environment
 
 	/**
 	 * Loads data according to the file annotation or specified by Tester\Runner\TestHandler::initiateDataProvider()
-	 * @return array
 	 */
-	public static function loadData()
+	public static function loadData(): array
 	{
 		if (isset($_SERVER['argv']) && ($tmp = preg_filter('#--dataprovider=(.*)#Ai', '$1', $_SERVER['argv']))) {
 			[$query, $file] = explode('|', reset($tmp), 2);
@@ -215,7 +205,7 @@ class Environment
 	}
 
 
-	private static function removeOutputBuffers()
+	private static function removeOutputBuffers(): void
 	{
 		while (ob_get_level() > self::$obLevel && @ob_end_flush()); // @ may be not removable
 	}

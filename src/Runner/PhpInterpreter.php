@@ -28,7 +28,7 @@ class PhpInterpreter
 	private $error;
 
 
-	public function __construct($path, array $args = [])
+	public function __construct(string $path, array $args = [])
 	{
 		$this->commandLine = Helpers::escapeArg($path);
 		$proc = @proc_open( // @ is escalated to exception
@@ -83,11 +83,9 @@ class PhpInterpreter
 
 
 	/**
-	 * @param  string
-	 * @param  string
 	 * @return static
 	 */
-	public function withPhpIniOption($name, $value = null)
+	public function withPhpIniOption(string $name, string $value = null): self
 	{
 		$me = clone $this;
 		$me->commandLine .= ' -d ' . Helpers::escapeArg($name . ($value === null ? '' : "=$value"));
@@ -95,66 +93,44 @@ class PhpInterpreter
 	}
 
 
-	/**
-	 * @return string
-	 */
-	public function getCommandLine()
+	public function getCommandLine(): string
 	{
 		return $this->commandLine;
 	}
 
 
-	/**
-	 * @return string
-	 */
-	public function getVersion()
+	public function getVersion(): string
 	{
 		return $this->info->version;
 	}
 
 
-	/**
-	 * @return bool
-	 */
-	public function canMeasureCodeCoverage()
+	public function canMeasureCodeCoverage(): bool
 	{
 		return $this->info->canMeasureCodeCoverage;
 	}
 
 
-	/**
-	 * @return bool
-	 */
-	public function isCgi()
+	public function isCgi(): bool
 	{
 		return $this->cgi;
 	}
 
 
-	/**
-	 * @return string
-	 */
-	public function getStartupError()
+	public function getStartupError(): string
 	{
 		return $this->error;
 	}
 
 
-	/**
-	 * @return string
-	 */
-	public function getShortInfo()
+	public function getShortInfo(): string
 	{
 		return "PHP {$this->info->version} ({$this->info->sapi})"
 			. ($this->info->phpDbgVersion ? "; PHPDBG {$this->info->phpDbgVersion}" : '');
 	}
 
 
-	/**
-	 * @param  string
-	 * @return bool
-	 */
-	public function hasExtension($name)
+	public function hasExtension(string $name): bool
 	{
 		return in_array(strtolower($name), array_map('strtolower', $this->info->extensions), true);
 	}
