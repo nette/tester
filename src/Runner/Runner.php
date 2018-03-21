@@ -130,7 +130,7 @@ class Runner
 			while ($threads && $this->jobs) {
 				$running[] = $job = array_shift($this->jobs);
 				$async = $this->threadCount > 1 && (count($running) + count($this->jobs) > 1);
-				$job->setEnvironmentVariable(Environment::THREAD, array_shift($threads));
+				$job->setEnvironmentVariable(Environment::THREAD, (string) array_shift($threads));
 				$job->run($async ? $job::RUN_ASYNC : 0);
 			}
 
@@ -292,7 +292,7 @@ class Runner
 
 		$file = $this->getLastResultFilename($test);
 		if (is_file($file)) {
-			return $this->lastResults[$signature] = file_get_contents($file);
+			return $this->lastResults[$signature] = (int) file_get_contents($file);
 		}
 
 		return $this->lastResults[$signature] = Test::PREPARED;

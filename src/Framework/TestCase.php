@@ -83,7 +83,7 @@ class TestCase
 		} elseif (is_array($info['throws'])) {
 			throw new TestCaseException("Annotation @throws for {$method->getName()}() can be specified only once.");
 		} else {
-			$throws = preg_split('#\s+#', $info['throws'], 2);
+			$throws = is_string($info['throws']) ? preg_split('#\s+#', $info['throws'], 2) : [];
 		}
 
 		$data = [];

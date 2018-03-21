@@ -25,9 +25,9 @@ class Helpers
 		}
 		foreach (new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($dir, \RecursiveDirectoryIterator::SKIP_DOTS), \RecursiveIteratorIterator::CHILD_FIRST) as $entry) {
 			if ($entry->isDir()) {
-				rmdir($entry);
+				rmdir((string) $entry);
 			} else {
-				unlink($entry);
+				unlink((string) $entry);
 			}
 		}
 	}
