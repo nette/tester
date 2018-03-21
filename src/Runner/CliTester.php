@@ -59,8 +59,8 @@ class CliTester
 		}
 
 		$runner = $this->createRunner();
-		$runner->setEnvironmentVariable(Environment::RUNNER, 1);
-		$runner->setEnvironmentVariable(Environment::COLORS, (int) Environment::$useColors);
+		$runner->setEnvironmentVariable(Environment::RUNNER, '1');
+		$runner->setEnvironmentVariable(Environment::COLORS, (string) (int) Environment::$useColors);
 		if (isset($coverageFile)) {
 			$runner->setEnvironmentVariable(Environment::COVERAGE, $coverageFile);
 		}

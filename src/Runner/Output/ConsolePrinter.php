@@ -101,7 +101,7 @@ class ConsolePrinter implements Tester\Runner\OutputHandler
 		fwrite($this->file, $outputs[$test->getResult()]);
 
 		$title = ($test->title ? "$test->title | " : '') . substr($test->getSignature(), strlen($this->baseDir));
-		$message = '   ' . str_replace("\n", "\n   ", trim($test->message)) . "\n\n";
+		$message = '   ' . str_replace("\n", "\n   ", trim((string) $test->message)) . "\n\n";
 		if ($test->getResult() === Test::FAILED) {
 			$this->buffer .= Dumper::color('red', "-- FAILED: $title") . "\n$message";
 		} elseif ($test->getResult() === Test::SKIPPED && $this->displaySkipped) {

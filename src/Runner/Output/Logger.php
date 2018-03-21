@@ -60,7 +60,7 @@ class Logger implements Tester\Runner\OutputHandler
 	public function finish(Test $test)
 	{
 		$this->results[$test->getResult()]++;
-		$message = '   ' . str_replace("\n", "\n   ", Tester\Dumper::removeColors(trim($test->message)));
+		$message = '   ' . str_replace("\n", "\n   ", Tester\Dumper::removeColors(trim((string) $test->message)));
 		$outputs = [
 			Test::PASSED => "-- OK: {$test->getSignature()}",
 			Test::SKIPPED => "-- Skipped: {$test->getSignature()}\n$message",
