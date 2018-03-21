@@ -169,7 +169,7 @@ class Job
 			foreach (explode("\r\n", $headers) as $header) {
 				$pos = strpos($header, ':');
 				if ($pos !== false) {
-					$this->headers[trim(substr($header, 0, $pos))] = (string) trim(substr($header, $pos + 1));
+					$this->headers[trim(substr($header, 0, $pos))] = trim(substr($header, $pos + 1));
 				}
 			}
 		}
