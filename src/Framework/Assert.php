@@ -283,7 +283,7 @@ class Assert
 	 * @param  string class
 	 * @param  string message
 	 * @param  int code
-	 * @return \Exception|\Throwable
+	 * @return \Throwable
 	 */
 	public static function exception(callable $function, $class, $message = null, $code = null)
 	{
@@ -291,7 +291,6 @@ class Assert
 		$e = null;
 		try {
 			call_user_func($function);
-		} catch (\Exception $e) {
 		} catch (\Throwable $e) {
 		}
 		if ($e === null) {
@@ -312,7 +311,7 @@ class Assert
 
 	/**
 	 * Checks if the function throws exception, alias for exception().
-	 * @return \Exception|\Throwable
+	 * @return \Throwable
 	 */
 	public static function throws(callable $function, $class, $message = null, $code = null)
 	{
@@ -325,7 +324,7 @@ class Assert
 	 * @param  callable
 	 * @param  int|string|array
 	 * @param  string message
-	 * @return null|\Exception|\Throwable
+	 * @return null|\Throwable
 	 */
 	public static function error(callable $function, $expectedType, $expectedMessage = null)
 	{
