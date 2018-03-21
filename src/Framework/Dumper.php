@@ -75,7 +75,7 @@ class Dumper
 			}
 			return "[$out]";
 
-		} elseif ($var instanceof \Exception || $var instanceof \Throwable) {
+		} elseif ($var instanceof \Throwable) {
 			return 'Exception ' . get_class($var) . ': ' . ($var->getCode() ? '#' . $var->getCode() . ' ' : '') . $var->getMessage();
 
 		} elseif (is_object($var)) {
@@ -247,7 +247,7 @@ class Dumper
 
 
 	/**
-	 * @param  \Exception|\Throwable
+	 * @param  \Throwable
 	 * @internal
 	 */
 	public static function dumpException($e)

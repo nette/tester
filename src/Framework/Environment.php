@@ -120,7 +120,7 @@ class Environment
 
 
 	/**
-	 * @param  \Exception|\Throwable
+	 * @param  \Throwable
 	 * @internal
 	 */
 	public static function handleException($e)
