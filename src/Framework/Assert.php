@@ -391,10 +391,7 @@ class Assert
 	public static function match(string $pattern, $actual, string $description = null): void
 	{
 		self::$counter++;
-		if (!is_string($pattern)) {
-			throw new \Exception('Pattern must be a string.');
-
-		} elseif (!is_scalar($actual)) {
+		if (!is_scalar($actual)) {
 			self::fail(self::describe('%1 should match %2', $description), $actual, $pattern);
 
 		} elseif (!self::isMatching($pattern, $actual)) {
@@ -459,8 +456,8 @@ class Assert
 	 */
 	public static function isMatching(string $pattern, $actual, bool $strict = false): bool
 	{
-		if (!is_string($pattern) || !is_scalar($actual)) {
-			throw new \Exception('Value and pattern must be strings.');
+		if (!is_scalar($actual)) {
+			throw new \Exception('Value must be strings.');
 		}
 
 		$old = ini_set('pcre.backtrack_limit', '10000000');
