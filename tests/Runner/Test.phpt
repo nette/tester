@@ -4,6 +4,8 @@
  * TEST: Runner\Test basics.
  */
 
+declare(strict_types=1);
+
 use Tester\Assert;
 use Tester\Runner\Test;
 

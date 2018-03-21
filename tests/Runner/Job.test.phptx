@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 header('Love: Nette Tester');
 
 echo 'Args: ', implode(', ', array_splice($_SERVER['argv'], 1));

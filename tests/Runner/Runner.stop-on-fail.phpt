@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use Tester\Assert;
 use Tester\Runner\Runner;
 use Tester\Runner\Test;

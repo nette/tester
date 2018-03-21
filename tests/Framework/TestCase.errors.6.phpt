@@ -5,6 +5,8 @@
  * @outputMatch #^Test::setUp,Test::testMe,Test::tearDown,Exception: tearDown\s+in#
  */
 
+declare(strict_types=1);
+
 require __DIR__ . '/../bootstrap.php';
 
 Tester\Environment::$useColors = false;
