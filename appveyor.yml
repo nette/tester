@@ -57,3 +57,7 @@ test_script:
     - c:\php\72\php src\tester tests -s -p c:\php\72\php
     - c:\php\72\php src\tester tests -s -p c:\php\72\php-cgi
     - c:\php\72\php src\tester tests -s -p c:\php\72\phpdbg
+
+on_failure:
+    # Print *.actual content
+    - for /r %%x in (*.actual) do ( type "%%x" )
