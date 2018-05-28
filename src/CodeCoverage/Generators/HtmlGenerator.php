@@ -30,8 +30,8 @@ class HtmlGenerator extends AbstractGenerator
 
 
 	/**
-	 * @param  string  path to coverage.dat file
-	 * @param  string  path to source file/directory
+	 * @param  string  $file  path to coverage.dat file
+	 * @param  string  $source  file/directory
 	 */
 	public function __construct(string $file, string $source = null, string $title = null)
 	{

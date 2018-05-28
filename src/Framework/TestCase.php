@@ -60,8 +60,7 @@ class TestCase
 
 	/**
 	 * Runs the test method.
-	 * @param  string  test method name
-	 * @param  array  test method parameters (dataprovider bypass)
+	 * @param  array  $args  test method parameters (dataprovider bypass)
 	 */
 	public function runTest(string $method, array $args = null): void
 	{

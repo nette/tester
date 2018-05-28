@@ -137,8 +137,7 @@ class Assert
 
 	/**
 	 * Checks TRUE assertion.
-	 * @param  mixed  actual
-	 * @param  string  fail message
+	 * @param  mixed  $actual
 	 */
 	public static function true($actual, string $description = null): void
 	{
@@ -151,8 +150,7 @@ class Assert
 
 	/**
 	 * Checks FALSE assertion.
-	 * @param  mixed  actual
-	 * @param  string  fail message
+	 * @param  mixed  $actual
 	 */
 	public static function false($actual, string $description = null): void
 	{
@@ -165,8 +163,7 @@ class Assert
 
 	/**
 	 * Checks NULL assertion.
-	 * @param  mixed  actual
-	 * @param  string  fail message
+	 * @param  mixed  $actual
 	 */
 	public static function null($actual, string $description = null): void
 	{
@@ -179,8 +176,7 @@ class Assert
 
 	/**
 	 * Checks Not a Number assertion.
-	 * @param  mixed  actual
-	 * @param  string  fail message
+	 * @param  mixed  $actual
 	 */
 	public static function nan($actual, string $description = null): void
 	{
@@ -193,8 +189,7 @@ class Assert
 
 	/**
 	 * Checks truthy assertion.
-	 * @param  mixed  actual
-	 * @param  string  fail message
+	 * @param  mixed  $actual
 	 */
 	public static function truthy($actual, string $description = null): void
 	{
@@ -207,8 +202,7 @@ class Assert
 
 	/**
 	 * Checks falsey (empty) assertion.
-	 * @param  mixed  actual
-	 * @param  string  fail message
+	 * @param  mixed  $actual
 	 */
 	public static function falsey($actual, string $description = null): void
 	{
@@ -221,9 +215,7 @@ class Assert
 
 	/**
 	 * Checks if subject has expected count.
-	 * @param  int    expected count
-	 * @param  mixed  subject
-	 * @param  string  fail message
+	 * @param  mixed  $value
 	 */
 	public static function count(int $count, $value, string $description = null): void
 	{
@@ -239,6 +231,8 @@ class Assert
 
 	/**
 	 * Checks assertion.
+	 * @param  string|object  $type
+	 * @param  mixed  $value
 	 */
 	public static function type($type, $value, string $description = null): void
 	{
@@ -303,9 +297,9 @@ class Assert
 
 	/**
 	 * Checks if the function generates PHP error or throws exception.
-	 * @param  callable
-	 * @param  int|string|array
-	 * @param  string message
+	 * @param  int|string|array $expectedType
+	 * @param  string $expectedMessage message
+	 * @throws \Exception
 	 * @throws \Exception
 	 */
 	public static function error(callable $function, $expectedType, string $expectedMessage = null): ?\Throwable
@@ -387,8 +381,7 @@ class Assert
 	 *   %i%    signed integer value
 	 *   %f%    floating point number
 	 *   %h%    one or more HEX digits
-	 * @param  string  mask|regexp; only delimiters ~ and # are supported for regexp
-	 * @param  string $description  fail message
+	 * @param  string  $pattern  mask|regexp; only delimiters ~ and # are supported for regexp
 	 */
 	public static function match(string $pattern, $actual, string $description = null): void
 	{

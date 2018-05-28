@@ -26,7 +26,7 @@ class Dumper
 
 	/**
 	 * Dumps information about a variable in readable format.
-	 * @param  mixed  variable to dump
+	 * @param  mixed  $var  variable to dump
 	 */
 	public static function toLine($var): string
 	{
@@ -93,7 +93,7 @@ class Dumper
 
 	/**
 	 * Formats object to line.
-	 * @param  object
+	 * @param  object  $object
 	 */
 	private static function objectToLine($object): string
 	{
@@ -108,7 +108,7 @@ class Dumper
 
 	/**
 	 * Dumps variable in PHP format.
-	 * @param  mixed  variable to dump
+	 * @param  mixed  $var  variable to dump
 	 */
 	public static function toPhp($var): string
 	{
@@ -118,7 +118,7 @@ class Dumper
 
 	/**
 	 * Returns object's stripped hash.
-	 * @param  object
+	 * @param  object  $object
 	 */
 	private static function hash($object): string
 	{
