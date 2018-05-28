@@ -37,8 +37,8 @@ abstract class AbstractGenerator
 
 
 	/**
-	 * @param  string  path to coverage.dat file
-	 * @param  string  path to covered source file or directory
+	 * @param  string  $file  path to coverage.dat file
+	 * @param  string  $source  path to covered source file or directory
 	 */
 	public function __construct(string $file, string $source = null)
 	{

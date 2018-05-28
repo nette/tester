@@ -85,7 +85,7 @@ class Job
 
 	/**
 	 * Runs single test.
-	 * @param  int self::RUN_ASYNC | self::RUN_COLLECT_ERRORS
+	 * @param  int  $flags  self::RUN_ASYNC | self::RUN_COLLECT_ERRORS
 	 */
 	public function run(int $flags = 0): void
 	{

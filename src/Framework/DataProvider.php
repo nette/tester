@@ -16,8 +16,6 @@ namespace Tester;
 class DataProvider
 {
 	/**
-	 * @param  string  path to data provider file
-	 * @param  string  filtering condition
 	 * @throws \Exception
 	 */
 	public static function load(string $file, string $query = ''): array
@@ -57,10 +55,6 @@ class DataProvider
 	}
 
 
-	/**
-	 * @param  string  tested subject
-	 * @param  string  condition
-	 */
 	public static function testQuery(string $input, string $query): bool
 	{
 		static $replaces = ['' => '=', '=>' => '>=', '=<' => '<='];

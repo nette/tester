@@ -143,7 +143,7 @@ class Environment
 
 	/**
 	 * Locks the parallel tests.
-	 * @param  string $path  lock store directory
+	 * @param  string  $path  lock store directory
 	 */
 	public static function lock(string $name = '', string $path = ''): void
 	{
