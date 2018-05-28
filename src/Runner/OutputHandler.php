@@ -8,7 +8,6 @@
 namespace Tester\Runner;
 
 
-
 /**
  * Runner output.
  */
