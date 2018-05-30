@@ -139,10 +139,6 @@ XX
 				unset($_SERVER['argv'][$tmp]);
 				$_SERVER['argv'] = array_merge($_SERVER['argv'], ['-o', 'tap']);
 			}
-
-			if (array_search('-p', $_SERVER['argv'], true) === false) {
-				echo "Note: Default interpreter is CLI since Tester v2.0. It used to be CGI.\n";
-			}
 		}
 
 		$this->options = $cmd->parse();
