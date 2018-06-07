@@ -26,6 +26,20 @@ Assert::error(function () {
 	[E_NOTICE, 'Undefined variable: b'],
 ]);
 
+Assert::error(function () {
+	$a++;
+	$b++;
+}, [
+	[E_NOTICE],
+	[E_NOTICE],
+]);
+
+Assert::error(function () {
+	$a++;
+	$b++;
+}, [E_NOTICE, E_NOTICE]
+);
+
 Assert::exception(function () {
 	Assert::error(function () {
 	}, E_NOTICE);

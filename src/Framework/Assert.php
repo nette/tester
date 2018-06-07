@@ -336,7 +336,8 @@ class Assert
 		self::$counter++;
 		$expected = is_array($expectedType) ? $expectedType : [[$expectedType, $expectedMessage]];
 		foreach ($expected as &$item) {
-			list($expectedType, $expectedMessage) = $item;
+			$item = ((array) $item) + [null, null];
+			$expectedType = $item[0];
 			if (is_int($expectedType)) {
 				$item[2] = Helpers::errorTypeToString($expectedType);
 			} elseif (is_string($expectedType)) {
