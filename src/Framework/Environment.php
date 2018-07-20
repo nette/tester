@@ -173,7 +173,7 @@ class Environment
 	{
 		FileMutator::addMutator(function (string $code): string {
 			if (strpos($code, 'final') !== false) {
-				$tokens = token_get_all($code);
+				$tokens = token_get_all($code, TOKEN_PARSE);
 				$code = '';
 				foreach ($tokens as $token) {
 					$code .= is_array($token)
