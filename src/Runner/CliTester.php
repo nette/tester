@@ -236,6 +236,10 @@ XX
 		if (!in_array($this->options['-o'], ['none', 'tap', 'junit'], true)) {
 			echo 'Generating code coverage report... ';
 		}
+		if (filesize($file) === 0) {
+			echo 'failed. Coverage file is empty. Do you call Tester\Environment::setup() in tests?';
+			return;
+		}
 		if (pathinfo($file, PATHINFO_EXTENSION) === 'xml') {
 			$generator = new CodeCoverage\Generators\CloverXMLGenerator($file, $this->options['--coverage-src']);
 		} else {
