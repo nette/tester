@@ -53,7 +53,7 @@ class PhpParser
 	 */
 	public function parse(string $code): \stdClass
 	{
-		$tokens = @token_get_all($code); // @ - source code can be written in newer PHP
+		$tokens = token_get_all($code, TOKEN_PARSE);
 
 		$level = $classLevel = $functionLevel = null;
 		$namespace = '';
