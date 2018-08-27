@@ -42,7 +42,7 @@ class Runner
 	private $jobs;
 
 	/** @var bool */
-	private $interrupted;
+	private $interrupted = false;
 
 	/** @var string|null */
 	private $tempDir;

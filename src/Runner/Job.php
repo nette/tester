@@ -40,20 +40,20 @@ class Job
 	/** @var string[]  environment variables for test */
 	private $envVars;
 
-	/** @var resource */
+	/** @var resource|null */
 	private $proc;
 
-	/** @var resource */
+	/** @var resource|null */
 	private $stdout;
 
-	/** @var resource */
+	/** @var resource|null */
 	private $stderr;
 
 	/** @var int */
 	private $exitCode = self::CODE_NONE;
 
 	/** @var string[]  output headers */
-	private $headers;
+	private $headers = [];
 
 
 	public function __construct(Test $test, PhpInterpreter $interpreter, array $envVars = null)
