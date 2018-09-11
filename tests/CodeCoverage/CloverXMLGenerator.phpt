@@ -21,7 +21,7 @@ $coverageData = Tester\FileMock::create(serialize([
 	)),
 ]));
 
-$generator = new CodeCoverage\Generators\CloverXMLGenerator($coverageData, $coveredDir);
+$generator = new CodeCoverage\Generators\CloverXMLGenerator($coverageData, [$coveredDir]);
 $generator->render($output = Tester\FileMock::create('', 'xml'));
 
 $dom = new DOMDocument;
