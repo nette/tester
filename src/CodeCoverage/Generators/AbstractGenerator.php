@@ -51,6 +51,10 @@ abstract class AbstractGenerator
 			throw new \Exception("Content of file '$file' is invalid.");
 		}
 
+		$this->data = array_filter($this->data, function (string $path) {
+			return @is_file($path); // @ some files or wrappers may not exist, i.e. mock://
+		}, ARRAY_FILTER_USE_KEY);
+
 		if (!$source) {
 			$source = key($this->data);
 			for ($i = 0; $i < strlen($source); $i++) {
