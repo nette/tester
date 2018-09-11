@@ -26,8 +26,8 @@ abstract class AbstractGenerator
 	/** @var array */
 	protected $data;
 
-	/** @var string */
-	protected $source;
+	/** @var array */
+	protected $sources;
 
 	/** @var int */
 	protected $totalSum = 0;
@@ -38,9 +38,9 @@ abstract class AbstractGenerator
 
 	/**
 	 * @param  string  $file  path to coverage.dat file
-	 * @param  string  $source  path to covered source file or directory
+	 * @param  array   $sources  paths to covered source files or directories
 	 */
-	public function __construct(string $file, string $source = null)
+	public function __construct(string $file, array $sources = [])
 	{
 		if (!is_file($file)) {
 			throw new \Exception("File '$file' is missing.");
@@ -55,23 +55,18 @@ abstract class AbstractGenerator
 			return @is_file($path); // @ some files or wrappers may not exist, i.e. mock://
 		}, ARRAY_FILTER_USE_KEY);
 
-		if (!$source) {
-			$source = key($this->data);
-			for ($i = 0; $i < strlen($source); $i++) {
-				foreach ($this->data as $s => $foo) {
-					if (!isset($s[$i]) || $source[$i] !== $s[$i]) {
-						$source = substr($source, 0, $i);
-						break 2;
-					}
+		if (!$sources) {
+			$sources = [self::getCommonFilesPath(array_keys($this->data))];
+
+		} else {
+			foreach ($sources as $source) {
+				if (!file_exists($source)) {
+					throw new \Exception("File or directory '$source' is missing.");
 				}
 			}
-			$source = dirname($source . 'x');
-
-		} elseif (!file_exists($source)) {
-			throw new \Exception("File or directory '$source' is missing.");
 		}
 
-		$this->source = realpath($source);
+		$this->sources = array_map('realpath', $sources);
 	}
 
 
@@ -107,14 +102,35 @@ abstract class AbstractGenerator
 
 	protected function getSourceIterator(): \Iterator
 	{
-		$iterator = is_dir($this->source)
-			? new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($this->source))
-			: new \ArrayIterator([new \SplFileInfo($this->source)]);
+		$iterator = new \AppendIterator;
+		foreach ($this->sources as $source) {
+			$iterator->append(
+				is_dir($source)
+					? new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($source))
+					: new \ArrayIterator([new \SplFileInfo($source)])
+			);
+		}
 
 		return new \CallbackFilterIterator($iterator, function (\SplFileInfo $file): bool {
 			return $file->getBasename()[0] !== '.'  // . or .. or .gitignore
 				&& in_array($file->getExtension(), $this->acceptFiles, true);
 		});
+	}
+
+
+	protected static function getCommonFilesPath(array $files): string
+	{
+		$path = reset($files);
+		for ($i = 0; $i < strlen($path); $i++) {
+			foreach ($files as $file) {
+				if (!isset($file[$i]) || $path[$i] !== $file[$i]) {
+					$path = substr($path, 0, $i);
+					break 2;
+				}
+			}
+		}
+
+		return rtrim(is_dir($path) ? $path : dirname($path), DIRECTORY_SEPARATOR);
 	}
 
 

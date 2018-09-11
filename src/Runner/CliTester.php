@@ -127,7 +127,7 @@ XX
 			'--temp' => [CommandLine::REALPATH => true],
 			'paths' => [CommandLine::REPEATABLE => true, CommandLine::VALUE => getcwd()],
 			'--debug' => [],
-			'--coverage-src' => [CommandLine::REALPATH => true],
+			'--coverage-src' => [CommandLine::REALPATH => true, CommandLine::REPEATABLE => true],
 		]);
 
 		if (isset($_SERVER['argv'])) {

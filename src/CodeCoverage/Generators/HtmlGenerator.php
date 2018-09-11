@@ -31,11 +31,11 @@ class HtmlGenerator extends AbstractGenerator
 
 	/**
 	 * @param  string  $file  path to coverage.dat file
-	 * @param  string  $source  file/directory
+	 * @param  array   $sources  files/directories
 	 */
-	public function __construct(string $file, string $source = null, string $title = null)
+	public function __construct(string $file, array $sources = [], string $title = null)
 	{
-		parent::__construct($file, $source);
+		parent::__construct($file, $sources);
 		$this->title = $title;
 	}
 
@@ -71,6 +71,7 @@ class HtmlGenerator extends AbstractGenerator
 		}
 
 		$this->files = [];
+		$commonSourcesPath = self::getCommonFilesPath($this->sources) . DIRECTORY_SEPARATOR;
 		foreach ($this->getSourceIterator() as $entry) {
 			$entry = (string) $entry;
 
@@ -96,7 +97,7 @@ class HtmlGenerator extends AbstractGenerator
 
 			$light = $total ? $total < 5 : count(file($entry)) < 50;
 			$this->files[] = (object) [
-				'name' => str_replace((is_dir($this->source) ? $this->source : dirname($this->source)) . DIRECTORY_SEPARATOR, '', $entry),
+				'name' => str_replace($commonSourcesPath, '', $entry),
 				'file' => $entry,
 				'lines' => $lines,
 				'coverage' => $coverage,
