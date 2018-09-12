@@ -1,0 +1,8 @@
+imports:
+    - { resource: '../temp/coding-standard/coding-standard-php71.yml' }
+
+parameters:
+    skip:
+        PHP_CodeSniffer\Standards\PSR1\Sniffs\Methods\CamelCapsMethodNameSniff:
+            - src/Framework/FileMock.php
+            - src/Framework/FileMutator.php
