@@ -51,7 +51,7 @@ class Collector
 			throw new \LogicException('Code coverage functionality requires Xdebug extension or phpdbg SAPI.');
 		}
 
-		register_shutdown_function(function () {
+		register_shutdown_function(function (): void {
 			register_shutdown_function([__CLASS__, 'save']);
 		});
 	}

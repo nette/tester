@@ -141,7 +141,7 @@ class TestHandler
 			return $test->withResult(empty($optional) ? Test::FAILED : Test::SKIPPED, $e->getMessage());
 		}
 
-		return array_map(function ($item) use ($test, $dataFile) {
+		return array_map(function (string $item) use ($test, $dataFile): Test {
 			return $test->withArguments(['dataprovider' => "$item|$dataFile"]);
 		}, array_keys($data));
 	}
@@ -149,7 +149,7 @@ class TestHandler
 
 	private function initiateMultiple(Test $test, $count): array
 	{
-		return array_map(function ($i) use ($test) {
+		return array_map(function (int $i) use ($test): Test {
 			return $test->withArguments(['multiple' => $i]);
 		}, range(0, (int) $count - 1));
 	}
@@ -170,7 +170,7 @@ class TestHandler
 			return $test->withResult(Test::SKIPPED, "TestCase in file '{$test->getFile()}' does not contain test methods.");
 		}
 
-		return array_map(function ($method) use ($test) {
+		return array_map(function (string $method) use ($test): Test {
 			return $test->withArguments(['method' => $method]);
 		}, explode(',', $m[1]));
 	}

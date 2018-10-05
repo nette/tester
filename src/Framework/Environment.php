@@ -91,18 +91,18 @@ class Environment
 
 		set_exception_handler([__CLASS__, 'handleException']);
 
-		set_error_handler(function (int $severity, string $message, string $file, int $line) {
+		set_error_handler(function (int $severity, string $message, string $file, int $line): ?bool {
 			if (in_array($severity, [E_RECOVERABLE_ERROR, E_USER_ERROR], true) || ($severity & error_reporting()) === $severity) {
 				self::handleException(new \ErrorException($message, 0, $severity, $file, $line));
 			}
 			return false;
 		});
 
-		register_shutdown_function(function () {
+		register_shutdown_function(function (): void {
 			Assert::$onFailure = [__CLASS__, 'handleException'];
 
 			$error = error_get_last();
-			register_shutdown_function(function () use ($error) {
+			register_shutdown_function(function () use ($error): void {
 				if (in_array($error['type'], [E_ERROR, E_CORE_ERROR, E_COMPILE_ERROR, E_PARSE], true)) {
 					if (($error['type'] & error_reporting()) !== $error['type']) { // show fatal errors hidden by @shutup
 						self::removeOutputBuffers();

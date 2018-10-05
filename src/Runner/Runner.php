@@ -224,7 +224,7 @@ class Runner
 	private function installInterruptHandler(): void
 	{
 		if (extension_loaded('pcntl')) {
-			pcntl_signal(SIGINT, function () {
+			pcntl_signal(SIGINT, function (): void {
 				pcntl_signal(SIGINT, SIG_DFL);
 				$this->interrupted = true;
 			});

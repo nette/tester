@@ -40,7 +40,7 @@ class Assert
 		'%(\[.+\][+*?{},\d]*)%' => '$1', // range
 	];
 
-	/** @var callable  function (AssertException $exception) */
+	/** @var callable  function (AssertException $exception): void */
 	public static $onFailure;
 
 	/** @var int  the count of assertions */

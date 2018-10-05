@@ -211,7 +211,7 @@ XX
 		}
 
 		if ($this->options['--setup']) {
-			(function () use ($runner) {
+			(function () use ($runner): void {
 				require func_get_arg(0);
 			})($this->options['--setup']);
 		}

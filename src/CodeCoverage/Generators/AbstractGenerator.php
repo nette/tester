@@ -51,7 +51,7 @@ abstract class AbstractGenerator
 			throw new \Exception("Content of file '$file' is invalid.");
 		}
 
-		$this->data = array_filter($this->data, function (string $path) {
+		$this->data = array_filter($this->data, function (string $path): bool {
 			return @is_file($path); // @ some files or wrappers may not exist, i.e. mock://
 		}, ARRAY_FILTER_USE_KEY);
 
@@ -134,5 +134,5 @@ abstract class AbstractGenerator
 	}
 
 
-	abstract protected function renderSelf();
+	abstract protected function renderSelf(): void;
 }

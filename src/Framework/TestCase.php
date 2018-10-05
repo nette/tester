@@ -114,7 +114,7 @@ class TestCase
 
 
 		if ($this->prevErrorHandler === false) {
-			$this->prevErrorHandler = set_error_handler(function (int $severity) {
+			$this->prevErrorHandler = set_error_handler(function (int $severity): ?bool {
 				if ($this->handleErrors && ($severity & error_reporting()) === $severity) {
 					$this->handleErrors = false;
 					$this->silentTearDown();
@@ -133,7 +133,7 @@ class TestCase
 				$params = array_values($params);
 				try {
 					if ($info['throws']) {
-						$e = Assert::error(function () use ($method, $params) {
+						$e = Assert::error(function () use ($method, $params): void {
 							[$this, $method->getName()](...$params);
 						}, ...$throws);
 						if ($e instanceof AssertException) {
