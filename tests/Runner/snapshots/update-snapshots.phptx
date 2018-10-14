@@ -1,0 +1,7 @@
+<?php
+
+use Tester\Snapshot;
+
+require __DIR__ . '/../../bootstrap.php';
+
+Snapshot::match('snapshot value', 'snapshot');

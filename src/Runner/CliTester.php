@@ -66,6 +66,9 @@ class CliTester
 		if ($this->options['--coverage']) {
 			$coverageFile = $this->prepareCodeCoverage($runner);
 		}
+		if ($this->options['--update-snapshots']) {
+			$runner->setEnvironmentVariable(Environment::UPDATE_SNAPSHOTS, '1');
+		}
 
 		if ($this->options['-o'] !== null) {
 			ob_clean();
@@ -118,6 +121,7 @@ Options:
     --colors [1|0]               Enable or disable colors.
     --coverage <path>            Generate code coverage report to file.
     --coverage-src <path>        Path to source code.
+    --update-snapshots           Create or update snapshot files. Tests with snapshot changes will be marked as skipped.
     -h | --help                  This help.
 
 XX
