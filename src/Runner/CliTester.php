@@ -259,13 +259,18 @@ XX
 			foreach ($this->options['--watch'] as $directory) {
 				foreach (new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($directory)) as $file) {
 					if (substr($file->getExtension(), 0, 3) === 'php' && substr($file->getBasename(), 0, 1) !== '.') {
-						$state[(string) $file] = md5_file((string) $file);
+						$state[(string) $file] = @md5_file((string) $file); // @ file could be deleted in the meantime
 					}
 				}
 			}
 			if ($state !== $prev) {
 				$prev = $state;
-				$runner->run();
+				try {
+					$runner->run();
+				} catch (\ErrorException $e) {
+					$this->displayException($e);
+				}
+				echo "\n";
 			}
 			echo 'Watching ' . implode(', ', $this->options['--watch']) . ' ' . str_repeat('.', ++$counter % 5) . "    \r";
 			sleep(2);
