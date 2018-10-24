@@ -29,7 +29,7 @@ class CliTester
 	public function run(): ?int
 	{
 		Environment::setupColors();
-		Environment::setupErrors();
+		$this->setupErrors();
 
 		ob_start();
 		$cmd = $this->loadOptions();
@@ -270,5 +270,34 @@ XX
 			echo 'Watching ' . implode(', ', $this->options['--watch']) . ' ' . str_repeat('.', ++$counter % 5) . "    \r";
 			sleep(2);
 		}
+	}
+
+
+	private function setupErrors(): void
+	{
+		error_reporting(E_ALL);
+		ini_set('html_errors', '0');
+
+		set_error_handler(function (int $severity, string $message, string $file, int $line) {
+			if (($severity & error_reporting()) === $severity) {
+				throw new \ErrorException($message, 0, $severity, $file, $line);
+			}
+			return false;
+		});
+
+		set_exception_handler(function (\Throwable $e) {
+			$this->displayException($e);
+			exit(2);
+		});
+	}
+
+
+	private function displayException(\Throwable $e): void
+	{
+		echo "\n";
+		echo Environment::$debugMode
+			? Dumper::dumpException($e)
+			: Dumper::color('white/red', 'Error: ' . $e->getMessage());
+		echo "\n";
 	}
 }
