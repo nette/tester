@@ -130,6 +130,7 @@ XX
 			'--temp' => [CommandLine::REALPATH => true],
 			'paths' => [CommandLine::REPEATABLE => true, CommandLine::VALUE => getcwd()],
 			'--debug' => [],
+			'--cider' => [],
 			'--coverage-src' => [CommandLine::REALPATH => true, CommandLine::REPEATABLE => true],
 		]);
 
@@ -204,7 +205,12 @@ XX
 					$runner->outputHandlers[] = new Output\JUnitPrinter;
 					break;
 				default:
-					$runner->outputHandlers[] = new Output\ConsolePrinter($runner, (bool) $this->options['-s']);
+					$runner->outputHandlers[] = new Output\ConsolePrinter(
+						$runner,
+						(bool) $this->options['-s'],
+						'php://output',
+						(bool) $this->options['--cider']
+					);
 			}
 		}
 
