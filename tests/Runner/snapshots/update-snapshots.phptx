@@ -1,7 +1,7 @@
 <?php
 
-use Tester\Snapshot;
+use Tester\Assert;
 
 require __DIR__ . '/../../bootstrap.php';
 
-Snapshot::match('snapshot value', 'snapshot');
+Assert::snapshot('snapshot', 'snapshot value');

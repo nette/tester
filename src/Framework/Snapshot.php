@@ -11,71 +11,70 @@ namespace Tester;
 
 
 /**
- * Snapshot testing helper.
+ * Snapshot of a tested value.
  */
 class Snapshot
 {
+	/** @var string */
 	public static $snapshotDir = 'snapshots';
 
+	/** @var string[] */
 	public static $updatedSnapshots = [];
 
+	/** @var string[] */
+	private static $usedNames = [];
 
-	/**
-	 * Compares value with a previously created snapshot.
-	 */
-	public static function match($value, string $snapshotName): void
+	/** @var string */
+	private $name;
+
+
+	public function __construct(string $name)
 	{
-		$updateSnapshots = (bool) getenv(Environment::UPDATE_SNAPSHOTS);
-
-		$testFile = $_SERVER['argv'][0];
-		$snapshotFile = self::getSnapshotFile($testFile, $snapshotName);
-
-		if (!file_exists($snapshotFile)) {
-			if (!$updateSnapshots) {
-				Assert::fail("Missing snapshot file '$snapshotFile', use --update-snapshots option to generate it.");
-			}
-
-			self::write($snapshotFile, $value);
+		if (!preg_match('/^[a-zA-Z0-9-_]+$/', $name)) {
+			throw new \Exception("Invalid snapshot name '$name'. Only alphanumeric characters, dash and underscore are allowed.");
 		}
 
-		$snapshot = self::read($snapshotFile);
-
-		try {
-			Assert::equal($snapshot, $value, "Snapshot $snapshotName");
-
-		} catch (AssertException $e) {
-			if (!$updateSnapshots) {
-				throw $e;
-			}
-
-			self::write($snapshotFile, $value);
+		if (in_array($name, self::$usedNames, true)) {
+			throw new \Exception("Snapshot '$name' was already asserted, please use a different name.");
 		}
+
+		$this->name = self::$usedNames[] = $name;
 	}
 
 
-	private static function getSnapshotFile(string $testFile, string $snapshotName): string
+	public function exists(): bool
 	{
-		$path = self::$snapshotDir . DIRECTORY_SEPARATOR . pathinfo($testFile, PATHINFO_FILENAME) . '.' . $snapshotName . '.phps';
-		if (!preg_match('#/|\w:#A', self::$snapshotDir)) {
-			$path = dirname($testFile) . DIRECTORY_SEPARATOR . $path;
-		}
-		return $path;
+		return file_exists($this->getSnapshotFile());
 	}
 
 
-	private static function read(string $snapshotFile)
+	public function read()
 	{
-		$snapshotContents = @file_get_contents($snapshotFile);
-		if ($snapshotContents === false) {
-			throw new \Exception("Unable to read snapshot file '$snapshotFile'.");
-		}
+		$snapshotFile = $this->getSnapshotFile();
+		set_error_handler(function ($errno, $errstr) use ($snapshotFile) {
+			throw new \Exception("Unable to read snapshot file '$snapshotFile': $errstr");
+		});
 
-		return eval(substr($snapshotContents, strlen('<?php ')));
+		$snapshotContents = include $snapshotFile;
+
+		restore_error_handler();
+		return $snapshotContents;
 	}
 
 
-	private static function write(string $snapshotFile, $value): void
+	public function canUpdate(): bool
 	{
+		return (bool) getenv(Environment::UPDATE_SNAPSHOTS);
+	}
+
+
+	public function update($value): void
+	{
+		if (!$this->canUpdate()) {
+			throw new \Exception('Cannot update snapshot. Please run tests again with --update-snapshots.');
+		}
+
+		$snapshotFile = $this->getSnapshotFile();
 		$snapshotDirectory = dirname($snapshotFile);
 		if (!is_dir($snapshotDirectory) && !mkdir($snapshotDirectory)) {
 			throw new \Exception("Unable to create snapshot directory '$snapshotDirectory'.");
@@ -87,5 +86,16 @@ class Snapshot
 		}
 
 		self::$updatedSnapshots[] = $snapshotFile;
+	}
+
+
+	private function getSnapshotFile(): string
+	{
+		$testFile = $_SERVER['argv'][0];
+		$path = self::$snapshotDir . DIRECTORY_SEPARATOR . pathinfo($testFile, PATHINFO_FILENAME) . '.' . $this->name . '.phps';
+		if (!preg_match('#/|\w:#A', self::$snapshotDir)) {
+			$path = dirname($testFile) . DIRECTORY_SEPARATOR . $path;
+		}
+		return $path;
 	}
 }

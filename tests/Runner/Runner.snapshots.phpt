@@ -52,11 +52,11 @@ $runner->run();
 
 Assert::same(Test::FAILED, $logger->results['update-snapshots.phptx'][0]);
 Assert::match(
-	"Failed: Missing snapshot file '%a%', use --update-snapshots option to generate it.\n%A%",
+	"Failed: Missing snapshot '%a%', use --update-snapshots option to generate it.\n%A%",
 	trim(Dumper::removeColors($logger->results['update-snapshots.phptx'][1]))
 );
 
-// second run, with update -> skipped
+// second run, with update -> fail
 
 $runner = new Tester\Runner\Runner(createInterpreter());
 $runner->paths[] = __DIR__ . '/snapshots/*.phptx';

@@ -443,6 +443,40 @@ class Assert
 
 
 	/**
+	 * Compares value with a previously created snapshot.
+	 */
+	public static function snapshot(string $snapshotName, $actual, string $description = null): void
+	{
+		self::$counter++;
+
+		$snapshot = new Snapshot($snapshotName);
+		if (!$snapshot->exists()) {
+			if (!$snapshot->canUpdate()) {
+				self::fail("Missing snapshot '$snapshotName', use --update-snapshots option to generate it.");
+			}
+
+			$snapshot->update($actual);
+		}
+
+		$expected = $snapshot->read();
+		if ($expected !== $actual) {
+			if (!$snapshot->canUpdate()) {
+				self::fail(
+					self::describe(
+						"%1 should be %2 in snapshot '$snapshotName'",
+						$description
+					),
+					$actual,
+					$expected
+				);
+			}
+
+			$snapshot->update($actual);
+		}
+	}
+
+
+	/**
 	 * Assertion that fails.
 	 */
 	public static function fail(string $message, $actual = null, $expected = null, \Throwable $previous = null): void
