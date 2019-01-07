@@ -43,7 +43,9 @@ class FileMutator
 
 	public function dir_opendir(string $path, int $options): bool
 	{
-		$this->handle = $this->native('opendir', $path, $this->context);
+		$this->handle = $this->context
+			? $this->native('opendir', $path, $this->context)
+			: $this->native('opendir', $path);
 		return (bool) $this->handle;
 	}
 
