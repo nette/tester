@@ -9,9 +9,11 @@ use Tester\FileMock;
 require __DIR__ . '/../bootstrap.php';
 
 
-$engines = CodeCoverage\Collector::detectEngines();
+$engines = array_filter(CodeCoverage\Collector::detectEngines(), function (string $engine) {
+	return $engine !== CodeCoverage\Collector::ENGINE_PCOV; // PCOV needs system pcov.directory INI to be set
+});
 if (count($engines) < 1) {
-	Tester\Environment::skip('Requires Xdebug or phpdbg SAPI.');
+	Tester\Environment::skip('Requires Xdebug or PHPDB SAPI.');
 }
 $engine = reset($engines);
 

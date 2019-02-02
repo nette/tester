@@ -12,6 +12,7 @@ namespace Tester\Runner;
 use Tester\CodeCoverage;
 use Tester\Dumper;
 use Tester\Environment;
+use Tester\Helpers;
 
 
 /**
@@ -229,7 +230,7 @@ XX
 	{
 		$engines = $this->interpreter->getCodeCoverageEngines();
 		if (count($engines) < 1) {
-			throw new \Exception("Code coverage functionality requires Xdebug extension or phpdbg SAPI (used {$this->interpreter->getCommandLine()})");
+			throw new \Exception("Code coverage functionality requires Xdebug or PCOV extension or PHPDBG SAPI (used {$this->interpreter->getCommandLine()})");
 		}
 
 		file_put_contents($this->options['--coverage'], '');
@@ -237,6 +238,10 @@ XX
 
 		$runner->setEnvironmentVariable(Environment::COVERAGE, $file);
 		$runner->setEnvironmentVariable(Environment::COVERAGE_ENGINE, $engine = reset($engines));
+
+		if ($engine === CodeCoverage\Collector::ENGINE_PCOV && count($this->options['--coverage-src'])) {
+			$runner->addPhpIniOption('pcov.directory', Helpers::findCommonDirectory($this->options['--coverage-src']));
+		}
 
 		echo "Code coverage by $engine: $file\n";
 		return $file;

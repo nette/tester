@@ -25,4 +25,8 @@ if (extension_loaded('xdebug')) {
 	Assert::contains(Tester\CodeCoverage\Collector::ENGINE_XDEBUG, $engines);
 	$count++;
 }
+if (extension_loaded('pcov')) {
+	Assert::contains(Tester\CodeCoverage\Collector::ENGINE_PCOV, $engines);
+	$count++;
+}
 Assert::count($count, $engines);
