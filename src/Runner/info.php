@@ -21,7 +21,7 @@ $info = (object) [
 	),
 	'extensions' => $extensions,
 	'tempDir' => sys_get_temp_dir(),
-	'canMeasureCodeCoverage' => $isPhpDbg || in_array('xdebug', $extensions, true),
+	'canMeasureCodeCoverage' => $isPhpDbg || in_array('xdebug', $extensions, true) || in_array('pcov', $extensions, true),
 ];
 
 if (isset($_SERVER['argv'][1])) {

@@ -9,8 +9,8 @@ use Tester\FileMock;
 require __DIR__ . '/../bootstrap.php';
 
 
-if (!extension_loaded('xdebug') && (!defined('PHPDBG_VERSION'))) {
-	Tester\Environment::skip('Requires Xdebug or phpdbg SAPI.');
+if (!extension_loaded('xdebug') && (!defined('PHPDBG_VERSION')) && !extension_loaded('pcov')) {
+	Tester\Environment::skip('Requires Xdebug, phpdbg SAPI or PCOV extension.');
 }
 
 if (CodeCoverage\Collector::isStarted()) {

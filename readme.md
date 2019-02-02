@@ -32,7 +32,7 @@ composer require nette/tester --dev
 Alternatively, you can download the [tester.phar](https://github.com/nette/tester/releases) file.
 
 Nette Tester 2.0 requires PHP 5.6 and supports PHP up to 7.3. The 2.1 version requires PHP 7.1.
-Collecting and processing code coverage information depends on Xdebug, or PHPDBG.
+Collecting and processing code coverage information depends on Xdebug, PHPDBG or PCOV.
 
 
 Writing Tests
@@ -150,7 +150,7 @@ tester -j 1
 
 How do you find code that is not yet tested? Use Code-Coverage Analysis. This feature
 requires you have installed [Xdebug](https://xdebug.org/) in `php.ini`, or you are
-using PHPDBG. This will generate nice HTML report in `coverage.html`.
+using PHPDBG or [PCOV](https://github.com/krakjoe/pcov). This will generate nice HTML report in `coverage.html`.
 
 ```
 tester . -c php.ini --coverage coverage.html --coverage-src /my/source/codes

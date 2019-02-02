@@ -222,7 +222,7 @@ XX
 	private function prepareCodeCoverage(): string
 	{
 		if (!$this->interpreter->canMeasureCodeCoverage()) {
-			throw new \Exception("Code coverage functionality requires Xdebug extension or phpdbg SAPI (used {$this->interpreter->getCommandLine()})");
+			throw new \Exception("Code coverage functionality requires Xdebug extension, phpdbg SAPI or PCOV extension (used {$this->interpreter->getCommandLine()})");
 		}
 		file_put_contents($this->options['--coverage'], '');
 		$file = realpath($this->options['--coverage']);

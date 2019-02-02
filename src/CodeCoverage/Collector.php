@@ -47,8 +47,12 @@ class Collector
 			xdebug_start_code_coverage(XDEBUG_CC_UNUSED | XDEBUG_CC_DEAD_CODE);
 			self::$collector = 'collectXdebug';
 
+		} elseif (extension_loaded('pcov')) {
+			\pcov\start();
+			self::$collector = 'collectPCOV';
+
 		} else {
-			throw new \LogicException('Code coverage functionality requires Xdebug extension or phpdbg SAPI.');
+			throw new \LogicException('Code coverage functionality requires Xdebug extension, phpdbg SAPI or PCOV extension.');
 		}
 
 		register_shutdown_function(function (): void {
@@ -90,6 +94,33 @@ class Collector
 		ftruncate(self::$file, 0);
 		fwrite(self::$file, serialize($coverage));
 		flock(self::$file, LOCK_UN);
+	}
+
+
+	/**
+	 * Collects information about code coverage.
+	 */
+	private static function collectPCOV(): array
+	{
+		$positive = $negative = [];
+
+		\pcov\stop();
+
+		foreach (\pcov\collect() as $file => $lines) {
+			if (!file_exists($file)) {
+				continue;
+			}
+
+			foreach ($lines as $num => $val) {
+				if ($val > 0) {
+					$positive[$file][$num] = $val;
+				} else {
+					$negative[$file][$num] = $val;
+				}
+			}
+		}
+
+		return [$positive, $negative];
 	}
 
 
