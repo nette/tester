@@ -15,7 +15,7 @@ namespace Tester;
  */
 class Environment
 {
-	/** Should Tester use console colors? */
+	/** Should Test use console colors? */
 	public const COLORS = 'NETTE_TESTER_COLORS';
 
 	/** Test is run by Runner */
