@@ -15,8 +15,6 @@ namespace Tester;
  */
 class TestCaseRunner
 {
-	private const LIST_METHODS = 'nette-tester-list-methods';
-
 	/** @var array */
 	private $classes = [];
 
@@ -38,43 +36,50 @@ class TestCaseRunner
 	}
 
 
-	public function run(): void
+	public function run(TestCase $test = null): void
 	{
-		if ($this->runFromCli()) {
+		if ($this->runFromCli($test)) {
 			return;
-		}
 
-		foreach ($this->classes as $class) {
-			$test = $this->createInstance($class);
+		} elseif ($test) {
 			$test->run();
+
+		} else {
+			foreach ($this->classes as $class) {
+				$test = $this->createInstance($class);
+				$test->run();
+			}
 		}
 	}
 
 
-	private function runFromCli(): bool
+	private function runFromCli(TestCase $test = null): bool
 	{
 		$args = preg_filter('#--method=([\w:-]+)$#Ai', '$1', $_SERVER['argv'] ?? []);
 		$arg = reset($args);
-		if (!$arg) {
-			return false;
 
-		} elseif ($arg === self::LIST_METHODS) {
+		if ($arg) {
+			[$class, $method] = explode('::', $arg);
+			$test = $test ?: $this->createInstance($class);
+			$test->runTest($method);
+			return true;
+
+		} elseif (getenv(Environment::RUNNER)) {
 			Environment::$checkAssertions = false;
 			$methods = [];
-			foreach ($this->classes as $class) {
+			$classes = $test ? [get_class($test)] : $this->classes;
+			foreach ($classes as $class) {
 				foreach ($class::findMethods() as $method) {
 					$methods[] = $class . '::' . $method;
 				}
 			}
 			header('Content-Type: text/plain');
 			echo '[' . implode(',', $methods) . ']';
+			exit(Runner\Job::CODE_TESTCASE);
 
 		} else {
-			[$class, $method] = explode('::', $arg);
-			$test = $this->createInstance($class);
-			$test->runTest($method);
+			return false;
 		}
-		return true;
 	}
 
 

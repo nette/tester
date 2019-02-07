@@ -22,6 +22,7 @@ class Job
 		CODE_OK = 0,
 		CODE_SKIP = 177,
 		CODE_FAIL = 178,
+		CODE_TESTCASE = 179,
 		CODE_ERROR = 255;
 
 	/** waiting time between process activity check in microseconds */
