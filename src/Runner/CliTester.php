@@ -25,6 +25,9 @@ class CliTester
 	/** @var PhpInterpreter */
 	private $interpreter;
 
+	/** @var bool */
+	private $debugMode = true;
+
 
 	public function run(): ?int
 	{
@@ -34,7 +37,7 @@ class CliTester
 		ob_start();
 		$cmd = $this->loadOptions();
 
-		Environment::$debugMode = (bool) $this->options['--debug'];
+		$this->debugMode = (bool) $this->options['--debug'];
 		if (isset($this->options['--colors'])) {
 			Environment::$useColors = (bool) $this->options['--colors'];
 		} elseif (in_array($this->options['-o'], ['tap', 'junit'], true)) {
@@ -300,7 +303,7 @@ XX
 	private function displayException(\Throwable $e): void
 	{
 		echo "\n";
-		echo Environment::$debugMode
+		echo $this->debugMode
 			? Dumper::dumpException($e)
 			: Dumper::color('white/red', 'Error: ' . $e->getMessage());
 		echo "\n";

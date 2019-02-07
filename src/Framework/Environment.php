@@ -27,9 +27,6 @@ class Environment
 	/** Thread number when run tests in multi threads */
 	public const THREAD = 'NETTE_TESTER_THREAD';
 
-	/** @var bool  used for debugging Tester itself */
-	public static $debugMode = true;
-
 	/** @var bool */
 	public static $checkAssertions = false;
 
@@ -125,7 +122,7 @@ class Environment
 	{
 		self::removeOutputBuffers();
 		self::$checkAssertions = false;
-		echo self::$debugMode ? Dumper::dumpException($e) : "\nError: {$e->getMessage()}\n";
+		echo Dumper::dumpException($e);
 		exit($e instanceof AssertException ? Runner\Job::CODE_FAIL : Runner\Job::CODE_ERROR);
 	}
 
