@@ -58,6 +58,15 @@ class TestCase
 	}
 
 
+	public static function parseOutput(string $output): ?array
+	{
+		if (!preg_match('#\[([^[]*)]#', (string) strrchr($output, '['), $m)) {
+			return null;
+		}
+		return $m[1] ? explode(',', $m[1]) : [];
+	}
+
+
 	/**
 	 * Runs the test method.
 	 * @param  array  $args  test method parameters (dataprovider bypass)
