@@ -64,7 +64,8 @@ class FileMutator
 
 	public function mkdir(string $path, int $mode, int $options): bool
 	{
-		return $this->native('mkdir', $path, $mode, false, $this->context);
+		$recursive = (bool) ($options & STREAM_MKDIR_RECURSIVE);
+		return $this->native('mkdir', $path, $mode, $recursive, $this->context);
 	}
 
 
