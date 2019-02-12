@@ -274,8 +274,18 @@ XX
 					$this->displayException($e);
 				}
 				echo "\n";
+				$time = time();
 			}
-			echo 'Watching ' . implode(', ', $this->options['--watch']) . ' ' . str_repeat('.', ++$counter % 5) . "    \r";
+
+			$idle = time() - $time;
+			if ($idle >= 60 * 60) {
+				$idle = 'long time';
+			} elseif ($idle >= 60) {
+				$idle = round($idle / 60) . ' min';
+			} else {
+				$idle = $idle . ' sec';
+			}
+			echo 'Watching ' . implode(', ', $this->options['--watch']) . " (idle for $idle) " . str_repeat('.', ++$counter % 5) . "    \r";
 			sleep(2);
 		}
 	}
