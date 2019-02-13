@@ -438,7 +438,7 @@ class Assert
 
 	public static function with($obj, \Closure $closure)
 	{
-		return $closure->bindTo($obj, $obj)->__invoke();
+		return $closure->call($obj);
 	}
 
 
