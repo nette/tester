@@ -48,7 +48,7 @@ class Assert
 
 
 	/**
-	 * Checks assertion. Values must be exactly the same.
+	 * Asserts that two values are equal and have the same type and identity of objects.
 	 */
 	public static function same($expected, $actual, string $description = null): void
 	{
@@ -60,7 +60,7 @@ class Assert
 
 
 	/**
-	 * Checks assertion. Values must not be exactly the same.
+	 * Asserts that two values are not equal or do not have the same type and identity of objects.
 	 */
 	public static function notSame($expected, $actual, string $description = null): void
 	{
@@ -72,7 +72,8 @@ class Assert
 
 
 	/**
-	 * Checks assertion. The identity of objects and the order of keys in the arrays are ignored.
+	 * Asserts that two values are equal. The identity of objects,
+	 * the order of keys in the arrays and marginally different floats are ignored.
 	 */
 	public static function equal($expected, $actual, string $description = null): void
 	{
@@ -84,7 +85,8 @@ class Assert
 
 
 	/**
-	 * Checks assertion. The identity of objects and the order of keys in the arrays are ignored.
+	 * Asserts that two values are not equal. The identity of objects,
+	 * the order of keys in the arrays and marginally different floats are ignored.
 	 */
 	public static function notEqual($expected, $actual, string $description = null): void
 	{
@@ -96,7 +98,7 @@ class Assert
 
 
 	/**
-	 * Checks assertion. Values must contains expected needle.
+	 * Asserts that a haystack (string or array) contains an expected needle.
 	 */
 	public static function contains($needle, $actual, string $description = null): void
 	{
@@ -116,7 +118,7 @@ class Assert
 
 
 	/**
-	 * Checks assertion. Values must not contains expected needle.
+	 * Asserts that a haystack (string or array) does not contain an expected needle.
 	 */
 	public static function notContains($needle, $actual, string $description = null): void
 	{
@@ -136,7 +138,7 @@ class Assert
 
 
 	/**
-	 * Checks TRUE assertion.
+	 * Asserts that a value is true.
 	 * @param  mixed  $actual
 	 */
 	public static function true($actual, string $description = null): void
@@ -149,7 +151,7 @@ class Assert
 
 
 	/**
-	 * Checks FALSE assertion.
+	 * Asserts that a value is false.
 	 * @param  mixed  $actual
 	 */
 	public static function false($actual, string $description = null): void
@@ -162,7 +164,7 @@ class Assert
 
 
 	/**
-	 * Checks NULL assertion.
+	 * Asserts that a value is null.
 	 * @param  mixed  $actual
 	 */
 	public static function null($actual, string $description = null): void
@@ -175,7 +177,7 @@ class Assert
 
 
 	/**
-	 * Checks Not a Number assertion.
+	 * Asserts that a value is Not a Number.
 	 * @param  mixed  $actual
 	 */
 	public static function nan($actual, string $description = null): void
@@ -188,7 +190,7 @@ class Assert
 
 
 	/**
-	 * Checks truthy assertion.
+	 * Asserts that a value is truthy.
 	 * @param  mixed  $actual
 	 */
 	public static function truthy($actual, string $description = null): void
@@ -201,7 +203,7 @@ class Assert
 
 
 	/**
-	 * Checks falsey (empty) assertion.
+	 * Asserts that a value is falsey.
 	 * @param  mixed  $actual
 	 */
 	public static function falsey($actual, string $description = null): void
@@ -214,7 +216,7 @@ class Assert
 
 
 	/**
-	 * Checks if subject has expected count.
+	 * Asserts the number of items in an array or Countable.
 	 * @param  mixed  $value
 	 */
 	public static function count(int $count, $value, string $description = null): void
@@ -230,7 +232,7 @@ class Assert
 
 
 	/**
-	 * Checks assertion.
+	 * Asserts that a value is of given class, interface or built-in type.
 	 * @param  string|object  $type
 	 * @param  mixed  $value
 	 */
@@ -260,7 +262,7 @@ class Assert
 
 
 	/**
-	 * Checks if the function throws exception.
+	 * Asserts that a function throws exception of given type and its message matches given pattern.
 	 */
 	public static function exception(callable $function, string $class, string $message = null, $code = null): ?\Throwable
 	{
@@ -287,7 +289,7 @@ class Assert
 
 
 	/**
-	 * Checks if the function throws exception, alias for exception().
+	 * Asserts that a function throws exception of given type and its message matches given pattern. Alias for exception().
 	 */
 	public static function throws(callable $function, string $class, string $message = null, $code = null): ?\Throwable
 	{
@@ -296,7 +298,7 @@ class Assert
 
 
 	/**
-	 * Checks if the function generates PHP error or throws exception.
+	 * Asserts that a function generates one or more PHP errors or throws exceptions.
 	 * @param  int|string|array $expectedType
 	 * @param  string $expectedMessage message
 	 * @throws \Exception
@@ -357,7 +359,7 @@ class Assert
 
 
 	/**
-	 * Checks that the function does not generate PHP error and does not throw exception.
+	 * Asserts that a function does not generate PHP errors and does not throw exceptions.
 	 */
 	public static function noError(callable $function): void
 	{
@@ -369,7 +371,7 @@ class Assert
 
 
 	/**
-	 * Compares result using regular expression or mask:
+	 * Asserts that a string matches a given pattern.
 	 *   %a%    one or more of anything except the end of line characters
 	 *   %a?%   zero or more of anything except the end of line characters
 	 *   %A%    one or more of anything including the end of line characters
@@ -400,7 +402,7 @@ class Assert
 
 
 	/**
-	 * Compares results using mask sorted in file.
+	 * Asserts that a string matches a given pattern stored in file.
 	 */
 	public static function matchFile(string $file, $actual, string $description = null): void
 	{
@@ -420,7 +422,7 @@ class Assert
 
 
 	/**
-	 * Failed assertion
+	 * Assertion that fails.
 	 */
 	public static function fail(string $message, $actual = null, $expected = null, \Throwable $previous = null): void
 	{
@@ -439,6 +441,9 @@ class Assert
 	}
 
 
+	/**
+	 * Executes function that can access private and protected members of given object via $this.
+	 */
 	public static function with($obj, \Closure $closure)
 	{
 		return $closure->call($obj);
@@ -548,7 +553,8 @@ class Assert
 
 
 	/**
-	 * Compares two structures. Ignores the identity of objects and the order of keys in the arrays.
+	 * Compares two structures. The identity of objects, the order of keys
+	 * in the arrays and marginally different floats are ignored.
 	 */
 	private static function isEqual($expected, $actual, int $level = 0, $objects = null): bool
 	{
