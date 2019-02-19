@@ -107,9 +107,9 @@ class PhpInterpreter
 	}
 
 
-	public function canMeasureCodeCoverage(): bool
+	public function getCodeCoverageEngines(): array
 	{
-		return $this->info->canMeasureCodeCoverage;
+		return $this->info->codeCoverageEngines;
 	}
 
 

@@ -58,15 +58,12 @@ class CliTester
 			return null;
 		}
 
-		if ($this->options['--coverage']) {
-			$coverageFile = $this->prepareCodeCoverage();
-		}
-
 		$runner = $this->createRunner();
 		$runner->setEnvironmentVariable(Environment::RUNNER, '1');
 		$runner->setEnvironmentVariable(Environment::COLORS, (string) (int) Environment::$useColors);
-		if (isset($coverageFile)) {
-			$runner->setEnvironmentVariable(Environment::COVERAGE, $coverageFile);
+
+		if ($this->options['--coverage']) {
+			$coverageFile = $this->prepareCodeCoverage($runner);
 		}
 
 		if ($this->options['-o'] !== null) {
@@ -228,14 +225,20 @@ XX
 	}
 
 
-	private function prepareCodeCoverage(): string
+	private function prepareCodeCoverage(Runner $runner): string
 	{
-		if (!$this->interpreter->canMeasureCodeCoverage()) {
+		$engines = $this->interpreter->getCodeCoverageEngines();
+		if (count($engines) < 1) {
 			throw new \Exception("Code coverage functionality requires Xdebug extension or phpdbg SAPI (used {$this->interpreter->getCommandLine()})");
 		}
+
 		file_put_contents($this->options['--coverage'], '');
 		$file = realpath($this->options['--coverage']);
-		echo "Code coverage: {$file}\n";
+
+		$runner->setEnvironmentVariable(Environment::COVERAGE, $file);
+		$runner->setEnvironmentVariable(Environment::COVERAGE_ENGINE, $engine = reset($engines));
+
+		echo "Code coverage by $engine: $file\n";
 		return $file;
 	}
 

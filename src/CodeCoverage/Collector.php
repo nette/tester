@@ -15,11 +15,30 @@ namespace Tester\CodeCoverage;
  */
 class Collector
 {
+	public const
+		ENGINE_PHPDBG = 'PHPDBG',
+		ENGINE_XDEBUG = 'Xdebug';
+
 	/** @var resource */
 	private static $file;
 
 	/** @var string */
 	private static $collector;
+
+
+	public static function detectEngines(): array
+	{
+		$engines = [];
+		if (defined('PHPDBG_VERSION')) {
+			$engines[] = self::ENGINE_PHPDBG;
+		}
+
+		if (extension_loaded('xdebug')) {
+			$engines[] = self::ENGINE_XDEBUG;
+		}
+
+		return $engines;
+	}
 
 
 	public static function isStarted(): bool
@@ -32,23 +51,26 @@ class Collector
 	 * Starts gathering the information for code coverage.
 	 * @throws \LogicException
 	 */
-	public static function start(string $file): void
+	public static function start(string $file, string $engine): void
 	{
 		if (self::isStarted()) {
 			throw new \LogicException('Code coverage collector has been already started.');
 		}
 		self::$file = fopen($file, 'c+');
 
-		if (defined('PHPDBG_VERSION')) {
-			phpdbg_start_oplog();
-			self::$collector = 'collectPhpDbg';
+		switch ($engine) {
+			case self::ENGINE_PHPDBG:
+				phpdbg_start_oplog();
+				self::$collector = 'collectPhpDbg';
+				break;
 
-		} elseif (extension_loaded('xdebug')) {
-			xdebug_start_code_coverage(XDEBUG_CC_UNUSED | XDEBUG_CC_DEAD_CODE);
-			self::$collector = 'collectXdebug';
+			case self::ENGINE_XDEBUG:
+				xdebug_start_code_coverage(XDEBUG_CC_UNUSED | XDEBUG_CC_DEAD_CODE);
+				self::$collector = 'collectXdebug';
+				break;
 
-		} else {
-			throw new \LogicException('Code coverage functionality requires Xdebug extension or phpdbg SAPI.');
+			default:
+				throw new \LogicException("Code coverage engine '$engine' is not supported.");
 		}
 
 		register_shutdown_function(function (): void {
