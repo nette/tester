@@ -32,7 +32,6 @@ $equals = [
 	[1, 1],
 	['1', '1'],
 	[['1'], ['1']],
-	[['a', 'b'], [1 => 'b', 0 => 'a']],
 	[['a' => true, 'b' => false], ['b' => false, 'a' => true]],
 	[new stdClass, new stdClass],
 	[[new stdClass], [new stdClass]],
@@ -50,6 +49,7 @@ $equals = [
 
 $notEquals = [
 	[1, 1.0],
+	[['a', 'b'], [1 => 'b', 0 => 'a']],
 	[INF, -INF],
 	[['a', 'b'], ['b', 'a']],
 	[NAN, NAN],

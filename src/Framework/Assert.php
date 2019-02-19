@@ -572,8 +572,13 @@ class Assert
 		}
 
 		if (is_array($expected) && is_array($actual)) {
-			ksort($expected, SORT_STRING);
-			ksort($actual, SORT_STRING);
+			if ($expected && array_keys($expected) === range(0, count($expected) - 1)) {
+				reset($expected);
+				reset($actual);
+			} else {
+				ksort($expected, SORT_STRING);
+				ksort($actual, SORT_STRING);
+			}
 			if (array_keys($expected) !== array_keys($actual)) {
 				return false;
 			}
