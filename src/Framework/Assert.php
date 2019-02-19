@@ -74,12 +74,18 @@ class Assert
 
 	/**
 	 * Asserts that two values are equal and checks expectations. The identity of objects,
-	 * the order of keys in the arrays and marginally different floats are ignored.
+	 * the order of keys in the arrays and marginally different floats are ignored by default.
 	 */
-	public static function equal(mixed $expected, mixed $actual, ?string $description = null): void
+	public static function equal(
+		mixed $expected,
+		mixed $actual,
+		?string $description = null,
+		bool $matchOrder = false,
+		bool $matchIdentity = false,
+	): void
 	{
 		self::$counter++;
-		if (!self::isEqual($expected, $actual)) {
+		if (!self::isEqual($expected, $actual, $matchOrder, $matchIdentity)) {
 			self::fail(self::describe('%1 should be equal to %2', $description), $actual, $expected);
 		}
 	}
@@ -93,7 +99,7 @@ class Assert
 	{
 		self::$counter++;
 		try {
-			$res = self::isEqual($expected, $actual);
+			$res = self::isEqual($expected, $actual, matchOrder: false, matchIdentity: false);
 		} catch (AssertException $e) {
 		}
 
@@ -602,6 +608,8 @@ class Assert
 	private static function isEqual(
 		mixed $expected,
 		mixed $actual,
+		bool $matchOrder,
+		bool $matchIdentity,
 		int $level = 0,
 		?\SplObjectStorage $objects = null
 	): bool
@@ -618,7 +626,7 @@ class Assert
 				$diff = abs($expected - $actual);
 				return ($diff < self::Epsilon) || ($diff / max(abs($expected), abs($actual)) < self::Epsilon);
 
-			case is_object($expected) && is_object($actual) && $expected::class === $actual::class:
+			case !$matchIdentity && is_object($expected) && is_object($actual) && $expected::class === $actual::class:
 				$objects = $objects ? clone $objects : new \SplObjectStorage;
 				if (isset($objects[$expected])) {
 					return $objects[$expected] === $actual;
@@ -633,14 +641,20 @@ class Assert
 				// break omitted
 
 			case is_array($expected) && is_array($actual):
-				ksort($expected, SORT_STRING);
-				ksort($actual, SORT_STRING);
+				if ($matchOrder) {
+					reset($expected);
+					reset($actual);
+				} else {
+					ksort($expected, SORT_STRING);
+					ksort($actual, SORT_STRING);
+				}
+
 				if (array_keys($expected) !== array_keys($actual)) {
 					return false;
 				}
 
 				foreach ($expected as $value) {
-					if (!self::isEqual($value, current($actual), $level + 1, $objects)) {
+					if (!self::isEqual($value, current($actual), $matchOrder, $matchIdentity, $level + 1, $objects)) {
 						return false;
 					}
 
