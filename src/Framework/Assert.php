@@ -361,6 +361,9 @@ class Assert
 	 */
 	public static function noError(callable $function): void
 	{
+		if (($count = func_num_args()) > 1) {
+			throw new \Exception(__METHOD__ . "() expects 1 parameter, $count given.");
+		}
 		self::error($function, []);
 	}
 
