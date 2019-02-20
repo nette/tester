@@ -193,22 +193,22 @@ XX
 			$runner->setTempDirectory($this->options['--temp']);
 		}
 
-		if ($this->options['-o'] !== 'none') {
-			switch ($this->options['-o']) {
-				case 'tap':
-					$runner->outputHandlers[] = new Output\TapPrinter;
-					break;
-				case 'junit':
-					$runner->outputHandlers[] = new Output\JUnitPrinter;
-					break;
-				default:
-					$runner->outputHandlers[] = new Output\ConsolePrinter(
-						$runner,
-						(bool) $this->options['-s'],
-						'php://output',
-						(bool) $this->options['--cider']
-					);
-			}
+		switch ($this->options['-o']) {
+			case 'none':
+				break;
+			case 'tap':
+				$runner->outputHandlers[] = new Output\TapPrinter;
+				break;
+			case 'junit':
+				$runner->outputHandlers[] = new Output\JUnitPrinter;
+				break;
+			default:
+				$runner->outputHandlers[] = new Output\ConsolePrinter(
+					$runner,
+					(bool) $this->options['-s'],
+					'php://output',
+					(bool) $this->options['--cider']
+				);
 		}
 
 		if ($this->options['--log']) {

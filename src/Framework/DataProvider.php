@@ -77,23 +77,23 @@ class DataProvider
 	private static function compare($l, string $operator, $r): bool
 	{
 		switch ($operator) {
-		case '>':
-			return $l > $r;
-		case '=>':
-		case '>=':
-			return $l >= $r;
-		case '<':
-			return $l < $r;
-		case '=<':
-		case '<=':
-			return $l <= $r;
-		case '=':
-		case '==':
-			return $l == $r;
-		case '!':
-		case '!=':
-		case '<>':
-			return $l != $r;
+			case '>':
+				return $l > $r;
+			case '=>':
+			case '>=':
+				return $l >= $r;
+			case '<':
+				return $l < $r;
+			case '=<':
+			case '<=':
+				return $l <= $r;
+			case '=':
+			case '==':
+				return $l == $r;
+			case '!':
+			case '!=':
+			case '<>':
+				return $l != $r;
 		}
 		throw new \InvalidArgumentException("Unknown operator $operator.");
 	}
