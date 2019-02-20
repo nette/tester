@@ -9,6 +9,8 @@ declare(strict_types=1);
 
 namespace Tester\CodeCoverage\Generators;
 
+use Tester\Helpers;
+
 
 /**
  * Code coverage report generator.
@@ -56,7 +58,7 @@ abstract class AbstractGenerator
 		}, ARRAY_FILTER_USE_KEY);
 
 		if (!$sources) {
-			$sources = [self::getCommonFilesPath(array_keys($this->data))];
+			$sources = [Helpers::findCommonDirectory(array_keys($this->data))];
 
 		} else {
 			foreach ($sources as $source) {
@@ -118,19 +120,10 @@ abstract class AbstractGenerator
 	}
 
 
+	/** @deprecated  */
 	protected static function getCommonFilesPath(array $files): string
 	{
-		$path = reset($files);
-		for ($i = 0; $i < strlen($path); $i++) {
-			foreach ($files as $file) {
-				if (!isset($file[$i]) || $path[$i] !== $file[$i]) {
-					$path = substr($path, 0, $i);
-					break 2;
-				}
-			}
-		}
-
-		return rtrim(is_dir($path) ? $path : dirname($path), DIRECTORY_SEPARATOR);
+		return Helpers::findCommonDirectory($files);
 	}
 
 

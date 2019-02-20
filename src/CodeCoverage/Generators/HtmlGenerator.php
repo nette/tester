@@ -9,6 +9,8 @@ declare(strict_types=1);
 
 namespace Tester\CodeCoverage\Generators;
 
+use Tester\Helpers;
+
 
 /**
  * Code coverage report generator.
@@ -70,7 +72,7 @@ class HtmlGenerator extends AbstractGenerator
 		}
 
 		$this->files = [];
-		$commonSourcesPath = self::getCommonFilesPath($this->sources) . DIRECTORY_SEPARATOR;
+		$commonSourcesPath = Helpers::findCommonDirectory($this->sources) . DIRECTORY_SEPARATOR;
 		foreach ($this->getSourceIterator() as $entry) {
 			$entry = (string) $entry;
 
