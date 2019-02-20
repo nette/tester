@@ -72,7 +72,7 @@ class Assert
 
 
 	/**
-	 * Asserts that two values are equal. The identity of objects,
+	 * Asserts that two values are equal and checks expectations. The identity of objects,
 	 * the order of keys in the arrays and marginally different floats are ignored.
 	 */
 	public static function equal($expected, $actual, string $description = null): void
@@ -85,13 +85,17 @@ class Assert
 
 
 	/**
-	 * Asserts that two values are not equal. The identity of objects,
+	 * Asserts that two values are not equal and checks expectations. The identity of objects,
 	 * the order of keys in the arrays and marginally different floats are ignored.
 	 */
 	public static function notEqual($expected, $actual, string $description = null): void
 	{
 		self::$counter++;
-		if (self::isEqual($expected, $actual)) {
+		try {
+			$res = self::isEqual($expected, $actual);
+		} catch (AssertException $e) {
+		}
+		if (empty($e) && $res) {
 			self::fail(self::describe('%1 should not be equal to %2', $description), $actual, $expected);
 		}
 	}
@@ -553,13 +557,18 @@ class Assert
 
 
 	/**
-	 * Compares two structures. The identity of objects, the order of keys
+	 * Compares two structures and checks expectations. The identity of objects, the order of keys
 	 * in the arrays and marginally different floats are ignored.
 	 */
 	private static function isEqual($expected, $actual, int $level = 0, $objects = null): bool
 	{
 		if ($level > 10) {
 			throw new \Exception('Nesting level too deep or recursive dependency.');
+		}
+
+		if ($expected instanceof Expect) {
+			$expected($actual);
+			return true;
 		}
 
 		if (is_float($expected) && is_float($actual) && is_finite($expected) && is_finite($actual)) {

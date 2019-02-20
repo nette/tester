@@ -46,6 +46,7 @@ $equals = [
 	[$obj3, $obj4],
 	[[0 => 'a', 'str' => 'b'], ['str' => 'b', 0 => 'a']],
 	[$deep1, $deep2],
+	[\Tester\Expect::type('int'), 1],
 ];
 
 $notEquals = [
@@ -53,6 +54,7 @@ $notEquals = [
 	[INF, -INF],
 	[['a', 'b'], ['b', 'a']],
 	[NAN, NAN],
+	[\Tester\Expect::type('int'), '1', 'string should be int'],
 ];
 
 
@@ -65,12 +67,13 @@ foreach ($equals as [$expected, $value]) {
 	}, Tester\AssertException::class, '%a% should not be equal to %a%');
 }
 
-foreach ($notEquals as [$expected, $value]) {
+foreach ($notEquals as $fixture) {
+	[$expected, $value] = $fixture;
 	Assert::notEqual($expected, $value);
 
 	Assert::exception(function () use ($expected, $value) {
 		Assert::equal($expected, $value);
-	}, Tester\AssertException::class, '%a% should be equal to %a%');
+	}, Tester\AssertException::class, $fixture[2] ?? '%a% should be equal to %a%');
 }
 
 Assert::exception(function () {

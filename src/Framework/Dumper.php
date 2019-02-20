@@ -79,6 +79,9 @@ class Dumper
 		} elseif ($var instanceof \Throwable) {
 			return 'Exception ' . get_class($var) . ': ' . ($var->getCode() ? '#' . $var->getCode() . ' ' : '') . $var->getMessage();
 
+		} elseif ($var instanceof Expect) {
+			return $var->dump();
+
 		} elseif (is_object($var)) {
 			return self::objectToLine($var);
 
