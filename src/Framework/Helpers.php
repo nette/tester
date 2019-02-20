@@ -37,6 +37,35 @@ class Helpers
 
 
 	/**
+	 * Find common directory for given paths. All files or directories must exist.
+	 * @return string  Empty when not found. Slash and back slash chars normalized to DIRECTORY_SEPARATOR.
+	 */
+	public static function findCommonDirectory(array $paths): string
+	{
+		$splitPaths = array_map(function ($s) {
+			$real = realpath($s);
+			if ($s === '') {
+				throw new \RuntimeException('Path must not be empty.');
+			} elseif ($real === false) {
+				throw new \RuntimeException("File or directory '$s' does not exist.");
+			}
+			return explode(DIRECTORY_SEPARATOR, $real);
+		}, $paths);
+
+		$first = (array) array_shift($splitPaths);
+		for ($i = 0; $i < count($first); $i++) {
+			foreach ($splitPaths as $s) {
+				if ($first[$i] !== ($s[$i] ?? null)) {
+					break 2;
+				}
+			}
+		}
+		$common = implode(DIRECTORY_SEPARATOR, array_slice($first, 0, $i));
+		return is_dir($common) ? $common : dirname($common);
+	}
+
+
+	/**
 	 * Parse phpDoc comment.
 	 * @internal
 	 */
