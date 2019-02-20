@@ -21,6 +21,9 @@ class Environment
 	/** Test is run by Runner */
 	public const RUNNER = 'NETTE_TESTER_RUNNER';
 
+	/** Code coverage engine */
+	public const COVERAGE_ENGINE = 'NETTE_TESTER_COVERAGE_ENGINE';
+
 	/** Code coverage file */
 	public const COVERAGE = 'NETTE_TESTER_COVERAGE';
 
@@ -53,8 +56,8 @@ class Environment
 		$annotations = self::getTestAnnotations();
 		self::$checkAssertions = !isset($annotations['outputmatch']) && !isset($annotations['outputmatchfile']);
 
-		if (getenv(self::COVERAGE)) {
-			CodeCoverage\Collector::start(getenv(self::COVERAGE));
+		if (getenv(self::COVERAGE) && getenv(self::COVERAGE_ENGINE)) {
+			CodeCoverage\Collector::start(getenv(self::COVERAGE), getenv(self::COVERAGE_ENGINE));
 		}
 	}
 

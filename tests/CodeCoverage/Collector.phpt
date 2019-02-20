@@ -9,9 +9,11 @@ use Tester\FileMock;
 require __DIR__ . '/../bootstrap.php';
 
 
-if (!extension_loaded('xdebug') && (!defined('PHPDBG_VERSION'))) {
+$engines = CodeCoverage\Collector::detectEngines();
+if (count($engines) < 1) {
 	Tester\Environment::skip('Requires Xdebug or phpdbg SAPI.');
 }
+$engine = reset($engines);
 
 if (CodeCoverage\Collector::isStarted()) {
 	Tester\Environment::skip('Requires running without --coverage.');
@@ -20,11 +22,11 @@ if (CodeCoverage\Collector::isStarted()) {
 $outputFile = FileMock::create('');
 
 Assert::false(CodeCoverage\Collector::isStarted());
-CodeCoverage\Collector::start($outputFile);
+CodeCoverage\Collector::start($outputFile, $engine);
 Assert::true(CodeCoverage\Collector::isStarted());
 
-Assert::exception(function () use ($outputFile) {
-	CodeCoverage\Collector::start($outputFile);
+Assert::exception(function () use ($outputFile, $engine) {
+	CodeCoverage\Collector::start($outputFile, $engine);
 }, LogicException::class, 'Code coverage collector has been already started.');
 
 $content = file_get_contents($outputFile);
