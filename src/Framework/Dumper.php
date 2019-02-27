@@ -314,7 +314,7 @@ class Dumper
 			if ($e instanceof AssertException && $item['file'] === __DIR__ . DIRECTORY_SEPARATOR . 'Assert.php') {
 				continue;
 			}
-			$line = $item['class'] === 'Tester\Assert' && method_exists($item['class'], $item['function'])
+			$line = $item['class'] === Assert::class && method_exists($item['class'], $item['function'])
 				&& strpos($tmp = file($item['file'])[$item['line'] - 1], "::$item[function](") ? $tmp : null;
 
 			$s .= 'in '

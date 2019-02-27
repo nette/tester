@@ -49,9 +49,9 @@ class Environment
 		self::setupColors();
 		self::$obLevel = ob_get_level();
 
-		class_exists('Tester\Runner\Job');
-		class_exists('Tester\Dumper');
-		class_exists('Tester\Assert');
+		class_exists(Runner\Job::class);
+		class_exists(Dumper::class);
+		class_exists(Assert::class);
 
 		$annotations = self::getTestAnnotations();
 		self::$checkAssertions = !isset($annotations['outputmatch']) && !isset($annotations['outputmatchfile']);
