@@ -447,10 +447,11 @@ class Assert
 
 	/**
 	 * Executes function that can access private and protected members of given object via $this.
+	 * @param  object|string  $obj
 	 */
-	public static function with($obj, \Closure $closure)
+	public static function with($objectOrClass, \Closure $closure)
 	{
-		return $closure->call($obj);
+		return $closure->bindTo(is_object($objectOrClass) ? $objectOrClass : null, $objectOrClass)();
 	}
 
 
