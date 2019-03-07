@@ -15,10 +15,8 @@ namespace Tester;
  */
 class TestCase
 {
-	/** @internal */
-	public const
-		LIST_METHODS = 'nette-tester-list-methods',
-		METHOD_PATTERN = '#^test[A-Z0-9_]#';
+	public const LIST_METHODS = 'nette-tester-list-methods';
+	private const METHOD_PATTERN = '#^test[A-Z0-9_]#';
 
 	/** @var bool */
 	private $handleErrors = false;
@@ -36,25 +34,48 @@ class TestCase
 			throw new \LogicException('Calling TestCase::run($method) is deprecated. Use TestCase::runTest($method) instead.');
 		}
 
-		$methods = array_values(preg_grep(self::METHOD_PATTERN, array_map(function (\ReflectionMethod $rm): string {
-			return $rm->getName();
-		}, (new \ReflectionObject($this))->getMethods())));
-
-		if (isset($_SERVER['argv']) && ($tmp = preg_filter('#--method=([\w-]+)$#Ai', '$1', $_SERVER['argv']))) {
-			$method = reset($tmp);
-			if ($method === self::LIST_METHODS) {
-				Environment::$checkAssertions = false;
-				header('Content-Type: text/plain');
-				echo '[' . implode(',', $methods) . ']';
-				return;
-			}
-			$this->runTest($method);
-
-		} else {
-			foreach ($methods as $method) {
-				$this->runTest($method);
-			}
+		if ($this->runFromCli()) {
+			return;
 		}
+
+		foreach ($this::findMethods() as $method) {
+			$this->runTest($method);
+		}
+	}
+
+
+	public static function findMethods(): array
+	{
+		$methods = (new \ReflectionClass(static::class))->getMethods();
+		return array_values(preg_grep(self::METHOD_PATTERN, array_map(function (\ReflectionMethod $rm): string {
+			return $rm->getName();
+		}, $methods)));
+	}
+
+
+	private function runFromCli(): bool
+	{
+		$args = preg_filter('#--method=([\w-]+)$#Ai', '$1', $_SERVER['argv'] ?? []);
+		$arg = reset($args);
+		if (!$arg) {
+			return false;
+		} elseif ($arg === self::LIST_METHODS) {
+			Environment::$checkAssertions = false;
+			header('Content-Type: text/plain');
+			echo '[' . implode(',', $this::findMethods()) . ']';
+		} elseif ($arg) {
+			$this->runTest($arg);
+		}
+		return true;
+	}
+
+
+	public static function parseOutput(string $output): ?array
+	{
+		if (!preg_match('#\[([^[]*)]#', (string) strrchr($output, '['), $m)) {
+			return null;
+		}
+		return $m[1] ? explode(',', $m[1]) : [];
 	}
 
 

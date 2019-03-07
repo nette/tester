@@ -164,30 +164,45 @@ class TestHandler
 			return $test->withResult($job->getExitCode() === Job::CODE_SKIP ? Test::SKIPPED : Test::FAILED, $job->getTest()->stdout);
 		}
 
-		if (!preg_match('#\[([^[]*)]#', (string) strrchr($job->getTest()->stdout, '['), $m)) {
+		$methods = TestCase::parseOutput($job->getTest()->stdout);
+		if ($methods === null) {
 			return $test->withResult(Test::FAILED, "Cannot list TestCase methods in file '{$test->getFile()}'. Do you call TestCase::run() in it?");
-		} elseif (!strlen($m[1])) {
+		} elseif (!$methods) {
 			return $test->withResult(Test::SKIPPED, "TestCase in file '{$test->getFile()}' does not contain test methods.");
 		}
 
 		return array_map(function (string $method) use ($test): Test {
 			return $test->withArguments(['method' => $method]);
-		}, explode(',', $m[1]));
+		}, $methods);
 	}
 
 
 	private function assessExitCode(Job $job, $code): ?Test
 	{
+		$test = $job->getTest();
 		$code = (int) $code;
 		if ($job->getExitCode() === Job::CODE_SKIP) {
-			$message = preg_match('#.*Skipped:\n(.*?)\z#s', $output = $job->getTest()->stdout, $m)
+			$message = preg_match('#.*Skipped:\n(.*?)\z#s', $output = $test->stdout, $m)
 				? $m[1]
 				: $output;
-			return $job->getTest()->withResult(Test::SKIPPED, trim($message));
+			return $test->withResult(Test::SKIPPED, trim($message));
+
+		} elseif ($job->getExitCode() === Job::CODE_TESTCASE) {
+			$methods = TestCase::parseOutput($test->stdout);
+			if ($methods === null) {
+				return $test->withResult(Test::FAILED, "Cannot read TestCaseRunner output in file '{$test->getFile()}'.");
+			} elseif (!$methods) {
+				return $test->withResult(Test::SKIPPED, "TestCaseRunner in file '{$test->getFile()}' does not contain any test.");
+			}
+			foreach ($methods as $method) {
+				$testVariety = $test->withArguments(['method' => $method]);
+				$this->runner->prepareTest($testVariety);
+				$this->runner->addJob(new Job($testVariety, $this->runner->getInterpreter(), $this->runner->getEnvironmentVariables()));
+			}
 
 		} elseif ($job->getExitCode() !== $code) {
 			$message = $job->getExitCode() !== Job::CODE_FAIL ? "Exited with error code {$job->getExitCode()} (expected $code)" : '';
-			return $job->getTest()->withResult(Test::FAILED, trim($message . "\n" . $job->getTest()->stdout));
+			return $test->withResult(Test::FAILED, trim($message . "\n" . $test->stdout));
 		}
 		return null;
 	}

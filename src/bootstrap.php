@@ -14,6 +14,7 @@ require __DIR__ . '/Framework/AssertException.php';
 require __DIR__ . '/Framework/Dumper.php';
 require __DIR__ . '/Framework/FileMock.php';
 require __DIR__ . '/Framework/TestCase.php';
+require __DIR__ . '/Framework/TestCaseRunner.php';
 require __DIR__ . '/Framework/DomQuery.php';
 require __DIR__ . '/Framework/FileMutator.php';
 require __DIR__ . '/Framework/Expect.php';
