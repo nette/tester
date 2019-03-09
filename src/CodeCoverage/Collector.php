@@ -24,7 +24,7 @@ class Collector
 	private static $file;
 
 	/** @var string */
-	private static $collector;
+	private static $engine;
 
 
 	public static function detectEngines(): array
@@ -51,28 +51,14 @@ class Collector
 	{
 		if (self::isStarted()) {
 			throw new \LogicException('Code coverage collector has been already started.');
+
+		} elseif (!in_array($engine, self::detectEngines(), true)) {
+			throw new \LogicException("Code coverage engine '$engine' is not supported.");
 		}
+
 		self::$file = fopen($file, 'c+');
-
-		switch ($engine) {
-			case self::ENGINE_PCOV:
-				\pcov\start();
-				self::$collector = 'collectPCOV';
-				break;
-
-			case self::ENGINE_PHPDBG:
-				phpdbg_start_oplog();
-				self::$collector = 'collectPhpDbg';
-				break;
-
-			case self::ENGINE_XDEBUG:
-				xdebug_start_code_coverage(XDEBUG_CC_UNUSED | XDEBUG_CC_DEAD_CODE);
-				self::$collector = 'collectXdebug';
-				break;
-
-			default:
-				throw new \LogicException("Code coverage engine '$engine' is not supported.");
-		}
+		self::$engine = $engine;
+		self::{'start' . $engine}();
 
 		register_shutdown_function(function (): void {
 			register_shutdown_function([__CLASS__, 'save']);
@@ -85,7 +71,7 @@ class Collector
 	 */
 	public static function flush(): void
 	{
-		if (self::isStarted() && self::$collector === 'collectPhpDbg') {
+		if (self::isStarted() && self::$engine === self::ENGINE_PHPDBG) {
 			self::save();
 		}
 	}
@@ -101,7 +87,7 @@ class Collector
 			throw new \LogicException('Code coverage collector has not been started.');
 		}
 
-		[$positive, $negative] = [__CLASS__, self::$collector]();
+		[$positive, $negative] = self::{'collect' . self::$engine}();
 
 		flock(self::$file, LOCK_EX);
 		fseek(self::$file, 0);
@@ -113,6 +99,12 @@ class Collector
 		ftruncate(self::$file, 0);
 		fwrite(self::$file, serialize($coverage));
 		flock(self::$file, LOCK_UN);
+	}
+
+
+	private static function startPCOV(): void
+	{
+		\pcov\start();
 	}
 
 
@@ -143,6 +135,12 @@ class Collector
 	}
 
 
+	private static function startXdebug(): void
+	{
+		xdebug_start_code_coverage(XDEBUG_CC_UNUSED | XDEBUG_CC_DEAD_CODE);
+	}
+
+
 	/**
 	 * Collects information about code coverage.
 	 */
@@ -165,6 +163,12 @@ class Collector
 		}
 
 		return [$positive, $negative];
+	}
+
+
+	private static function startPhpDbg(): void
+	{
+		phpdbg_start_oplog();
 	}
 
 
