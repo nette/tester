@@ -1,0 +1,7 @@
+<?php
+
+use Tester\Assert;
+
+require __DIR__ . '/../../bootstrap.php';
+
+Assert::same('bar/baz', ini_get('default_mimetype'));

@@ -44,8 +44,13 @@ $runner = new Tester\Runner\Runner(createInterpreter());
 $runner->paths[] = __DIR__ . '/misc/*.phptx';
 $runner->outputHandlers[] = $logger = new Logger;
 $runner->setEnvironmentVariable('TesterEnvVar', 'Is here!');
+$runner->addPhpIniOption('default_mimetype', 'bar/baz');
 $runner->run();
 
 Assert::false(getenv('TesterEnvVar'));
 
-Assert::same(Test::PASSED, $logger->results['env-vars.phptx']);
+ksort($logger->results);
+Assert::same([
+	'addPhpIniOption.phptx' => Test::PASSED,
+	'env-vars.phptx' => Test::PASSED,
+], $logger->results);
