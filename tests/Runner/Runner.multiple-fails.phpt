@@ -58,7 +58,7 @@ Assert::same(Test::SKIPPED, $logger->results['testcase-no-methods.phptx'][0]);
 
 Assert::match(
 	'Error: This test forgets to execute an assertion.',
-	trim($logger->results['testcase-not-call-run.phptx'][1])
+	trim(Dumper::removeColors($logger->results['testcase-not-call-run.phptx'][1]))
 );
 Assert::same(Test::FAILED, $logger->results['testcase-not-call-run.phptx'][0]);
 
