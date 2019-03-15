@@ -106,11 +106,11 @@ class Environment
 				if (in_array($error['type'], [E_ERROR, E_CORE_ERROR, E_COMPILE_ERROR, E_PARSE], true)) {
 					if (($error['type'] & error_reporting()) !== $error['type']) { // show fatal errors hidden by @shutup
 						self::removeOutputBuffers();
-						echo "\nFatal error: $error[message] in $error[file] on line $error[line]\n";
+						echo "\n", Dumper::color('white/red', "Fatal error: $error[message] in $error[file] on line $error[line]"), "\n";
 					}
 				} elseif (self::$checkAssertions && !Assert::$counter) {
 					self::removeOutputBuffers();
-					echo "\nError: This test forgets to execute an assertion.\n";
+					echo "\n", Dumper::color('white/red', 'Error: This test forgets to execute an assertion.'), "\n";
 					exit(Runner\Job::CODE_FAIL);
 				}
 			});
