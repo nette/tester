@@ -276,7 +276,7 @@ XX
 			foreach ($this->options['--watch'] as $directory) {
 				foreach (new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($directory)) as $file) {
 					if (substr($file->getExtension(), 0, 3) === 'php' && substr($file->getBasename(), 0, 1) !== '.') {
-						$state[(string) $file] = @md5_file((string) $file); // @ file could be deleted in the meantime
+						$state[(string) $file] = @filemtime((string) $file); // @ file could be deleted in the meantime
 					}
 				}
 			}
