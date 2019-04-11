@@ -181,6 +181,19 @@ class Assert
 
 
 	/**
+	 * Asserts that a value is not null.
+	 * @param  mixed  $actual
+	 */
+	public static function notNull($actual, string $description = null): void
+	{
+		self::$counter++;
+		if ($actual === null) {
+			self::fail(self::describe('Value should not be NULL', $description));
+		}
+	}
+
+
+	/**
 	 * Asserts that a value is Not a Number.
 	 * @param  mixed  $actual
 	 */
