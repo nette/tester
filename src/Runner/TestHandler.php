@@ -157,7 +157,7 @@ class TestHandler
 
 	private function initiateTestCase(Test $test, $foo, PhpInterpreter $interpreter)
 	{
-		$job = new Job($test->withArguments(['method' => TestCase::LIST_METHODS]), $interpreter);
+		$job = new Job($test->withArguments(['method' => TestCase::LIST_METHODS]), $interpreter, $this->runner->getEnvironmentVariables());
 		$job->run();
 
 		if (in_array($job->getExitCode(), [Job::CODE_ERROR, Job::CODE_FAIL, Job::CODE_SKIP], true)) {
