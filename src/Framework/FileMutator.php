@@ -107,7 +107,9 @@ class FileMutator
 
 	public function stream_lock(int $operation): bool
 	{
-		return flock($this->handle, $operation);
+		return $operation
+			? flock($this->handle, $operation)
+			: true;
 	}
 
 
