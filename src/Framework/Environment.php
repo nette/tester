@@ -39,6 +39,9 @@ class Environment
 	/** @var int initial output buffer level */
 	private static $obLevel;
 
+	/** @var int */
+	private static $exitCode = 0;
+
 
 	/**
 	 * Configures testing environment.
@@ -111,7 +114,9 @@ class Environment
 				} elseif (self::$checkAssertions && !Assert::$counter) {
 					self::removeOutputBuffers();
 					echo "\n", Dumper::color('white/red', 'Error: This test forgets to execute an assertion.'), "\n";
-					exit(Runner\Job::CODE_FAIL);
+					self::exit(Runner\Job::CODE_FAIL);
+				} elseif (!getenv(self::RUNNER) && self::$exitCode !== Runner\Job::CODE_SKIP) {
+					echo "\n", (self::$exitCode ? Dumper::color('white/red', 'FAILURE') : Dumper::color('white/green', 'OK')), "\n";
 				}
 			});
 		});
@@ -126,7 +131,7 @@ class Environment
 		self::removeOutputBuffers();
 		self::$checkAssertions = false;
 		echo Dumper::dumpException($e);
-		exit($e instanceof AssertException ? Runner\Job::CODE_FAIL : Runner\Job::CODE_ERROR);
+		self::exit($e instanceof AssertException ? Runner\Job::CODE_FAIL : Runner\Job::CODE_ERROR);
 	}
 
 
@@ -137,7 +142,7 @@ class Environment
 	{
 		self::$checkAssertions = false;
 		echo "\nSkipped:\n$message\n";
-		die(Runner\Job::CODE_SKIP);
+		self::exit(Runner\Job::CODE_SKIP);
 	}
 
 
@@ -210,5 +215,12 @@ class Environment
 	private static function removeOutputBuffers(): void
 	{
 		while (ob_get_level() > self::$obLevel && @ob_end_flush()); // @ may be not removable
+	}
+
+
+	public static function exit(int $code = 0): void
+	{
+		self::$exitCode = $code;
+		exit($code);
 	}
 }
