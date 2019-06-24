@@ -102,9 +102,14 @@ class Job
 			}
 		}
 
+		$testFilePath = $this->test->getFile();
+        $annotations = Helpers::parseDocComment(file_get_contents($testFilePath));
+        $interpreter = $annotations['interpreter'] ?? 'php';
+        $commandLine = $this->interpreter->getCommandLine();
+
 		$this->proc = proc_open(
-			$this->interpreter->getCommandLine()
-			. ' -d register_argc_argv=on ' . Helpers::escapeArg($this->test->getFile()) . ' ' . implode(' ', $args),
+            $interpreter . substr($commandLine, strpos($commandLine, ' '))
+			. ' -d register_argc_argv=on ' . Helpers::escapeArg($testFilePath) . ' ' . implode(' ', $args),
 			[
 				['pipe', 'r'],
 				['pipe', 'w'],
