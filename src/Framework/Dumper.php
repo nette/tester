@@ -289,7 +289,7 @@ class Dumper
 
 			$message = 'Failed: ' . $e->origMessage;
 			if (((is_string($actual) && is_string($expected)) || (is_array($actual) && is_array($expected)))
-				&& preg_match('#^(.*)(%\d)(.*)(%\d.*)\z#s', $message, $m)
+				&& preg_match('#^(.*)(%\d)(.*)(%\d.*)$#Ds', $message, $m)
 			) {
 				if (($delta = strlen($m[1]) - strlen($m[3])) >= 3) {
 					$message = "$m[1]$m[2]\n" . str_repeat(' ', $delta - 3) . "...$m[3]$m[4]";

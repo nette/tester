@@ -63,7 +63,7 @@ class DataProvider
 		foreach ($queryParts as [, $operator, $operand]) {
 			$operator = $replaces[$operator] ?? $operator;
 			$token = (string) array_shift($tokens);
-			$res = preg_match('#^[0-9.]+\z#', $token)
+			$res = preg_match('#^[0-9.]+$#D', $token)
 				? version_compare($token, $operand, $operator)
 				: self::compare($token, $operator, $operand);
 			if (!$res) {

@@ -180,7 +180,7 @@ class TestHandler
 	{
 		$code = (int) $code;
 		if ($job->getExitCode() === Job::CODE_SKIP) {
-			$message = preg_match('#.*Skipped:\n(.*?)\z#s', $output = $job->getTest()->stdout, $m)
+			$message = preg_match('#.*Skipped:\n(.*?)$#Ds', $output = $job->getTest()->stdout, $m)
 				? $m[1]
 				: $output;
 			return $job->getTest()->withResult(Test::SKIPPED, trim($message));

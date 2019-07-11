@@ -323,7 +323,7 @@ class Assert
 	 */
 	public static function error(callable $function, $expectedType, string $expectedMessage = null): ?\Throwable
 	{
-		if (is_string($expectedType) && !preg_match('#^E_[A-Z_]+\z#', $expectedType)) {
+		if (is_string($expectedType) && !preg_match('#^E_[A-Z_]+$#D', $expectedType)) {
 			return static::exception($function, $expectedType, $expectedMessage);
 		}
 
@@ -485,7 +485,7 @@ class Assert
 
 		if (!self::isPcre($pattern)) {
 			$utf8 = preg_match('#\x80-\x{10FFFF}]#u', $pattern) ? 'u' : '';
-			$suffix = ($strict ? '\z#sU' : '\s*$#sU') . $utf8;
+			$suffix = ($strict ? '$#DsU' : '\s*$#sU') . $utf8;
 			$patterns = static::$patterns + [
 				'[.\\\\+*?[^$(){|\#]' => '\$0', // preg quoting
 				'\x00' => '\x00',
@@ -493,7 +493,7 @@ class Assert
 			];
 			$pattern = '#^' . preg_replace_callback('#' . implode('|', array_keys($patterns)) . '#U' . $utf8, function ($m) use ($patterns) {
 				foreach ($patterns as $re => $replacement) {
-					$s = preg_replace("#^$re\\z#", str_replace('\\', '\\\\', $replacement), $m[0], 1, $count);
+					$s = preg_replace("#^$re$#D", str_replace('\\', '\\\\', $replacement), $m[0], 1, $count);
 					if ($count) {
 						return $s;
 					}
@@ -624,6 +624,6 @@ class Assert
 
 	private static function isPcre(string $pattern): bool
 	{
-		return (bool) preg_match('/^([~#]).+(\1)[imsxUu]*\z/s', $pattern);
+		return (bool) preg_match('/^([~#]).+(\1)[imsxUu]*$/Ds', $pattern);
 	}
 }
