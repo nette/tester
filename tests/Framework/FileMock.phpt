@@ -256,3 +256,10 @@ test(function () {
 
 	unlink($pathReal);
 });
+
+
+// touch
+test(function () {
+	fopen($name = Tester\FileMock::create('foo'), 'r');
+	Assert::true(touch($name));
+});

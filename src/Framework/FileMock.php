@@ -182,6 +182,16 @@ class FileMock
 	}
 
 
+	public function stream_metadata(string $path, int $option, $value): bool
+	{
+		switch ($option) {
+			case STREAM_META_TOUCH:
+				return true;
+		}
+		return false;
+	}
+
+
 	public function unlink(string $path): bool
 	{
 		if (isset(self::$files[$path])) {
