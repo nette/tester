@@ -15,12 +15,10 @@ Assert::performance(1000, function () {
 // Negative
 $e = null;
 try {
-	Assert::performance(5, function () {
-		password_hash('password', PASSWORD_DEFAULT);
+	Assert::performance(500, function () {
+		sleep(1);
 	});
 } catch (\Tester\AssertException $e) {
 }
 
-if ($e === null) {
-	Assert::fail('Performance password function must throw exception.');
-}
+Assert::true($e === null, 'Performance password function must throw exception.');
