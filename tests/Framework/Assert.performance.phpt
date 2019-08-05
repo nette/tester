@@ -17,4 +17,4 @@ Assert::exception(function () {
 	Assert::performance(500, function () {
 		sleep(1);
 	});
-}, Tester\AssertException::class, 'Performance password function must throw exception.');
+}, Tester\AssertException::class, 'Function is too slow. Limit \'%f% ms\' expected, but real time is \'%f% ms\'.');
