@@ -315,6 +315,28 @@ class Assert
 
 
 	/**
+	 * Asserts that measures the process time of function.
+	 */
+	public static function performance(float $limitMs, callable $function, string $description = null): void
+	{
+		$startTime = microtime(true);
+		try {
+			$function();
+		} catch (\Throwable $e) {
+			self::fail($e->getMessage());
+		}
+		$processTime = (float) ((microtime(true) - $startTime) * 1000);
+		if ($processTime > $limitMs) {
+			self::fail(
+				self::describe('Function is too slow. Limit %1 expected, but real time is %2.', $description),
+				number_format($limitMs, 3, '.', '') . ' ms',
+				number_format($processTime, 3, '.', '') . ' ms'
+			);
+		}
+	}
+
+
+	/**
 	 * Asserts that a function generates one or more PHP errors or throws exceptions.
 	 * @param  int|string|array $expectedType
 	 * @param  string $expectedMessage message
