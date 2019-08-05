@@ -13,12 +13,8 @@ Assert::performance(1000, function () {
 });
 
 // Negative
-$e = null;
-try {
+Assert::exception(function () {
 	Assert::performance(500, function () {
 		sleep(1);
 	});
-} catch (\Tester\AssertException $e) {
-}
-
-Assert::true($e === null, 'Performance password function must throw exception.');
+}, Tester\AssertException::class, 'Performance password function must throw exception.');
