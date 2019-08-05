@@ -13,8 +13,14 @@ Assert::performance(1000, function () {
 });
 
 // Negative
-Assert::exception(function () {
+$e = null;
+try {
 	Assert::performance(5, function () {
 		password_hash('password', PASSWORD_DEFAULT);
 	});
-}, Tester\AssertException::class, 'The function can never be evaluated.');
+} catch (\Tester\AssertException $e) {
+}
+
+if ($e === null) {
+	Assert::fail('Performance password function must throw exception.');
+}
