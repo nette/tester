@@ -18,3 +18,10 @@ Assert::exception(function () {
 		sleep(1);
 	});
 }, Tester\AssertException::class, 'Function is too slow. Limit \'%f% ms\' expected, but real time is \'%f% ms\'.');
+
+
+Assert::exception(function () {
+	Assert::performance(500, function () {
+		throw new \Exception('Something was wrong.');
+	});
+}, Tester\AssertException::class, 'Something was wrong.');
