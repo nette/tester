@@ -323,7 +323,7 @@ class Assert
 		try {
 			$function();
 		} catch (\Throwable $e) {
-			self::fail($e->getMessage());
+			self::fail(self::describe($e->getMessage(), $description));
 		}
 		$processTime = (float) ((microtime(true) - $startTime) * 1000);
 		if ($processTime > $limitMs) {
