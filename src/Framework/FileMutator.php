@@ -135,7 +135,7 @@ class FileMutator
 	public function stream_open(string $path, string $mode, int $options, ?string &$openedPath): bool
 	{
 		$usePath = (bool) ($options & STREAM_USE_PATH);
-		if (pathinfo($path, PATHINFO_EXTENSION) === 'php') {
+		if ($mode === 'rb' && pathinfo($path, PATHINFO_EXTENSION) === 'php') {
 			$content = $this->native('file_get_contents', $path, $usePath, $this->context);
 			if ($content === false) {
 				return false;
