@@ -111,6 +111,7 @@ This table shows all assertions (class `Assert` means `Tester\Assert`):
 - `Assert::match($pattern, $value)` - Compares result using regular expression or mask.
 - `Assert::matchFile($file, $value)` - Compares result using regular expression or mask sorted in file.
 - `Assert::count($count, $value)` - Reports an error if number of items in $value is not $count.
+- `Assert::with($objectOrClass, $closure)` - Executes function that can access private and protected members of given object via $this.
 
 Testing exceptions:
 
@@ -123,12 +124,21 @@ Assert::exception(function () {
 
 Testing PHP errors, warnings or notices:
 
-
 ```php
 Assert::error(function () {
 	$h = new Greeting;
 	echo $h->abc;
 }, E_NOTICE, 'Undefined property: Greeting::$abc');
+```
+
+Testing private access methods:
+
+```php
+$h = new Greeting;
+Assert::with($h, function () {
+	// normalize() is internal private method.
+	Assert::same('Hello David', $this->normalize('Hello david')); // $this is Greeting
+});
 ```
 
 Tips and features
