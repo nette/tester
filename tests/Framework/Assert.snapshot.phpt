@@ -8,7 +8,7 @@ use Tester\Snapshot;
 
 require __DIR__ . '/../bootstrap.php';
 
-Snapshot::$snapshotDir = __DIR__ . '/fixtures';
+Snapshot::$snapshotDir = __DIR__ . DIRECTORY_SEPARATOR . 'fixtures';
 
 Assert::snapshot('existingSnapshot', ['answer' => 42]);
 
