@@ -166,8 +166,8 @@ class Environment
 	public static function getTestAnnotations(): array
 	{
 		$trace = debug_backtrace();
-		$file = $trace[count($trace) - 1]['file'];
-		return Helpers::parseDocComment(file_get_contents($file)) + ['file' => $file];
+		$file = $trace[count($trace) - 1]['file'] ?? null;
+		return Helpers::parseDocComment($file ? file_get_contents($file) : '') + ['file' => $file];
 	}
 
 
