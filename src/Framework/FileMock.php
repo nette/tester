@@ -162,6 +162,12 @@ class FileMock
 	}
 
 
+	public function stream_set_option(int $option, int $arg1, int $arg2): bool
+	{
+		return true;
+	}
+
+
 	public function stream_stat(): array
 	{
 		return ['mode' => 0100666, 'size' => strlen($this->content)];
