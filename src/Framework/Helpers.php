@@ -102,6 +102,7 @@ class Helpers
 				return $name;
 			}
 		}
+		return 'Unknown error';
 	}
 
 
