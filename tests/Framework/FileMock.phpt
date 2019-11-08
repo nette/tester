@@ -250,6 +250,12 @@ test(function () {
 		Assert::same(file_get_contents($pathReal), file_get_contents($pathMock));
 
 		Assert::same(fseek($handleReal, 2), fseek($handleMock, 2));
+		Assert::same(ftell($handleReal), ftell($handleMock));
+
+		Assert::same(fwrite($handleReal, 'World'), fwrite($handleMock, 'World'));
+		Assert::same(ftell($handleReal), ftell($handleMock));
+		Assert::same(file_get_contents($pathReal), file_get_contents($pathMock));
+
 		Assert::same(fread($handleReal, 7), fread($handleMock, 7));
 		Assert::same(fclose($handleReal), fclose($handleMock));
 	}
