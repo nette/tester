@@ -93,10 +93,10 @@ class FileMock
 	}
 
 
-	public function stream_read(int $length): string
+	public function stream_read(int $length)
 	{
 		if (!$this->isReadable) {
-			return '';
+			return false;
 		}
 
 		$result = substr($this->content, $this->readingPos, $length);
@@ -106,10 +106,10 @@ class FileMock
 	}
 
 
-	public function stream_write(string $data): int
+	public function stream_write(string $data)
 	{
 		if (!$this->isWritable) {
-			return 0;
+			return false;
 		}
 
 		$length = strlen($data);

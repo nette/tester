@@ -101,13 +101,13 @@ test(function () {
 	$cases = [
 		'r' => ['ABC', 'ABC'],
 		'r+' => ['ABC', 'ABC'],
-		'w' => ['', ''],
+		'w' => ['', PHP_VERSION_ID < 70400 ? '' : false],
 		'w+' => ['', ''],
-		'a' => ['ABC', ''],
+		'a' => ['ABC', PHP_VERSION_ID < 70400 ? '' : false],
 		'a+' => ['ABC', 'ABC'],
-		'x' => ['', ''],
+		'x' => ['', PHP_VERSION_ID < 70400 ? '' : false],
 		'x+' => ['', ''],
-		'c' => ['ABC', ''],
+		'c' => ['ABC', PHP_VERSION_ID < 70400 ? '' : false],
 		'c+' => ['ABC', 'ABC'],
 	];
 
@@ -129,13 +129,13 @@ test(function () {
 	$cases = [
 		'r' => ['ABC', 'ABC'],
 		'r+' => ['_BC', '_BC'],
-		'w' => ['_', ''],
+		'w' => ['_', PHP_VERSION_ID < 70400 ? '' : false],
 		'w+' => ['_', '_'],
-		'a' => ['ABC_', ''],
+		'a' => ['ABC_', PHP_VERSION_ID < 70400 ? '' : false],
 		'a+' => ['ABC_', 'ABC_'],
-		'x' => ['_', ''],
+		'x' => ['_', PHP_VERSION_ID < 70400 ? '' : false],
 		'x+' => ['_', '_'],
-		'c' => ['_BC', ''],
+		'c' => ['_BC', PHP_VERSION_ID < 70400 ? '' : false],
 		'c+' => ['_BC', '_BC'],
 	];
 
@@ -237,7 +237,7 @@ test(function () {
 		Assert::same(ftell($handleReal), ftell($handleMock));
 		Assert::same(file_get_contents($pathReal), file_get_contents($pathMock));
 
-		Assert::same(fwrite($handleReal, 'World'), fwrite($handleMock, 'World'));
+		Assert::same(@fwrite($handleReal, 'World'), fwrite($handleMock, 'World')); // @ - triggers E_NOTICE since PHP 7.4
 		Assert::same(ftell($handleReal), ftell($handleMock));
 		Assert::same(file_get_contents($pathReal), file_get_contents($pathMock));
 
@@ -245,12 +245,12 @@ test(function () {
 		Assert::same(ftell($handleReal), ftell($handleMock));
 		Assert::same(file_get_contents($pathReal), file_get_contents($pathMock));
 
-		Assert::same(fwrite($handleReal, 'World'), fwrite($handleMock, 'World'));
+		Assert::same(@fwrite($handleReal, 'World'), fwrite($handleMock, 'World')); // @ - triggers E_NOTICE since PHP 7.4
 		Assert::same(ftell($handleReal), ftell($handleMock));
 		Assert::same(file_get_contents($pathReal), file_get_contents($pathMock));
 
 		Assert::same(fseek($handleReal, 2), fseek($handleMock, 2));
-		Assert::same(fread($handleReal, 7), fread($handleMock, 7));
+		Assert::same(@fread($handleReal, 7), fread($handleMock, 7)); // @ - triggers E_NOTICE since PHP 7.4
 		Assert::same(fclose($handleReal), fclose($handleMock));
 	}
 
