@@ -31,7 +31,10 @@ composer require nette/tester --dev
 
 Alternatively, you can download the [tester.phar](https://github.com/nette/tester/releases) file.
 
-Nette Tester 2.0 requires PHP 5.6 and supports PHP up to 7.3. The 2.1 version and newer require PHP 7.1.
+- Nette Tester 2.3 is compatible with PHP 7.1 to 7.4
+- Nette Tester 2.1 & 2.2 is compatible with PHP 7.1 to 7.3
+- Nette Tester 2.0 is compatible with PHP 5.6 to 7.3
+
 Collecting and processing code coverage information depends on Xdebug or PCOV extension, or PHPDBG SAPI.
 
 
