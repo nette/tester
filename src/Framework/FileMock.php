@@ -164,7 +164,7 @@ class FileMock
 
 	public function stream_set_option(int $option, int $arg1, int $arg2): bool
 	{
-		return true;
+		return false;
 	}
 
 

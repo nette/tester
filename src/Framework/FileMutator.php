@@ -169,8 +169,9 @@ class FileMutator
 	}
 
 
-	public function stream_set_option(int $option, int $arg1, int $arg2)
+	public function stream_set_option(int $option, int $arg1, int $arg2): bool
 	{
+		return false;
 	}
 
 
@@ -192,7 +193,7 @@ class FileMutator
 	}
 
 
-	public function stream_write(string $data): int
+	public function stream_write(string $data)
 	{
 		return fwrite($this->handle, $data);
 	}
