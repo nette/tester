@@ -234,6 +234,10 @@ class Runner
 				pcntl_signal(SIGINT, SIG_DFL);
 				$this->interrupted = true;
 			});
+		} elseif (function_exists('sapi_windows_set_ctrl_handler') && PHP_SAPI === 'cli') {
+			sapi_windows_set_ctrl_handler(function () {
+				$this->interrupted = true;
+			});
 		}
 	}
 
@@ -242,6 +246,8 @@ class Runner
 	{
 		if (extension_loaded('pcntl')) {
 			pcntl_signal(SIGINT, SIG_DFL);
+		} elseif (function_exists('sapi_windows_set_ctrl_handler') && PHP_SAPI === 'cli') {
+			sapi_windows_set_ctrl_handler(null);
 		}
 	}
 
