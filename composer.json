@@ -17,10 +17,17 @@
 	"require": {
 		"php": ">=7.1"
 	},
+	"require-dev": {
+		"phpstan/phpstan": "^0.12"
+	},
 	"autoload": {
 		"classmap": ["src/"]
 	},
 	"bin": ["src/tester"],
+	"scripts": {
+		"phpstan": "phpstan analyse --level 5 src",
+		"tester": "tester tests -s"
+	},
 	"extra": {
 		"branch-alias": { "dev-master": "2.4-dev" }
 	}
