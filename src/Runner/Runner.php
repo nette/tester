@@ -20,6 +20,9 @@ class Runner
 	/** @var string[]  paths to test files/directories */
 	public $paths = [];
 
+	/** @var string[] */
+	public $ignoreDirs = ['vendor'];
+
 	/** @var int  run in parallel threads */
 	public $threadCount = 1;
 
@@ -164,6 +167,9 @@ class Runner
 
 		if (is_dir($path)) {
 			foreach (glob(str_replace('[', '[[]', $path) . '/*', GLOB_ONLYDIR) ?: [] as $dir) {
+				if (in_array(basename($dir), $this->ignoreDirs, true)) {
+					continue;
+				}
 				$this->findTests($dir);
 			}
 
