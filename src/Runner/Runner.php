@@ -235,7 +235,7 @@ class Runner
 
 	private function installInterruptHandler(): void
 	{
-		if (extension_loaded('pcntl')) {
+		if (function_exists('pcntl_signal')) {
 			pcntl_signal(SIGINT, function (): void {
 				pcntl_signal(SIGINT, SIG_DFL);
 				$this->interrupted = true;
@@ -250,7 +250,7 @@ class Runner
 
 	private function removeInterruptHandler(): void
 	{
-		if (extension_loaded('pcntl')) {
+		if (function_exists('pcntl_signal')) {
 			pcntl_signal(SIGINT, SIG_DFL);
 		} elseif (function_exists('sapi_windows_set_ctrl_handler') && PHP_SAPI === 'cli') {
 			sapi_windows_set_ctrl_handler(null);
@@ -260,7 +260,7 @@ class Runner
 
 	private function isInterrupted(): bool
 	{
-		if (extension_loaded('pcntl')) {
+		if (function_exists('pcntl_signal_dispatch')) {
 			pcntl_signal_dispatch();
 		}
 
