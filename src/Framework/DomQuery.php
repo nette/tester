@@ -37,7 +37,14 @@ class DomQuery extends \SimpleXMLElement
 		libxml_use_internal_errors($old);
 
 		$re = '#Tag (article|aside|audio|bdi|canvas|data|datalist|figcaption|figure|footer|header|keygen|main|mark'
-			. '|meter|nav|output|picture|progress|rb|rp|rt|rtc|ruby|section|source|template|time|track|video|wbr) invalid#';
+			. '|meter|nav|output|picture|progress|rb|rp|rt|rtc|ruby|section|source|svg|template|time|track|video|wbr'
+			. '|animate|animateMotion|animateTransform|circle|clipPath|color-profile|defs|desc|discard|ellipse|feBlend'
+			. '|feColorMatrix|feComponentTransfer|feComposite|feConvolveMatrix|feDiffuseLighting|feDisplacementMap'
+			. '|feDistantLight|feDropShadow|feFlood|feFuncA|feFuncB|feFuncG|feFuncR|feGaussianBlur|feImage|feMerge'
+			. '|feMergeNode|feMorphology|feOffset|fePointLight|feSpecularLighting|feSpotLight|feTile|feTurbulence'
+			. '|filter|foreignObject|g|hatch|hatchpath|image|line|linearGradient|marker|mask|mesh|meshgradient|meshpatch'
+			. '|meshrow|metadata|mpath|path|pattern|polygon|polyline|radialGradient|rect|script|set|solidcolor|stop|'
+			. 'style|switch|symbol|text|textPath|title|tspan|unknown|use|view) invalid#';
 		foreach ($errors as $error) {
 			if (!preg_match($re, $error->message)) {
 				trigger_error(__METHOD__ . ": $error->message on line $error->line.", E_USER_WARNING);
