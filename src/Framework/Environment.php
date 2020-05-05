@@ -62,6 +62,11 @@ class Environment
 		if (getenv(self::COVERAGE) && getenv(self::COVERAGE_ENGINE)) {
 			CodeCoverage\Collector::start(getenv(self::COVERAGE), getenv(self::COVERAGE_ENGINE));
 		}
+
+		if (getenv('TERMINAL_EMULATOR') === 'JetBrains-JediTerm') {
+			Dumper::$maxPathSegments = -1;
+			Dumper::$pathSeparator = '/';
+		}
 	}
 
 
