@@ -23,6 +23,8 @@ class Dumper
 
 	public static $maxPathSegments = 3;
 
+	public static $pathSeparator;
+
 
 	/**
 	 * Dumps information about a variable in readable format.
@@ -321,7 +323,10 @@ class Dumper
 				. ($item['file']
 					? (
 						($item['file'] === $testFile ? self::color('white') : '')
-						. implode(DIRECTORY_SEPARATOR, array_slice(explode(DIRECTORY_SEPARATOR, $item['file']), -self::$maxPathSegments))
+						. implode(
+							self::$pathSeparator ?? DIRECTORY_SEPARATOR,
+							array_slice(explode(DIRECTORY_SEPARATOR, $item['file']), -self::$maxPathSegments)
+						)
 						. "($item[line])" . self::color('gray') . ' '
 					)
 					: '[internal function]'
