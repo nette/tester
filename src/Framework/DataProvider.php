@@ -43,7 +43,7 @@ class DataProvider
 		}
 
 		foreach ($data as $key => $value) {
-			if (!self::testQuery($key, $query)) {
+			if (!is_int($key) && !self::testQuery($key, $query)) {
 				unset($data[$key]);
 			}
 		}
