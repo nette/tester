@@ -29,11 +29,14 @@ sort($jobs);
 $path = __DIR__ . DIRECTORY_SEPARATOR . 'multiple' . DIRECTORY_SEPARATOR;
 
 Assert::same([
+	['dataProvider.multiple.phptx', [['dataprovider', "1|$path../../Framework/fixtures/dataprovider.ini"], ['multiple', '0']]],
+	['dataProvider.multiple.phptx', [['dataprovider', "1|$path../../Framework/fixtures/dataprovider.ini"], ['multiple', '1']]],
 	['dataProvider.multiple.phptx', [['dataprovider', "bar|$path../../Framework/fixtures/dataprovider.ini"], ['multiple', '0']]],
 	['dataProvider.multiple.phptx', [['dataprovider', "bar|$path../../Framework/fixtures/dataprovider.ini"], ['multiple', '1']]],
 	['dataProvider.multiple.phptx', [['dataprovider', "foo|$path../../Framework/fixtures/dataprovider.ini"], ['multiple', '0']]],
 	['dataProvider.multiple.phptx', [['dataprovider', "foo|$path../../Framework/fixtures/dataprovider.ini"], ['multiple', '1']]],
 
+	['dataProvider.phptx', [['dataprovider', "1|$path../../Framework/fixtures/dataprovider.ini"]]],
 	['dataProvider.phptx', [['dataprovider', "bar|$path../../Framework/fixtures/dataprovider.ini"]]],
 	['dataProvider.phptx', [['dataprovider', "foo|$path../../Framework/fixtures/dataprovider.ini"]]],
 

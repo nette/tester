@@ -10,6 +10,7 @@ require __DIR__ . '/../bootstrap.php';
 
 test(function () {
 	$expect = [
+		1 => [],
 		'foo' => [],
 		'bar' => [],
 	];
