@@ -15,10 +15,10 @@
 		}
 	],
 	"require": {
-		"php": ">=7.1"
+		"php": ">=7.1",
+		"ext-simplexml": "*"
 	},
 	"require-dev": {
-		"ext-simplexml": "*",
 		"phpstan/phpstan": "^0.12"
 	},
 	"autoload": {
