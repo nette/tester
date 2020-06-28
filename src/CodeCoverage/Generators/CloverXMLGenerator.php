@@ -35,8 +35,8 @@ class CloverXMLGenerator extends AbstractGenerator
 
 	public function __construct(string $file, array $sources = [])
 	{
-		if (!extension_loaded('dom')) {
-			throw new \LogicException('CloverXML generator requires DOM extension to be loaded.');
+		if (!extension_loaded('dom') || !extension_loaded('tokenizer')) {
+			throw new \LogicException('CloverXML generator requires DOM and Tokenizer extensions to be loaded.');
 		}
 		parent::__construct($file, $sources);
 	}
