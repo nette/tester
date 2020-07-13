@@ -125,15 +125,16 @@ class Runner
 		$threads = range(1, $this->threadCount);
 
 		$this->installInterruptHandler();
+		$async = $this->threadCount > 1 && count($this->jobs) > 1;
+
 		while (($this->jobs || $running) && !$this->isInterrupted()) {
 			while ($threads && $this->jobs) {
 				$running[] = $job = array_shift($this->jobs);
-				$async = $this->threadCount > 1 && (count($running) + count($this->jobs) > 1);
 				$job->setEnvironmentVariable(Environment::THREAD, (string) array_shift($threads));
 				$job->run($async ? $job::RUN_ASYNC : 0);
 			}
 
-			if (count($running) > 1) {
+			if ($async) {
 				usleep(Job::RUN_USLEEP); // stream_select() doesn't work with proc_open()
 			}
 
