@@ -16,8 +16,8 @@ class MyTest extends Tester\TestCase
 	{
 		$this->order[] = __METHOD__;
 		return [
-			[1, 2],
-			[3, 4],
+			'one' => [1, 2],
+			'two' => [3, 4],
 		];
 	}
 
@@ -112,4 +112,4 @@ Assert::same([
 Assert::exception(function () {
 	$test = new MyTest;
 	$test->runTest('testAssertion');
-}, Tester\AssertException::class, 'FALSE should be TRUE in testAssertion(1, 2)');
+}, Tester\AssertException::class, "FALSE should be TRUE in testAssertion(1, 2) (data set 'one')");

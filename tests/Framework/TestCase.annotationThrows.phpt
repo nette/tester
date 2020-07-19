@@ -131,7 +131,7 @@ Assert::exception(function () use ($test) {
 
 Assert::exception(function () use ($test) {
 	$test->runTest('testThrowsWithDataprovider');
-}, Exception::class, 'Exception was expected, but none was thrown in testThrowsWithDataprovider(1)');
+}, Exception::class, "Exception was expected, but none was thrown in testThrowsWithDataprovider(1) (data set '0')");
 
 Assert::exception(function () use ($test) {
 	$test->runTest('testUndefinedMethod');
