@@ -13,7 +13,7 @@ Assert::noError(function () {
 
 Assert::exception(function () {
 	Assert::noError(function () {
-		$a++;
+		$a = &pi();
 	});
 }, Tester\AssertException::class, 'Generated more errors than expected: E_NOTICE %a%');
 

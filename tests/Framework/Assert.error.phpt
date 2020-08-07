@@ -8,37 +8,37 @@ require __DIR__ . '/../bootstrap.php';
 
 
 Assert::error(function () {
-	$a++;
+	$a = &pi();
 }, E_NOTICE);
 
 Assert::error(function () {
-	$a++;
+	$a = &pi();
 }, 'E_NOTICE');
 
 Assert::error(function () {
-	$a++;
-}, E_NOTICE, 'Undefined variable: a');
+	$a = &pi();
+}, E_NOTICE, 'Only variables should be assigned by reference');
 
 Assert::error(function () {
-	$a++;
-	@$x++;
-	$b++;
+	$a = &pi();
+	@$a++;
+	$a = &pi();
 }, [
-	[E_NOTICE, 'Undefined variable: a'],
-	[E_NOTICE, 'Undefined variable: b'],
+	[E_NOTICE, 'Only variables should be assigned by reference'],
+	[E_NOTICE, 'Only variables should be assigned by reference'],
 ]);
 
 Assert::error(function () {
-	$a++;
-	$b++;
+	$a = &pi();
+	$a = &pi();
 }, [
 	[E_NOTICE],
 	[E_NOTICE],
 ]);
 
 Assert::error(function () {
-	$a++;
-	$b++;
+	$a = &pi();
+	$a = &pi();
 }, [E_NOTICE, E_NOTICE]
 );
 
@@ -49,29 +49,29 @@ Assert::exception(function () {
 
 Assert::exception(function () {
 	Assert::error(function () {
-		$a++;
+		$a = &pi();
 	}, E_WARNING);
-}, Tester\AssertException::class, 'E_WARNING was expected, but E_NOTICE (Undefined variable: a) was generated in file %a% on line %d%');
+}, Tester\AssertException::class, 'E_WARNING was expected, but E_NOTICE (Only variables should be assigned by reference) was generated in file %a% on line %d%');
 
 Assert::exception(function () {
 	Assert::error(function () {
-		$a++;
+		$a = &pi();
 	}, E_NOTICE, 'Abc');
-}, Tester\AssertException::class, "E_NOTICE with a message matching 'Abc' was expected but got 'Undefined variable: a'");
+}, Tester\AssertException::class, "E_NOTICE with a message matching 'Abc' was expected but got 'Only variables should be assigned by reference'");
 
 Assert::exception(function () {
 	Assert::error(function () {
-		$a++;
-		$b++;
-	}, E_NOTICE, 'Undefined variable: a');
-}, Tester\AssertException::class, 'Generated more errors than expected: E_NOTICE (Undefined variable: b) was generated in file %a% on line %d%');
+		$a = &pi();
+		$a = &pi();
+	}, E_NOTICE, 'Only variables should be assigned by reference');
+}, Tester\AssertException::class, 'Generated more errors than expected: E_NOTICE (Only variables should be assigned by reference) was generated in file %a% on line %d%');
 
 Assert::exception(function () {
 	Assert::error(function () {
-		$a++;
+		$a = &pi();
 	}, [
-		[E_NOTICE, 'Undefined variable: a'],
-		[E_NOTICE, 'Undefined variable: b'],
+		[E_NOTICE, 'Only variables should be assigned by reference'],
+		[E_NOTICE, 'Only variables should be assigned by reference'],
 	]);
 }, Tester\AssertException::class, 'Error was expected, but was not generated');
 
