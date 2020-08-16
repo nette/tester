@@ -8,7 +8,7 @@ use Tester\DataProvider;
 require __DIR__ . '/../bootstrap.php';
 
 
-test(function () {
+test('', function () {
 	$expect = [
 		1 => [],
 		'foo' => [],
@@ -20,7 +20,7 @@ test(function () {
 });
 
 
-test(function () {
+test('', function () {
 	$expect = [
 		'bar 1.2.3' => ['a' => '1'],
 		'bar' => ['b' => '2'],
