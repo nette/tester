@@ -10,7 +10,7 @@ require __DIR__ . '/../../src/Runner/Test.php';
 require __DIR__ . '/../bootstrap.php';
 
 
-test(function () {
+test('', function () {
 	$test = (new Test('Job.test.phptx'))->withArguments(['one', 'two' => 1])->withArguments(['three', 'two' => 2]);
 	$job = new Job($test, createInterpreter());
 	$job->setTempDirectory(Tester\Helpers::prepareTempDir(sys_get_temp_dir()));

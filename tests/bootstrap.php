@@ -9,7 +9,7 @@ require __DIR__ . '/../src/bootstrap.php';
 require __DIR__ . '/../src/Runner/PhpInterpreter.php';
 
 
-function test(Closure $function): void
+function test(string $description, Closure $function): void
 {
 	$function();
 }

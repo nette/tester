@@ -11,7 +11,7 @@ $key = count($_SERVER['argv']);
 $file = realpath(__DIR__ . '/fixtures/dataprovider.ini');
 
 
-test(function () use ($key, $file) {
+test('', function () use ($key, $file) {
 	$_SERVER['argv'][$key] = "--dataprovider=0|$file";
 	Assert::same(['dataset-0'], Environment::loadData());
 
@@ -29,7 +29,7 @@ test(function () use ($key, $file) {
 });
 
 
-test(function () use ($key, $file) {
+test('', function () use ($key, $file) {
 	$_SERVER['argv'][$key] = "--dataprovider=bar|$file";
 
 	Assert::exception(function () {
@@ -38,7 +38,7 @@ test(function () use ($key, $file) {
 });
 
 
-test(function () use ($key, $file) {
+test('', function () use ($key, $file) {
 	unset($_SERVER['argv'][$key]);
 
 	Assert::exception(function () {

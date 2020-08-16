@@ -8,7 +8,7 @@ use Tester\DataProvider;
 require __DIR__ . '/../bootstrap.php';
 
 
-test(function () {
+test('', function () {
 	$expect = [
 		0 => ['dataset-0'],
 		1 => ['dataset-1'],
@@ -22,7 +22,7 @@ test(function () {
 });
 
 
-test(function () {
+test('', function () {
 	$expect = [
 		'bar 1.2.3' => ['a' => '1'],
 		'bar' => ['b' => '2'],
@@ -33,7 +33,7 @@ test(function () {
 });
 
 
-test(function () {
+test('', function () {
 	Assert::same([], DataProvider::load('fixtures/dataprovider.query.ini', 'non-existent'));
 	Assert::same([], DataProvider::load('fixtures/dataprovider.query.php', 'non-existent'));
 });
