@@ -46,10 +46,10 @@ class TestFunction
 		}
 
 		if ($description !== '') {
-			echo empty($e)
-				? Dumper::color('lime', '√')
-				: Dumper::color('red', '×');
-			echo " $description\n";
+			$this->print(empty($e)
+				? Dumper::color('lime', '√') . " $description\n"
+				: Dumper::color('red', '×') . " $description\n\n"
+			);
 		}
 
 		if (isset($e)) {
@@ -58,6 +58,16 @@ class TestFunction
 
 		if ($this->after) {
 			($this->after)();
+		}
+	}
+
+
+	private function print(string $s): void
+	{
+		if (PHP_SAPI === 'cli' || PHP_SAPI === 'phpdbg') {
+			fwrite(STDOUT, $s);
+		} else {
+			echo $s;
 		}
 	}
 }
