@@ -12,12 +12,6 @@ require __DIR__ . '/../src/Runner/PhpInterpreter.php';
 date_default_timezone_set('Europe/Prague');
 
 
-function test(string $description, Closure $function): void
-{
-	$function();
-}
-
-
 function createInterpreter(): PhpInterpreter
 {
 	$args = strlen((string) php_ini_scanned_files())
