@@ -143,6 +143,15 @@ class Environment
 
 
 	/**
+	 * Creates global functions test(), setUp() and tearDown().
+	 */
+	public static function setupFunctions(): void
+	{
+		require __DIR__ . '/functions.php';
+	}
+
+
+	/**
 	 * @internal
 	 */
 	public static function handleException(\Throwable $e): void
