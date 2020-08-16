@@ -12,6 +12,7 @@ namespace Tester;
 
 /**
  * PHP file mutator.
+ * @internal
  */
 class FileMutator
 {

@@ -12,6 +12,7 @@ namespace Tester;
 
 /**
  * Dumps PHP variables.
+ * @internal
  */
 class Dumper
 {
@@ -246,9 +247,6 @@ class Dumper
 	}
 
 
-	/**
-	 * @internal
-	 */
 	public static function dumpException(\Throwable $e): string
 	{
 		$trace = $e->getTrace();
@@ -347,7 +345,6 @@ class Dumper
 
 	/**
 	 * Dumps data to folder 'output'.
-	 * @internal
 	 */
 	public static function saveOutput(string $testFile, $content, string $suffix = ''): string
 	{

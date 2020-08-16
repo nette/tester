@@ -39,6 +39,7 @@ class Helpers
 	/**
 	 * Find common directory for given paths. All files or directories must exist.
 	 * @return string  Empty when not found. Slash and back slash chars normalized to DIRECTORY_SEPARATOR.
+	 * @internal
 	 */
 	public static function findCommonDirectory(array $paths): string
 	{
@@ -108,6 +109,7 @@ class Helpers
 
 	/**
 	 * Escape a string to be used as a shell argument.
+	 * @internal
 	 */
 	public static function escapeArg(string $s): string
 	{

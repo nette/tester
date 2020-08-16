@@ -12,6 +12,7 @@ namespace Tester;
 
 /**
  * Data provider helpers.
+ * @internal
  */
 class DataProvider
 {
@@ -100,7 +101,6 @@ class DataProvider
 
 
 	/**
-	 * @internal
 	 * @throws \Exception
 	 */
 	public static function parseAnnotation(string $annotation, string $file): array
