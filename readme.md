@@ -203,7 +203,7 @@ at the command-line options:
 > tester
 
 Usage:
-    tester.php [options] [<test file> | <directory>]...
+    tester [options] [<test file> | <directory>]...
 
 Options:
     -p <path>                    Specify PHP interpreter to run (default: php).
