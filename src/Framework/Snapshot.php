@@ -12,6 +12,7 @@ namespace Tester;
 
 /**
  * Snapshot of a tested value.
+ * @internal
  */
 class Snapshot
 {
