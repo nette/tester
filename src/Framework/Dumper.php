@@ -265,7 +265,7 @@ class Dumper
 			$actual = $e->actual;
 
 			if (is_object($expected) || is_array($expected) || (is_string($expected) && strlen($expected) > self::$maxLength)
-				|| is_object($actual) || is_array($actual) || (is_string($actual) && strlen($actual) > self::$maxLength)
+				|| is_object($actual) || is_array($actual) || (is_string($actual) && (strlen($actual) > self::$maxLength || preg_match('#[\x00-\x1F]#', $actual)))
 			) {
 				$args = isset($_SERVER['argv'][1])
 					? '.[' . implode(' ', preg_replace(['#^-*([^|]+).*#i', '#[^=a-z0-9. -]+#i'], ['$1', '-'], array_slice($_SERVER['argv'], 1))) . ']'
