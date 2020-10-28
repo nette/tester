@@ -36,10 +36,12 @@ Assert::error(function () {
 	[E_NOTICE],
 ]);
 
-Assert::error(function () {
-	$a = &pi();
-	$a = &pi();
-}, [E_NOTICE, E_NOTICE]
+Assert::error(
+	function () {
+		$a = &pi();
+		$a = &pi();
+	},
+	[E_NOTICE, E_NOTICE]
 );
 
 Assert::exception(function () {

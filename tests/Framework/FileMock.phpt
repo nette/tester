@@ -88,7 +88,9 @@ test(function () {
 	];
 
 	foreach ($cases as $mode => $position) {
-		$file = $mode[0] === 'x' ? "mock://none-$mode" : FileMock::create('ABC');
+		$file = $mode[0] === 'x'
+			? "mock://none-$mode"
+			: FileMock::create('ABC');
 		Assert::same($position, ftell(fopen($file, $mode)), "Mode $mode");
 	}
 });
@@ -112,7 +114,9 @@ test(function () {
 	];
 
 	foreach ($cases as $mode => [$contents, $readOut]) {
-		$file = $mode[0] === 'x' ? "mock://none-$mode" : FileMock::create('ABC');
+		$file = $mode[0] === 'x'
+			? "mock://none-$mode"
+			: FileMock::create('ABC');
 
 		$f = fopen($file, $mode);
 		fseek($f, 0);
@@ -140,7 +144,9 @@ test(function () {
 	];
 
 	foreach ($cases as $mode => [$contents, $readOut]) {
-		$file = $mode[0] === 'x' ? "mock://none-$mode" : FileMock::create('ABC');
+		$file = $mode[0] === 'x'
+			? "mock://none-$mode"
+			: FileMock::create('ABC');
 
 		$f = fopen($file, $mode);
 		fwrite($f, '_');

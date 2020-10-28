@@ -56,7 +56,7 @@ class FileMock
 	public static function register(): void
 	{
 		if (!in_array(self::PROTOCOL, stream_get_wrappers(), true)) {
-			stream_wrapper_register(self::PROTOCOL, __CLASS__);
+			stream_wrapper_register(self::PROTOCOL, self::class);
 		}
 	}
 

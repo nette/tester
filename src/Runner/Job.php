@@ -95,11 +95,9 @@ class Job
 
 		$args = [];
 		foreach ($this->test->getArguments() as $value) {
-			if (is_array($value)) {
-				$args[] = Helpers::escapeArg("--$value[0]=$value[1]");
-			} else {
-				$args[] = Helpers::escapeArg($value);
-			}
+			$args[] = is_array($value)
+				? Helpers::escapeArg("--$value[0]=$value[1]")
+				: Helpers::escapeArg($value);
 		}
 
 		$this->proc = proc_open(
@@ -164,7 +162,9 @@ class Job
 			fclose($this->stderr);
 		}
 		$code = proc_close($this->proc);
-		$this->exitCode = $code === self::CODE_NONE ? $status['exitcode'] : $code;
+		$this->exitCode = $code === self::CODE_NONE
+			? $status['exitcode']
+			: $code;
 
 		if ($this->interpreter->isCgi() && count($tmp = explode("\r\n\r\n", $this->test->stdout, 2)) >= 2) {
 			[$headers, $this->test->stdout] = $tmp;
