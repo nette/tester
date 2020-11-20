@@ -23,7 +23,7 @@ class TestCase
 	/** @var bool */
 	private $handleErrors = false;
 
-	/** @var callable|null|false */
+	/** @var callable|false|null */
 	private $prevErrorHandler = false;
 
 
@@ -89,7 +89,9 @@ class TestCase
 		if ($args === null) {
 			$defaultParams = [];
 			foreach ($method->getParameters() as $param) {
-				$defaultParams[$param->getName()] = $param->isDefaultValueAvailable() ? $param->getDefaultValue() : null;
+				$defaultParams[$param->getName()] = $param->isDefaultValueAvailable()
+					? $param->getDefaultValue()
+					: null;
 			}
 
 			foreach ((array) $info['dataprovider'] as $i => $provider) {
@@ -99,7 +101,9 @@ class TestCase
 				}
 
 				foreach ($res as $k => $set) {
-					$data["$i-$k"] = is_string(key($set)) ? array_merge($defaultParams, $set) : $set;
+					$data["$i-$k"] = is_string(key($set))
+						? array_merge($defaultParams, $set)
+						: $set;
 				}
 			}
 
@@ -121,7 +125,9 @@ class TestCase
 					$this->silentTearDown();
 				}
 
-				return $this->prevErrorHandler ? ($this->prevErrorHandler)(...func_get_args()) : false;
+				return $this->prevErrorHandler
+					? ($this->prevErrorHandler)(...func_get_args())
+					: false;
 			});
 		}
 
@@ -153,7 +159,8 @@ class TestCase
 				$this->tearDown();
 
 			} catch (AssertException $e) {
-				throw $e->setMessage(sprintf('%s in %s(%s)%s',
+				throw $e->setMessage(sprintf(
+					'%s in %s(%s)%s',
 					$e->origMessage,
 					$method->getName(),
 					substr(Dumper::toLine($params), 1, -1),

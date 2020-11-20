@@ -29,7 +29,7 @@ class DomQuery extends \SimpleXMLElement
 			return $m[1] . str_replace('</', '<\/', $m[2]) . $m[3];
 		}, $html);
 
-		$dom = new \DOMDocument();
+		$dom = new \DOMDocument;
 		$old = libxml_use_internal_errors(true);
 		libxml_clear_errors();
 		$dom->loadHTML($html);
@@ -41,13 +41,13 @@ class DomQuery extends \SimpleXMLElement
 				trigger_error(__METHOD__ . ": $error->message on line $error->line.", E_USER_WARNING);
 			}
 		}
-		return simplexml_import_dom($dom, __CLASS__);
+		return simplexml_import_dom($dom, self::class);
 	}
 
 
 	public static function fromXml(string $xml): self
 	{
-		return simplexml_load_string($xml, __CLASS__);
+		return simplexml_load_string($xml, self::class);
 	}
 
 

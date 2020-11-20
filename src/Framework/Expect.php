@@ -73,7 +73,7 @@ class Expect
 			$this->constraints[] = (object) ['method' => lcfirst($m[1]), 'args' => $args];
 			return $this;
 		}
-		throw new \Error('Call to undefined method ' . __CLASS__ . '::' . $method . '()');
+		throw new \Error('Call to undefined method ' . self::class . '::' . $method . '()');
 	}
 
 
@@ -107,7 +107,9 @@ class Expect
 		$res = [];
 		foreach ($this->constraints as $cstr) {
 			if ($cstr instanceof \stdClass) {
-				$args = isset($cstr->args[0]) ? Dumper::toLine($cstr->args[0]) : '';
+				$args = isset($cstr->args[0])
+					? Dumper::toLine($cstr->args[0])
+					: '';
 				$res[] = "$cstr->method($args)";
 
 			} elseif ($cstr instanceof self) {

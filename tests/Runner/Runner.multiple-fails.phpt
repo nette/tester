@@ -79,8 +79,8 @@ Assert::same(Test::FAILED, $logger->results['testcase-pre-fail.phptx'][0]);
 
 Assert::match(
 	defined('PHPDBG_VERSION')
-		? '%A%Parse error: syntax error, unexpected end of file in %a%testcase-syntax-error.phptx on line %d%'
-		: 'Parse error: syntax error, unexpected end of file in %a%testcase-syntax-error.phptx on line %d%',
+		? '%A%Parse error: %a% in %a%testcase-syntax-error.phptx on line %d%'
+		: 'Parse error: %a% in %a%testcase-syntax-error.phptx on line %d%',
 	trim($logger->results['testcase-syntax-error.phptx'][1])
 );
 Assert::same(Test::FAILED, $logger->results['testcase-syntax-error.phptx'][0]);
