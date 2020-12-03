@@ -36,7 +36,9 @@ foreach ([
 	'PHP version' . ($isPhpDbg ? '; PHPDBG version' : '')
 		=> "$info->version ($info->sapi)" . ($isPhpDbg ? "; $info->phpDbgVersion" : ''),
 	'Loaded php.ini files' => count($info->iniFiles) ? implode(', ', $info->iniFiles) : '(none)',
-	'Code coverage engines' => count($info->codeCoverageEngines) ? implode(', ', $info->codeCoverageEngines) : '(not available)',
+	'Code coverage engines' => count($info->codeCoverageEngines)
+		? implode(', ', array_map(function (array $engineInfo) { return sprintf('%s (%s)', ...$engineInfo); }, $info->codeCoverageEngines))
+		: '(not available)',
 	'PHP temporary directory' => $info->tempDir == '' ? '(empty)' : $info->tempDir,
 	'Loaded extensions' => count($info->extensions) ? implode(', ', $info->extensions) : '(none)',
 ] as $title => $value) {
