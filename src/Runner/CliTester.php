@@ -236,10 +236,14 @@ XX
 		file_put_contents($this->options['--coverage'], '');
 		$file = realpath($this->options['--coverage']);
 
-		[$engine] = reset($engines);
+		[$engine, $version] = reset($engines);
 
 		$runner->setEnvironmentVariable(Environment::COVERAGE, $file);
 		$runner->setEnvironmentVariable(Environment::COVERAGE_ENGINE, $engine);
+
+		if ($engine === CodeCoverage\Collector::ENGINE_XDEBUG && version_compare($version, '3.0.0', '>=')) {
+			$runner->addPhpIniOption('xdebug.mode', ltrim(ini_get('xdebug.mode') . ',coverage', ','));
+		}
 
 		if ($engine === CodeCoverage\Collector::ENGINE_PCOV && count($this->options['--coverage-src'])) {
 			$runner->addPhpIniOption('pcov.directory', Helpers::findCommonDirectory($this->options['--coverage-src']));
