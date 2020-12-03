@@ -28,6 +28,7 @@ $cases = [
 	['list', []],
 	['list', [1]],
 	['list', [4 => 1], '[4 => 1] should be list'],
+	[new stdClass, 'string', 'string should be instance of stdClass'],
 ];
 
 foreach ($cases as $case) {
