@@ -11,7 +11,11 @@ require __DIR__ . '/../bootstrap.php';
 
 // https://bugs.php.net/bug.php?id=76801
 // fixed by https://github.com/php/php-src/pull/3965 in PHP 7.2.18
-if (strncasecmp(PHP_OS, 'win', 3) === 0 && strpos(PHP_BINARY, 'phpdbg') !== false && version_compare(PHP_VERSION, '7.2.18') < 0) {
+if (
+	strncasecmp(PHP_OS, 'win', 3) === 0
+	&& strpos(PHP_BINARY, 'phpdbg') !== false
+	&& version_compare(PHP_VERSION, '7.2.18') < 0
+) {
 	Environment::skip('There is a bug in PHP :(');
 }
 
