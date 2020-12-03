@@ -30,9 +30,9 @@ class Collector
 	public static function detectEngines(): array
 	{
 		return array_filter([
-			extension_loaded('pcov') ? self::ENGINE_PCOV : null,
-			defined('PHPDBG_VERSION') ? self::ENGINE_PHPDBG : null,
-			extension_loaded('xdebug') ? self::ENGINE_XDEBUG : null,
+			extension_loaded('pcov') ? [self::ENGINE_PCOV, phpversion('pcov')] : null,
+			defined('PHPDBG_VERSION') ? [self::ENGINE_PHPDBG, PHPDBG_VERSION] : null,
+			extension_loaded('xdebug') ? [self::ENGINE_XDEBUG, phpversion('xdebug')] : null,
 		]);
 	}
 
@@ -52,7 +52,11 @@ class Collector
 		if (self::isStarted()) {
 			throw new \LogicException('Code coverage collector has been already started.');
 
-		} elseif (!in_array($engine, self::detectEngines(), true)) {
+		} elseif (!in_array(
+			$engine,
+			array_map(function (array $engineInfo) { return $engineInfo[0]; }, self::detectEngines()),
+			true
+		)) {
 			throw new \LogicException("Code coverage engine '$engine' is not supported.");
 		}
 

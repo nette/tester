@@ -9,13 +9,14 @@ use Tester\FileMock;
 require __DIR__ . '/../bootstrap.php';
 
 
-$engines = array_filter(CodeCoverage\Collector::detectEngines(), function (string $engine) {
+$engines = array_filter(CodeCoverage\Collector::detectEngines(), function (array $engineInfo) {
+	[$engine] = $engineInfo;
 	return $engine !== CodeCoverage\Collector::ENGINE_PCOV; // PCOV needs system pcov.directory INI to be set
 });
 if (count($engines) < 1) {
 	Tester\Environment::skip('Requires Xdebug or PHPDB SAPI.');
 }
-$engine = reset($engines);
+[$engine] = reset($engines);
 
 if (CodeCoverage\Collector::isStarted()) {
 	Tester\Environment::skip('Requires running without --coverage.');

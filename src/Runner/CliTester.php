@@ -236,8 +236,10 @@ XX
 		file_put_contents($this->options['--coverage'], '');
 		$file = realpath($this->options['--coverage']);
 
+		[$engine] = reset($engines);
+
 		$runner->setEnvironmentVariable(Environment::COVERAGE, $file);
-		$runner->setEnvironmentVariable(Environment::COVERAGE_ENGINE, $engine = reset($engines));
+		$runner->setEnvironmentVariable(Environment::COVERAGE_ENGINE, $engine);
 
 		if ($engine === CodeCoverage\Collector::ENGINE_PCOV && count($this->options['--coverage-src'])) {
 			$runner->addPhpIniOption('pcov.directory', Helpers::findCommonDirectory($this->options['--coverage-src']));
