@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use Tester\Assert;
+use Tester\Expect;
 use Tester\Runner\Test;
 
 require __DIR__ . '/../bootstrap.php';
@@ -24,7 +25,7 @@ class Logger implements Tester\Runner\OutputHandler
 
 	public function finish(Test $test): void
 	{
-		$this->results[basename($test->getFile())] = $test->getResult();
+		$this->results[basename($test->getFile())] = [$test->getResult(), $test->getDuration()];
 	}
 
 
@@ -50,7 +51,7 @@ $runner->run();
 Assert::false(getenv('TesterEnvVar'));
 
 ksort($logger->results);
-Assert::same([
-	'addPhpIniOption.phptx' => Test::PASSED,
-	'env-vars.phptx' => Test::PASSED,
+Assert::equal([
+	'addPhpIniOption.phptx' => [Test::PASSED, Expect::type('float')],
+	'env-vars.phptx' => [Test::PASSED, Expect::type('float')],
 ], $logger->results);

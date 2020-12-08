@@ -55,6 +55,9 @@ class Job
 	/** @var string[]  output headers */
 	private $headers = [];
 
+	/** @var float|null */
+	private $duration;
+
 
 	public function __construct(Test $test, PhpInterpreter $interpreter, array $envVars = null)
 	{
@@ -100,6 +103,7 @@ class Job
 				: Helpers::escapeArg($value);
 		}
 
+		$this->duration = -microtime(true);
 		$this->proc = proc_open(
 			$this->interpreter->getCommandLine()
 			. ' -d register_argc_argv=on ' . Helpers::escapeArg($this->test->getFile()) . ' ' . implode(' ', $args),
@@ -156,6 +160,7 @@ class Job
 		if ($status['running']) {
 			return true;
 		}
+		$this->duration += microtime(true);
 
 		fclose($this->stdout);
 		if ($this->stderr) {
@@ -201,5 +206,16 @@ class Job
 	public function getHeaders(): array
 	{
 		return $this->headers;
+	}
+
+
+	/**
+	 * Returns process duration in seconds.
+	 */
+	public function getDuration(): ?float
+	{
+		return $this->duration > 0
+			? $this->duration
+			: null;
 	}
 }

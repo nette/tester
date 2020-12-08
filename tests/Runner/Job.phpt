@@ -21,6 +21,7 @@ test(function () {
 
 	Assert::same('Args: one, --two=1, three, --two=2+stdout', $job->getTest()->stdout);
 	Assert::same('+stderr1+stderr2', $job->getTest()->stderr);
+	Assert::type('float', $job->getDuration());
 
 	if (PHP_SAPI !== 'cli') {
 		Assert::contains('Nette Tester', $job->getHeaders());
