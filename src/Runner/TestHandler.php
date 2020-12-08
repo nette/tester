@@ -94,7 +94,7 @@ class TestHandler
 				}
 			}
 		}
-		$this->runner->finishTest($test->withResult(Test::PASSED, $test->message));
+		$this->runner->finishTest($test->withResult(Test::PASSED, $test->message, $job->getDuration()));
 	}
 
 

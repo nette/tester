@@ -39,6 +39,9 @@ class Test
 	/** @var int */
 	private $result = self::PREPARED;
 
+	/** @var float|null */
+	private $duration;
+
 	/** @var string[]|string[][] */
 	private $args = [];
 
@@ -88,6 +91,15 @@ class Test
 
 
 	/**
+	 * Duration in seconds.
+	 */
+	public function getDuration(): ?float
+	{
+		return $this->duration;
+	}
+
+
+	/**
 	 * @return static
 	 */
 	public function withArguments(array $args): self
@@ -111,7 +123,7 @@ class Test
 	/**
 	 * @return static
 	 */
-	public function withResult(int $result, ?string $message): self
+	public function withResult(int $result, ?string $message, float $duration = null): self
 	{
 		if ($this->hasResult()) {
 			throw new \LogicException("Result of test is already set to $this->result with message '$this->message'.");
@@ -120,6 +132,7 @@ class Test
 		$me = clone $this;
 		$me->result = $result;
 		$me->message = $message;
+		$me->duration = $duration;
 		return $me;
 	}
 }
