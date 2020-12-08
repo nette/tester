@@ -25,6 +25,7 @@ test(function () {
 	Assert::same('some/Test.phpt', $test->getSignature());
 	Assert::false($test->hasResult());
 	Assert::same(Test::PREPARED, $test->getResult());
+	Assert::null($test->getDuration());
 });
 
 
