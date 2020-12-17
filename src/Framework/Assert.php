@@ -139,6 +139,36 @@ class Assert
 			self::fail(self::describe('%1 should be string or array', $description), $actual);
 		}
 	}
+	
+	/**
+         * Asserts that a haystack (string or array) has an expected key.
+         */
+        public static function hasKey($key, $actual, string $description = null): void
+        {
+		self::$counter++;
+		if (is_array($actual)) {
+			if (!array_key_exists($key, $actual)) {
+				self::fail(self::describe('%1 should contain key %2', $description), $actual, $key);
+			}
+		} else {
+			self::fail(self::describe('%1 should be array', $description), $actual);
+		}
+	}
+
+        /**
+         * Asserts that a haystack (string or array) doesnt have an expected key.
+         */
+        public static function hasNotKey($key, $actual, string $description = null): void
+        {
+		self::$counter++;
+		if (is_array($actual)) {
+			if (array_key_exists($key, $actual)) {
+				self::fail(self::describe('%1 should not contain key %2', $description), $actual, $key);
+			}
+		} else {
+			self::fail(self::describe('%1 should be array', $description), $actual);
+		}
+	}
 
 
 	/**
