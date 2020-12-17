@@ -48,8 +48,8 @@ Assert::exception(function () use ($string) {
 
 Assert::exception(function () use ($array) {
 	Assert::hasKey('two', $array, 'Custom description');
-}, Tester\AssertException::class, "Custom description: %a% should contain 'two'");
+}, Tester\AssertException::class, "Custom description: [1 => 1, 'one' => 'one'] should contain 'two'");
 
 Assert::exception(function () use ($array) {
 	Assert::hasNotKey('one', $array, 'Custom description');
-}, Tester\AssertException::class, "Custom description: %a% should not contain 'one'");
+}, Tester\AssertException::class, "Custom description: [1 => 1, 'one' => 'one'] should not contain 'one'");
