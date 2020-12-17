@@ -9,42 +9,42 @@ require __DIR__ . '/../bootstrap.php';
 
 $array = [
 	1 => 1,
-	"one" => "one",
+	'one' => 'one',
 ];
 
-$string= "Lorem ipsum";
+$string= 'Lorem ipsum';
 
 Assert::hasKey(1, $array);
-Assert::hasKey("one", $array);
+Assert::hasKey('one', $array);
 
 Assert::hasNotKey(2, $array);
-Assert::hasNotKey("two", $array);
+Assert::hasNotKey('two', $array);
 
 Assert::exception(function () use ($array) {
-		Assert::hasKey(2, $array);
-	}, Tester\AssertException::class, '%a% should contain key %a%');
+	Assert::hasKey(2, $array);
+}, Tester\AssertException::class, '%a% should contain key %a%');
 
 Assert::exception(function () use ($array) {
-		Assert::hasKey("two", $array);
-	}, Tester\AssertException::class, '%a% should contain key %a%');
+	Assert::hasKey('two', $array);
+}, Tester\AssertException::class, '%a% should contain key %a%');
 
 Assert::exception(function () use ($string) {
-		Assert::hasKey("two", $string);
-	}, Tester\AssertException::class, '%a% should be array');
+	Assert::hasKey('two', $string);
+}, Tester\AssertException::class, '%a% should be array');
 
 
 Assert::exception(function () use ($array) {
-		Assert::hasNotKey(1, $array);
-	}, Tester\AssertException::class, '%a% should not contain key %a%');
+	Assert::hasNotKey(1, $array);
+}, Tester\AssertException::class, '%a% should not contain key %a%');
 
 Assert::exception(function () use ($array) {
-		Assert::hasNotKey("one", $array);
-	}, Tester\AssertException::class, '%a% should not contain key %a%');
+	Assert::hasNotKey('one', $array);
+}, Tester\AssertException::class, '%a% should not contain key %a%');
 
 
 Assert::exception(function () use ($string) {
-		Assert::hasNotKey("two", $string);
-	}, Tester\AssertException::class, '%a% should be array');
+	Assert::hasNotKey('two', $string);
+}, Tester\AssertException::class, '%a% should be array');
 
 Assert::exception(function () use ($array) {
 	Assert::hasKey('two', $array, 'Custom description');

@@ -140,6 +140,7 @@ class Assert
 		}
 	}
 
+
 	/**
 	 * Asserts that a haystack (string or array) has an expected key.
 	 */
@@ -154,6 +155,7 @@ class Assert
 			self::fail(self::describe('%1 should be array', $description), $actual);
 		}
 	}
+
 
 	/**
 	 * Asserts that a haystack (string or array) doesnt have an expected key.
