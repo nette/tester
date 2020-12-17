@@ -8,8 +8,8 @@ require __DIR__ . '/../bootstrap.php';
 
 
 $array = [
-  1 => 1,
-  "one" => "one",
+	1 => 1,
+	"one" => "one",
 ];
 
 $string= "Lorem ipsum";
