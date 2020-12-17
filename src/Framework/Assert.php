@@ -148,10 +148,10 @@ class Assert
 		self::$counter++;
 		if (is_array($actual)) {
 			if (!array_key_exists($key, $actual)) {
-				self::fail(self::describe('%1 should contain key %2', $description), $actual, $key);
+				self::fail(self::describe('Array should contain key %1', $description), $key);
 			}
 		} else {
-			self::fail(self::describe('%1 should be array', $description), $actual);
+			self::fail(self::describe('Input should be array', $description));
 		}
 	}
 
@@ -163,10 +163,10 @@ class Assert
 		self::$counter++;
 		if (is_array($actual)) {
 			if (array_key_exists($key, $actual)) {
-				self::fail(self::describe('%1 should not contain key %2', $description), $actual, $key);
+				self::fail(self::describe('Array should not contain key %1', $description), $key);
 			}
 		} else {
-			self::fail(self::describe('%1 should be array', $description), $actual);
+			self::fail(self::describe('Input should be array', $description));
 		}
 	}
 
