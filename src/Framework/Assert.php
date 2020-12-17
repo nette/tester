@@ -141,8 +141,8 @@ class Assert
 	}
 	
 	/**
-         * Asserts that a haystack (string or array) has an expected key.
-         */
+	 * Asserts that a haystack (string or array) has an expected key.
+	 */
         public static function hasKey($key, $actual, string $description = null): void
         {
 		self::$counter++;
@@ -156,8 +156,8 @@ class Assert
 	}
 
         /**
-         * Asserts that a haystack (string or array) doesnt have an expected key.
-         */
+	 * Asserts that a haystack (string or array) doesnt have an expected key.
+	 */
         public static function hasNotKey($key, $actual, string $description = null): void
         {
 		self::$counter++;
