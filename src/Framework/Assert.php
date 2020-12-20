@@ -152,6 +152,38 @@ class Assert
 
 
 	/**
+	 * Asserts that a haystack has an expected key.
+	 * @param  string|int  $key
+	 */
+	public static function hasKey($key, array $actual, string $description = null): void
+	{
+		self::$counter++;
+		if (!is_int($key) && !is_string($key)) {
+			self::fail(self::describe('Key %1 should be string or integer'), $key);
+
+		} elseif (!array_key_exists($key, $actual)) {
+			self::fail(self::describe('%1 should contain key %2', $description), $actual, $key);
+		}
+	}
+
+
+	/**
+	 * Asserts that a haystack doesn't have an expected key.
+	 * @param  string|int  $key
+	 */
+	public static function hasNotKey($key, array $actual, string $description = null): void
+	{
+		self::$counter++;
+		if (!is_int($key) && !is_string($key)) {
+			self::fail(self::describe('Key %1 should be string or integer'), $key);
+
+		} elseif (array_key_exists($key, $actual)) {
+			self::fail(self::describe('%1 should not contain key %2', $description), $actual, $key);
+		}
+	}
+
+
+	/**
 	 * Asserts that a value is true.
 	 * @param  mixed  $actual
 	 */
