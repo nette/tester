@@ -244,7 +244,7 @@ class Assert
 
 	/**
 	 * Asserts the number of items in an array or Countable.
-	 * @param  mixed  $value
+	 * @param  array|\Countable  $value
 	 */
 	public static function count(int $count, $value, string $description = null): void
 	{
