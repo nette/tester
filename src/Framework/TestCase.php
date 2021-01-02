@@ -45,7 +45,9 @@ class TestCase
 			if ($method === self::LIST_METHODS) {
 				Environment::$checkAssertions = false;
 				header('Content-Type: text/plain');
-				echo '[' . implode(',', $methods) . ']';
+				echo "\n";
+				echo 'TestCase:' . static::class . "\n";
+				echo 'Method:' . implode("\nMethod:", $methods) . "\n";
 				return;
 			}
 			$this->runTest($method);
