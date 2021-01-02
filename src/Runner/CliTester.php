@@ -29,6 +29,9 @@ class CliTester
 	/** @var bool */
 	private $debugMode = true;
 
+	/** @var string|null */
+	private $stdoutFormat;
+
 
 	public function run(): ?int
 	{
@@ -41,7 +44,7 @@ class CliTester
 		$this->debugMode = (bool) $this->options['--debug'];
 		if (isset($this->options['--colors'])) {
 			Environment::$useColors = (bool) $this->options['--colors'];
-		} elseif (in_array($this->options['-o'], ['tap', 'junit'], true)) {
+		} elseif (in_array($this->stdoutFormat, ['tap', 'junit'], true)) {
 			Environment::$useColors = false;
 		}
 
@@ -67,7 +70,7 @@ class CliTester
 			$coverageFile = $this->prepareCodeCoverage($runner);
 		}
 
-		if ($this->options['-o'] !== null) {
+		if ($this->stdoutFormat !== null) {
 			ob_clean();
 		}
 		ob_end_flush();
@@ -89,6 +92,8 @@ class CliTester
 
 	private function loadOptions(): CommandLine
 	{
+		$outputFiles = [];
+
 		echo <<<'XX'
  _____ ___  ___ _____ ___  ___
 |_   _/ __)( __/_   _/ __)| _ )
@@ -110,7 +115,8 @@ Options:
     -s                           Show information about skipped tests.
     --stop-on-fail               Stop execution upon the first failure.
     -j <num>                     Run <num> jobs in parallel (default: 8).
-    -o <console|tap|junit|none>  Specify output format.
+    -o <console|tap|junit|none>  Specify one or more output formats with optional file name.
+                                 (e.g. -o junit:output.xml)
     -w | --watch <path>          Watch directory.
     -i | --info                  Show tests environment info and exit.
     --setup <path>               Script for runner setup.
@@ -130,6 +136,22 @@ XX
 			'--debug' => [],
 			'--cider' => [],
 			'--coverage-src' => [CommandLine::REALPATH => true, CommandLine::REPEATABLE => true],
+			'-o' => [CommandLine::REPEATABLE => true, CommandLine::NORMALIZER => function ($arg) use (&$outputFiles) {
+				[$format, $file] = explode(':', $arg, 2) + [1 => null];
+
+				if (isset($outputFiles[$file])) {
+					throw new \Exception(
+						$file === null
+							? 'Option -o <format> without file name parameter can be used only once.'
+							: "Cannot specify output by -o into file '$file' more then once."
+					);
+				} elseif ($file === null) {
+					$this->stdoutFormat = $format;
+				}
+				$outputFiles[$file] = true;
+
+				return [$format, $file];
+			}],
 		]);
 
 		if (isset($_SERVER['argv'])) {
@@ -167,7 +189,7 @@ XX
 			echo "Note: No php.ini is used.\n";
 		}
 
-		if (in_array($this->options['-o'], ['tap', 'junit'], true)) {
+		if (in_array($this->stdoutFormat, ['tap', 'junit'], true)) {
 			array_push($args, '-d', 'html_errors=off');
 		}
 
@@ -194,22 +216,36 @@ XX
 			$runner->setTempDirectory($this->options['--temp']);
 		}
 
-		switch ($this->options['-o']) {
-			case 'none':
-				break;
-			case 'tap':
-				$runner->outputHandlers[] = new Output\TapPrinter;
-				break;
-			case 'junit':
-				$runner->outputHandlers[] = new Output\JUnitPrinter;
-				break;
-			default:
-				$runner->outputHandlers[] = new Output\ConsolePrinter(
-					$runner,
-					(bool) $this->options['-s'],
-					'php://output',
-					(bool) $this->options['--cider']
-				);
+		if ($this->stdoutFormat === null) {
+			$runner->outputHandlers[] = new Output\ConsolePrinter(
+				$runner,
+				(bool) $this->options['-s'],
+				'php://output',
+				(bool) $this->options['--cider']
+			);
+		}
+
+		foreach ($this->options['-o'] as $output) {
+			[$format, $file] = $output;
+			switch ($format) {
+				case 'console':
+					$runner->outputHandlers[] = new Output\ConsolePrinter($runner, (bool) $this->options['-s'], $file, (bool) $this->options['--cider']);
+					break;
+
+				case 'tap':
+					$runner->outputHandlers[] = new Output\TapPrinter($file);
+					break;
+
+				case 'junit':
+					$runner->outputHandlers[] = new Output\JUnitPrinter($file);
+					break;
+
+				case 'none':
+					break;
+
+				default:
+					throw new \LogicException("Undefined output printer '$format'.'");
+			}
 		}
 
 		if ($this->options['--log']) {
@@ -256,7 +292,7 @@ XX
 
 	private function finishCodeCoverage(string $file): void
 	{
-		if (!in_array($this->options['-o'], ['none', 'tap', 'junit'], true)) {
+		if (!in_array($this->stdoutFormat, ['none', 'tap', 'junit'], true)) {
 			echo 'Generating code coverage report... ';
 		}
 		if (filesize($file) === 0) {

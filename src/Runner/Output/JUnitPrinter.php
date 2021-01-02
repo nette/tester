@@ -31,9 +31,9 @@ class JUnitPrinter implements Tester\Runner\OutputHandler
 	private $results;
 
 
-	public function __construct(string $file = 'php://output')
+	public function __construct(string $file = null)
 	{
-		$this->file = fopen($file, 'w');
+		$this->file = fopen($file ?: 'php://output', 'w');
 	}
 
 

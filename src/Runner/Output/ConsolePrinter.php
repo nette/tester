@@ -51,12 +51,12 @@ class ConsolePrinter implements Tester\Runner\OutputHandler
 	public function __construct(
 		Runner $runner,
 		bool $displaySkipped = false,
-		string $file = 'php://output',
+		string $file = null,
 		bool $ciderMode = false
 	) {
 		$this->runner = $runner;
 		$this->displaySkipped = $displaySkipped;
-		$this->file = fopen($file, 'w');
+		$this->file = fopen($file ?: 'php://output', 'w');
 		$this->symbols = [
 			Test::PASSED => $ciderMode ? Dumper::color('green', '🍎') : '.',
 			Test::SKIPPED => 's',
