@@ -36,9 +36,10 @@ class TestCase
 			throw new \LogicException('Calling TestCase::run($method) is deprecated. Use TestCase::runTest($method) instead.');
 		}
 
+		$ro = new \ReflectionObject($this);
 		$methods = array_values(preg_grep(self::METHOD_PATTERN, array_map(function (\ReflectionMethod $rm): string {
 			return $rm->getName();
-		}, (new \ReflectionObject($this))->getMethods())));
+		}, $ro->getMethods())));
 
 		if (isset($_SERVER['argv']) && ($tmp = preg_filter('#--method=([\w-]+)$#Ai', '$1', $_SERVER['argv']))) {
 			$method = reset($tmp);
@@ -48,6 +49,22 @@ class TestCase
 				echo "\n";
 				echo 'TestCase:' . static::class . "\n";
 				echo 'Method:' . implode("\nMethod:", $methods) . "\n";
+
+				$dependentFiles = [];
+				$reflections = [$ro];
+				while (count($reflections)) {
+					$rc = array_shift($reflections);
+					$dependentFiles[$rc->getFileName()] = 1;
+
+					if ($rpc = $rc->getParentClass()) {
+						$reflections[] = $rpc;
+					}
+
+					foreach ($rc->getTraits() as $rt) {
+						$reflections[] = $rt;
+					}
+				}
+				echo 'Dependency:' . implode("\nDependency:", array_keys($dependentFiles)) . "\n";
 				return;
 			}
 			$this->runTest($method);
