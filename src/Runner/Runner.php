@@ -96,6 +96,7 @@ class Runner
 		}
 
 		$this->tempDir = $path;
+		$this->testHandler->setTempDirectory($path);
 	}
 
 
