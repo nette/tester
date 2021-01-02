@@ -220,6 +220,22 @@ class TestCase
 		echo "\n";
 		echo 'TestCase:' . static::class . "\n";
 		echo 'Method:' . implode("\nMethod:", $methods) . "\n";
+
+		$dependentFiles = [];
+		$reflections = [new \ReflectionObject($this)];
+		while (count($reflections)) {
+			$rc = array_shift($reflections);
+			$dependentFiles[$rc->getFileName()] = 1;
+
+			if ($rpc = $rc->getParentClass()) {
+				$reflections[] = $rpc;
+			}
+
+			foreach ($rc->getTraits() as $rt) {
+				$reflections[] = $rt;
+			}
+		}
+		echo 'Dependency:' . implode("\nDependency:", array_keys($dependentFiles)) . "\n";
 	}
 }
 
