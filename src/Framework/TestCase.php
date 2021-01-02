@@ -43,9 +43,7 @@ class TestCase
 		if (isset($_SERVER['argv']) && ($tmp = preg_filter('#--method=([\w-]+)$#Ai', '$1', $_SERVER['argv']))) {
 			$method = reset($tmp);
 			if ($method === self::LIST_METHODS) {
-				Environment::$checkAssertions = false;
-				header('Content-Type: text/plain');
-				echo '[' . implode(',', $methods) . ']';
+				$this->sendMethodList($methods);
 				return;
 			}
 			$this->runTest($method);
@@ -212,6 +210,16 @@ class TestCase
 		} catch (\Exception $e) {
 		}
 		restore_error_handler();
+	}
+
+
+	private function sendMethodList(array $methods): void
+	{
+		Environment::$checkAssertions = false;
+		header('Content-Type: text/plain');
+		echo "\n";
+		echo 'TestCase:' . static::class . "\n";
+		echo 'Method:' . implode("\nMethod:", $methods) . "\n";
 	}
 }
 

@@ -164,15 +164,21 @@ class TestHandler
 			return $test->withResult($job->getExitCode() === Job::CODE_SKIP ? Test::SKIPPED : Test::FAILED, $job->getTest()->stdout);
 		}
 
-		if (!preg_match('#\[([^[]*)]#', (string) strrchr($job->getTest()->stdout, '['), $m)) {
+		$stdout = $job->getTest()->stdout;
+
+		if (!preg_match('#^TestCase:([^\n]+)$#m', $stdout, $m)) {
 			return $test->withResult(Test::FAILED, "Cannot list TestCase methods in file '{$test->getFile()}'. Do you call TestCase::run() in it?");
-		} elseif (!strlen($m[1])) {
-			return $test->withResult(Test::SKIPPED, "TestCase in file '{$test->getFile()}' does not contain test methods.");
+		}
+		$testCaseClass = $m[1];
+
+		preg_match_all('#^Method:([^\n]+)$#m', $stdout, $m);
+		if (count($m[1]) < 1) {
+			return $test->withResult(Test::SKIPPED, "Class $testCaseClass in file '{$test->getFile()}' does not contain test methods.");
 		}
 
 		return array_map(function (string $method) use ($test): Test {
 			return $test->withArguments(['method' => $method]);
-		}, explode(',', $m[1]));
+		}, $m[1]);
 	}
 
 
