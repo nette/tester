@@ -50,7 +50,7 @@ $runner->outputHandlers[] = $logger = new Logger;
 $runner->run();
 
 Assert::match(
-	"TestCase in file '%a%testcase-no-methods.phptx' does not contain test methods.",
+	"Class MyTest in file '%a%testcase-no-methods.phptx' does not contain test methods.",
 	$logger->results['testcase-no-methods.phptx'][1]
 );
 Assert::same(Test::SKIPPED, $logger->results['testcase-no-methods.phptx'][0]);
