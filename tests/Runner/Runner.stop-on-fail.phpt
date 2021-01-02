@@ -42,8 +42,7 @@ class Logger implements Tester\Runner\OutputHandler
 $interpreter = createInterpreter();
 
 
-// Normal stop on the end
-test(function () use ($interpreter) {
+test('Normal stop on the end', function () use ($interpreter) {
 	$runner = new Runner($interpreter);
 	$runner->outputHandlers[] = $logger = new Logger;
 	$runner->paths = [
@@ -61,8 +60,7 @@ test(function () use ($interpreter) {
 });
 
 
-// Stop in initial phase
-test(function () use ($interpreter) {
+test('Stop in initial phase', function () use ($interpreter) {
 	$runner = new Runner($interpreter);
 	$runner->outputHandlers[] = $logger = new Logger;
 	$runner->stopOnFail = true;
@@ -78,8 +76,7 @@ test(function () use ($interpreter) {
 });
 
 
-// Stop in run-time
-test(function () use ($interpreter) {
+test('Stop in run-time', function () use ($interpreter) {
 	$runner = new Runner($interpreter);
 	$runner->outputHandlers[] = $logger = new Logger;
 	$runner->stopOnFail = true;

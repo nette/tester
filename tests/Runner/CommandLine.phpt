@@ -10,7 +10,7 @@ require __DIR__ . '/../../src/Runner/CommandLine.php';
 
 
 
-test(function () {
+test('', function () {
 	$cmd = new Cmd('
 		-p
 		--p
@@ -29,7 +29,7 @@ test(function () {
 });
 
 
-test(function () { // default value
+test('default value', function () {
 	$cmd = new Cmd('
 		-p  (default: 123)
 	');
@@ -49,7 +49,7 @@ test(function () { // default value
 });
 
 
-test(function () { // alias
+test('alias', function () {
 	$cmd = new Cmd('
 		-p | --param
 	');
@@ -76,7 +76,7 @@ test(function () { // alias
 });
 
 
-test(function () { // argument
+test('argument', function () {
 	$cmd = new Cmd('
 		-p param
 	');
@@ -104,7 +104,7 @@ test(function () { // argument
 
 
 
-test(function () { // optional argument
+test('optional argument', function () {
 	$cmd = new Cmd('
 		-p [param]
 	');
@@ -138,7 +138,7 @@ test(function () { // optional argument
 
 
 
-test(function () { // repeatable argument
+test('repeatable argument', function () {
 	$cmd = new Cmd('
 		-p [param]...
 	');
@@ -151,7 +151,7 @@ test(function () { // repeatable argument
 
 
 
-test(function () { // enumerates
+test('enumerates', function () {
 	$cmd = new Cmd('
 		-p <a|b|c>
 	');
@@ -180,7 +180,7 @@ test(function () { // enumerates
 
 
 
-test(function () { // realpath
+test('realpath', function () {
 	$cmd = new Cmd('
 		-p <path>
 	', [
@@ -195,7 +195,7 @@ test(function () { // realpath
 
 
 
-test(function () { // positional arguments
+test('positional arguments', function () {
 	$cmd = new Cmd('', [
 		'pos' => [],
 	]);
@@ -233,7 +233,7 @@ test(function () { // positional arguments
 
 
 
-test(function () { // errors
+test('errors', function () {
 	$cmd = new Cmd('
 		-p
 	');

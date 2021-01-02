@@ -12,7 +12,7 @@ require __DIR__ . '/../../src/CodeCoverage/PhpParser.php';
 $parser = new CodeCoverage\PhpParser;
 
 
-test(function () use ($parser) {
+test('', function () use ($parser) {
 	$parsed = $parser->parse(file_get_contents(__DIR__ . '/fixtures.parse/namespaces.none.php'));
 
 	Assert::equal([
@@ -33,7 +33,7 @@ test(function () use ($parser) {
 });
 
 
-test(function () use ($parser) {
+test('', function () use ($parser) {
 	$parsed = $parser->parse(file_get_contents(__DIR__ . '/fixtures.parse/namespaces.php'));
 
 	Assert::equal([
@@ -58,7 +58,7 @@ test(function () use ($parser) {
 });
 
 
-test(function () use ($parser) {
+test('', function () use ($parser) {
 	$parsed = $parser->parse(file_get_contents(__DIR__ . '/fixtures.parse/namespaces.braces.php'));
 
 	Assert::equal([

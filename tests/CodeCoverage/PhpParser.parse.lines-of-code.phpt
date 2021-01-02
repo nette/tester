@@ -15,7 +15,7 @@ $parser = new CodeCoverage\PhpParser;
  * Assertions assume that every line is considered as a line of code.
  */
 
-test(function () use ($parser) {
+test('', function () use ($parser) {
 	$parsed = $parser->parse('<?php ');
 
 	Assert::same(1, $parsed->linesOfCode);
@@ -23,7 +23,7 @@ test(function () use ($parser) {
 });
 
 
-test(function () use ($parser) {
+test('', function () use ($parser) {
 	$parsed = $parser->parse("<?php\n");
 
 	Assert::same(1, $parsed->linesOfCode);
@@ -31,7 +31,7 @@ test(function () use ($parser) {
 });
 
 
-test(function () use ($parser) {
+test('', function () use ($parser) {
 	$parsed = $parser->parse("<?php\n// Comment\n");
 
 	Assert::same(2, $parsed->linesOfCode);
@@ -39,7 +39,7 @@ test(function () use ($parser) {
 });
 
 
-test(function () use ($parser) {
+test('', function () use ($parser) {
 	$parsed = $parser->parse("<?php\n/* Comment */\n");
 
 	Assert::same(2, $parsed->linesOfCode);
@@ -47,7 +47,7 @@ test(function () use ($parser) {
 });
 
 
-test(function () use ($parser) {
+test('', function () use ($parser) {
 	$parsed = $parser->parse("<?php\n/** Doc */\n");
 
 	Assert::same(2, $parsed->linesOfCode);
@@ -55,7 +55,7 @@ test(function () use ($parser) {
 });
 
 
-test(function () use ($parser) {
+test('', function () use ($parser) {
 	$parsed = $parser->parse("<?php\n/* Multi\nline\ncomment */\n");
 
 	Assert::same(4, $parsed->linesOfCode);
@@ -63,7 +63,7 @@ test(function () use ($parser) {
 });
 
 
-test(function () use ($parser) {
+test('', function () use ($parser) {
 	$parsed = $parser->parse("<?php\n/** Multi\n * doc\n * block\n **/\n");
 
 	Assert::same(5, $parsed->linesOfCode);

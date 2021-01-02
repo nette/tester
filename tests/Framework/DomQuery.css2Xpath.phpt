@@ -7,26 +7,26 @@ use Tester\DomQuery;
 
 require __DIR__ . '/../bootstrap.php';
 
-test(function () { // type selectors
+test('type selectors', function () {
 	Assert::same('//*', DomQuery::css2xpath('*'));
 	Assert::same('//foo', DomQuery::css2xpath('foo'));
 });
 
 
-test(function () { // #ID
+test('#ID', function () {
 	Assert::same("//*[@id='foo']", DomQuery::css2xpath('#foo'));
 	Assert::same("//*[@id='id']", DomQuery::css2xpath('*#id'));
 });
 
 
-test(function () { // class
+test('class', function () {
 	Assert::same("//*[contains(concat(' ', normalize-space(@class), ' '), ' foo ')]", DomQuery::css2xpath('.foo'));
 	Assert::same("//*[contains(concat(' ', normalize-space(@class), ' '), ' foo ')]", DomQuery::css2xpath('*.foo'));
 	Assert::same("//*[contains(concat(' ', normalize-space(@class), ' '), ' foo ')][contains(concat(' ', normalize-space(@class), ' '), ' bar ')]", DomQuery::css2xpath('.foo.bar'));
 });
 
 
-test(function () { // attribute selectors
+test('attribute selectors', function () {
 	Assert::same('//div[@foo]', DomQuery::css2xpath('div[foo]'));
 	Assert::same("//div[@foo='bar']", DomQuery::css2xpath('div[foo=bar]'));
 	Assert::same("//*[@foo='bar']", DomQuery::css2xpath('[foo="bar"]'));
@@ -42,14 +42,14 @@ test(function () { // attribute selectors
 });
 
 
-test(function () { // variants
+test('variants', function () {
 	Assert::same("//*[@id='foo']|//*[@id='bar']", DomQuery::css2xpath('#foo, #bar'));
 	Assert::same("//*[@id='foo']|//*[@id='bar']", DomQuery::css2xpath('#foo,#bar'));
 	Assert::same("//*[@id='foo']|//*[@id='bar']", DomQuery::css2xpath('#foo ,#bar'));
 });
 
 
-test(function () { // descendant combinator
+test('descendant combinator', function () {
 	Assert::same(
 		"//div[@id='foo']//*[contains(concat(' ', normalize-space(@class), ' '), ' bar ')]",
 		DomQuery::css2xpath('div#foo .bar')
@@ -61,18 +61,18 @@ test(function () { // descendant combinator
 });
 
 
-test(function () { // child combinator
+test('child combinator', function () {
 	Assert::same("//div[@id='foo']/span", DomQuery::css2xpath('div#foo>span'));
 	Assert::same("//div[@id='foo']/span", DomQuery::css2xpath('div#foo > span'));
 });
 
 
-test(function () { // general sibling combinator
+test('general sibling combinator', function () {
 	Assert::same('//div/following-sibling::span', DomQuery::css2xpath('div ~ span'));
 });
 
 
-test(function () { // complex
+test('complex', function () {
 	Assert::same(
 		"//div[@id='foo']//span[contains(concat(' ', normalize-space(@class), ' '), ' bar ')]"
 		. "|//*[@id='bar']//li[contains(concat(' ', normalize-space(@class), ' '), ' baz ')]//a",
@@ -81,14 +81,14 @@ test(function () { // complex
 });
 
 
-test(function () { // pseudoclass
+test('pseudoclass', function () {
 	Assert::exception(function () {
 		DomQuery::css2xpath('a:first-child');
 	}, InvalidArgumentException::class);
 });
 
 
-test(function () { // adjacent sibling combinator
+test('adjacent sibling combinator', function () {
 	Assert::exception(function () {
 		DomQuery::css2xpath('div + span');
 	}, InvalidArgumentException::class);

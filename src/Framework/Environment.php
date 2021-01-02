@@ -36,6 +36,9 @@ class Environment
 	/** @var bool */
 	public static $useColors;
 
+	/** @var ?TestFunction */
+	public static $testFunction;
+
 	/** @var int initial output buffer level */
 	private static $obLevel;
 
@@ -50,6 +53,7 @@ class Environment
 	{
 		self::setupErrors();
 		self::setupColors();
+		self::setupFunctions();
 		self::$obLevel = ob_get_level();
 
 		class_exists(Runner\Job::class);
@@ -135,6 +139,19 @@ class Environment
 				}
 			});
 		});
+	}
+
+
+	/**
+	 * Creates global functions.
+	 */
+	public static function setupFunctions(): void
+	{
+		if (function_exists('test')) {
+			return;
+		}
+		self::$testFunction = new TestFunction;
+		require __DIR__ . '/functions.php';
 	}
 
 
