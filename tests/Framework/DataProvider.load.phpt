@@ -10,13 +10,19 @@ require __DIR__ . '/../bootstrap.php';
 
 test(function () {
 	$expect = [
-		1 => [],
+		1 => ['integer' => 'abc'],
+		2 => ['integer' => 'def'],
 		'foo' => [],
 		'bar' => [],
 	];
 
 	Assert::same($expect, DataProvider::load('fixtures/dataprovider.ini'));
 	Assert::same($expect, DataProvider::load('fixtures/dataprovider.php'));
+
+	foreach (array_keys($expect) as $key) {
+		Assert::same([$key => $expect[$key]], DataProvider::load('fixtures/dataprovider.ini', (string) $key));
+		Assert::same([$key => $expect[$key]], DataProvider::load('fixtures/dataprovider.php', (string) $key));
+	}
 });
 
 
