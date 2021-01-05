@@ -29,15 +29,21 @@ sort($jobs);
 $path = __DIR__ . DIRECTORY_SEPARATOR . 'multiple' . DIRECTORY_SEPARATOR;
 
 Assert::same([
+	['dataProvider.multiple.phptx', [['dataprovider', "0|$path../../Framework/fixtures/dataprovider.ini"], ['multiple', '0']]],
+	['dataProvider.multiple.phptx', [['dataprovider', "0|$path../../Framework/fixtures/dataprovider.ini"], ['multiple', '1']]],
 	['dataProvider.multiple.phptx', [['dataprovider', "1|$path../../Framework/fixtures/dataprovider.ini"], ['multiple', '0']]],
 	['dataProvider.multiple.phptx', [['dataprovider', "1|$path../../Framework/fixtures/dataprovider.ini"], ['multiple', '1']]],
-	['dataProvider.multiple.phptx', [['dataprovider', "bar|$path../../Framework/fixtures/dataprovider.ini"], ['multiple', '0']]],
-	['dataProvider.multiple.phptx', [['dataprovider', "bar|$path../../Framework/fixtures/dataprovider.ini"], ['multiple', '1']]],
+	['dataProvider.multiple.phptx', [['dataprovider', "bar 1|$path../../Framework/fixtures/dataprovider.ini"], ['multiple', '0']]],
+	['dataProvider.multiple.phptx', [['dataprovider', "bar 1|$path../../Framework/fixtures/dataprovider.ini"], ['multiple', '1']]],
+	['dataProvider.multiple.phptx', [['dataprovider', "bar 2|$path../../Framework/fixtures/dataprovider.ini"], ['multiple', '0']]],
+	['dataProvider.multiple.phptx', [['dataprovider', "bar 2|$path../../Framework/fixtures/dataprovider.ini"], ['multiple', '1']]],
 	['dataProvider.multiple.phptx', [['dataprovider', "foo|$path../../Framework/fixtures/dataprovider.ini"], ['multiple', '0']]],
 	['dataProvider.multiple.phptx', [['dataprovider', "foo|$path../../Framework/fixtures/dataprovider.ini"], ['multiple', '1']]],
 
+	['dataProvider.phptx', [['dataprovider', "0|$path../../Framework/fixtures/dataprovider.ini"]]],
 	['dataProvider.phptx', [['dataprovider', "1|$path../../Framework/fixtures/dataprovider.ini"]]],
-	['dataProvider.phptx', [['dataprovider', "bar|$path../../Framework/fixtures/dataprovider.ini"]]],
+	['dataProvider.phptx', [['dataprovider', "bar 1|$path../../Framework/fixtures/dataprovider.ini"]]],
+	['dataProvider.phptx', [['dataprovider', "bar 2|$path../../Framework/fixtures/dataprovider.ini"]]],
 	['dataProvider.phptx', [['dataprovider', "foo|$path../../Framework/fixtures/dataprovider.ini"]]],
 
 	['dataProvider.query.phptx', [['dataprovider', "foo 2.2.3|$path../../Framework/fixtures/dataprovider.query.ini"]]],
