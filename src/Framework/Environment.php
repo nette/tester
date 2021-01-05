@@ -213,17 +213,26 @@ class Environment
 	public static function loadData(): array
 	{
 		if (isset($_SERVER['argv']) && ($tmp = preg_filter('#--dataprovider=(.*)#Ai', '$1', $_SERVER['argv']))) {
-			[$query, $file] = explode('|', reset($tmp), 2);
-
-		} else {
-			$annotations = self::getTestAnnotations();
-			if (!isset($annotations['dataprovider'])) {
-				throw new \Exception('Missing annotation @dataProvider.');
+			[$key, $file] = explode('|', reset($tmp), 2);
+			$data = DataProvider::load($file);
+			if (!array_key_exists($key, $data)) {
+				throw new \Exception("Missing dataset '$key' from data provider '$file'.");
 			}
-			$provider = (array) $annotations['dataprovider'];
-			[$file, $query] = DataProvider::parseAnnotation($provider[0], $annotations['file']);
+			return $data[$key];
 		}
+
+		$annotations = self::getTestAnnotations();
+		if (!isset($annotations['dataprovider'])) {
+			throw new \Exception('Missing annotation @dataProvider.');
+		}
+		$provider = (array) $annotations['dataprovider'];
+		[$file, $query] = DataProvider::parseAnnotation($provider[0], $annotations['file']);
+
 		$data = DataProvider::load($file, $query);
+		if (!$data) {
+			throw new \Exception("No datasets from data provider '$file'" . ($query ? " for query '$query'" : '') . '.');
+		}
+
 		return reset($data);
 	}
 
