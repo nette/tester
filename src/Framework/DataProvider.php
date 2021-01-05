@@ -44,14 +44,11 @@ class DataProvider
 		}
 
 		foreach ($data as $key => $value) {
-			if (!is_int($key) && !self::testQuery($key, $query)) {
+			if (!self::testQuery((string) $key, $query)) {
 				unset($data[$key]);
 			}
 		}
 
-		if (!$data) {
-			throw new \Exception("No records in data-provider file '$file'" . ($query ? " for query '$query'" : '') . '.');
-		}
 		return $data;
 	}
 
