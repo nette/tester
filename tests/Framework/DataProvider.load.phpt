@@ -31,3 +31,9 @@ test(function () {
 	Assert::same($expect, DataProvider::load('fixtures/dataprovider.query.ini', ' = bar'));
 	Assert::same($expect, DataProvider::load('fixtures/dataprovider.query.php', ' = bar'));
 });
+
+
+test(function () {
+	Assert::same([], DataProvider::load('fixtures/dataprovider.query.ini', 'non-existent'));
+	Assert::same([], DataProvider::load('fixtures/dataprovider.query.php', 'non-existent'));
+});
