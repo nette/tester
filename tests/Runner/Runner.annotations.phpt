@@ -49,7 +49,7 @@ $cli = PHP_SAPI === 'cli';
 $path = __DIR__ . DIRECTORY_SEPARATOR . 'annotations' . DIRECTORY_SEPARATOR;
 
 Assert::same([
-	['dataProvider.error.phptx', Test::FAILED, "Missing data-provider file '{$path}missing.ini'."],
+	['dataProvider.error.phptx', Test::FAILED, "Missing data provider file '{$path}missing.ini'."],
 	['exitCode.die.phptx', Test::PASSED, null],
 	['exitCode.error1.phptx', Test::FAILED, 'Exited with error code 231 (expected 1)'],
 	['exitCode.error2.phptx', Test::FAILED, 'Exited with error code 231 (expected 0)'],
