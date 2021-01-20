@@ -46,11 +46,20 @@ class TestCase
 				$this->sendMethodList($methods);
 				return;
 			}
-			$this->runTest($method);
+
+			try {
+				$this->runTest($method);
+			} catch (TestCaseSkippedException $e) {
+				Environment::skip($e->getMessage());
+			}
 
 		} else {
 			foreach ($methods as $method) {
-				$this->runTest($method);
+				try {
+					$this->runTest($method);
+				} catch (TestCaseSkippedException $e) {
+					echo "\nSkipped:\n{$e->getMessage()}\n";
+				}
 			}
 		}
 	}
@@ -213,6 +222,15 @@ class TestCase
 	}
 
 
+	/**
+	 * Skips the test.
+	 */
+	protected function skip(string $message = ''): void
+	{
+		throw new TestCaseSkippedException($message);
+	}
+
+
 	private function sendMethodList(array $methods): void
 	{
 		Environment::$checkAssertions = false;
@@ -241,5 +259,10 @@ class TestCase
 
 
 class TestCaseException extends \Exception
+{
+}
+
+
+class TestCaseSkippedException extends \Exception
 {
 }

@@ -1,0 +1,20 @@
+<?php
+
+/**
+ * @testcase
+ */
+
+use Tester\TestCase;
+
+require __DIR__ . '/../../bootstrap.php';
+
+
+class MyTest extends TestCase
+{
+	public function testSkipped()
+	{
+		$this->skip('foo');
+	}
+}
+
+(new MyTest)->run();

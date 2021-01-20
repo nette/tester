@@ -86,4 +86,11 @@ Assert::match(
 Assert::same(Test::FAILED, $logger->results['testcase-syntax-error.phptx'][0]);
 
 
-Assert::same(5, count($logger->results));
+Assert::match(
+	'foo',
+	trim($logger->results['testcase-skip.phptx'][1])
+);
+Assert::same(Test::SKIPPED, $logger->results['testcase-skip.phptx'][0]);
+
+
+Assert::same(6, count($logger->results));
