@@ -82,7 +82,7 @@ class TestCase
 			throw new TestCaseException("Method {$method->getName()} is not public. Make it public or rename it.");
 		}
 
-		$info = Helpers::parseDocComment((string) $method->getDocComment()) + ['dataprovider' => null, 'throws' => null];
+		$info = Helpers::parseDocComment((string) $method->getDocComment()) + ['throws' => null];
 
 		if ($info['throws'] === '') {
 			throw new TestCaseException("Missing class name in @throws annotation for {$method->getName()}().");
@@ -92,38 +92,9 @@ class TestCase
 			$throws = is_string($info['throws']) ? preg_split('#\s+#', $info['throws'], 2) : [];
 		}
 
-		$data = [];
-		if ($args === null) {
-			$defaultParams = [];
-			foreach ($method->getParameters() as $param) {
-				$defaultParams[$param->getName()] = $param->isDefaultValueAvailable()
-					? $param->getDefaultValue()
-					: null;
-			}
-
-			foreach ((array) $info['dataprovider'] as $i => $provider) {
-				$res = $this->getData($provider);
-				if (!is_array($res) && !$res instanceof \Traversable) {
-					throw new TestCaseException("Data provider $provider() doesn't return array or Traversable.");
-				}
-
-				foreach ($res as $k => $set) {
-					$data["$i-$k"] = is_string(key($set))
-						? array_merge($defaultParams, $set)
-						: $set;
-				}
-			}
-
-			if (!$info['dataprovider']) {
-				if ($method->getNumberOfRequiredParameters()) {
-					throw new TestCaseException("Method {$method->getName()}() has arguments, but @dataProvider is missing.");
-				}
-				$data[] = [];
-			}
-		} else {
-			$data[] = $args;
-		}
-
+		$data = $args === null
+			? $this->prepareTestData($method, (array) ($info['dataprovider'] ?? []))
+			: [$args];
 
 		if ($this->prevErrorHandler === false) {
 			$this->prevErrorHandler = set_error_handler(function (int $severity): ?bool {
@@ -254,6 +225,39 @@ class TestCase
 			}
 		}
 		echo 'Dependency:' . implode("\nDependency:", array_keys($dependentFiles)) . "\n";
+	}
+
+
+	private function prepareTestData(\ReflectionMethod $method, array $dataprovider): array
+	{
+		$data = $defaultParams = [];
+
+		foreach ($method->getParameters() as $param) {
+			$defaultParams[$param->getName()] = $param->isDefaultValueAvailable()
+				? $param->getDefaultValue()
+				: null;
+		}
+
+		foreach ($dataprovider as $i => $provider) {
+			$res = $this->getData($provider);
+			if (!is_array($res) && !$res instanceof \Traversable) {
+				throw new TestCaseException("Data provider $provider() doesn't return array or Traversable.");
+			}
+
+			foreach ($res as $k => $set) {
+				$data["$i-$k"] = is_string(key($set))
+					? array_merge($defaultParams, $set)
+					: $set;
+			}
+		}
+
+		if (!$dataprovider) {
+			if ($method->getNumberOfRequiredParameters()) {
+				throw new TestCaseException("Method {$method->getName()}() has arguments, but @dataProvider is missing.");
+			}
+			$data[] = [];
+		}
+		return $data;
 	}
 }
 
