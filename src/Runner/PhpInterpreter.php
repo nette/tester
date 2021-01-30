@@ -55,7 +55,7 @@ class PhpInterpreter
 		$this->commandLine .= rtrim($args);
 
 		$proc = proc_open(
-			$this->commandLine . ' ' . Helpers::escapeArg(__DIR__ . '/info.php') . ' serialized',
+			$this->commandLine . ' -d register_argc_argv=on ' . Helpers::escapeArg(__DIR__ . '/info.php') . ' serialized',
 			[['pipe', 'r'], ['pipe', 'w'], ['pipe', 'w']],
 			$pipes,
 			null,
