@@ -260,7 +260,7 @@ XX
 			echo 'Generating code coverage report... ';
 		}
 		if (filesize($file) === 0) {
-			echo 'failed. Coverage file is empty. Do you call Tester\Environment::setup() in tests?';
+			echo 'failed. Coverage file is empty. Do you call Tester\Environment::setup() in tests?' . "\n";
 			return;
 		}
 		$generator = pathinfo($file, PATHINFO_EXTENSION) === 'xml'
