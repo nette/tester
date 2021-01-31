@@ -8,14 +8,6 @@ init:
     - SET ANSICON=121x90 (121x90)
 
 install:
-    # Install PHP 7.1
-    - IF EXIST c:\php\71 (SET PHP=0) ELSE (SET PHP=1)
-    - IF %PHP%==1 mkdir c:\php\71
-    - IF %PHP%==1 cd c:\php\71
-    - IF %PHP%==1 curl https://windows.php.net/downloads/releases/archives/php-7.1.6-Win32-VC14-x64.zip --output php.zip
-    - IF %PHP%==1 7z x php.zip >nul
-    - IF %PHP%==1 del /Q *.zip
-
     # Install PHP 7.2
     - IF EXIST c:\php\72 (SET PHP=0) ELSE (SET PHP=1)
     - IF %PHP%==1 mkdir c:\php\72
@@ -27,10 +19,6 @@ install:
     - cd c:\projects\tester
 
 test_script:
-    - c:\php\71\php src\tester tests -s -p c:\php\71\php
-    - c:\php\71\php src\tester tests -s -p c:\php\71\php-cgi
-    - c:\php\71\php src\tester tests -s -p c:\php\71\phpdbg
-
     - c:\php\72\php src\tester tests -s -p c:\php\72\php
     - c:\php\72\php src\tester tests -s -p c:\php\72\php-cgi
     - c:\php\72\php src\tester tests -s -p c:\php\72\phpdbg
