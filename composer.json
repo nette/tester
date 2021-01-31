@@ -30,6 +30,6 @@
 		"tester": "tester tests -s"
 	},
 	"extra": {
-		"branch-alias": { "dev-master": "2.3-dev" }
+		"branch-alias": { "dev-master": "2.4-dev" }
 	}
 }
