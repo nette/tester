@@ -17,7 +17,15 @@ the [Nette Framework](https://nette.org) and is capable of testing any PHP code.
 Documentation is available on the [Nette Tester website](https://tester.nette.org).
 Read the [blog](https://blog.nette.org/category/tester/) for new information.
 
-If you like Nette, **[please make a donation now](https://nette.org/donate)**. Thank you!
+
+[Support Tester](https://github.com/sponsors/dg)
+--------------------------------------------
+
+Do you like Nette Tester? Are you looking forward to the new features?
+
+[![Buy me a coffee](https://files.nette.org/icons/donation-3.svg)](https://github.com/sponsors/dg)
+
+Thank you!
 
 
 Installation
