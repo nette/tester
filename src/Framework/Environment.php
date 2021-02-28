@@ -30,6 +30,9 @@ class Environment
 	/** Thread number when run tests in multi threads */
 	public const THREAD = 'NETTE_TESTER_THREAD';
 
+	/** Should Tester update snapshots? */
+	public const UPDATE_SNAPSHOTS = 'NETTE_TESTER_UPDATE_SNAPSHOTS';
+
 	/** @var bool */
 	public static $checkAssertions = false;
 
@@ -126,6 +129,11 @@ class Environment
 						self::removeOutputBuffers();
 						echo "\n", Dumper::color('white/red', "Fatal error: $error[message] in $error[file] on line $error[line]"), "\n";
 					}
+				} elseif (getenv(self::UPDATE_SNAPSHOTS) && Snapshot::$updatedSnapshots) {
+					self::removeOutputBuffers();
+					echo "\nThe following snapshots were updated, please make sure they are correct:\n"
+						. implode("\n", Snapshot::$updatedSnapshots) . "\n";
+					exit(Runner\Job::CODE_FAIL);
 				} elseif (self::$checkAssertions && !Assert::$counter) {
 					self::removeOutputBuffers();
 					echo "\n", Dumper::color('white/red', 'Error: This test forgets to execute an assertion.'), "\n";
