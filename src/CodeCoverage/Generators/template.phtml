@@ -216,12 +216,12 @@
 
 <?php
 
-function assignArrayByPath(&$arr, $info, $value, $separator = '/') {
-	$keys = explode($separator, $info->name);
+function assignArrayByPath(&$arr, $info, $value) {
+	$keys = explode(DIRECTORY_SEPARATOR, $info->name);
 
 	$currentFile = '';
 	foreach ($keys as $key) {
-		$currentFile = $currentFile . ($currentFile !== '' ? '/' : '') . $key;
+		$currentFile = $currentFile . ($currentFile !== '' ? DIRECTORY_SEPARATOR : '') . $key;
 		$arr = &$arr['files'][$key];
 
 		if (!isset($arr['name'])) {
