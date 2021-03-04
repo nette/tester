@@ -13,13 +13,11 @@ return function (Symfony\Component\DependencyInjection\Loader\Configurator\Conta
 
 	$parameters = $containerConfigurator->parameters();
 
-	$parameters->set('exclude_paths', [
+	$parameters->set('skip', [
 		'fixtures*/*',
 		'tests/Runner/*/*',
 		'vendor/*',
-	]);
 
-	$parameters->set('skip', [
 		PHP_CodeSniffer\Standards\PSR1\Sniffs\Methods\CamelCapsMethodNameSniff::class => [
 			'src/Framework/FileMock.php',
 			'src/Framework/FileMutator.php',
