@@ -239,7 +239,10 @@ class TestCase
 		}
 
 		foreach ($dataprovider as $i => $provider) {
-			$res = (array) $this->getData($provider);
+			$res = $this->getData($provider);
+			if (!is_array($res) && !$res instanceof \Traversable) {
+				throw new TestCaseException("Data provider $provider() doesn't return array or Traversable.");
+			}
 			foreach ($res as $k => $set) {
 				if (!is_array($set) && !$set instanceof \Traversable) {
 					throw new TestCaseException("Data provider $provider() doesn't return array or Traversable.");
