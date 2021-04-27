@@ -50,6 +50,13 @@ $runner->outputHandlers[] = $logger = new Logger;
 $runner->run();
 
 Assert::match(
+	"No records in data provider file '%a%dataprovider-empty.phptx' for query 'non-existent'.",
+	$logger->results['dataprovider-empty.phptx'][1]
+);
+Assert::same(Test::FAILED, $logger->results['dataprovider-empty.phptx'][0]);
+
+
+Assert::match(
 	"Class MyTest in file '%a%testcase-no-methods.phptx' does not contain test methods.",
 	$logger->results['testcase-no-methods.phptx'][1]
 );
@@ -93,4 +100,4 @@ Assert::match(
 Assert::same(Test::SKIPPED, $logger->results['testcase-skip.phptx'][0]);
 
 
-Assert::same(6, count($logger->results));
+Assert::same(7, count($logger->results));

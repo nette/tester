@@ -1,0 +1,5 @@
+<?php
+
+/**
+ * @dataProvider  ../../Framework/fixtures/dataprovider.query.ini, non-existent
+ */

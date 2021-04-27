@@ -146,6 +146,10 @@ class TestHandler
 		try {
 			[$dataFile, $query, $optional] = Tester\DataProvider::parseAnnotation($provider, $test->getFile());
 			$data = Tester\DataProvider::load($dataFile, $query);
+			if (count($data) < 1) {
+				throw new \Exception("No records in data provider file '{$test->getFile()}'" . ($query ? " for query '$query'" : '') . '.');
+			}
+
 		} catch (\Exception $e) {
 			return $test->withResult(empty($optional) ? Test::FAILED : Test::SKIPPED, $e->getMessage());
 		}
