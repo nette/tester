@@ -243,8 +243,10 @@ class TestCase
 			if (!is_array($res) && !$res instanceof \Traversable) {
 				throw new TestCaseException("Data provider $provider() doesn't return array or Traversable.");
 			}
-
 			foreach ($res as $k => $set) {
+				if (!is_array($set) && !$set instanceof \Traversable) {
+					throw new TestCaseException("Data provider $provider() doesn't return array or Traversable.");
+				}
 				$data["$i-$k"] = is_string(key($set))
 					? array_merge($defaultParams, $set)
 					: $set;
