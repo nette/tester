@@ -40,6 +40,9 @@ class Assert
 		'%(\[.+\][+*?{},\d]*)%' => '$1', // range
 	];
 
+	/** @var bool expand patterns in match() and matchFile() */
+	public static $expandPatterns = true;
+
 	/** @var callable  function (AssertException $exception): void */
 	public static $onFailure;
 
@@ -459,7 +462,9 @@ class Assert
 			self::fail(self::describe('%1 should match %2', $description), $actual, $pattern);
 
 		} elseif (!self::isMatching($pattern, $actual)) {
-			[$pattern, $actual] = self::expandMatchingPatterns($pattern, $actual);
+			if (self::$expandPatterns) {
+				[$pattern, $actual] = self::expandMatchingPatterns($pattern, $actual);
+			}
 			self::fail(self::describe('%1 should match %2', $description), $actual, $pattern);
 		}
 	}
@@ -479,7 +484,9 @@ class Assert
 			self::fail(self::describe('%1 should match %2', $description), $actual, $pattern);
 
 		} elseif (!self::isMatching($pattern, $actual)) {
-			[$pattern, $actual] = self::expandMatchingPatterns($pattern, $actual);
+			if (self::$expandPatterns) {
+				[$pattern, $actual] = self::expandMatchingPatterns($pattern, $actual);
+			}
 			self::fail(self::describe('%1 should match %2', $description), $actual, $pattern);
 		}
 	}
