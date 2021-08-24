@@ -24,6 +24,8 @@ require __DIR__ . '/../../src/Runner/Output/TapPrinter.php';
 
 
 $runner = new Runner(createInterpreter());
+$runner->setEnvironmentVariable(Tester\Environment::RUNNER, '1');
+$runner->setEnvironmentVariable(Tester\Environment::COLORS, '0');
 $runner->paths[] = __DIR__ . '/cases/*.phptx';
 $runner->outputHandlers[] = new Output\ConsolePrinter($runner, false, $console = FileMock::create(''));
 $runner->outputHandlers[] = new Output\ConsolePrinter($runner, true, $consoleWithSkipped = FileMock::create(''));
@@ -35,6 +37,6 @@ $runner->run();
 
 Assert::matchFile(__DIR__ . '/OutputHandlers.expect.console.txt', Dumper::removeColors(file_get_contents($console)));
 Assert::matchFile(__DIR__ . '/OutputHandlers.expect.consoleWithSkip.txt', Dumper::removeColors(file_get_contents($consoleWithSkipped)));
-Assert::matchFile(__DIR__ . '/OutputHandlers.expect.jUnit.xml', Dumper::removeColors(file_get_contents($jUnit)));
-Assert::matchFile(__DIR__ . '/OutputHandlers.expect.logger.txt', Dumper::removeColors(file_get_contents($logger)));
-Assert::matchFile(__DIR__ . '/OutputHandlers.expect.tap.txt', Dumper::removeColors(file_get_contents($tap)));
+Assert::matchFile(__DIR__ . '/OutputHandlers.expect.jUnit.xml', file_get_contents($jUnit));
+Assert::matchFile(__DIR__ . '/OutputHandlers.expect.logger.txt', file_get_contents($logger));
+Assert::matchFile(__DIR__ . '/OutputHandlers.expect.tap.txt', file_get_contents($tap));
