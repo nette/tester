@@ -245,6 +245,11 @@ class TestCase
 			}
 
 			foreach ($res as $k => $set) {
+				if (!is_array($set)) {
+					$type = is_object($set) ? get_class($set) : gettype($set);
+					throw new TestCaseException("Data provider $provider() item '$k' must be an array, $type given.");
+				}
+
 				$data["$i-$k"] = is_string(key($set))
 					? array_merge($defaultParams, $set)
 					: $set;
