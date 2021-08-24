@@ -61,7 +61,7 @@ class JUnitPrinter implements Tester\Runner\OutputHandler
 
 		switch ($test->getResult()) {
 			case Test::FAILED:
-				$this->buffer .= ">\n\t\t\t<failure message=\"" . htmlspecialchars($test->message) . "\"/>\n\t\t</testcase>\n";
+				$this->buffer .= ">\n\t\t\t<failure message=\"" . htmlspecialchars($test->message, ENT_COMPAT | ENT_HTML5) . "\"/>\n\t\t</testcase>\n";
 				break;
 			case Test::SKIPPED:
 				$this->buffer .= ">\n\t\t\t<skipped/>\n\t\t</testcase>\n";
