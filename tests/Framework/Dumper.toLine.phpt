@@ -21,10 +21,11 @@ Assert::match('NAN', Dumper::toLine(NAN));
 Assert::match("''", Dumper::toLine(''));
 Assert::match("' '", Dumper::toLine(' '));
 Assert::match("'0'", Dumper::toLine('0'));
-Assert::match('"\\x00"', Dumper::toLine("\x00"));
-Assert::match("'	'", Dumper::toLine("\t"));
-Assert::match('"\\xff"', Dumper::toLine("\xFF"));
-Assert::match("'multi\nline'", Dumper::toLine("multi\nline"));
+Assert::match("'\e[22m\\x00\e[1m'", Dumper::toLine("\x00"));
+Assert::match("'\e[22m\\u{FEFF}\e[1m'", Dumper::toLine("\xEF\xBB\xBF")); // BOM
+Assert::match("'\e[22m\\t\t\e[1m'", Dumper::toLine("\t"));
+Assert::match("'\e[22m\\xFF\e[1m'", Dumper::toLine("\xFF"));
+Assert::match("'multi\e[22m\\n\n\e[1mline'", Dumper::toLine("multi\nline"));
 Assert::match("'Iñtërnâtiônàlizætiøn'", Dumper::toLine("I\xc3\xb1t\xc3\xabrn\xc3\xa2ti\xc3\xb4n\xc3\xa0liz\xc3\xa6ti\xc3\xb8n"));
 Assert::match('resource(stream)', Dumper::toLine(fopen(__FILE__, 'r')));
 Assert::match('stdClass(#%a%)', Dumper::toLine((object) [1, 2]));
