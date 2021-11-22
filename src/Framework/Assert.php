@@ -481,13 +481,13 @@ class Assert
 			throw new \Exception("Unable to read file '$file'.");
 
 		} elseif (!is_scalar($actual)) {
-			self::fail(self::describe('%1 should match %2', $description), $actual, $pattern);
+			self::fail(self::describe('%1 should match %2', $description), $actual, $pattern, null, basename($file));
 
 		} elseif (!self::isMatching($pattern, $actual)) {
 			if (self::$expandPatterns) {
 				[$pattern, $actual] = self::expandMatchingPatterns($pattern, $actual);
 			}
-			self::fail(self::describe('%1 should match %2', $description), $actual, $pattern);
+			self::fail(self::describe('%1 should match %2', $description), $actual, $pattern, null, basename($file));
 		}
 	}
 
@@ -495,9 +495,15 @@ class Assert
 	/**
 	 * Assertion that fails.
 	 */
-	public static function fail(string $message, $actual = null, $expected = null, \Throwable $previous = null): void
-	{
+	public static function fail(
+		string $message,
+		$actual = null,
+		$expected = null,
+		\Throwable $previous = null,
+		string $outputName = null
+	): void {
 		$e = new AssertException($message, $expected, $actual, $previous);
+		$e->outputName = $outputName;
 		if (self::$onFailure) {
 			(self::$onFailure)($e);
 		} else {

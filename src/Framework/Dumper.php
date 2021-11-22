@@ -305,6 +305,9 @@ class Dumper
 		if ($e instanceof AssertException) {
 			$expected = $e->expected;
 			$actual = $e->actual;
+			$testFile = $e->outputName
+				? dirname($testFile) . '/' . $e->outputName . '.foo'
+				: $testFile;
 
 			if (is_object($expected) || is_array($expected) || (is_string($expected) && strlen($expected) > self::$maxLength)
 				|| is_object($actual) || is_array($actual) || (is_string($actual) && (strlen($actual) > self::$maxLength || preg_match('#[\x00-\x1F]#', $actual)))
