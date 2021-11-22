@@ -21,6 +21,8 @@ class AssertException extends \Exception
 
 	public $expected;
 
+	public $outputName;
+
 
 	public function __construct(string $message, $expected, $actual, \Throwable $previous = null)
 	{
