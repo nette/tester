@@ -66,6 +66,8 @@ class CliTester
 		$runner->setEnvironmentVariable(Environment::RUNNER, '1');
 		$runner->setEnvironmentVariable(Environment::COLORS, (string) (int) Environment::$useColors);
 
+		$this->installInterruptHandler();
+
 		if ($this->options['--coverage']) {
 			$coverageFile = $this->prepareCodeCoverage($runner);
 		}
@@ -360,7 +362,9 @@ XX
 		});
 
 		set_exception_handler(function (\Throwable $e) {
-			$this->displayException($e);
+			if (!$e instanceof InterruptException) {
+				$this->displayException($e);
+			}
 			exit(2);
 		});
 	}
@@ -373,5 +377,22 @@ XX
 			? Dumper::dumpException($e)
 			: Dumper::color('white/red', 'Error: ' . $e->getMessage());
 		echo "\n";
+	}
+
+
+	private function installInterruptHandler(): void
+	{
+		if (function_exists('pcntl_signal')) {
+			pcntl_signal(SIGINT, function (): void {
+				pcntl_signal(SIGINT, SIG_DFL);
+				throw new InterruptException;
+			});
+			pcntl_async_signals(true);
+
+		} elseif (function_exists('sapi_windows_set_ctrl_handler') && PHP_SAPI === 'cli') {
+			sapi_windows_set_ctrl_handler(function (): void {
+				throw new InterruptException;
+			});
+		}
 	}
 }

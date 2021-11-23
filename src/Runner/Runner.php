@@ -125,36 +125,37 @@ class Runner
 
 		$threads = range(1, $this->threadCount);
 
-		$this->installInterruptHandler();
 		$async = $this->threadCount > 1 && count($this->jobs) > 1;
 
-		while (($this->jobs || $running) && !$this->isInterrupted()) {
-			while ($threads && $this->jobs) {
-				$running[] = $job = array_shift($this->jobs);
-				$job->setEnvironmentVariable(Environment::THREAD, (string) array_shift($threads));
-				$job->run($async ? $job::RUN_ASYNC : 0);
-			}
-
-			if ($async) {
-				usleep(Job::RUN_USLEEP); // stream_select() doesn't work with proc_open()
-			}
-
-			foreach ($running as $key => $job) {
-				if ($this->isInterrupted()) {
-					break 2;
+		try {
+			while (($this->jobs || $running) && !$this->interrupted) {
+				while ($threads && $this->jobs) {
+					$running[] = $job = array_shift($this->jobs);
+					$job->setEnvironmentVariable(Environment::THREAD, (string) array_shift($threads));
+					$job->run($async ? $job::RUN_ASYNC : 0);
 				}
 
-				if (!$job->isRunning()) {
-					$threads[] = $job->getEnvironmentVariable(Environment::THREAD);
-					$this->testHandler->assess($job);
-					unset($running[$key]);
+				if ($async) {
+					usleep(Job::RUN_USLEEP); // stream_select() doesn't work with proc_open()
+				}
+
+				foreach ($running as $key => $job) {
+					if ($this->interrupted) {
+						break 2;
+					}
+
+					if (!$job->isRunning()) {
+						$threads[] = $job->getEnvironmentVariable(Environment::THREAD);
+						$this->testHandler->assess($job);
+						unset($running[$key]);
+					}
 				}
 			}
-		}
-		$this->removeInterruptHandler();
 
-		foreach ($this->outputHandlers as $handler) {
-			$handler->end();
+		} finally {
+			foreach ($this->outputHandlers as $handler) {
+				$handler->end();
+			}
 		}
 
 		return $this->result;
@@ -232,41 +233,6 @@ class Runner
 	public function getInterpreter(): PhpInterpreter
 	{
 		return $this->interpreter;
-	}
-
-
-	private function installInterruptHandler(): void
-	{
-		if (function_exists('pcntl_signal')) {
-			pcntl_signal(SIGINT, function (): void {
-				pcntl_signal(SIGINT, SIG_DFL);
-				$this->interrupted = true;
-			});
-		} elseif (function_exists('sapi_windows_set_ctrl_handler') && PHP_SAPI === 'cli') {
-			sapi_windows_set_ctrl_handler(function () {
-				$this->interrupted = true;
-			});
-		}
-	}
-
-
-	private function removeInterruptHandler(): void
-	{
-		if (function_exists('pcntl_signal')) {
-			pcntl_signal(SIGINT, SIG_DFL);
-		} elseif (function_exists('sapi_windows_set_ctrl_handler') && PHP_SAPI === 'cli') {
-			sapi_windows_set_ctrl_handler(null);
-		}
-	}
-
-
-	private function isInterrupted(): bool
-	{
-		if (function_exists('pcntl_signal_dispatch')) {
-			pcntl_signal_dispatch();
-		}
-
-		return $this->interrupted;
 	}
 
 
