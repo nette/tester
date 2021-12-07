@@ -49,6 +49,23 @@ class Assert
 	/** @var int  the count of assertions */
 	public static $counter = 0;
 
+	/**
+	 * Asserts that a value is string and valid JSON.
+	 * @param  mixed  $actual
+	 */
+	public static function json($actual, string $description = null): void
+	{
+		self::$counter++;
+
+		if (!is_string($actual)) {
+			self::fail(self::describe('%1 should be string', $description), $actual);
+		}
+			
+		json_decode($actual);
+		if (json_last_error() != JSON_ERROR_NONE) {
+			self::fail(self::describe('%1 should be valid JSON', $description), $actual);
+		}
+	}
 
 	/**
 	 * Asserts that two values are equal and have the same type and identity of objects.
