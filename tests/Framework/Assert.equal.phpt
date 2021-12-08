@@ -46,7 +46,7 @@ $equals = [
 	[$obj3, $obj4],
 	[[0 => 'a', 'str' => 'b'], ['str' => 'b', 0 => 'a']],
 	[$deep1, $deep2],
-	[\Tester\Expect::type('int'), 1],
+	[Tester\Expect::type('int'), 1],
 ];
 
 $notEquals = [
@@ -54,7 +54,7 @@ $notEquals = [
 	[INF, -INF],
 	[['a', 'b'], ['b', 'a']],
 	[NAN, NAN],
-	[\Tester\Expect::type('int'), '1', 'string should be int'],
+	[Tester\Expect::type('int'), '1', 'string should be int'],
 ];
 
 

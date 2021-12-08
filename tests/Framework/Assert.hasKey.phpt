@@ -12,7 +12,7 @@ $array = [
 	'one' => 'one',
 ];
 
-$string= 'Lorem ipsum';
+$string = 'Lorem ipsum';
 
 Assert::hasKey(1, $array);
 Assert::hasKey('1', $array);

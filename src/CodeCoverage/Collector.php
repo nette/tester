@@ -8,6 +8,7 @@
 declare(strict_types=1);
 
 namespace Tester\CodeCoverage;
+use pcov;
 
 
 /**
@@ -108,7 +109,7 @@ class Collector
 
 	private static function startPCOV(): void
 	{
-		\pcov\start();
+		pcov\start();
 	}
 
 
@@ -119,9 +120,9 @@ class Collector
 	{
 		$positive = $negative = [];
 
-		\pcov\stop();
+		pcov\stop();
 
-		foreach (\pcov\collect() as $file => $lines) {
+		foreach (pcov\collect() as $file => $lines) {
 			if (!file_exists($file)) {
 				continue;
 			}

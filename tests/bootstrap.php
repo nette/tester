@@ -12,7 +12,7 @@ require __DIR__ . '/../src/Runner/PhpInterpreter.php';
 date_default_timezone_set('Europe/Prague');
 
 
-function test(\Closure $function): void
+function test(Closure $function): void
 {
 	$function();
 }

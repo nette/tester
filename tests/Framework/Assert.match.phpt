@@ -93,7 +93,7 @@ foreach ($notMatches as [$expected, $actual, $expected2, $actual2]) {
 
 	$ex = Assert::exception(function () use ($expected, $actual) {
 		Assert::match($expected, $actual);
-	}, Tester\AssertException::class, Dumper::toLine($actual3) . " should match " . Dumper::toLine($expected3));
+	}, Tester\AssertException::class, Dumper::toLine($actual3) . ' should match ' . Dumper::toLine($expected3));
 
 	Assert::same($expected2, $ex->expected);
 	Assert::same($actual2, $ex->actual);
