@@ -406,7 +406,7 @@ class Dumper
 	 */
 	public static function color(string $color = '', string $s = null): string
 	{
-		static $colors = [
+		$colors = [
 			'black' => '0;30', 'gray' => '1;30', 'silver' => '0;37', 'white' => '1;37',
 			'navy' => '0;34', 'blue' => '1;34', 'green' => '0;32', 'lime' => '1;32',
 			'teal' => '0;36', 'aqua' => '1;36', 'maroon' => '0;31', 'red' => '1;31',

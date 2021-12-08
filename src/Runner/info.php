@@ -28,7 +28,7 @@ $info = (object) [
 
 if (isset($_SERVER['argv'][1])) {
 	echo serialize($info);
-	die();
+	die;
 }
 
 foreach ([

@@ -25,7 +25,7 @@ class MyTest extends Tester\TestCase
 	public function dataProviderIterator()
 	{
 		$this->order[] = __METHOD__;
-		return new \ArrayIterator([
+		return new ArrayIterator([
 			[1, 2],
 			[3, 4],
 		]);

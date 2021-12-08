@@ -20,13 +20,13 @@ Assert::exception(function () {
 
 Assert::exception(function () {
 	Assert::noError(function () {
-		throw new \Exception('Unexpected');
+		throw new Exception('Unexpected');
 	});
 }, Exception::class, 'Unexpected');
 
 
 Assert::exception(function () {
 	Assert::noError(function () {
-		throw new \Exception('Unexpected');
+		throw new Exception('Unexpected');
 	}, InvalidArgumentException::class);
 }, Exception::class, 'Tester\Assert::noError() expects 1 parameter, 2 given.');

@@ -55,7 +55,7 @@ class DataProvider
 
 	public static function testQuery(string $input, string $query): bool
 	{
-		static $replaces = ['' => '=', '=>' => '>=', '=<' => '<='];
+		$replaces = ['' => '=', '=>' => '>=', '=<' => '<='];
 		$tokens = preg_split('#\s+#', $input);
 		preg_match_all('#\s*,?\s*(<=|=<|<|==|=|!=|<>|>=|=>|>)?\s*([^\s,]+)#A', $query, $queryParts, PREG_SET_ORDER);
 		foreach ($queryParts as [, $operator, $operand]) {

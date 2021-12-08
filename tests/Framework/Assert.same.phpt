@@ -21,7 +21,7 @@ $notSame = [
 	[['a', 'b'], [1 => 'b', 0 => 'a']],
 	[new stdClass, new stdClass],
 	[[new stdClass], [new stdClass]],
-	[\Tester\Expect::type('int'), 1],
+	[Tester\Expect::type('int'), 1],
 ];
 
 foreach ($same as [$expected, $value]) {

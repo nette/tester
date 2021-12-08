@@ -34,7 +34,7 @@ Assert::exception(function () {
 }, Tester\AssertException::class, '\'lorem ipsum\' should be array or countable object');
 
 Assert::exception(function () {
-	Assert::count(1, new \Exception('lorem ipsum'));
+	Assert::count(1, new Exception('lorem ipsum'));
 }, Tester\AssertException::class, 'Exception Exception: lorem ipsum should be array or countable object');
 
 Assert::exception(function () {
