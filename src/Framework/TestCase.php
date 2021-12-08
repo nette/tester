@@ -127,7 +127,7 @@ class TestCase
 					} else {
 						[$this, $method->getName()](...$params);
 					}
-				} catch (\Exception $e) {
+				} catch (\Throwable $e) {
 					$this->handleErrors = false;
 					$this->silentTearDown();
 					throw $e;
@@ -187,7 +187,7 @@ class TestCase
 		set_error_handler(function () {});
 		try {
 			$this->tearDown();
-		} catch (\Exception $e) {
+		} catch (\Throwable $e) {
 		}
 		restore_error_handler();
 	}

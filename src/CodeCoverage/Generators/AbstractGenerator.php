@@ -82,7 +82,7 @@ abstract class AbstractGenerator
 		ob_start(function (string $buffer) use ($handle) { fwrite($handle, $buffer); }, 4096);
 		try {
 			$this->renderSelf();
-		} catch (\Exception $e) {
+		} catch (\Throwable $e) {
 		}
 		ob_end_flush();
 		fclose($handle);
