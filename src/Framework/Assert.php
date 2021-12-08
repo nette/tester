@@ -413,7 +413,7 @@ class Assert
 		try {
 			$function();
 			restore_error_handler();
-		} catch (\Exception $e) {
+		} catch (\Throwable $e) {
 			restore_error_handler();
 			throw $e;
 		}
