@@ -73,6 +73,7 @@ class Expect
 			$this->constraints[] = (object) ['method' => lcfirst($m[1]), 'args' => $args];
 			return $this;
 		}
+
 		throw new \Error('Call to undefined method ' . self::class . '::' . $method . '()');
 	}
 
@@ -119,6 +120,7 @@ class Expect
 				$res[] = is_string($cstr) ? $cstr : 'user-expectation';
 			}
 		}
+
 		return implode(',', $res);
 	}
 }

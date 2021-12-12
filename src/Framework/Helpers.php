@@ -23,9 +23,11 @@ class Helpers
 		if (preg_match('#^(\w:)?[/\\\\]?$#', $dir)) {
 			throw new \InvalidArgumentException('Directory must not be an empty string or root path.');
 		}
+
 		if (!is_dir($dir)) {
 			mkdir($dir);
 		}
+
 		foreach (new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($dir, \RecursiveDirectoryIterator::SKIP_DOTS), \RecursiveIteratorIterator::CHILD_FIRST) as $entry) {
 			if ($entry->isDir()) {
 				rmdir((string) $entry);
@@ -50,6 +52,7 @@ class Helpers
 			} elseif ($real === false) {
 				throw new \RuntimeException("File or directory '$s' does not exist.");
 			}
+
 			return explode(DIRECTORY_SEPARATOR, $real);
 		}, $paths);
 
@@ -61,6 +64,7 @@ class Helpers
 				}
 			}
 		}
+
 		$common = implode(DIRECTORY_SEPARATOR, array_slice($first, 0, $i));
 		return is_dir($common) ? $common : dirname($common);
 	}
@@ -76,9 +80,11 @@ class Helpers
 		if (!preg_match('#^/\*\*(.*?)\*/#ms', $s, $content)) {
 			return [];
 		}
+
 		if (preg_match('#^[ \t\*]*+([^\s@].*)#mi', $content[1], $matches)) {
 			$options[0] = trim($matches[1]);
 		}
+
 		preg_match_all('#^[ \t\*]*@(\w+)([^\w\r\n].*)?#mi', $content[1], $matches, PREG_SET_ORDER);
 		foreach ($matches as $match) {
 			$ref = &$options[strtolower($match[1])];
@@ -86,8 +92,10 @@ class Helpers
 				$ref = (array) $ref;
 				$ref = &$ref[];
 			}
+
 			$ref = isset($match[2]) ? trim($match[2]) : '';
 		}
+
 		return $options;
 	}
 
@@ -103,6 +111,7 @@ class Helpers
 				return $name;
 			}
 		}
+
 		return 'Unknown error';
 	}
 

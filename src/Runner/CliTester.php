@@ -75,6 +75,7 @@ class CliTester
 		if ($this->stdoutFormat !== null) {
 			ob_clean();
 		}
+
 		ob_end_flush();
 
 		if ($this->options['--watch']) {
@@ -149,6 +150,7 @@ XX
 				} elseif ($file === null) {
 					$this->stdoutFormat = $format;
 				}
+
 				$outputFiles[$file] = true;
 
 				return [$format, $file];
@@ -262,6 +264,7 @@ XX
 				require func_get_arg(0);
 			})($this->options['--setup']);
 		}
+
 		return $runner;
 	}
 
@@ -299,10 +302,12 @@ XX
 		if (!in_array($this->stdoutFormat, ['none', 'tap', 'junit'], true)) {
 			echo 'Generating code coverage report... ';
 		}
+
 		if (filesize($file) === 0) {
 			echo 'failed. Coverage file is empty. Do you call Tester\Environment::setup() in tests?' . "\n";
 			return;
 		}
+
 		$generator = pathinfo($file, PATHINFO_EXTENSION) === 'xml'
 			? new CodeCoverage\Generators\CloverXMLGenerator($file, $this->options['--coverage-src'])
 			: new CodeCoverage\Generators\HtmlGenerator($file, $this->options['--coverage-src']);
@@ -324,6 +329,7 @@ XX
 					}
 				}
 			}
+
 			if ($state !== $prev) {
 				$prev = $state;
 				try {
@@ -331,6 +337,7 @@ XX
 				} catch (\ErrorException $e) {
 					$this->displayException($e);
 				}
+
 				echo "\n";
 				$time = time();
 			}
@@ -343,6 +350,7 @@ XX
 			} else {
 				$idle .= ' sec';
 			}
+
 			echo 'Watching ' . implode(', ', $this->options['--watch']) . " (idle for $idle) " . str_repeat('.', ++$counter % 5) . "    \r";
 			sleep(2);
 		}
@@ -358,6 +366,7 @@ XX
 			if (($severity & error_reporting()) === $severity) {
 				throw new \ErrorException($message, 0, $severity, $file, $line);
 			}
+
 			return false;
 		});
 
@@ -365,6 +374,7 @@ XX
 			if (!$e instanceof InterruptException) {
 				$this->displayException($e);
 			}
+
 			exit(2);
 		});
 	}

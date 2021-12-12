@@ -151,6 +151,7 @@ class Job
 		if (!is_resource($this->stdout)) {
 			return false;
 		}
+
 		$this->test->stdout .= stream_get_contents($this->stdout);
 		if ($this->stderr) {
 			$this->test->stderr .= stream_get_contents($this->stderr);
@@ -160,12 +161,14 @@ class Job
 		if ($status['running']) {
 			return true;
 		}
+
 		$this->duration += microtime(true);
 
 		fclose($this->stdout);
 		if ($this->stderr) {
 			fclose($this->stderr);
 		}
+
 		$code = proc_close($this->proc);
 		$this->exitCode = $code === self::CODE_NONE
 			? $status['exitcode']
@@ -180,6 +183,7 @@ class Job
 				}
 			}
 		}
+
 		return false;
 	}
 

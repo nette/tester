@@ -99,6 +99,7 @@ class PhpParser
 							'methods' => [],
 						];
 					}
+
 					break;
 
 				case T_PUBLIC:
@@ -128,8 +129,10 @@ class PhpParser
 								'end' => null,
 							];
 						}
+
 						$functionLevel = $level + 1;
 					}
+
 					unset($visibility, $isAbstract);
 					break;
 
@@ -148,6 +151,7 @@ class PhpParser
 						$class->end = $line;
 						unset($class);
 					}
+
 					$level--;
 					break;
 
@@ -177,8 +181,10 @@ class PhpParser
 			} elseif (!in_array($token, [T_DOC_COMMENT, T_WHITESPACE, T_COMMENT], true)) {
 				break;
 			}
+
 			next($tokens);
 		}
+
 		return $res;
 	}
 }

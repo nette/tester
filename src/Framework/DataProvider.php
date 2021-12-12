@@ -35,7 +35,6 @@ class DataProvider
 			} elseif (!is_array($data)) {
 				throw new \Exception("Data provider '$file' did not return array or Traversable.");
 			}
-
 		} else {
 			$data = @parse_ini_file($file, true); // @ is escalated to exception
 			if ($data === false) {
@@ -68,6 +67,7 @@ class DataProvider
 				return false;
 			}
 		}
+
 		return true;
 	}
 
@@ -93,6 +93,7 @@ class DataProvider
 			case '<>':
 				return $l != $r;
 		}
+
 		throw new \InvalidArgumentException("Unknown operator $operator.");
 	}
 
@@ -105,6 +106,7 @@ class DataProvider
 		if (!preg_match('#^(\??)\s*([^,\s]+)\s*,?\s*(\S.*)?()#', $annotation, $m)) {
 			throw new \Exception("Invalid @dataProvider value '$annotation'.");
 		}
+
 		return [dirname($file) . DIRECTORY_SEPARATOR . $m[2], $m[3], (bool) $m[1]];
 	}
 }

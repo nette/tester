@@ -96,6 +96,7 @@ class ConsolePrinter implements Tester\Runner\OutputHandler
 				if ($i !== $prev++) {
 					break;
 				}
+
 				$this->baseDir .= $part . DIRECTORY_SEPARATOR;
 			}
 		}

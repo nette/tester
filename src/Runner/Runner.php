@@ -151,7 +151,6 @@ class Runner
 					}
 				}
 			}
-
 		} finally {
 			foreach ($this->outputHandlers as $handler) {
 				$handler->end();
@@ -173,6 +172,7 @@ class Runner
 				if (in_array(basename($dir), $this->ignoreDirs, true)) {
 					continue;
 				}
+
 				$this->findTests($dir);
 			}
 

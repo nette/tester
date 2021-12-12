@@ -41,6 +41,7 @@ class DomQuery extends \SimpleXMLElement
 				trigger_error(__METHOD__ . ": $error->message on line $error->line.", E_USER_WARNING);
 			}
 		}
+
 		return simplexml_import_dom($dom, self::class);
 	}
 
@@ -107,6 +108,7 @@ class DomQuery extends \SimpleXMLElement
 					$xpath .= "[$attr]";
 					continue;
 				}
+
 				$val = trim($m[5], '"\'');
 				if ($m[4] === '') {
 					$xpath .= "[$attr='$val']";
@@ -131,6 +133,7 @@ class DomQuery extends \SimpleXMLElement
 				$xpath .= '//*';
 			}
 		}
+
 		return $xpath;
 	}
 }

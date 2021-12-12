@@ -84,6 +84,7 @@ abstract class AbstractGenerator
 			$this->renderSelf();
 		} catch (\Throwable $e) {
 		}
+
 		ob_end_flush();
 		fclose($handle);
 
@@ -91,6 +92,7 @@ abstract class AbstractGenerator
 			if ($file) {
 				unlink($file);
 			}
+
 			throw $e;
 		}
 	}

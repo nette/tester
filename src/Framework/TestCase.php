@@ -52,7 +52,6 @@ class TestCase
 			} catch (TestCaseSkippedException $e) {
 				Environment::skip($e->getMessage());
 			}
-
 		} else {
 			foreach ($methods as $method) {
 				try {
@@ -109,7 +108,6 @@ class TestCase
 			});
 		}
 
-
 		foreach ($data as $k => $params) {
 			try {
 				$this->setUp();
@@ -132,6 +130,7 @@ class TestCase
 					$this->silentTearDown();
 					throw $e;
 				}
+
 				$this->handleErrors = false;
 
 				$this->tearDown();
@@ -189,6 +188,7 @@ class TestCase
 			$this->tearDown();
 		} catch (\Throwable $e) {
 		}
+
 		restore_error_handler();
 	}
 
@@ -224,6 +224,7 @@ class TestCase
 				$reflections[] = $rt;
 			}
 		}
+
 		echo 'Dependency:' . implode("\nDependency:", array_keys($dependentFiles)) . "\n";
 	}
 
@@ -260,8 +261,10 @@ class TestCase
 			if ($method->getNumberOfRequiredParameters()) {
 				throw new TestCaseException("Method {$method->getName()}() has arguments, but @dataProvider is missing.");
 			}
+
 			$data[] = [];
 		}
+
 		return $data;
 	}
 }

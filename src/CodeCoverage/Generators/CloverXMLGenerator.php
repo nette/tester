@@ -38,6 +38,7 @@ class CloverXMLGenerator extends AbstractGenerator
 		if (!extension_loaded('dom') || !extension_loaded('tokenizer')) {
 			throw new \LogicException('CloverXML generator requires DOM and Tokenizer extensions to be loaded.');
 		}
+
 		parent::__construct($file, $sources);
 	}
 
@@ -121,6 +122,7 @@ class CloverXMLGenerator extends AbstractGenerator
 				self::setMetricAttributes($elClassMetrics, $classMetrics);
 				self::appendMetrics($fileMetrics, $classMetrics);
 			}
+
 			self::setMetricAttributes($elFileMetrics, $fileMetrics);
 
 
