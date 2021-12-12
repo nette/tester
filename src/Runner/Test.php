@@ -46,7 +46,7 @@ class Test
 	private $args = [];
 
 
-	public function __construct(string $file, string $title = null)
+	public function __construct(string $file, ?string $title = null)
 	{
 		$this->file = $file;
 		$this->title = $title;
@@ -124,7 +124,7 @@ class Test
 	/**
 	 * @return static
 	 */
-	public function withResult(int $result, ?string $message, float $duration = null): self
+	public function withResult(int $result, ?string $message, ?float $duration = null): self
 	{
 		if ($this->hasResult()) {
 			throw new \LogicException("Result of test is already set to $this->result with message '$this->message'.");

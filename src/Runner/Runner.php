@@ -76,7 +76,7 @@ class Runner
 	}
 
 
-	public function addPhpIniOption(string $name, string $value = null): void
+	public function addPhpIniOption(string $name, ?string $value = null): void
 	{
 		$this->interpreter = $this->interpreter->withPhpIniOption($name, $value);
 	}

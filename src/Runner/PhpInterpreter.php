@@ -89,7 +89,7 @@ class PhpInterpreter
 	/**
 	 * @return static
 	 */
-	public function withPhpIniOption(string $name, string $value = null): self
+	public function withPhpIniOption(string $name, ?string $value = null): self
 	{
 		$me = clone $this;
 		$me->commandLine .= ' -d ' . Helpers::escapeArg($name . ($value === null ? '' : "=$value"));

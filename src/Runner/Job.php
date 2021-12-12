@@ -59,7 +59,7 @@ class Job
 	private $duration;
 
 
-	public function __construct(Test $test, PhpInterpreter $interpreter, array $envVars = null)
+	public function __construct(Test $test, PhpInterpreter $interpreter, ?array $envVars = null)
 	{
 		if ($test->getResult() !== Test::PREPARED) {
 			throw new \LogicException("Test '{$test->getSignature()}' already has result '{$test->getResult()}'.");

@@ -24,7 +24,7 @@ class AssertException extends \Exception
 	public $outputName;
 
 
-	public function __construct(string $message, $expected, $actual, \Throwable $previous = null)
+	public function __construct(string $message, $expected, $actual, ?\Throwable $previous = null)
 	{
 		parent::__construct('', 0, $previous);
 		$this->expected = $expected;

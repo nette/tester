@@ -151,7 +151,7 @@ class CloverXMLGenerator extends AbstractGenerator
 	}
 
 
-	private function calculateClassMetrics(\stdClass $info, array $coverageData = null): \stdClass
+	private function calculateClassMetrics(\stdClass $info, ?array $coverageData = null): \stdClass
 	{
 		$stats = (object) [
 			'methodCount' => count($info->methods),
@@ -182,7 +182,7 @@ class CloverXMLGenerator extends AbstractGenerator
 	}
 
 
-	private static function analyzeMethod(\stdClass $info, array $coverageData = null): array
+	private static function analyzeMethod(\stdClass $info, ?array $coverageData = null): array
 	{
 		$count = 0;
 		$coveredCount = 0;

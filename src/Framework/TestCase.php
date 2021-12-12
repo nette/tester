@@ -68,7 +68,7 @@ class TestCase
 	 * Runs the test method.
 	 * @param  array  $args  test method parameters (dataprovider bypass)
 	 */
-	public function runTest(string $method, array $args = null): void
+	public function runTest(string $method, ?array $args = null): void
 	{
 		if (!method_exists($this, $method)) {
 			throw new TestCaseException("Method '$method' does not exist.");
