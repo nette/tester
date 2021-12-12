@@ -34,7 +34,7 @@ class HtmlGenerator extends AbstractGenerator
 	 * @param  string  $file  path to coverage.dat file
 	 * @param  array   $sources  files/directories
 	 */
-	public function __construct(string $file, array $sources = [], string $title = null)
+	public function __construct(string $file, array $sources = [], ?string $title = null)
 	{
 		parent::__construct($file, $sources);
 		$this->title = $title;

@@ -53,7 +53,7 @@ class Assert
 	/**
 	 * Asserts that two values are equal and have the same type and identity of objects.
 	 */
-	public static function same($expected, $actual, string $description = null): void
+	public static function same($expected, $actual, ?string $description = null): void
 	{
 		self::$counter++;
 		if ($actual !== $expected) {
@@ -65,7 +65,7 @@ class Assert
 	/**
 	 * Asserts that two values are not equal or do not have the same type and identity of objects.
 	 */
-	public static function notSame($expected, $actual, string $description = null): void
+	public static function notSame($expected, $actual, ?string $description = null): void
 	{
 		self::$counter++;
 		if ($actual === $expected) {
@@ -78,7 +78,7 @@ class Assert
 	 * Asserts that two values are equal and checks expectations. The identity of objects,
 	 * the order of keys in the arrays and marginally different floats are ignored.
 	 */
-	public static function equal($expected, $actual, string $description = null): void
+	public static function equal($expected, $actual, ?string $description = null): void
 	{
 		self::$counter++;
 		if (!self::isEqual($expected, $actual)) {
@@ -91,7 +91,7 @@ class Assert
 	 * Asserts that two values are not equal and checks expectations. The identity of objects,
 	 * the order of keys in the arrays and marginally different floats are ignored.
 	 */
-	public static function notEqual($expected, $actual, string $description = null): void
+	public static function notEqual($expected, $actual, ?string $description = null): void
 	{
 		self::$counter++;
 		try {
@@ -110,7 +110,7 @@ class Assert
 	 * @param  mixed  $needle
 	 * @param  array|string  $actual
 	 */
-	public static function contains($needle, $actual, string $description = null): void
+	public static function contains($needle, $actual, ?string $description = null): void
 	{
 		self::$counter++;
 		if (is_array($actual)) {
@@ -135,7 +135,7 @@ class Assert
 	 * @param  mixed  $needle
 	 * @param  array|string  $actual
 	 */
-	public static function notContains($needle, $actual, string $description = null): void
+	public static function notContains($needle, $actual, ?string $description = null): void
 	{
 		self::$counter++;
 		if (is_array($actual)) {
@@ -159,7 +159,7 @@ class Assert
 	 * Asserts that a haystack has an expected key.
 	 * @param  string|int  $key
 	 */
-	public static function hasKey($key, array $actual, string $description = null): void
+	public static function hasKey($key, array $actual, ?string $description = null): void
 	{
 		self::$counter++;
 		if (!is_int($key) && !is_string($key)) {
@@ -175,7 +175,7 @@ class Assert
 	 * Asserts that a haystack doesn't have an expected key.
 	 * @param  string|int  $key
 	 */
-	public static function hasNotKey($key, array $actual, string $description = null): void
+	public static function hasNotKey($key, array $actual, ?string $description = null): void
 	{
 		self::$counter++;
 		if (!is_int($key) && !is_string($key)) {
@@ -191,7 +191,7 @@ class Assert
 	 * Asserts that a value is true.
 	 * @param  mixed  $actual
 	 */
-	public static function true($actual, string $description = null): void
+	public static function true($actual, ?string $description = null): void
 	{
 		self::$counter++;
 		if ($actual !== true) {
@@ -204,7 +204,7 @@ class Assert
 	 * Asserts that a value is false.
 	 * @param  mixed  $actual
 	 */
-	public static function false($actual, string $description = null): void
+	public static function false($actual, ?string $description = null): void
 	{
 		self::$counter++;
 		if ($actual !== false) {
@@ -217,7 +217,7 @@ class Assert
 	 * Asserts that a value is null.
 	 * @param  mixed  $actual
 	 */
-	public static function null($actual, string $description = null): void
+	public static function null($actual, ?string $description = null): void
 	{
 		self::$counter++;
 		if ($actual !== null) {
@@ -230,7 +230,7 @@ class Assert
 	 * Asserts that a value is not null.
 	 * @param  mixed  $actual
 	 */
-	public static function notNull($actual, string $description = null): void
+	public static function notNull($actual, ?string $description = null): void
 	{
 		self::$counter++;
 		if ($actual === null) {
@@ -243,7 +243,7 @@ class Assert
 	 * Asserts that a value is Not a Number.
 	 * @param  mixed  $actual
 	 */
-	public static function nan($actual, string $description = null): void
+	public static function nan($actual, ?string $description = null): void
 	{
 		self::$counter++;
 		if (!is_float($actual) || !is_nan($actual)) {
@@ -256,7 +256,7 @@ class Assert
 	 * Asserts that a value is truthy.
 	 * @param  mixed  $actual
 	 */
-	public static function truthy($actual, string $description = null): void
+	public static function truthy($actual, ?string $description = null): void
 	{
 		self::$counter++;
 		if (!$actual) {
@@ -269,7 +269,7 @@ class Assert
 	 * Asserts that a value is falsey.
 	 * @param  mixed  $actual
 	 */
-	public static function falsey($actual, string $description = null): void
+	public static function falsey($actual, ?string $description = null): void
 	{
 		self::$counter++;
 		if ($actual) {
@@ -282,7 +282,7 @@ class Assert
 	 * Asserts the number of items in an array or Countable.
 	 * @param  array|\Countable  $value
 	 */
-	public static function count(int $count, $value, string $description = null): void
+	public static function count(int $count, $value, ?string $description = null): void
 	{
 		self::$counter++;
 		if (!$value instanceof \Countable && !is_array($value)) {
@@ -299,7 +299,7 @@ class Assert
 	 * @param  string|object  $type
 	 * @param  mixed  $value
 	 */
-	public static function type($type, $value, string $description = null): void
+	public static function type($type, $value, ?string $description = null): void
 	{
 		self::$counter++;
 		if (!is_object($type) && !is_string($type)) {
@@ -329,7 +329,7 @@ class Assert
 	public static function exception(
 		callable $function,
 		string $class,
-		string $message = null,
+		?string $message = null,
 		$code = null
 	): ?\Throwable {
 		self::$counter++;
@@ -359,7 +359,7 @@ class Assert
 	/**
 	 * Asserts that a function throws exception of given type and its message matches given pattern. Alias for exception().
 	 */
-	public static function throws(callable $function, string $class, string $message = null, $code = null): ?\Throwable
+	public static function throws(callable $function, string $class, ?string $message = null, $code = null): ?\Throwable
 	{
 		return self::exception($function, $class, $message, $code);
 	}
@@ -372,7 +372,7 @@ class Assert
 	 * @throws \Exception
 	 * @throws \Exception
 	 */
-	public static function error(callable $function, $expectedType, string $expectedMessage = null): ?\Throwable
+	public static function error(callable $function, $expectedType, ?string $expectedMessage = null): ?\Throwable
 	{
 		if (is_string($expectedType) && !preg_match('#^E_[A-Z_]+$#D', $expectedType)) {
 			return static::exception($function, $expectedType, $expectedMessage);
@@ -458,7 +458,7 @@ class Assert
 	 *   %h%    one or more HEX digits
 	 * @param  string  $pattern  mask|regexp; only delimiters ~ and # are supported for regexp
 	 */
-	public static function match(string $pattern, $actual, string $description = null): void
+	public static function match(string $pattern, $actual, ?string $description = null): void
 	{
 		self::$counter++;
 		if (!is_scalar($actual)) {
@@ -477,7 +477,7 @@ class Assert
 	/**
 	 * Asserts that a string matches a given pattern stored in file.
 	 */
-	public static function matchFile(string $file, $actual, string $description = null): void
+	public static function matchFile(string $file, $actual, ?string $description = null): void
 	{
 		self::$counter++;
 		$pattern = @file_get_contents($file); // @ is escalated to exception
@@ -504,8 +504,8 @@ class Assert
 		string $message,
 		$actual = null,
 		$expected = null,
-		\Throwable $previous = null,
-		string $outputName = null
+		?\Throwable $previous = null,
+		?string $outputName = null
 	): void {
 		$e = new AssertException($message, $expected, $actual, $previous);
 		$e->outputName = $outputName;
@@ -517,7 +517,7 @@ class Assert
 	}
 
 
-	private static function describe(string $reason, string $description = null): string
+	private static function describe(string $reason, ?string $description = null): string
 	{
 		return ($description ? $description . ': ' : '') . $reason;
 	}

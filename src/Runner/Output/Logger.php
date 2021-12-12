@@ -32,7 +32,7 @@ class Logger implements Tester\Runner\OutputHandler
 	private $results;
 
 
-	public function __construct(Runner $runner, string $file = null)
+	public function __construct(Runner $runner, ?string $file = null)
 	{
 		$this->runner = $runner;
 		$this->file = fopen($file ?: 'php://output', 'w');

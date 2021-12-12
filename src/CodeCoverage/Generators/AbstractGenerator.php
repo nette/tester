@@ -72,7 +72,7 @@ abstract class AbstractGenerator
 	}
 
 
-	public function render(string $file = null): void
+	public function render(?string $file = null): void
 	{
 		$handle = $file ? @fopen($file, 'w') : STDOUT; // @ is escalated to exception
 		if (!$handle) {

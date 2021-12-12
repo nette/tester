@@ -42,7 +42,7 @@ class FileMock
 	/**
 	 * @return string  file name
 	 */
-	public static function create(string $content = '', string $extension = null): string
+	public static function create(string $content = '', ?string $extension = null): string
 	{
 		self::register();
 
