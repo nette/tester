@@ -21,12 +21,15 @@ if (defined('PHPDBG_VERSION')) {
 	Assert::contains([Tester\CodeCoverage\Collector::ENGINE_PHPDBG, PHPDBG_VERSION], $engines);
 	$count++;
 }
+
 if (extension_loaded('xdebug')) {
 	Assert::contains([Tester\CodeCoverage\Collector::ENGINE_XDEBUG, phpversion('xdebug')], $engines);
 	$count++;
 }
+
 if (extension_loaded('pcov')) {
 	Assert::contains([Tester\CodeCoverage\Collector::ENGINE_PCOV, phpversion('pcov')], $engines);
 	$count++;
 }
+
 Assert::count($count, $engines);

@@ -51,6 +51,7 @@ class Dumper
 			} elseif (strlen($var) > self::$maxLength) {
 				$var = substr($var, 0, self::$maxLength) . '...';
 			}
+
 			return self::encodeStringLine($var);
 
 		} elseif (is_array($var)) {
@@ -62,10 +63,12 @@ class Dumper
 					$out .= '...';
 					break;
 				}
+
 				$out .= ($k === $counter ? '' : self::toLine($k) . ' => ')
 					. (is_array($v) && $v ? '[...]' : self::toLine($v));
 				$counter = is_int($k) ? max($k + 1, $counter) : $counter;
 			}
+
 			return "[$out]";
 
 		} elseif ($var instanceof \Throwable) {
@@ -145,6 +148,7 @@ class Dumper
 			if ($marker === null) {
 				$marker = uniqid("\x00", true);
 			}
+
 			if (empty($var)) {
 				$out = '';
 
@@ -167,12 +171,14 @@ class Dumper
 						$line++;
 					}
 				}
+
 				unset($var[$marker]);
 				if (strpos($outShort, "\n") === false && strlen($outShort) < self::$maxLength) {
 					$line = $oldLine;
 					$out = $outShort;
 				}
 			}
+
 			return '[' . $out . ']';
 
 		} elseif ($var instanceof \Closure) {
@@ -183,6 +189,7 @@ class Dumper
 			if (($rc = new \ReflectionObject($var))->isAnonymous()) {
 				return "/* Anonymous class defined in file {$rc->getFileName()} on line {$rc->getStartLine()} */";
 			}
+
 			$arr = (array) $var;
 			$space = str_repeat("\t", $level);
 			$class = get_class($var);
@@ -205,11 +212,14 @@ class Dumper
 					if (isset($k[0]) && $k[0] === "\x00") {
 						$k = substr($k, strrpos($k, "\x00") + 1);
 					}
+
 					$out .= "$space\t" . self::_toPhp($k, $list, $level + 1, $line) . ' => ' . self::_toPhp($v, $list, $level + 1, $line) . ",\n";
 					$line++;
 				}
+
 				$out .= $space;
 			}
+
 			$hash = self::hash($var);
 			return $class === 'stdClass'
 				? "(object) /* $hash */ [$out]"
@@ -340,6 +350,7 @@ class Dumper
 					? "$m[1]$m[2]\n" . str_repeat(' ', $delta - 3) . "...$m[3]$m[4]"
 					: "$m[1]$m[2]$m[3]\n" . str_repeat(' ', strlen($m[1]) - 4) . "... $m[4]";
 			}
+
 			$message = strtr($message, [
 				'%1' => self::color('yellow') . self::toLine($actual) . self::color('white'),
 				'%2' => self::color('yellow') . self::toLine($expected) . self::color('white'),
@@ -357,6 +368,7 @@ class Dumper
 			if ($e instanceof AssertException && $item['file'] === __DIR__ . DIRECTORY_SEPARATOR . 'Assert.php') {
 				continue;
 			}
+
 			$line = $item['class'] === Assert::class && method_exists($item['class'], $item['function'])
 				&& strpos($tmp = file($item['file'])[$item['line'] - 1], "::$item[function](") ? $tmp : null;
 
@@ -382,6 +394,7 @@ class Dumper
 		if ($e->getPrevious()) {
 			$s .= "\n(previous) " . static::dumpException($e->getPrevious());
 		}
+
 		return $s;
 	}
 
@@ -395,6 +408,7 @@ class Dumper
 		if (!preg_match('#/|\w:#A', self::$dumpDir)) {
 			$path = dirname($testFile) . DIRECTORY_SEPARATOR . $path;
 		}
+
 		@mkdir(dirname($path)); // @ - directory may already exist
 		file_put_contents($path, is_string($content) ? $content : (self::toPhp($content) . "\n"));
 		return $path;

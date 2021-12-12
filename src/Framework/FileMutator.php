@@ -134,6 +134,7 @@ class FileMutator
 			case STREAM_META_ACCESS:
 				return $this->native('chmod', $path, $value);
 		}
+
 		return false;
 	}
 
@@ -149,6 +150,7 @@ class FileMutator
 				foreach (self::$mutators as $mutator) {
 					$content = $mutator($content);
 				}
+
 				$this->handle = tmpfile();
 				$this->native('fwrite', $this->handle, $content);
 				$this->native('fseek', $this->handle, 0);

@@ -71,6 +71,7 @@ class TestHandler
 						}
 					}
 				}
+
 				$tests = $prepared;
 			}
 		}
@@ -103,6 +104,7 @@ class TestHandler
 				}
 			}
 		}
+
 		$this->runner->finishTest($test->withResult(Test::PASSED, $test->message, $job->getDuration()));
 	}
 
@@ -119,6 +121,7 @@ class TestHandler
 			&& version_compare($matches[2], $interpreter->getVersion(), $matches[1] ?: '>=')) {
 			return $test->withResult(Test::SKIPPED, "Requires PHP $version.");
 		}
+
 		return null;
 	}
 
@@ -130,6 +133,7 @@ class TestHandler
 				return $test->withResult(Test::SKIPPED, "Requires PHP extension $extension.");
 			}
 		}
+
 		return null;
 	}
 
@@ -149,7 +153,6 @@ class TestHandler
 			if (count($data) < 1) {
 				throw new \Exception("No records in data provider file '{$test->getFile()}'" . ($query ? " for query '$query'" : '') . '.');
 			}
-
 		} catch (\Throwable $e) {
 			return $test->withResult(empty($optional) ? Test::FAILED : Test::SKIPPED, $e->getMessage());
 		}
@@ -184,6 +187,7 @@ class TestHandler
 						break;
 					}
 				}
+
 				if ($valid) {
 					$methods = $cache['methods'];
 				}
@@ -203,12 +207,14 @@ class TestHandler
 			if (!preg_match('#^TestCase:([^\n]+)$#m', $stdout, $m)) {
 				return $test->withResult(Test::FAILED, "Cannot list TestCase methods in file '{$test->getFile()}'. Do you call TestCase::run() in it?");
 			}
+
 			$testCaseClass = $m[1];
 
 			preg_match_all('#^Method:([^\n]+)$#m', $stdout, $m);
 			if (count($m[1]) < 1) {
 				return $test->withResult(Test::SKIPPED, "Class $testCaseClass in file '{$test->getFile()}' does not contain test methods.");
 			}
+
 			$methods = $m[1];
 
 			if ($this->tempDir) {
@@ -241,6 +247,7 @@ class TestHandler
 				: '';
 			return $job->getTest()->withResult(Test::FAILED, trim($message . "\n" . $job->getTest()->stdout));
 		}
+
 		return null;
 	}
 
@@ -250,6 +257,7 @@ class TestHandler
 		if (!$this->runner->getInterpreter()->isCgi()) {
 			return null;
 		}
+
 		$headers = $job->getHeaders();
 		$actual = (int) ($headers['Status'] ?? self::HTTP_OK);
 		$code = (int) $code;
@@ -265,6 +273,7 @@ class TestHandler
 		if (!is_file($file)) {
 			return $job->getTest()->withResult(Test::FAILED, "Missing matching file '$file'.");
 		}
+
 		return $this->assessOutputMatch($job, file_get_contents($file));
 	}
 
@@ -278,6 +287,7 @@ class TestHandler
 			Dumper::saveOutput($job->getTest()->getFile(), $content, '.expected');
 			return $job->getTest()->withResult(Test::FAILED, 'Failed: output should match ' . Dumper::toLine($content));
 		}
+
 		return null;
 	}
 

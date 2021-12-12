@@ -140,6 +140,7 @@ class FileMock
 		} elseif ($whence === SEEK_END) {
 			$offset += strlen($this->content);
 		}
+
 		if ($offset >= 0) {
 			$this->readingPos = $offset;
 			$this->writingPos = $this->appendMode ? $this->writingPos : $offset;
@@ -194,6 +195,7 @@ class FileMock
 			case STREAM_META_TOUCH:
 				return true;
 		}
+
 		return false;
 	}
 

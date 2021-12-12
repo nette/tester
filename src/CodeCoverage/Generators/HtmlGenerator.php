@@ -85,10 +85,12 @@ class HtmlGenerator extends AbstractGenerator
 					if ($flag >= self::CODE_UNTESTED) {
 						$total++;
 					}
+
 					if ($flag >= self::CODE_TESTED) {
 						$covered++;
 					}
 				}
+
 				$coverage = round($covered * 100 / $total);
 				$this->totalSum += $total;
 				$this->coveredSum += $covered;

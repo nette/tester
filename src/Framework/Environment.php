@@ -110,6 +110,7 @@ class Environment
 			) {
 				self::handleException(new \ErrorException($message, 0, $severity, $file, $line));
 			}
+
 			return false;
 		});
 
@@ -199,6 +200,7 @@ class Environment
 						: $token;
 				}
 			}
+
 			return $code;
 		});
 	}
@@ -215,6 +217,7 @@ class Environment
 			if (!array_key_exists($key, $data)) {
 				throw new \Exception("Missing dataset '$key' from data provider '$file'.");
 			}
+
 			return $data[$key];
 		}
 
@@ -222,6 +225,7 @@ class Environment
 		if (!isset($annotations['dataprovider'])) {
 			throw new \Exception('Missing annotation @dataProvider.');
 		}
+
 		$provider = (array) $annotations['dataprovider'];
 		[$file, $query] = DataProvider::parseAnnotation($provider[0], $annotations['file']);
 

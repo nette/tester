@@ -98,6 +98,7 @@ class Assert
 			$res = self::isEqual($expected, $actual);
 		} catch (AssertException $e) {
 		}
+
 		if (empty($e) && $res) {
 			self::fail(self::describe('%1 should not be equal to %2', $description), $actual, $expected);
 		}
@@ -308,14 +309,12 @@ class Assert
 			if (!is_array($value) || ($value && array_keys($value) !== range(0, count($value) - 1))) {
 				self::fail(self::describe("%1 should be $type", $description), $value);
 			}
-
 		} elseif (in_array($type, ['array', 'bool', 'callable', 'float',
 			'int', 'integer', 'null', 'object', 'resource', 'scalar', 'string', ], true)
 		) {
 			if (!("is_$type")($value)) {
 				self::fail(self::describe(gettype($value) . " should be $type", $description));
 			}
-
 		} elseif (!$value instanceof $type) {
 			$actual = is_object($value) ? get_class($value) : gettype($value);
 			$type = is_object($type) ? get_class($type) : $type;
@@ -339,6 +338,7 @@ class Assert
 			$function();
 		} catch (\Throwable $e) {
 		}
+
 		if ($e === null) {
 			self::fail("$class was expected, but none was thrown");
 
@@ -351,6 +351,7 @@ class Assert
 		} elseif ($code !== null && $e->getCode() !== $code) {
 			self::fail("$class with a code %2 was expected but got %1", $e->getCode(), $code);
 		}
+
 		return $e;
 	}
 
@@ -421,6 +422,7 @@ class Assert
 		if ($expected) {
 			self::fail('Error was expected, but was not generated');
 		}
+
 		return null;
 	}
 
@@ -433,6 +435,7 @@ class Assert
 		if (($count = func_num_args()) > 1) {
 			throw new \Exception(__METHOD__ . "() expects 1 parameter, $count given.");
 		}
+
 		self::error($function, []);
 	}
 
@@ -465,6 +468,7 @@ class Assert
 			if (self::$expandPatterns) {
 				[$pattern, $actual] = self::expandMatchingPatterns($pattern, $actual);
 			}
+
 			self::fail(self::describe('%1 should match %2', $description), $actual, $pattern);
 		}
 	}
@@ -487,6 +491,7 @@ class Assert
 			if (self::$expandPatterns) {
 				[$pattern, $actual] = self::expandMatchingPatterns($pattern, $actual);
 			}
+
 			self::fail(self::describe('%1 should match %2', $description), $actual, $pattern, null, basename($file));
 		}
 	}
@@ -566,6 +571,7 @@ class Assert
 		if ($res === false || preg_last_error()) {
 			throw new \Exception('Error while executing regular expression. (PREG Error Code ' . preg_last_error() . ')');
 		}
+
 		return (bool) $res;
 	}
 
@@ -655,6 +661,7 @@ class Assert
 				} elseif ($expected === $actual) {
 					return true;
 				}
+
 				$objects[$expected] = $actual;
 				$objects[$actual] = $expected;
 				$expected = (array) $expected;
@@ -672,8 +679,10 @@ class Assert
 					if (!self::isEqual($value, current($actual), $level + 1, $objects)) {
 						return false;
 					}
+
 					next($actual);
 				}
+
 				return true;
 
 			default:
