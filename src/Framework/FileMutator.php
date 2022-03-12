@@ -16,7 +16,7 @@ namespace Tester;
  */
 class FileMutator
 {
-	private const PROTOCOL = 'file';
+	private const Protocol = 'file';
 
 	/** @var resource|null */
 	public $context;
@@ -31,8 +31,8 @@ class FileMutator
 	public static function addMutator(callable $mutator): void
 	{
 		self::$mutators[] = $mutator;
-		stream_wrapper_unregister(self::PROTOCOL);
-		stream_wrapper_register(self::PROTOCOL, self::class);
+		stream_wrapper_unregister(self::Protocol);
+		stream_wrapper_register(self::Protocol, self::class);
 	}
 
 
@@ -224,12 +224,12 @@ class FileMutator
 
 	private function native(string $func)
 	{
-		stream_wrapper_restore(self::PROTOCOL);
+		stream_wrapper_restore(self::Protocol);
 		try {
 			return $func(...array_slice(func_get_args(), 1));
 		} finally {
-			stream_wrapper_unregister(self::PROTOCOL);
-			stream_wrapper_register(self::PROTOCOL, self::class);
+			stream_wrapper_unregister(self::Protocol);
+			stream_wrapper_register(self::Protocol, self::class);
 		}
 	}
 }

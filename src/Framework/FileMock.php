@@ -15,7 +15,7 @@ namespace Tester;
  */
 class FileMock
 {
-	private const PROTOCOL = 'mock';
+	private const Protocol = 'mock';
 
 	/** @var string[] */
 	public static $files = [];
@@ -47,7 +47,7 @@ class FileMock
 		self::register();
 
 		static $id;
-		$name = self::PROTOCOL . '://' . (++$id) . '.' . $extension;
+		$name = self::Protocol . '://' . (++$id) . '.' . $extension;
 		self::$files[$name] = $content;
 		return $name;
 	}
@@ -55,8 +55,8 @@ class FileMock
 
 	public static function register(): void
 	{
-		if (!in_array(self::PROTOCOL, stream_get_wrappers(), true)) {
-			stream_wrapper_register(self::PROTOCOL, self::class);
+		if (!in_array(self::Protocol, stream_get_wrappers(), true)) {
+			stream_wrapper_register(self::Protocol, self::class);
 		}
 	}
 

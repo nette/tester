@@ -17,7 +17,7 @@ use Tester\Helpers;
  */
 class HtmlGenerator extends AbstractGenerator
 {
-	private const CLASSES = [
+	private const Classes = [
 		self::CODE_TESTED => 't', // tested
 		self::CODE_UNTESTED => 'u', // untested
 		self::CODE_DEAD => 'dead', // dead code
@@ -47,7 +47,7 @@ class HtmlGenerator extends AbstractGenerator
 		$this->parse();
 
 		$title = $this->title;
-		$classes = self::CLASSES;
+		$classes = self::Classes;
 		$files = $this->files;
 		$coveredPercent = $this->getCoveredPercent();
 

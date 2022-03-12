@@ -130,15 +130,15 @@ Options:
 
 XX
 		, [
-			'-c' => [CommandLine::REALPATH => true],
-			'--watch' => [CommandLine::REPEATABLE => true, CommandLine::REALPATH => true],
-			'--setup' => [CommandLine::REALPATH => true],
-			'--temp' => [CommandLine::REALPATH => true],
-			'paths' => [CommandLine::REPEATABLE => true, CommandLine::VALUE => getcwd()],
+			'-c' => [CommandLine::Realpath => true],
+			'--watch' => [CommandLine::Repeatable => true, CommandLine::Realpath => true],
+			'--setup' => [CommandLine::Realpath => true],
+			'--temp' => [CommandLine::Realpath => true],
+			'paths' => [CommandLine::Repeatable => true, CommandLine::Value => getcwd()],
 			'--debug' => [],
 			'--cider' => [],
-			'--coverage-src' => [CommandLine::REALPATH => true, CommandLine::REPEATABLE => true],
-			'-o' => [CommandLine::REPEATABLE => true, CommandLine::NORMALIZER => function ($arg) use (&$outputFiles) {
+			'--coverage-src' => [CommandLine::Realpath => true, CommandLine::Repeatable => true],
+			'-o' => [CommandLine::Repeatable => true, CommandLine::Normalizer => function ($arg) use (&$outputFiles) {
 				[$format, $file] = explode(':', $arg, 2) + [1 => null];
 
 				if (isset($outputFiles[$file])) {

@@ -20,7 +20,7 @@ use Tester\TestCase;
  */
 class TestHandler
 {
-	private const HTTP_OK = 200;
+	private const HttpOk = 200;
 
 	/** @var Runner */
 	private $runner;
@@ -88,7 +88,7 @@ class TestHandler
 		$test = $job->getTest();
 		$annotations = $this->getAnnotations($test->getFile())[0] += [
 			'exitcode' => Job::CODE_OK,
-			'httpcode' => self::HTTP_OK,
+			'httpcode' => self::HttpOk,
 		];
 
 		foreach (get_class_methods($this) as $method) {
@@ -195,7 +195,7 @@ class TestHandler
 		}
 
 		if ($methods === null) {
-			$job = new Job($test->withArguments(['method' => TestCase::LIST_METHODS]), $interpreter, $this->runner->getEnvironmentVariables());
+			$job = new Job($test->withArguments(['method' => TestCase::ListMethods]), $interpreter, $this->runner->getEnvironmentVariables());
 			$job->run();
 
 			if (in_array($job->getExitCode(), [Job::CODE_ERROR, Job::CODE_FAIL, Job::CODE_SKIP], true)) {
@@ -259,7 +259,7 @@ class TestHandler
 		}
 
 		$headers = $job->getHeaders();
-		$actual = (int) ($headers['Status'] ?? self::HTTP_OK);
+		$actual = (int) ($headers['Status'] ?? self::HttpOk);
 		$code = (int) $code;
 		return $code && $code !== $actual
 			? $job->getTest()->withResult(Test::FAILED, "Exited with HTTP code $actual (expected $code)")

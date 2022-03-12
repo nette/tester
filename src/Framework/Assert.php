@@ -16,7 +16,7 @@ namespace Tester;
 class Assert
 {
 	/** used by equal() for comparing floats */
-	private const EPSILON = 1e-10;
+	private const Epsilon = 1e-10;
 
 	/** used by match(); in values, each $ followed by number is backreference */
 	public static $patterns = [
@@ -652,7 +652,7 @@ class Assert
 
 			case is_float($expected) && is_float($actual) && is_finite($expected) && is_finite($actual):
 				$diff = abs($expected - $actual);
-				return ($diff < self::EPSILON) || ($diff / max(abs($expected), abs($actual)) < self::EPSILON);
+				return ($diff < self::Epsilon) || ($diff / max(abs($expected), abs($actual)) < self::Epsilon);
 
 			case is_object($expected) && is_object($actual) && get_class($expected) === get_class($actual):
 				$objects = $objects ? clone $objects : new \SplObjectStorage;

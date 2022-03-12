@@ -17,8 +17,8 @@ class TestCase
 {
 	/** @internal */
 	public const
-		LIST_METHODS = 'nette-tester-list-methods',
-		METHOD_PATTERN = '#^test[A-Z0-9_]#';
+		ListMethods = 'nette-tester-list-methods',
+		MethodPattern = '#^test[A-Z0-9_]#';
 
 	/** @var bool */
 	private $handleErrors = false;
@@ -36,13 +36,13 @@ class TestCase
 			throw new \LogicException('Calling TestCase::run($method) is deprecated. Use TestCase::runTest($method) instead.');
 		}
 
-		$methods = array_values(preg_grep(self::METHOD_PATTERN, array_map(function (\ReflectionMethod $rm): string {
+		$methods = array_values(preg_grep(self::MethodPattern, array_map(function (\ReflectionMethod $rm): string {
 			return $rm->getName();
 		}, (new \ReflectionObject($this))->getMethods())));
 
 		if (isset($_SERVER['argv']) && ($tmp = preg_filter('#--method=([\w-]+)$#Ai', '$1', $_SERVER['argv']))) {
 			$method = reset($tmp);
-			if ($method === self::LIST_METHODS) {
+			if ($method === self::ListMethods) {
 				$this->sendMethodList($methods);
 				return;
 			}
@@ -72,7 +72,7 @@ class TestCase
 	{
 		if (!method_exists($this, $method)) {
 			throw new TestCaseException("Method '$method' does not exist.");
-		} elseif (!preg_match(self::METHOD_PATTERN, $method)) {
+		} elseif (!preg_match(self::MethodPattern, $method)) {
 			throw new TestCaseException("Method '$method' is not a testing method.");
 		}
 

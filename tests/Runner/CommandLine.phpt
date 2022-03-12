@@ -41,7 +41,7 @@ test(function () { // default value
 	$cmd = new Cmd('
 		-p
 	', [
-		'-p' => [Cmd::VALUE => 123],
+		'-p' => [Cmd::Value => 123],
 	]);
 
 	Assert::same(['-p' => 123], $cmd->parse([]));
@@ -116,7 +116,7 @@ test(function () { // optional argument
 	$cmd = new Cmd('
 		-p param
 	', [
-		'-p' => [Cmd::VALUE => 123],
+		'-p' => [Cmd::Value => 123],
 	]);
 
 	Assert::same(['-p' => 123], $cmd->parse([]));
@@ -127,7 +127,7 @@ test(function () { // optional argument
 	$cmd = new Cmd('
 		-p param
 	', [
-		'-p' => [Cmd::OPTIONAL => true],
+		'-p' => [Cmd::Optional => true],
 	]);
 
 	Assert::same(['-p' => null], $cmd->parse([]));
@@ -180,7 +180,7 @@ test(function () { // realpath
 	$cmd = new Cmd('
 		-p <path>
 	', [
-		'-p' => [Cmd::REALPATH => true],
+		'-p' => [Cmd::Realpath => true],
 	]);
 
 	Assert::exception(function () use ($cmd) {
@@ -194,7 +194,7 @@ test(function () { // normalizer
 	$cmd = new Cmd('
 		-p param
 	', [
-		'-p' => [Cmd::NORMALIZER => function ($arg) {
+		'-p' => [Cmd::Normalizer => function ($arg) {
 			return "$arg-normalized";
 		}],
 	]);
@@ -205,7 +205,7 @@ test(function () { // normalizer
 	$cmd = new Cmd('
 		-p <a|b>
 	', [
-		'-p' => [Cmd::NORMALIZER => function () {
+		'-p' => [Cmd::Normalizer => function () {
 			return 'a';
 		}],
 	]);
@@ -216,7 +216,7 @@ test(function () { // normalizer
 	$cmd = new Cmd('
 		-p <a|b>
 	', [
-		'-p' => [Cmd::NORMALIZER => function () {
+		'-p' => [Cmd::Normalizer => function () {
 			return ['a', 'foo'];
 		}],
 	]);
@@ -241,21 +241,21 @@ test(function () { // positional arguments
 	}, Exception::class, 'Unexpected parameter val2.');
 
 	$cmd = new Cmd('', [
-		'pos' => [Cmd::REPEATABLE => true],
+		'pos' => [Cmd::Repeatable => true],
 	]);
 
 	Assert::same(['pos' => ['val1', 'val2']], $cmd->parse(['val1', 'val2']));
 
 
 	$cmd = new Cmd('', [
-		'pos' => [Cmd::OPTIONAL => true],
+		'pos' => [Cmd::Optional => true],
 	]);
 
 	Assert::same(['pos' => null], $cmd->parse([]));
 
 
 	$cmd = new Cmd('', [
-		'pos' => [Cmd::VALUE => 'default', Cmd::REPEATABLE => true],
+		'pos' => [Cmd::Value => 'default', Cmd::Repeatable => true],
 	]);
 
 	Assert::same(['pos' => ['default']], $cmd->parse([]));
