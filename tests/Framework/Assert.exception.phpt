@@ -19,7 +19,7 @@ Assert::exception(function () {
 
 Assert::exception(function () {
 	eval('*');
-}, Error::class, 'syntax error%a%');
+}, Error::class, 'syntax error%a?%');
 
 Assert::exception(function () {
 	Assert::exception(function () {
