@@ -86,7 +86,7 @@ Now we run tests from command-line using the `tester` command:
 > tester
  _____ ___  ___ _____ ___  ___
 |_   _/ __)( __/_   _/ __)| _ )
-  |_| \___ /___) |_| \___ |_|_\  v2.4.1
+  |_| \___ /___) |_| \___ |_|_\  v2.4.2
 
 PHP 7.3.3 | php -n | 8 threads
 .
