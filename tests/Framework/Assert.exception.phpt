@@ -33,23 +33,23 @@ $e = Assert::exception(function () use (&$inner) {
 }, Tester\AssertException::class, 'UnknownException was expected but got Exception (message)');
 Assert::same($inner, $e->getPrevious());
 
-$e = Assert::exception(function () {
-	Assert::exception(function () {
-		throw new Exception('Text');
+$e = Assert::exception(function () use (&$inner) {
+	Assert::exception(function () use (&$inner) {
+		throw $inner = new Exception('Text');
 	}, Exception::class, 'Abc');
 }, Tester\AssertException::class, "Exception with a message matching 'Abc' was expected but got 'Text'");
-Assert::null($e->getPrevious());
+Assert::same($inner, $e->getPrevious());
 
 Assert::exception(function () {
 	throw new Exception('Text', 42);
 }, Exception::class, null, 42);
 
-$e = Assert::exception(function () {
-	Assert::exception(function () {
-		throw new Exception('Text', 1);
+$e = Assert::exception(function () use (&$inner) {
+	Assert::exception(function () use (&$inner) {
+		throw $inner = new Exception('Text', 1);
 	}, Exception::class, null, 42);
 }, Tester\AssertException::class, 'Exception with a code 42 was expected but got 1');
-Assert::null($e->getPrevious());
+Assert::same($inner, $e->getPrevious());
 
 $old = Assert::$onFailure;
 Assert::$onFailure = function () {};

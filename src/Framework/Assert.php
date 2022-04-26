@@ -346,10 +346,10 @@ class Assert
 			self::fail("$class was expected but got " . get_class($e) . ($e->getMessage() ? " ({$e->getMessage()})" : ''), null, null, $e);
 
 		} elseif ($message && !self::isMatching($message, $e->getMessage())) {
-			self::fail("$class with a message matching %2 was expected but got %1", $e->getMessage(), $message);
+			self::fail("$class with a message matching %2 was expected but got %1", $e->getMessage(), $message, $e);
 
 		} elseif ($code !== null && $e->getCode() !== $code) {
-			self::fail("$class with a code %2 was expected but got %1", $e->getCode(), $code);
+			self::fail("$class with a code %2 was expected but got %1", $e->getCode(), $code, $e);
 		}
 
 		return $e;
