@@ -8,3 +8,5 @@ require __DIR__ . '/../../bootstrap.php';
 Tester\Environment::$checkAssertions = false;
 
 echo "Multi\nline\nstdout.";
+
+file_put_contents('php://stderr', "Multi\nline\nstderr.");

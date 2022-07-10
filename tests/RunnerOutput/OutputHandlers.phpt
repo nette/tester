@@ -24,6 +24,7 @@ require __DIR__ . '/../../src/Runner/Output/TapPrinter.php';
 
 
 $runner = new Runner(createInterpreter());
+$runner->setTempDirectory(Tester\Helpers::prepareTempDir(sys_get_temp_dir()));
 $runner->setEnvironmentVariable(Tester\Environment::RUNNER, '1');
 $runner->setEnvironmentVariable(Tester\Environment::COLORS, '0');
 $runner->paths[] = __DIR__ . '/cases/*.phptx';
