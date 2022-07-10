@@ -98,6 +98,7 @@ class ConsolePrinter implements Tester\Runner\OutputHandler
 
 		$title = ($test->title ? "$test->title | " : '') . substr($test->getSignature(), strlen($this->baseDir));
 		$message = '   ' . str_replace("\n", "\n   ", trim((string) $test->message)) . "\n\n";
+		$message = preg_replace('/^   $/m', '', $message);
 		if ($test->getResult() === Test::FAILED) {
 			$this->buffer .= Dumper::color('red', "-- FAILED: $title") . "\n$message";
 		} elseif ($test->getResult() === Test::SKIPPED && $this->displaySkipped) {

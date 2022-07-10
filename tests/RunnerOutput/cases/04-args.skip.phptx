@@ -8,4 +8,6 @@ require __DIR__ . '/../../bootstrap.php';
 
 echo "Multi\nline\nstdout.";
 
+file_put_contents('php://stderr', "Multi\nline\nstderr.");
+
 Tester\Environment::skip("Multi\nline\nmessage.");

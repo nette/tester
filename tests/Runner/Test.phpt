@@ -20,6 +20,7 @@ test(function () {
 	Assert::null($test->message);
 	Assert::same('', $test->stdout);
 	Assert::same('', $test->stderr);
+	Assert::same('', $test->getOutput());
 	Assert::same('some/Test.phpt', $test->getFile());
 	Assert::same([], $test->getArguments());
 	Assert::same('some/Test.phpt', $test->getSignature());

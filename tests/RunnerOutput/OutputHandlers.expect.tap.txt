@@ -4,7 +4,12 @@ not ok %a%01-basic.fail.phptx
 # line
 # stdout.Failed:
 #
-# in %a%01-basic.fail.phptx(7) Tester\Assert::fail('');
+# in %a%01-basic.fail.phptx(%d%) Tester\Assert::fail('');
+#
+# STDERR:
+# Multi
+# line
+# stderr.
 ok %a%01-basic.pass.phptx
 ok %a%01-basic.skip.phptx #skip
 not ok %a%02-title.fail.phptx
@@ -12,7 +17,12 @@ not ok %a%02-title.fail.phptx
 # line
 # stdout.Failed:
 #
-# in %a%02-title.fail.phptx(11) Tester\Assert::fail('');
+# in %a%02-title.fail.phptx(%d%) Tester\Assert::fail('');
+#
+# STDERR:
+# Multi
+# line
+# stderr.
 ok %a%02-title.pass.phptx
 ok %a%02-title.skip.phptx #skip
 not ok %a%03-message.fail.phptx
@@ -22,7 +32,12 @@ not ok %a%03-message.fail.phptx
 # line
 # message.
 #
-# in %a%03-message.fail.phptx(7) Tester\Assert::fail("Multi\nline\nmessage.");
+# in %a%03-message.fail.phptx(%d%) Tester\Assert::fail("Multi\nline\nmessage.");
+#
+# STDERR:
+# Multi
+# line
+# stderr.
 ok %a%03-message.skip.phptx #skip Multi
 # line
 # message.
@@ -31,7 +46,12 @@ not ok %a%04-args.fail.phptx dataprovider=thisIsAVeryVeryVeryLongArgumentNameToT
 # line
 # stdout.Failed:
 #
-# in %a%04-args.fail.phptx(11) Tester\Assert::fail('');
+# in %a%04-args.fail.phptx(%d%) Tester\Assert::fail('');
+#
+# STDERR:
+# Multi
+# line
+# stderr.
 ok %a%04-args.pass.phptx dataprovider=thisIsAVeryVeryVeryLongArgumentNameToTestHowOutputHandlersDealWithItsLengthInTheirOutputFormatting|%a%provider.ini
 ok %a%04-args.skip.phptx dataprovider=thisIsAVeryVeryVeryLongArgumentNameToTestHowOutputHandlersDealWithItsLengthInTheirOutputFormatting|%a%provider.ini #skip Multi
 # line
