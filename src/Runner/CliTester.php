@@ -57,6 +57,9 @@ class CliTester
 
 		if ($this->options['--info']) {
 			$job = new Job(new Test(__DIR__ . '/info.php'), $this->interpreter);
+			if ($this->options['--temp'] !== null) {
+				$job->setTempDirectory($this->options['--temp']);
+			}
 			$job->run();
 			echo $job->getTest()->stdout;
 			return null;

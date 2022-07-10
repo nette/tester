@@ -78,7 +78,9 @@ class TestHandler
 
 		foreach ($tests as $test) {
 			$this->runner->prepareTest($test);
-			$this->runner->addJob(new Job($test, $php, $this->runner->getEnvironmentVariables()));
+			$job = new Job($test, $php, $this->runner->getEnvironmentVariables());
+			$job->setTempDirectory($this->tempDir);
+			$this->runner->addJob($job);
 		}
 	}
 
@@ -196,10 +198,11 @@ class TestHandler
 
 		if ($methods === null) {
 			$job = new Job($test->withArguments(['method' => TestCase::ListMethods]), $interpreter, $this->runner->getEnvironmentVariables());
+			$job->setTempDirectory($this->tempDir);
 			$job->run();
 
 			if (in_array($job->getExitCode(), [Job::CODE_ERROR, Job::CODE_FAIL, Job::CODE_SKIP], true)) {
-				return $test->withResult($job->getExitCode() === Job::CODE_SKIP ? Test::SKIPPED : Test::FAILED, $job->getTest()->stdout);
+				return $test->withResult($job->getExitCode() === Job::CODE_SKIP ? Test::SKIPPED : Test::FAILED, $job->getTest()->getOutput());
 			}
 
 			$stdout = $job->getTest()->stdout;
@@ -245,7 +248,7 @@ class TestHandler
 			$message = $job->getExitCode() !== Job::CODE_FAIL
 				? "Exited with error code {$job->getExitCode()} (expected $code)"
 				: '';
-			return $job->getTest()->withResult(Test::FAILED, trim($message . "\n" . $job->getTest()->stdout));
+			return $job->getTest()->withResult(Test::FAILED, trim($message . "\n" . $job->getTest()->getOutput()));
 		}
 
 		return null;

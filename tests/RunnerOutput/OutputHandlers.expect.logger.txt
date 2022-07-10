@@ -5,7 +5,12 @@
    line
    stdout.Failed:
 
-   in %a%01-basic.fail.phptx(7) Tester\Assert::fail('');
+   in %a%01-basic.fail.phptx(%d%) Tester\Assert::fail('');
+
+   STDERR:
+   Multi
+   line
+   stderr.
 
 -- OK: %a%01-basic.pass.phptx
 
@@ -17,7 +22,12 @@
    line
    stdout.Failed:
 
-   in %a%02-title.fail.phptx(11) Tester\Assert::fail('');
+   in %a%02-title.fail.phptx(%d%) Tester\Assert::fail('');
+
+   STDERR:
+   Multi
+   line
+   stderr.
 
 -- OK: %a%02-title.pass.phptx
 
@@ -31,7 +41,12 @@
    line
    message.
 
-   in %a%03-message.fail.phptx(7) Tester\Assert::fail("Multi\nline\nmessage.");
+   in %a%03-message.fail.phptx(%d%) Tester\Assert::fail("Multi\nline\nmessage.");
+
+   STDERR:
+   Multi
+   line
+   stderr.
 
 -- Skipped: %a%03-message.skip.phptx
    Multi
@@ -43,7 +58,12 @@
    line
    stdout.Failed:
 
-   in %a%04-args.fail.phptx(11) Tester\Assert::fail('');
+   in %a%04-args.fail.phptx(%d%) Tester\Assert::fail('');
+
+   STDERR:
+   Multi
+   line
+   stderr.
 
 -- OK: %a%04-args.pass.phptx dataprovider=thisIsAVeryVeryVeryLongArgumentNameToTestHowOutputHandlersDealWithItsLengthInTheirOutputFormatting|%a%provider.ini
 

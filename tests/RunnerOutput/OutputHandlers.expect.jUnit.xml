@@ -6,7 +6,12 @@
 line
 stdout.Failed:
 
-in %a%01-basic.fail.phptx(7) Tester\Assert::fail('');"/>
+in %a%01-basic.fail.phptx(%d%) Tester\Assert::fail('');
+
+STDERR:
+Multi
+line
+stderr."/>
 		</testcase>
 		<testcase classname="%a%01-basic.pass.phptx" name="%a%01-basic.pass.phptx"/>
 		<testcase classname="%a%01-basic.skip.phptx" name="%a%01-basic.skip.phptx">
@@ -17,7 +22,12 @@ in %a%01-basic.fail.phptx(7) Tester\Assert::fail('');"/>
 line
 stdout.Failed:
 
-in %a%02-title.fail.phptx(11) Tester\Assert::fail('');"/>
+in %a%02-title.fail.phptx(%d%) Tester\Assert::fail('');
+
+STDERR:
+Multi
+line
+stderr."/>
 		</testcase>
 		<testcase classname="%a%02-title.pass.phptx" name="%a%02-title.pass.phptx"/>
 		<testcase classname="%a%02-title.skip.phptx" name="%a%02-title.skip.phptx">
@@ -30,7 +40,12 @@ stdout.Failed: Multi
 line
 message.
 
-in %a%03-message.fail.phptx(7) Tester\Assert::fail(&quot;Multi\nline\nmessage.&quot;);"/>
+in %a%03-message.fail.phptx(%d%) Tester\Assert::fail(&quot;Multi\nline\nmessage.&quot;);
+
+STDERR:
+Multi
+line
+stderr."/>
 		</testcase>
 		<testcase classname="%a%03-message.skip.phptx" name="%a%03-message.skip.phptx">
 			<skipped/>
@@ -40,7 +55,12 @@ in %a%03-message.fail.phptx(7) Tester\Assert::fail(&quot;Multi\nline\nmessage.&q
 line
 stdout.Failed:
 
-in %a%04-args.fail.phptx(11) Tester\Assert::fail('');"/>
+in %a%04-args.fail.phptx(%d%) Tester\Assert::fail('');
+
+STDERR:
+Multi
+line
+stderr."/>
 		</testcase>
 		<testcase classname="%a%04-args.pass.phptx dataprovider=thisIsAVeryVeryVeryLongArgumentNameToTestHowOutputHandlersDealWithItsLengthInTheirOutputFormatting|%a%provider.ini" name="%a%04-args.pass.phptx dataprovider=thisIsAVeryVeryVeryLongArgumentNameToTestHowOutputHandlersDealWithItsLengthInTheirOutputFormatting|%a%provider.ini"/>
 		<testcase classname="%a%04-args.skip.phptx dataprovider=thisIsAVeryVeryVeryLongArgumentNameToTestHowOutputHandlersDealWithItsLengthInTheirOutputFormatting|%a%provider.ini" name="%a%04-args.skip.phptx dataprovider=thisIsAVeryVeryVeryLongArgumentNameToTestHowOutputHandlersDealWithItsLengthInTheirOutputFormatting|%a%provider.ini">

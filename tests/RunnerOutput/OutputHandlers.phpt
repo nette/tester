@@ -23,6 +23,9 @@ require __DIR__ . '/../../src/Runner/Output/Logger.php';
 require __DIR__ . '/../../src/Runner/Output/TapPrinter.php';
 
 
+$tempDir = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'nette_tester';
+Tester\Helpers::purge($tempDir);
+
 $runner = new Runner(createInterpreter());
 $runner->setEnvironmentVariable(Tester\Environment::RUNNER, '1');
 $runner->setEnvironmentVariable(Tester\Environment::COLORS, '0');
@@ -32,6 +35,7 @@ $runner->outputHandlers[] = new Output\ConsolePrinter($runner, true, $consoleWit
 $runner->outputHandlers[] = new Output\JUnitPrinter($jUnit = FileMock::create(''));
 $runner->outputHandlers[] = new Output\Logger($runner, $logger = FileMock::create(''));
 $runner->outputHandlers[] = new Output\TapPrinter($tap = FileMock::create(''));
+$runner->setTempDirectory($tempDir);
 $runner->run();
 
 

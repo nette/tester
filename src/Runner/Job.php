@@ -27,9 +27,10 @@ class Job
 	/** waiting time between process activity check in microseconds */
 	public const RUN_USLEEP = 10000;
 
-	public const
-		RUN_ASYNC = 1,
-		RUN_COLLECT_ERRORS = 2;
+	public const RUN_ASYNC = 1;
+
+	/** @var string|null */
+	private $tempDir;
 
 	/** @var Test */
 	private $test;
@@ -46,8 +47,8 @@ class Job
 	/** @var resource|null */
 	private $stdout;
 
-	/** @var resource|null */
-	private $stderr;
+	/** @var string|null */
+	private $stderrTmpFile;
 
 	/** @var int */
 	private $exitCode = self::CODE_NONE;
@@ -74,6 +75,12 @@ class Job
 	}
 
 
+	public function setTempDirectory(?string $path): void
+	{
+		$this->tempDir = $path;
+	}
+
+
 	public function setEnvironmentVariable(string $name, string $value): void
 	{
 		$this->envVars[$name] = $value;
@@ -88,7 +95,7 @@ class Job
 
 	/**
 	 * Runs single test.
-	 * @param  int  $flags  self::RUN_ASYNC | self::RUN_COLLECT_ERRORS
+	 * @param  int  $flags  self::RUN_ASYNC
 	 */
 	public function run(int $flags = 0): void
 	{
@@ -103,6 +110,10 @@ class Job
 				: Helpers::escapeArg($value);
 		}
 
+		if ($this->tempDir) {
+			$this->stderrTmpFile = $this->tempDir . DIRECTORY_SEPARATOR . 'Job.' . uniqid() . '.stderr';
+		}
+
 		$this->duration = -microtime(true);
 		$this->proc = proc_open(
 			$this->interpreter->getCommandLine()
@@ -110,7 +121,7 @@ class Job
 			[
 				['pipe', 'r'],
 				['pipe', 'w'],
-				['pipe', 'w'],
+				$this->stderrTmpFile ? ['file', $this->stderrTmpFile, 'a'] : ['pipe', 'w'],
 			],
 			$pipes,
 			dirname($this->test->getFile()),
@@ -122,19 +133,15 @@ class Job
 			putenv($name);
 		}
 
-		[$stdin, $this->stdout, $stderr] = $pipes;
+		[$stdin, $this->stdout] = $pipes;
 		fclose($stdin);
-		if ($flags & self::RUN_COLLECT_ERRORS) {
-			$this->stderr = $stderr;
-		} else {
-			fclose($stderr);
+
+		if (isset($pipes[2])) {
+			fclose($pipes[2]);
 		}
 
 		if ($flags & self::RUN_ASYNC) {
 			stream_set_blocking($this->stdout, false); // on Windows does not work with proc_open()
-			if ($this->stderr) {
-				stream_set_blocking($this->stderr, false);
-			}
 		} else {
 			while ($this->isRunning()) {
 				usleep(self::RUN_USLEEP); // stream_select() doesn't work with proc_open()
@@ -153,9 +160,6 @@ class Job
 		}
 
 		$this->test->stdout .= stream_get_contents($this->stdout);
-		if ($this->stderr) {
-			$this->test->stderr .= stream_get_contents($this->stderr);
-		}
 
 		$status = proc_get_status($this->proc);
 		if ($status['running']) {
@@ -165,8 +169,9 @@ class Job
 		$this->duration += microtime(true);
 
 		fclose($this->stdout);
-		if ($this->stderr) {
-			fclose($this->stderr);
+		if ($this->stderrTmpFile) {
+			$this->test->stderr .= file_get_contents($this->stderrTmpFile);
+			unlink($this->stderrTmpFile);
 		}
 
 		$code = proc_close($this->proc);
