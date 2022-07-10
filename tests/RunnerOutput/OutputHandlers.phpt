@@ -22,8 +22,11 @@ require __DIR__ . '/../../src/Runner/Output/JUnitPrinter.php';
 require __DIR__ . '/../../src/Runner/Output/Logger.php';
 require __DIR__ . '/../../src/Runner/Output/TapPrinter.php';
 
+$tempDir = Tester\Helpers::prepareTempDir(sys_get_temp_dir()) . '/oh-test';
+Tester\Helpers::purge($tempDir);
 
 $runner = new Runner(createInterpreter());
+$runner->setTempDirectory($tempDir);
 $runner->setEnvironmentVariable(Tester\Environment::RUNNER, '1');
 $runner->setEnvironmentVariable(Tester\Environment::COLORS, '0');
 $runner->paths[] = __DIR__ . '/cases/*.phptx';

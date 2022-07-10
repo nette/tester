@@ -7,43 +7,63 @@ F.sF.sFsF.s
    line
    stdout.Failed:
 
-   in %a%01-basic.fail.phptx(7) Tester\Assert::fail('');
+   in %a%01-basic.fail.phptx(%d%) Tester\Assert::fail('');
 
--- Skipped: %a?%01-basic.skip.phptx
+   STDERR:
+   Multi
+   line
+   stderr.
+
+-- Skipped: 01-basic.skip.phptx
 
 
--- FAILED: Title for output handlers | 02-title.fail.phptx
+-- FAILED: Title for output handlers | %a?%02-title.fail.phptx
    Multi
    line
    stdout.Failed:
 
-   in %a%02-title.fail.phptx(11) Tester\Assert::fail('');
+   in %a%02-title.fail.phptx(%d%) Tester\Assert::fail('');
 
--- Skipped: Title for output handlers | 02-title.skip.phptx
+   STDERR:
+   Multi
+   line
+   stderr.
+
+-- Skipped: Title for output handlers | %a?%02-title.skip.phptx
 
 
--- FAILED: 03-message.fail.phptx
+-- FAILED: %a?%03-message.fail.phptx
    Multi
    line
    stdout.Failed: Multi
    line
    message.
 
-   in %a%03-message.fail.phptx(7) Tester\Assert::fail("Multi\nline\nmessage.");
+   in %a%03-message.fail.phptx(%d%) Tester\Assert::fail("Multi\nline\nmessage.");
 
--- Skipped: 03-message.skip.phptx
+   STDERR:
+   Multi
+   line
+   stderr.
+
+-- Skipped: %a?%03-message.skip.phptx
    Multi
    line
    message.
 
--- FAILED: 04-args.fail.phptx dataprovider=thisIsAVeryVeryVeryLongArgumentNameToTestHowOutputHandlersDealWithItsLengthInTheirOutputFormatting|%a%provider.ini
+-- FAILED: %a?%04-args.fail.phptx dataprovider=thisIsAVeryVeryVeryLongArgumentNameToTestHowOutputHandlersDealWithItsLengthInTheirOutputFormatting|%a%provider.ini
    Multi
    line
    stdout.Failed:
 
-   in %a%04-args.fail.phptx(11) Tester\Assert::fail('');
+   in %a%04-args.fail.phptx(%d%) Tester\Assert::fail('');
 
--- Skipped: 04-args.skip.phptx dataprovider=thisIsAVeryVeryVeryLongArgumentNameToTestHowOutputHandlersDealWithItsLengthInTheirOutputFormatting|%a%provider.ini
+   STDERR:
+   Multi
+   line
+   stderr.
+
+-- Skipped: %a?%04-args.skip.phptx dataprovider=thisIsAVeryVeryVeryLongArgumentNameToTestHowOutputHandlersDealWithItsLengthInTheirOutputFormatting|%a%provider.ini
    Multi
    line
    message.

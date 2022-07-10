@@ -47,6 +47,7 @@ $interpreter = createInterpreter()
 $runner = new Runner($interpreter);
 $runner->paths[] = __DIR__ . '/multiple-fails/*.phptx';
 $runner->outputHandlers[] = $logger = new Logger;
+$runner->setTempDirectory(Tester\Helpers::prepareTempDir(sys_get_temp_dir()));
 $runner->run();
 
 Assert::match(
@@ -86,8 +87,8 @@ Assert::same(Test::FAILED, $logger->results['testcase-pre-fail.phptx'][0]);
 
 Assert::match(
 	defined('PHPDBG_VERSION')
-		? '%A%Parse error: %a% in %a%testcase-syntax-error.phptx on line %d%'
-		: 'Parse error: %a% in %a%testcase-syntax-error.phptx on line %d%',
+		? '%A%Parse error: %a% in %a%testcase-syntax-error.phptx on line %d%%A?%'
+		: 'Parse error: %a% in %a%testcase-syntax-error.phptx on line %d%%A?%',
 	trim($logger->results['testcase-syntax-error.phptx'][1])
 );
 Assert::same(Test::FAILED, $logger->results['testcase-syntax-error.phptx'][0]);

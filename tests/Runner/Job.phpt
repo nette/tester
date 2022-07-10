@@ -13,7 +13,8 @@ require __DIR__ . '/../bootstrap.php';
 test(function () {
 	$test = (new Test('Job.test.phptx'))->withArguments(['one', 'two' => 1])->withArguments(['three', 'two' => 2]);
 	$job = new Job($test, createInterpreter());
-	$job->run($job::RUN_COLLECT_ERRORS);
+	$job->setTempDirectory(Tester\Helpers::prepareTempDir(sys_get_temp_dir()));
+	$job->run();
 
 	Assert::false($job->isRunning());
 	Assert::same($test, $job->getTest());
