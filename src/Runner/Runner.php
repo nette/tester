@@ -66,17 +66,6 @@ class Runner
 
 	public function setTempDirectory(?string $path): void
 	{
-		if ($path !== null) {
-			if (!is_dir($path) || !is_writable($path)) {
-				throw new \RuntimeException("Path '$path' is not a writable directory.");
-			}
-
-			$path = realpath($path) . DIRECTORY_SEPARATOR . 'Tester';
-			if (!is_dir($path) && @mkdir($path) === false && !is_dir($path)) {  // @ - directory may exist
-				throw new \RuntimeException("Cannot create '$path' directory.");
-			}
-		}
-
 		$this->tempDir = $path;
 		$this->testHandler->setTempDirectory($path);
 	}

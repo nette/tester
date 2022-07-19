@@ -130,4 +130,23 @@ class Helpers
 			? '"' . str_replace('"', '""', $s) . '"'
 			: escapeshellarg($s);
 	}
+
+
+	/**
+	 * @internal
+	 */
+	public static function prepareTempDir(string $path): string
+	{
+		$real = realpath($path);
+		if ($real === false || !is_dir($real) || !is_writable($real)) {
+			throw new \RuntimeException("Path '$real' is not a writable directory.");
+		}
+
+		$path = $real . DIRECTORY_SEPARATOR . 'Tester';
+		if (!is_dir($path) && @mkdir($path) === false && !is_dir($path)) {  // @ - directory may exist
+			throw new \RuntimeException("Cannot create '$path' directory.");
+		}
+
+		return $path;
+	}
 }
