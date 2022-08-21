@@ -117,13 +117,13 @@ class TestCase
 				try {
 					if ($info['throws']) {
 						$e = Assert::error(function () use ($method, $params): void {
-							[$this, $method->getName()](...$params);
+							$this->runTestMethod($method->getName(), $params);
 						}, ...$throws);
 						if ($e instanceof AssertException) {
 							throw $e;
 						}
 					} else {
-						[$this, $method->getName()](...$params);
+						$this->runTestMethod($method->getName(), $params);
 					}
 				} catch (\Throwable $e) {
 					$this->handleErrors = false;
@@ -145,6 +145,12 @@ class TestCase
 				));
 			}
 		}
+	}
+
+
+	protected function runTestMethod($name, $params): void
+	{
+		[$this, $name](...$params);
 	}
 
 
