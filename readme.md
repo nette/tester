@@ -1,4 +1,4 @@
-[Nette Tester](https://tester.nette.org): enjoyable unit testing
+[Nette Tester](https://tester.nette.org): enjoyable unit testin
 ================================================================
 
 [![Downloads this Month](https://img.shields.io/packagist/dm/nette/tester.svg)](https://packagist.org/packages/nette/tester)
