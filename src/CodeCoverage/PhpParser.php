@@ -76,7 +76,7 @@ class PhpParser
 
 			switch (is_array($token) ? $token[0] : $token) {
 				case T_NAMESPACE:
-					$namespace = self::fetch($tokens, [T_STRING, PHP_VERSION_ID < 80000 ? T_NS_SEPARATOR : T_NAME_QUALIFIED]);
+					$namespace = self::fetch($tokens, [T_STRING, T_NAME_QUALIFIED]);
 					$namespace = ltrim($namespace . '\\', '\\');
 					break;
 

@@ -45,8 +45,7 @@ $runner->run();
 
 Assert::same([Test::FAILED, 'Exited with error code 231 (expected 0)'], $logger->results['shutdown.exitCode.a.phptx']);
 
-$bug65275 = PHP_SAPI === 'cli' && PHP_VERSION_ID < 80000;
-Assert::same($bug65275 ? [Test::FAILED, 'Exited with error code 231 (expected 0)'] : [Test::PASSED, null], $logger->results['shutdown.exitCode.b.phptx']);
+Assert::same([Test::PASSED, null], $logger->results['shutdown.exitCode.b.phptx']);
 
 Assert::same([Test::SKIPPED, 'just skipping'], $logger->results['skip.phptx']);
 
