@@ -3,7 +3,6 @@
 declare(strict_types=1);
 
 use Tester\Assert;
-use Tester\Runner\Test;
 
 require __DIR__ . '/../bootstrap.php';
 require __DIR__ . '/../../src/Runner/Test.php';
@@ -14,7 +13,6 @@ require __DIR__ . '/../../src/Runner/Runner.php';
 $runner = new Tester\Runner\Runner(createInterpreter());
 
 $jobs = Assert::with($runner, function () {
-	$this->results = [Test::PASSED => 0, Test::SKIPPED => 0, Test::FAILED => 0];
 	$this->findTests(__DIR__ . '/multiple/*.phptx');
 	return $this->jobs;
 });
