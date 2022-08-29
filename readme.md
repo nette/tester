@@ -39,7 +39,7 @@ composer require nette/tester --dev
 
 Alternatively, you can download the [tester.phar](https://github.com/nette/tester/releases) file.
 
-- Nette Tester 2.4 is compatible with PHP 7.2 to 8.1
+- Nette Tester 2.4 is compatible with PHP 7.2 to 8.2
 - Nette Tester 2.3 is compatible with PHP 7.1 to 8.0
 - Nette Tester 2.1 & 2.2 is compatible with PHP 7.1 to 7.3
 - Nette Tester 2.0 is compatible with PHP 5.6 to 7.3

@@ -20,6 +20,9 @@ class FileMock
 	/** @var string[] */
 	public static $files = [];
 
+	/** @var resource used by PHP itself */
+	public $context;
+
 	/** @var string */
 	private $content;
 
