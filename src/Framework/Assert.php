@@ -13,7 +13,6 @@ namespace Tester;
 /**
  * Assertion test helpers.
  */
-#[\AllowDynamicProperties]
 class Assert
 {
 	/** used by equal() for comparing floats */

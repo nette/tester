@@ -15,6 +15,7 @@ use Tester\Environment;
 /**
  * Test runner.
  */
+#[\AllowDynamicProperties]
 class Runner
 {
 	/** @var string[]  paths to test files/directories */

@@ -13,6 +13,7 @@ namespace Tester;
 /**
  * Mock files.
  */
+#[\AllowDynamicProperties]
 class FileMock
 {
 	private const Protocol = 'mock';
