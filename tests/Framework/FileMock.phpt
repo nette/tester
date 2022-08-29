@@ -103,13 +103,13 @@ test(function () {
 	$cases = [
 		'r' => ['ABC', 'ABC'],
 		'r+' => ['ABC', 'ABC'],
-		'w' => ['', PHP_VERSION_ID < 70400 ? '' : false],
+		'w' => ['', false],
 		'w+' => ['', ''],
-		'a' => ['ABC', PHP_VERSION_ID < 70400 ? '' : false],
+		'a' => ['ABC', false],
 		'a+' => ['ABC', 'ABC'],
-		'x' => ['', PHP_VERSION_ID < 70400 ? '' : false],
+		'x' => ['', false],
 		'x+' => ['', ''],
-		'c' => ['ABC', PHP_VERSION_ID < 70400 ? '' : false],
+		'c' => ['ABC', false],
 		'c+' => ['ABC', 'ABC'],
 	];
 
@@ -133,13 +133,13 @@ test(function () {
 	$cases = [
 		'r' => ['ABC', 'ABC'],
 		'r+' => ['_BC', '_BC'],
-		'w' => ['_', PHP_VERSION_ID < 70400 ? '' : false],
+		'w' => ['_', false],
 		'w+' => ['_', '_'],
-		'a' => ['ABC_', PHP_VERSION_ID < 70400 ? '' : false],
+		'a' => ['ABC_', false],
 		'a+' => ['ABC_', 'ABC_'],
-		'x' => ['_', PHP_VERSION_ID < 70400 ? '' : false],
+		'x' => ['_', false],
 		'x+' => ['_', '_'],
-		'c' => ['_BC', PHP_VERSION_ID < 70400 ? '' : false],
+		'c' => ['_BC', false],
 		'c+' => ['_BC', '_BC'],
 	];
 

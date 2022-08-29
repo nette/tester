@@ -77,9 +77,6 @@ class PhpInterpreter
 		if (!$this->info) {
 			throw new \Exception("Unable to detect PHP version (output: $output).");
 
-		} elseif ($this->info->phpDbgVersion && version_compare($this->info->version, '7.0.0', '<')) {
-			throw new \Exception('Unable to use phpdbg on PHP < 7.0.0.');
-
 		} elseif ($this->cgi && $this->error) {
 			$this->error .= "\n(note that PHP CLI generates better error messages)";
 		}
