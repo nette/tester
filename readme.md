@@ -39,6 +39,7 @@ composer require nette/tester --dev
 
 Alternatively, you can download the [tester.phar](https://github.com/nette/tester/releases) file.
 
+- Nette Tester 2.5 is compatible with PHP 8.0 to 8.2
 - Nette Tester 2.4 is compatible with PHP 7.2 to 8.2
 - Nette Tester 2.3 is compatible with PHP 7.1 to 8.0
 - Nette Tester 2.1 & 2.2 is compatible with PHP 7.1 to 7.3
@@ -88,7 +89,7 @@ Now we run tests from command-line using the `tester` command:
 |_   _/ __)( __/_   _/ __)| _ )
   |_| \___ /___) |_| \___ |_|_\  v2.5
 
-PHP 7.3.3 | php -n | 8 threads
+PHP 8.2.0 | php -n | 8 threads
 .
 OK (1 tests, 0 skipped, 0.0 seconds)
 ```
