@@ -194,9 +194,7 @@ test(function () { // normalizer
 	$cmd = new Cmd('
 		-p param
 	', [
-		'-p' => [Cmd::Normalizer => function ($arg) {
-			return "$arg-normalized";
-		}],
+		'-p' => [Cmd::Normalizer => fn($arg) => "$arg-normalized"],
 	]);
 
 	Assert::same(['-p' => 'val-normalized'], $cmd->parse(explode(' ', '-p val')));
@@ -205,9 +203,7 @@ test(function () { // normalizer
 	$cmd = new Cmd('
 		-p <a|b>
 	', [
-		'-p' => [Cmd::Normalizer => function () {
-			return 'a';
-		}],
+		'-p' => [Cmd::Normalizer => fn() => 'a'],
 	]);
 
 	Assert::same(['-p' => 'a'], $cmd->parse(explode(' ', '-p xxx')));
@@ -216,9 +212,7 @@ test(function () { // normalizer
 	$cmd = new Cmd('
 		-p <a|b>
 	', [
-		'-p' => [Cmd::Normalizer => function () {
-			return ['a', 'foo'];
-		}],
+		'-p' => [Cmd::Normalizer => fn() => ['a', 'foo']],
 	]);
 
 	Assert::same(['-p' => ['a', 'foo']], $cmd->parse(explode(' ', '-p xxx')));

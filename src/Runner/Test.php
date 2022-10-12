@@ -70,9 +70,7 @@ class Test
 
 	public function getSignature(): string
 	{
-		$args = implode(' ', array_map(function ($arg): string {
-			return is_array($arg) ? "$arg[0]=$arg[1]" : $arg;
-		}, $this->args));
+		$args = implode(' ', array_map(fn($arg): string => is_array($arg) ? "$arg[0]=$arg[1]" : $arg, $this->args));
 
 		return $this->file . ($args ? " $args" : '');
 	}

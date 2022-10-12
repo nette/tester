@@ -13,7 +13,7 @@ Assert::false($interpreter->hasExtension('foo-bar'));
 
 Assert::contains(PHP_BINARY, $interpreter->getCommandLine());
 Assert::same(PHP_VERSION, $interpreter->getVersion());
-Assert::same(strpos(PHP_SAPI, 'cgi') !== false, $interpreter->isCgi());
+Assert::same(str_contains(PHP_SAPI, 'cgi'), $interpreter->isCgi());
 
 $count = 0;
 $engines = $interpreter->getCodeCoverageEngines();

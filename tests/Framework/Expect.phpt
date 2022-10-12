@@ -59,7 +59,7 @@ Assert::exception(function () use ($expectation) {
 
 
 // expectation + closure
-$expectation = Expect::type('int')->and(function ($val) { return $val > 0; });
+$expectation = Expect::type('int')->and(fn($val) => $val > 0);
 
 Assert::same("type('int'),user-expectation", $expectation->dump());
 

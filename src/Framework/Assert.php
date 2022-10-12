@@ -121,7 +121,7 @@ class Assert
 			if (!is_string($needle)) {
 				self::fail(self::describe('Needle %1 should be string'), $needle);
 
-			} elseif ($needle !== '' && strpos($actual, $needle) === false) {
+			} elseif ($needle !== '' && !str_contains($actual, $needle)) {
 				self::fail(self::describe('%1 should contain %2', $description), $actual, $needle);
 			}
 		} else {
@@ -146,7 +146,7 @@ class Assert
 			if (!is_string($needle)) {
 				self::fail(self::describe('Needle %1 should be string'), $needle);
 
-			} elseif ($needle === '' || strpos($actual, $needle) !== false) {
+			} elseif ($needle === '' || str_contains($actual, $needle)) {
 				self::fail(self::describe('%1 should not contain %2', $description), $actual, $needle);
 			}
 		} else {
@@ -316,8 +316,8 @@ class Assert
 				self::fail(self::describe(gettype($value) . " should be $type", $description));
 			}
 		} elseif (!$value instanceof $type) {
-			$actual = is_object($value) ? get_class($value) : gettype($value);
-			$type = is_object($type) ? get_class($type) : $type;
+			$actual = is_object($value) ? $value::class : gettype($value);
+			$type = is_object($type) ? $type::class : $type;
 			self::fail(self::describe("$actual should be instance of $type", $description));
 		}
 	}
@@ -331,7 +331,8 @@ class Assert
 		string $class,
 		?string $message = null,
 		$code = null
-	): ?\Throwable {
+	): ?\Throwable
+	{
 		self::$counter++;
 		$e = null;
 		try {
@@ -343,7 +344,7 @@ class Assert
 			self::fail("$class was expected, but none was thrown");
 
 		} elseif (!$e instanceof $class) {
-			self::fail("$class was expected but got " . get_class($e) . ($e->getMessage() ? " ({$e->getMessage()})" : ''), null, null, $e);
+			self::fail("$class was expected but got " . $e::class . ($e->getMessage() ? " ({$e->getMessage()})" : ''), null, null, $e);
 
 		} elseif ($message && !self::isMatching($message, $e->getMessage())) {
 			self::fail("$class with a message matching %2 was expected but got %1", $e->getMessage(), $message, $e);
@@ -506,7 +507,8 @@ class Assert
 		$expected = null,
 		?\Throwable $previous = null,
 		?string $outputName = null
-	): void {
+	): void
+	{
 		$e = new AssertException($message, $expected, $actual, $previous);
 		$e->outputName = $outputName;
 		if (self::$onFailure) {
@@ -587,10 +589,10 @@ class Assert
 
 		$parts = preg_split('#(%)#', $pattern, -1, PREG_SPLIT_DELIM_CAPTURE);
 		for ($i = count($parts); $i >= 0; $i--) {
-			$patternX = implode(array_slice($parts, 0, $i));
+			$patternX = implode('', array_slice($parts, 0, $i));
 			$patternY = "$patternX%A?%";
 			if (self::isMatching($patternY, $actual)) {
-				$patternZ = implode(array_slice($parts, $i));
+				$patternZ = implode('', array_slice($parts, $i));
 				break;
 			}
 		}
@@ -654,7 +656,7 @@ class Assert
 				$diff = abs($expected - $actual);
 				return ($diff < self::Epsilon) || ($diff / max(abs($expected), abs($actual)) < self::Epsilon);
 
-			case is_object($expected) && is_object($actual) && get_class($expected) === get_class($actual):
+			case is_object($expected) && is_object($actual) && $expected::class === $actual::class:
 				$objects = $objects ? clone $objects : new \SplObjectStorage;
 				if (isset($objects[$expected])) {
 					return $objects[$expected] === $actual;

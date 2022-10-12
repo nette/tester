@@ -61,7 +61,7 @@ class TestHandler
 						$prepared[] = $test;
 					} else {
 						foreach (is_array($res) ? $res : [$res] as $testVariety) {
-							/** @var Test $testVariety */
+							\assert($testVariety instanceof Test);
 							if ($testVariety->hasResult()) {
 								$this->runner->prepareTest($testVariety);
 								$this->runner->finishTest($testVariety);
@@ -157,17 +157,19 @@ class TestHandler
 			return $test->withResult(empty($optional) ? Test::FAILED : Test::SKIPPED, $e->getMessage());
 		}
 
-		return array_map(function (string $item) use ($test, $dataFile): Test {
-			return $test->withArguments(['dataprovider' => "$item|$dataFile"]);
-		}, array_keys($data));
+		return array_map(
+			fn(string $item): Test => $test->withArguments(['dataprovider' => "$item|$dataFile"]),
+			array_keys($data)
+		);
 	}
 
 
 	private function initiateMultiple(Test $test, $count): array
 	{
-		return array_map(function (int $i) use ($test): Test {
-			return $test->withArguments(['multiple' => $i]);
-		}, range(0, (int) $count - 1));
+		return array_map(
+			fn(int $i): Test => $test->withArguments(['multiple' => $i]),
+			range(0, (int) $count - 1)
+		);
 	}
 
 
@@ -226,9 +228,10 @@ class TestHandler
 			}
 		}
 
-		return array_map(function (string $method) use ($test): Test {
-			return $test->withArguments(['method' => $method]);
-		}, $methods);
+		return array_map(
+			fn(string $method): Test => $test->withArguments(['method' => $method]),
+			$methods
+		);
 	}
 
 

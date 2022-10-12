@@ -26,9 +26,7 @@ class DataProvider
 		}
 
 		if (pathinfo($file, PATHINFO_EXTENSION) === 'php') {
-			$data = (function () {
-				return require func_get_arg(0);
-			})(realpath($file));
+			$data = (fn() => require func_get_arg(0))(realpath($file));
 
 			if ($data instanceof \Traversable) {
 				$data = iterator_to_array($data);

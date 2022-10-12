@@ -3,6 +3,6 @@
 	<rule ref="$presets/php72.xml"/>
 
 	<rule ref="SlevomatCodingStandard.Exceptions.ReferenceThrowableOnly">
-		<severity>0</severity>
+		<exclude-pattern>./tests/*/*.phpt</exclude-pattern>
 	</rule>
 </ruleset>
