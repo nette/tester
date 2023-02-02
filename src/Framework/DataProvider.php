@@ -70,7 +70,7 @@ class DataProvider
 	}
 
 
-	private static function compare($l, string $operator, $r): bool
+	private static function compare(mixed $l, string $operator, mixed $r): bool
 	{
 		return match ($operator) {
 			'>' => $l > $r,

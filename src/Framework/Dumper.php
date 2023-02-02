@@ -25,9 +25,8 @@ class Dumper
 
 	/**
 	 * Dumps information about a variable in readable format.
-	 * @param  mixed  $var  variable to dump
 	 */
-	public static function toLine($var): string
+	public static function toLine(mixed $var): string
 	{
 		if (is_bool($var)) {
 			return $var ? 'TRUE' : 'FALSE';
@@ -87,9 +86,8 @@ class Dumper
 
 	/**
 	 * Formats object to line.
-	 * @param  object  $object
 	 */
-	private static function objectToLine($object): string
+	private static function objectToLine(object $object): string
 	{
 		$line = $object::class;
 		if ($object instanceof \DateTime || $object instanceof \DateTimeInterface) {
@@ -102,9 +100,8 @@ class Dumper
 
 	/**
 	 * Dumps variable in PHP format.
-	 * @param  mixed  $var  variable to dump
 	 */
-	public static function toPhp($var): string
+	public static function toPhp(mixed $var): string
 	{
 		return self::_toPhp($var);
 	}
@@ -112,15 +109,14 @@ class Dumper
 
 	/**
 	 * Returns object's stripped hash.
-	 * @param  object  $object
 	 */
-	private static function hash($object): string
+	private static function hash(object $object): string
 	{
 		return '#' . substr(md5(spl_object_hash($object)), 0, 4);
 	}
 
 
-	private static function _toPhp(&$var, array &$list = [], int $level = 0, int &$line = 1): string
+	private static function _toPhp(mixed &$var, array &$list = [], int $level = 0, int &$line = 1): string
 	{
 		if (is_float($var)) {
 			$var = str_replace(',', '.', "$var");
@@ -398,7 +394,7 @@ class Dumper
 	/**
 	 * Dumps data to folder 'output'.
 	 */
-	public static function saveOutput(string $testFile, $content, string $suffix = ''): string
+	public static function saveOutput(string $testFile, mixed $content, string $suffix = ''): string
 	{
 		$path = self::$dumpDir . DIRECTORY_SEPARATOR . pathinfo($testFile, PATHINFO_FILENAME) . $suffix;
 		if (!preg_match('#/|\w:#A', self::$dumpDir)) {

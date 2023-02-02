@@ -148,9 +148,6 @@ class TestCase
 	}
 
 
-	/**
-	 * @return mixed
-	 */
 	protected function getData(string $provider)
 	{
 		if (!str_contains($provider, '.')) {

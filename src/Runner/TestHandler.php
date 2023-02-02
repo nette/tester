@@ -141,7 +141,7 @@ class TestHandler
 	}
 
 
-	private function initiateDataProvider(Test $test, string $provider)
+	private function initiateDataProvider(Test $test, string $provider): array|Test
 	{
 		try {
 			[$dataFile, $query, $optional] = Tester\DataProvider::parseAnnotation($provider, $test->getFile());
@@ -160,7 +160,7 @@ class TestHandler
 	}
 
 
-	private function initiateMultiple(Test $test, $count): array
+	private function initiateMultiple(Test $test, string $count): array
 	{
 		return array_map(
 			fn(int $i): Test => $test->withArguments(['multiple' => $i]),
@@ -231,7 +231,7 @@ class TestHandler
 	}
 
 
-	private function assessExitCode(Job $job, $code): ?Test
+	private function assessExitCode(Job $job, string|int $code): ?Test
 	{
 		$code = (int) $code;
 		if ($job->getExitCode() === Job::CODE_SKIP) {
@@ -251,7 +251,7 @@ class TestHandler
 	}
 
 
-	private function assessHttpCode(Job $job, $code): ?Test
+	private function assessHttpCode(Job $job, string|int $code): ?Test
 	{
 		if (!$this->runner->getInterpreter()->isCgi()) {
 			return null;

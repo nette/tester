@@ -165,7 +165,7 @@ class CommandLine
 	}
 
 
-	public function checkArg(array $opt, &$arg): void
+	public function checkArg(array $opt, mixed &$arg): void
 	{
 		if (!empty($opt[self::Normalizer])) {
 			$arg = call_user_func($opt[self::Normalizer], $arg);

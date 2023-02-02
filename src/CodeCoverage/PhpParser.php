@@ -171,7 +171,7 @@ class PhpParser
 	}
 
 
-	private static function fetch(array &$tokens, $take): ?string
+	private static function fetch(array &$tokens, array|int $take): ?string
 	{
 		$res = null;
 		while ($token = current($tokens)) {

@@ -88,7 +88,7 @@ class Expect
 	/**
 	 * Checks the expectations.
 	 */
-	public function __invoke($actual): void
+	public function __invoke(mixed $actual): void
 	{
 		foreach ($this->constraints as $cstr) {
 			if ($cstr instanceof \stdClass) {

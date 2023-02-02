@@ -216,7 +216,8 @@
 
 <?php
 
-function assignArrayByPath(&$arr, $info, $value) {
+function assignArrayByPath(array &$arr, stdClass $info, string $value): void
+{
 	$keys = explode(DIRECTORY_SEPARATOR, $info->name);
 
 	$currentFile = '';
