@@ -236,29 +236,14 @@ class CliTester
 
 		foreach ($this->options['-o'] as $output) {
 			[$format, $file] = $output;
-			switch ($format) {
-				case 'console':
-					$runner->outputHandlers[] = new Output\ConsolePrinter($runner, (bool) $this->options['-s'], $file, (bool) $this->options['--cider']);
-					break;
-
-				case 'tap':
-					$runner->outputHandlers[] = new Output\TapPrinter($file);
-					break;
-
-				case 'junit':
-					$runner->outputHandlers[] = new Output\JUnitPrinter($file);
-					break;
-
-				case 'log':
-					$runner->outputHandlers[] = new Output\Logger($runner, $file);
-					break;
-
-				case 'none':
-					break;
-
-				default:
-					throw new \LogicException("Undefined output printer '$format'.'");
-			}
+			match ($format) {
+				'console' => $runner->outputHandlers[] = new Output\ConsolePrinter($runner, (bool) $this->options['-s'], $file, (bool) $this->options['--cider']),
+				'tap' => $runner->outputHandlers[] = new Output\TapPrinter($file),
+				'junit' => $runner->outputHandlers[] = new Output\JUnitPrinter($file),
+				'log' => $runner->outputHandlers[] = new Output\Logger($runner, $file),
+				'none' => null,
+				default => throw new \LogicException("Undefined output printer '$format'.'"),
+			};
 		}
 
 		if ($this->options['--setup']) {
