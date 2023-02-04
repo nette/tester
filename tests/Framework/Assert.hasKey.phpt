@@ -21,16 +21,6 @@ Assert::hasKey('one', $array);
 Assert::hasNotKey(2, $array);
 Assert::hasNotKey('two', $array);
 
-foreach ([[], true, false, null, new stdClass, 1.0] as $key) {
-	Assert::exception(function () use ($key, $array) {
-		Assert::hasKey($key, $array);
-	}, Tester\AssertException::class, 'Key %a% should be string or integer');
-
-	Assert::exception(function () use ($key, $array) {
-		Assert::hasNotKey($key, $array);
-	}, Tester\AssertException::class, 'Key %a% should be string or integer');
-}
-
 Assert::exception(function () use ($array) {
 	Assert::hasKey(2, $array);
 }, Tester\AssertException::class, '%a% should contain key %a%');

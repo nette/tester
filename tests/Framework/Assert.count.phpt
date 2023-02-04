@@ -20,23 +20,7 @@ Assert::exception(function () {
 	Assert::count(1, [1, 2, 3]);
 }, Tester\AssertException::class, 'Count 3 should be 1');
 
-// test not countable values
-Assert::exception(function () {
-	Assert::count(1, null);
-}, Tester\AssertException::class, 'NULL should be array or countable object');
-
-Assert::exception(function () {
-	Assert::count(1, 1);
-}, Tester\AssertException::class, '1 should be array or countable object');
-
-Assert::exception(function () {
-	Assert::count(1, 'lorem ipsum');
-}, Tester\AssertException::class, '\'lorem ipsum\' should be array or countable object');
-
-Assert::exception(function () {
-	Assert::count(1, new Exception('lorem ipsum'));
-}, Tester\AssertException::class, 'Exception Exception: lorem ipsum should be array or countable object');
-
+// test custom description
 Assert::exception(function () {
 	Assert::count(1, [1, 2, 3], 'Custom description');
 }, Tester\AssertException::class, 'Custom description: Count 3 should be 1');

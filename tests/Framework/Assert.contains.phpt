@@ -37,16 +37,8 @@ foreach ($notContains as [$expected, $value]) {
 
 
 Assert::exception(function () {
-	Assert::contains(1, 1);
-}, Tester\AssertException::class, '1 should be string or array');
-
-Assert::exception(function () {
 	Assert::contains(1, '1');
 }, Tester\AssertException::class, 'Needle 1 should be string');
-
-Assert::exception(function () {
-	Assert::notContains(1, 1);
-}, Tester\AssertException::class, '1 should be string or array');
 
 Assert::exception(function () {
 	Assert::notContains(1, '1');
