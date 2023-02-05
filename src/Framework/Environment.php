@@ -47,7 +47,6 @@ class Environment
 
 	public static bool $checkAssertions = false;
 	public static bool $useColors;
-	private static int $obLevel;
 	private static int $exitCode = 0;
 
 
@@ -58,7 +57,6 @@ class Environment
 	{
 		self::setupErrors();
 		self::setupColors();
-		self::$obLevel = ob_get_level();
 
 		class_exists(Runner\Job::class);
 		class_exists(Dumper::class);
@@ -131,15 +129,13 @@ class Environment
 			register_shutdown_function(function () use ($error): void {
 				if (in_array($error['type'] ?? null, [E_ERROR, E_CORE_ERROR, E_COMPILE_ERROR, E_PARSE], true)) {
 					if (($error['type'] & error_reporting()) !== $error['type']) { // show fatal errors hidden by @shutup
-						self::removeOutputBuffers();
-						echo "\n", Dumper::color('white/red', "Fatal error: $error[message] in $error[file] on line $error[line]"), "\n";
+						self::print("\n" . Dumper::color('white/red', "Fatal error: $error[message] in $error[file] on line $error[line]"));
 					}
 				} elseif (self::$checkAssertions && !Assert::$counter) {
-					self::removeOutputBuffers();
-					echo "\n", Dumper::color('white/red', 'Error: This test forgets to execute an assertion.'), "\n";
+					self::print("\n" . Dumper::color('white/red', 'Error: This test forgets to execute an assertion.'));
 					self::exit(Runner\Job::CodeFail);
 				} elseif (!getenv(self::VariableRunner) && self::$exitCode !== Runner\Job::CodeSkip) {
-					echo "\n", (self::$exitCode ? Dumper::color('white/red', 'FAILURE') : Dumper::color('white/green', 'OK')), "\n";
+					self::print("\n" . (self::$exitCode ? Dumper::color('white/red', 'FAILURE') : Dumper::color('white/green', 'OK')));
 				}
 			});
 		});
@@ -151,9 +147,8 @@ class Environment
 	 */
 	public static function handleException(\Throwable $e): void
 	{
-		self::removeOutputBuffers();
 		self::$checkAssertions = false;
-		echo Dumper::dumpException($e);
+		self::print(Dumper::dumpException($e));
 		self::exit($e instanceof AssertException ? Runner\Job::CodeFail : Runner\Job::CodeError);
 	}
 
@@ -164,7 +159,7 @@ class Environment
 	public static function skip(string $message = ''): void
 	{
 		self::$checkAssertions = false;
-		echo "\nSkipped:\n$message\n";
+		self::print("\nSkipped:\n$message");
 		self::exit(Runner\Job::CodeSkip);
 	}
 
@@ -248,15 +243,21 @@ class Environment
 	}
 
 
-	private static function removeOutputBuffers(): void
-	{
-		while (ob_get_level() > self::$obLevel && @ob_end_flush()); // @ may be not removable
-	}
-
-
 	public static function exit(int $code = 0): void
 	{
 		self::$exitCode = $code;
 		exit($code);
+	}
+
+
+	/** @internal */
+	public static function print(string $s): void
+	{
+		$s = $s === '' || str_ends_with($s, "\n") ? $s : $s . "\n";
+		if (PHP_SAPI === 'cli' || PHP_SAPI === 'phpdbg') {
+			fwrite(STDOUT, self::$useColors ? $s : Dumper::removeColors($s));
+		} else {
+			echo $s;
+		}
 	}
 }
