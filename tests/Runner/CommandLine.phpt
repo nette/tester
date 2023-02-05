@@ -180,7 +180,7 @@ test(function () { // realpath
 	$cmd = new Cmd('
 		-p <path>
 	', [
-		'-p' => [Cmd::Realpath => true],
+		'-p' => [Cmd::RealPath => true],
 	]);
 
 	Assert::exception(function () use ($cmd) {

@@ -103,12 +103,12 @@ class Runner
 			while (($this->jobs || $running) && !$this->interrupted) {
 				while ($threads && $this->jobs) {
 					$running[] = $job = array_shift($this->jobs);
-					$job->setEnvironmentVariable(Environment::THREAD, (string) array_shift($threads));
+					$job->setEnvironmentVariable(Environment::VariableThread, (string) array_shift($threads));
 					$job->run(async: $async);
 				}
 
 				if ($async) {
-					usleep(Job::RUN_USLEEP); // stream_select() doesn't work with proc_open()
+					usleep(Job::RunSleep); // stream_select() doesn't work with proc_open()
 				}
 
 				foreach ($running as $key => $job) {
@@ -117,7 +117,7 @@ class Runner
 					}
 
 					if (!$job->isRunning()) {
-						$threads[] = $job->getEnvironmentVariable(Environment::THREAD);
+						$threads[] = $job->getEnvironmentVariable(Environment::VariableThread);
 						$this->testHandler->assess($job);
 						unset($running[$key]);
 					}
@@ -183,7 +183,7 @@ class Runner
 	 */
 	public function finishTest(Test $test): void
 	{
-		$this->result = $this->result && ($test->getResult() !== Test::FAILED);
+		$this->result = $this->result && ($test->getResult() !== Test::Failed);
 
 		foreach ($this->outputHandlers as $handler) {
 			$handler->finish($test);
@@ -196,7 +196,7 @@ class Runner
 			}
 		}
 
-		if ($this->stopOnFail && $test->getResult() === Test::FAILED) {
+		if ($this->stopOnFail && $test->getResult() === Test::Failed) {
 			$this->interrupted = true;
 		}
 	}
@@ -220,7 +220,7 @@ class Runner
 			return $this->lastResults[$signature] = (int) file_get_contents($file);
 		}
 
-		return $this->lastResults[$signature] = Test::PREPARED;
+		return $this->lastResults[$signature] = Test::Prepared;
 	}
 
 

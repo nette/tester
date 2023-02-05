@@ -16,17 +16,24 @@ namespace Tester\Runner;
 class Test
 {
 	public const
-		PREPARED = 0,
-		FAILED = 1,
-		PASSED = 2,
-		SKIPPED = 3;
+		Prepared = 0,
+		Failed = 1,
+		Passed = 2,
+		Skipped = 3;
+
+	/** @deprecated */
+	public const
+		PREPARED = self::Prepared,
+		FAILED = self::Failed,
+		PASSED = self::Passed,
+		SKIPPED = self::Skipped;
 
 	public ?string $title;
 	public ?string $message = null;
 	public string $stdout = '';
 	public string $stderr = '';
 	private string $file;
-	private int $result = self::PREPARED;
+	private int $result = self::Prepared;
 	private ?float $duration = null;
 
 	/** @var string[]|string[][] */
@@ -71,7 +78,7 @@ class Test
 
 	public function hasResult(): bool
 	{
-		return $this->result !== self::PREPARED;
+		return $this->result !== self::Prepared;
 	}
 
 

@@ -43,11 +43,11 @@ $runner->paths[] = __DIR__ . '/edge/*.phptx';
 $runner->outputHandlers[] = $logger = new Logger;
 $runner->run();
 
-Assert::same([Test::FAILED, 'Exited with error code 231 (expected 0)'], $logger->results['shutdown.exitCode.a.phptx']);
+Assert::same([Test::Failed, 'Exited with error code 231 (expected 0)'], $logger->results['shutdown.exitCode.a.phptx']);
 
-Assert::same([Test::PASSED, null], $logger->results['shutdown.exitCode.b.phptx']);
+Assert::same([Test::Passed, null], $logger->results['shutdown.exitCode.b.phptx']);
 
-Assert::same([Test::SKIPPED, 'just skipping'], $logger->results['skip.phptx']);
+Assert::same([Test::Skipped, 'just skipping'], $logger->results['skip.phptx']);
 
-Assert::same(Test::FAILED, $logger->results['shutdown.assert.phptx'][0]);
+Assert::same(Test::Failed, $logger->results['shutdown.assert.phptx'][0]);
 Assert::match("Failed: 'b' should be%A%", Tester\Dumper::removeColors($logger->results['shutdown.assert.phptx'][1]));

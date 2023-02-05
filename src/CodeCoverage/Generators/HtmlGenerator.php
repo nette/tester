@@ -18,9 +18,9 @@ use Tester\Helpers;
 class HtmlGenerator extends AbstractGenerator
 {
 	private const Classes = [
-		self::CODE_TESTED => 't', // tested
-		self::CODE_UNTESTED => 'u', // untested
-		self::CODE_DEAD => 'dead', // dead code
+		self::LineTested => 't', // tested
+		self::LineUntested => 'u', // untested
+		self::LineDead => 'dead', // dead code
 	];
 	private ?string $title;
 	private array $files = [];
@@ -78,11 +78,11 @@ class HtmlGenerator extends AbstractGenerator
 			if ($loaded) {
 				$lines = $this->data[$entry];
 				foreach ($lines as $flag) {
-					if ($flag >= self::CODE_UNTESTED) {
+					if ($flag >= self::LineUntested) {
 						$total++;
 					}
 
-					if ($flag >= self::CODE_TESTED) {
+					if ($flag >= self::LineTested) {
 						$covered++;
 					}
 				}

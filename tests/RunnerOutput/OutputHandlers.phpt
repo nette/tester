@@ -27,8 +27,8 @@ Tester\Helpers::purge($tempDir);
 
 $runner = new Runner(createInterpreter());
 $runner->setTempDirectory($tempDir);
-$runner->setEnvironmentVariable(Tester\Environment::RUNNER, '1');
-$runner->setEnvironmentVariable(Tester\Environment::COLORS, '0');
+$runner->setEnvironmentVariable(Tester\Environment::VariableRunner, '1');
+$runner->setEnvironmentVariable(Tester\Environment::VariableColors, '0');
 $runner->paths[] = __DIR__ . '/cases/*.phptx';
 $runner->outputHandlers[] = new Output\ConsolePrinter($runner, false, $console = FileMock::create(''));
 $runner->outputHandlers[] = new Output\ConsolePrinter($runner, true, $consoleWithSkipped = FileMock::create(''));

@@ -57,8 +57,8 @@ class CliTester
 		}
 
 		$runner = $this->createRunner();
-		$runner->setEnvironmentVariable(Environment::RUNNER, '1');
-		$runner->setEnvironmentVariable(Environment::COLORS, (string) (int) Environment::$useColors);
+		$runner->setEnvironmentVariable(Environment::VariableRunner, '1');
+		$runner->setEnvironmentVariable(Environment::VariableColors, (string) (int) Environment::$useColors);
 
 		$this->installInterruptHandler();
 
@@ -125,14 +125,14 @@ class CliTester
 
 				XX,
 			[
-				'-c' => [CommandLine::Realpath => true],
-				'--watch' => [CommandLine::Repeatable => true, CommandLine::Realpath => true],
-				'--setup' => [CommandLine::Realpath => true],
+				'-c' => [CommandLine::RealPath => true],
+				'--watch' => [CommandLine::Repeatable => true, CommandLine::RealPath => true],
+				'--setup' => [CommandLine::RealPath => true],
 				'--temp' => [],
 				'paths' => [CommandLine::Repeatable => true, CommandLine::Value => getcwd()],
 				'--debug' => [],
 				'--cider' => [],
-				'--coverage-src' => [CommandLine::Realpath => true, CommandLine::Repeatable => true],
+				'--coverage-src' => [CommandLine::RealPath => true, CommandLine::Repeatable => true],
 				'-o' => [CommandLine::Repeatable => true, CommandLine::Normalizer => function ($arg) use (&$outputFiles) {
 					[$format, $file] = explode(':', $arg, 2) + [1 => null];
 
@@ -261,14 +261,14 @@ class CliTester
 
 		[$engine, $version] = reset($engines);
 
-		$runner->setEnvironmentVariable(Environment::COVERAGE, $file);
-		$runner->setEnvironmentVariable(Environment::COVERAGE_ENGINE, $engine);
+		$runner->setEnvironmentVariable(Environment::VariableCoverage, $file);
+		$runner->setEnvironmentVariable(Environment::VariableCoverageEngine, $engine);
 
-		if ($engine === CodeCoverage\Collector::ENGINE_XDEBUG && version_compare($version, '3.0.0', '>=')) {
+		if ($engine === CodeCoverage\Collector::EngineXdebug && version_compare($version, '3.0.0', '>=')) {
 			$runner->addPhpIniOption('xdebug.mode', ltrim(ini_get('xdebug.mode') . ',coverage', ','));
 		}
 
-		if ($engine === CodeCoverage\Collector::ENGINE_PCOV && count($this->options['--coverage-src'])) {
+		if ($engine === CodeCoverage\Collector::EnginePcov && count($this->options['--coverage-src'])) {
 			$runner->addPhpIniOption('pcov.directory', Helpers::findCommonDirectory($this->options['--coverage-src']));
 		}
 

@@ -54,9 +54,9 @@ test(function () use ($interpreter) {
 
 	Assert::false($runner->run());
 	Assert::same([
-		[Test::FAILED, 'init-fail.phptx'],
-		[Test::FAILED, 'runtime-fail.phptx'],
-		[Test::PASSED, 'pass.phptx'],
+		[Test::Failed, 'init-fail.phptx'],
+		[Test::Failed, 'runtime-fail.phptx'],
+		[Test::Passed, 'pass.phptx'],
 	], $logger->results);
 });
 
@@ -73,7 +73,7 @@ test(function () use ($interpreter) {
 
 	Assert::false($runner->run());
 	Assert::same([
-		[Test::FAILED, 'init-fail.phptx'],
+		[Test::Failed, 'init-fail.phptx'],
 	], $logger->results);
 });
 
@@ -90,6 +90,6 @@ test(function () use ($interpreter) {
 
 	Assert::false($runner->run());
 	Assert::same([
-		[Test::FAILED, 'runtime-fail.phptx'],
+		[Test::Failed, 'runtime-fail.phptx'],
 	], $logger->results);
 });

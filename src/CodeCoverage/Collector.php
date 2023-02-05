@@ -17,9 +17,9 @@ use pcov;
 class Collector
 {
 	public const
-		ENGINE_PCOV = 'PCOV',
-		ENGINE_PHPDBG = 'PHPDBG',
-		ENGINE_XDEBUG = 'Xdebug';
+		EnginePcov = 'PCOV',
+		EnginePhpdbg = 'PHPDBG',
+		EngineXdebug = 'Xdebug';
 
 	/** @var resource */
 	private static $file;
@@ -29,9 +29,9 @@ class Collector
 	public static function detectEngines(): array
 	{
 		return array_filter([
-			extension_loaded('pcov') ? [self::ENGINE_PCOV, phpversion('pcov')] : null,
-			defined('PHPDBG_VERSION') ? [self::ENGINE_PHPDBG, PHPDBG_VERSION] : null,
-			extension_loaded('xdebug') ? [self::ENGINE_XDEBUG, phpversion('xdebug')] : null,
+			extension_loaded('pcov') ? [self::EnginePcov, phpversion('pcov')] : null,
+			defined('PHPDBG_VERSION') ? [self::EnginePhpdbg, PHPDBG_VERSION] : null,
+			extension_loaded('xdebug') ? [self::EngineXdebug, phpversion('xdebug')] : null,
 		]);
 	}
 
@@ -74,7 +74,7 @@ class Collector
 	 */
 	public static function flush(): void
 	{
-		if (self::isStarted() && self::$engine === self::ENGINE_PHPDBG) {
+		if (self::isStarted() && self::$engine === self::EnginePhpdbg) {
 			self::save();
 		}
 	}

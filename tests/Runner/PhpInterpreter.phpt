@@ -18,17 +18,17 @@ Assert::same(str_contains(PHP_SAPI, 'cgi'), $interpreter->isCgi());
 $count = 0;
 $engines = $interpreter->getCodeCoverageEngines();
 if (defined('PHPDBG_VERSION')) {
-	Assert::contains([Tester\CodeCoverage\Collector::ENGINE_PHPDBG, PHPDBG_VERSION], $engines);
+	Assert::contains([Tester\CodeCoverage\Collector::EnginePhpdbg, PHPDBG_VERSION], $engines);
 	$count++;
 }
 
 if (extension_loaded('xdebug')) {
-	Assert::contains([Tester\CodeCoverage\Collector::ENGINE_XDEBUG, phpversion('xdebug')], $engines);
+	Assert::contains([Tester\CodeCoverage\Collector::EngineXdebug, phpversion('xdebug')], $engines);
 	$count++;
 }
 
 if (extension_loaded('pcov')) {
-	Assert::contains([Tester\CodeCoverage\Collector::ENGINE_PCOV, phpversion('pcov')], $engines);
+	Assert::contains([Tester\CodeCoverage\Collector::EnginePcov, phpversion('pcov')], $engines);
 	$count++;
 }
 

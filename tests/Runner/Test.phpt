@@ -25,7 +25,7 @@ test(function () {
 	Assert::same([], $test->getArguments());
 	Assert::same('some/Test.phpt', $test->getSignature());
 	Assert::false($test->hasResult());
-	Assert::same(Test::PREPARED, $test->getResult());
+	Assert::same(Test::Prepared, $test->getResult());
 	Assert::null($test->getDuration());
 });
 
@@ -38,15 +38,15 @@ test(function () {
 
 
 test(function () {
-	$test = (new Test(__FILE__, 'My test'))->withResult(Test::PASSED, 'It is done');
+	$test = (new Test(__FILE__, 'My test'))->withResult(Test::Passed, 'It is done');
 
 	Assert::true($test->hasResult());
-	Assert::same(Test::PASSED, $test->getResult());
+	Assert::same(Test::Passed, $test->getResult());
 	Assert::same('It is done', $test->message);
 
 	Assert::exception(function () use ($test) {
-		$test->withResult(Test::FAILED, 'Foo');
-	}, LogicException::class, 'Result of test is already set to ' . Test::PASSED . " with message 'It is done'.");
+		$test->withResult(Test::Failed, 'Foo');
+	}, LogicException::class, 'Result of test is already set to ' . Test::Passed . " with message 'It is done'.");
 });
 
 
@@ -68,6 +68,6 @@ test(function () {
 	], $test->getArguments());
 
 	Assert::exception(function () use ($test) {
-		$test->withResult(Test::PASSED, '')->withArguments([]);
+		$test->withResult(Test::Passed, '')->withArguments([]);
 	}, LogicException::class, 'Cannot change arguments of test which already has a result.');
 });

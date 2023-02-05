@@ -52,6 +52,6 @@ Assert::false(getenv('TesterEnvVar'));
 
 ksort($logger->results);
 Assert::equal([
-	'addPhpIniOption.phptx' => [Test::PASSED, Expect::type('float')],
-	'env-vars.phptx' => [Test::PASSED, Expect::type('float')],
+	'addPhpIniOption.phptx' => [Test::Passed, Expect::type('float')],
+	'env-vars.phptx' => [Test::Passed, Expect::type('float')],
 ], $logger->results);

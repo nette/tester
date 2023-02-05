@@ -11,14 +11,14 @@ require __DIR__ . '/../bootstrap.php';
 
 $engines = array_filter(CodeCoverage\Collector::detectEngines(), function (array $engineInfo) {
 	[$engine] = $engineInfo;
-	return $engine !== CodeCoverage\Collector::ENGINE_PCOV; // PCOV needs system pcov.directory INI to be set
+	return $engine !== CodeCoverage\Collector::EnginePcov; // PCOV needs system pcov.directory INI to be set
 });
 if (count($engines) < 1) {
 	Tester\Environment::skip('Requires Xdebug or PHPDB SAPI.');
 }
 [$engine, $version] = reset($engines);
 
-if ($engine === CodeCoverage\Collector::ENGINE_XDEBUG
+if ($engine === CodeCoverage\Collector::EngineXdebug
 	&& version_compare($version, '3.0.0', '>=')
 	&& !str_contains(ini_get('xdebug.mode'), 'coverage')
 ) {

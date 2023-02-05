@@ -37,9 +37,9 @@ class Logger implements Tester\Runner\OutputHandler
 	{
 		$this->count = 0;
 		$this->results = [
-			Test::PASSED => 0,
-			Test::SKIPPED => 0,
-			Test::FAILED => 0,
+			Test::Passed => 0,
+			Test::Skipped => 0,
+			Test::Failed => 0,
 		];
 		fwrite($this->file, 'PHP ' . $this->runner->getInterpreter()->getVersion()
 			. ' | ' . $this->runner->getInterpreter()->getCommandLine()
@@ -58,9 +58,9 @@ class Logger implements Tester\Runner\OutputHandler
 		$this->results[$test->getResult()]++;
 		$message = '   ' . str_replace("\n", "\n   ", Tester\Dumper::removeColors(trim((string) $test->message)));
 		$outputs = [
-			Test::PASSED => "-- OK: {$test->getSignature()}",
-			Test::SKIPPED => "-- Skipped: {$test->getSignature()}\n$message",
-			Test::FAILED => "-- FAILED: {$test->getSignature()}\n$message",
+			Test::Passed => "-- OK: {$test->getSignature()}",
+			Test::Skipped => "-- Skipped: {$test->getSignature()}\n$message",
+			Test::Failed => "-- FAILED: {$test->getSignature()}\n$message",
 		];
 		fwrite($this->file, $outputs[$test->getResult()] . "\n\n");
 	}
@@ -71,10 +71,10 @@ class Logger implements Tester\Runner\OutputHandler
 		$run = array_sum($this->results);
 		fwrite(
 			$this->file,
-			($this->results[Test::FAILED] ? 'FAILURES!' : 'OK')
+			($this->results[Test::Failed] ? 'FAILURES!' : 'OK')
 			. " ($this->count tests"
-			. ($this->results[Test::FAILED] ? ", {$this->results[Test::FAILED]} failures" : '')
-			. ($this->results[Test::SKIPPED] ? ", {$this->results[Test::SKIPPED]} skipped" : '')
+			. ($this->results[Test::Failed] ? ", {$this->results[Test::Failed]} failures" : '')
+			. ($this->results[Test::Skipped] ? ", {$this->results[Test::Skipped]} skipped" : '')
 			. ($this->count !== $run ? ', ' . ($this->count - $run) . ' not run' : '')
 			. ')'
 		);

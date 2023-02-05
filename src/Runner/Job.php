@@ -18,14 +18,14 @@ use Tester\Helpers;
 class Job
 {
 	public const
-		CODE_NONE = -1,
-		CODE_OK = 0,
-		CODE_SKIP = 177,
-		CODE_FAIL = 178,
-		CODE_ERROR = 255;
+		CodeNone = -1,
+		CodeOk = 0,
+		CodeSkip = 177,
+		CodeFail = 178,
+		CodeError = 255;
 
 	/** waiting time between process activity check in microseconds */
-	public const RUN_USLEEP = 10000;
+	public const RunSleep = 10000;
 
 	private Test $test;
 	private PhpInterpreter $interpreter;
@@ -39,7 +39,7 @@ class Job
 	/** @var resource|null */
 	private $stdout;
 	private ?string $stderrFile;
-	private int $exitCode = self::CODE_NONE;
+	private int $exitCode = self::CodeNone;
 
 	/** @var string[]  output headers */
 	private array $headers = [];
@@ -48,7 +48,7 @@ class Job
 
 	public function __construct(Test $test, PhpInterpreter $interpreter, ?array $envVars = null)
 	{
-		if ($test->getResult() !== Test::PREPARED) {
+		if ($test->getResult() !== Test::Prepared) {
 			throw new \LogicException("Test '{$test->getSignature()}' already has result '{$test->getResult()}'.");
 		}
 
@@ -127,7 +127,7 @@ class Job
 			stream_set_blocking($this->stdout, false); // on Windows does not work with proc_open()
 		} else {
 			while ($this->isRunning()) {
-				usleep(self::RUN_USLEEP); // stream_select() doesn't work with proc_open()
+				usleep(self::RunSleep); // stream_select() doesn't work with proc_open()
 			}
 		}
 	}
@@ -158,7 +158,7 @@ class Job
 		}
 
 		$code = proc_close($this->proc);
-		$this->exitCode = $code === self::CODE_NONE
+		$this->exitCode = $code === self::CodeNone
 			? $status['exitcode']
 			: $code;
 

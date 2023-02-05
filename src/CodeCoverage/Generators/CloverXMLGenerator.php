@@ -131,7 +131,7 @@ class CloverXMLGenerator extends AbstractGenerator
 
 
 			foreach ((array) $coverageData as $line => $count) {
-				if ($count === self::CODE_DEAD) {
+				if ($count === self::LineDead) {
 					continue;
 				}
 
@@ -195,7 +195,7 @@ class CloverXMLGenerator extends AbstractGenerator
 			$count = max(1, $info->end - $info->start - 2);
 		} else {
 			for ($i = $info->start; $i <= $info->end; $i++) {
-				if (isset($coverageData[$i]) && $coverageData[$i] !== self::CODE_DEAD) {
+				if (isset($coverageData[$i]) && $coverageData[$i] !== self::LineDead) {
 					$count++;
 					if ($coverageData[$i] > 0) {
 						$coveredCount++;

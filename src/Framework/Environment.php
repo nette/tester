@@ -16,19 +16,34 @@ namespace Tester;
 class Environment
 {
 	/** Should Test use console colors? */
-	public const COLORS = 'NETTE_TESTER_COLORS';
+	public const VariableColors = 'NETTE_TESTER_COLORS';
 
 	/** Test is run by Runner */
-	public const RUNNER = 'NETTE_TESTER_RUNNER';
+	public const VariableRunner = 'NETTE_TESTER_RUNNER';
 
 	/** Code coverage engine */
-	public const COVERAGE_ENGINE = 'NETTE_TESTER_COVERAGE_ENGINE';
+	public const VariableCoverageEngine = 'NETTE_TESTER_COVERAGE_ENGINE';
 
 	/** Code coverage file */
-	public const COVERAGE = 'NETTE_TESTER_COVERAGE';
+	public const VariableCoverage = 'NETTE_TESTER_COVERAGE';
 
 	/** Thread number when run tests in multi threads */
-	public const THREAD = 'NETTE_TESTER_THREAD';
+	public const VariableThread = 'NETTE_TESTER_THREAD';
+
+	/** @deprecated use Environment::VariableColors */
+	public const COLORS = self::VariableColors;
+
+	/** @deprecated use Environment::VariableRunner */
+	public const RUNNER = self::VariableRunner;
+
+	/** @deprecated use Environment::VariableCoverageEngine */
+	public const COVERAGE_ENGINE = self::VariableCoverageEngine;
+
+	/** @deprecated use Environment::VariableCoverage */
+	public const COVERAGE = self::VariableCoverage;
+
+	/** @deprecated use Environment::VariableThread */
+	public const THREAD = self::VariableThread;
 
 	public static bool $checkAssertions = false;
 	public static bool $useColors;
@@ -52,8 +67,8 @@ class Environment
 		$annotations = self::getTestAnnotations();
 		self::$checkAssertions = !isset($annotations['outputmatch']) && !isset($annotations['outputmatchfile']);
 
-		if (getenv(self::COVERAGE) && getenv(self::COVERAGE_ENGINE)) {
-			CodeCoverage\Collector::start(getenv(self::COVERAGE), getenv(self::COVERAGE_ENGINE));
+		if (getenv(self::VariableCoverage) && getenv(self::VariableCoverageEngine)) {
+			CodeCoverage\Collector::start(getenv(self::VariableCoverage), getenv(self::VariableCoverageEngine));
 		}
 
 		if (getenv('TERMINAL_EMULATOR') === 'JetBrains-JediTerm') {
@@ -68,8 +83,8 @@ class Environment
 	 */
 	public static function setupColors(): void
 	{
-		self::$useColors = getenv(self::COLORS) !== false
-			? (bool) getenv(self::COLORS)
+		self::$useColors = getenv(self::VariableColors) !== false
+			? (bool) getenv(self::VariableColors)
 			: (PHP_SAPI === 'cli' || PHP_SAPI === 'phpdbg')
 				&& getenv('NO_COLOR') === false // https://no-color.org
 				&& (getenv('FORCE_COLOR')
@@ -122,8 +137,8 @@ class Environment
 				} elseif (self::$checkAssertions && !Assert::$counter) {
 					self::removeOutputBuffers();
 					echo "\n", Dumper::color('white/red', 'Error: This test forgets to execute an assertion.'), "\n";
-					self::exit(Runner\Job::CODE_FAIL);
-				} elseif (!getenv(self::RUNNER) && self::$exitCode !== Runner\Job::CODE_SKIP) {
+					self::exit(Runner\Job::CodeFail);
+				} elseif (!getenv(self::VariableRunner) && self::$exitCode !== Runner\Job::CodeSkip) {
 					echo "\n", (self::$exitCode ? Dumper::color('white/red', 'FAILURE') : Dumper::color('white/green', 'OK')), "\n";
 				}
 			});
@@ -139,7 +154,7 @@ class Environment
 		self::removeOutputBuffers();
 		self::$checkAssertions = false;
 		echo Dumper::dumpException($e);
-		self::exit($e instanceof AssertException ? Runner\Job::CODE_FAIL : Runner\Job::CODE_ERROR);
+		self::exit($e instanceof AssertException ? Runner\Job::CodeFail : Runner\Job::CodeError);
 	}
 
 
@@ -150,7 +165,7 @@ class Environment
 	{
 		self::$checkAssertions = false;
 		echo "\nSkipped:\n$message\n";
-		self::exit(Runner\Job::CODE_SKIP);
+		self::exit(Runner\Job::CodeSkip);
 	}
 
 
