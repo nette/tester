@@ -27,9 +27,6 @@ class Job
 	/** waiting time between process activity check in microseconds */
 	public const RUN_USLEEP = 10000;
 
-	public const
-		RUN_ASYNC = 1;
-
 	private Test $test;
 	private PhpInterpreter $interpreter;
 
@@ -86,9 +83,8 @@ class Job
 
 	/**
 	 * Runs single test.
-	 * @param  int  $flags  self::RUN_ASYNC
 	 */
-	public function run(int $flags = 0): void
+	public function run(bool $async = false): void
 	{
 		foreach ($this->envVars as $name => $value) {
 			putenv("$name=$value");
@@ -127,7 +123,7 @@ class Job
 			fclose($pipes[2]);
 		}
 
-		if ($flags & self::RUN_ASYNC) {
+		if ($async) {
 			stream_set_blocking($this->stdout, false); // on Windows does not work with proc_open()
 		} else {
 			while ($this->isRunning()) {

@@ -104,7 +104,7 @@ class Runner
 				while ($threads && $this->jobs) {
 					$running[] = $job = array_shift($this->jobs);
 					$job->setEnvironmentVariable(Environment::THREAD, (string) array_shift($threads));
-					$job->run($async ? $job::RUN_ASYNC : 0);
+					$job->run(async: $async);
 				}
 
 				if ($async) {
