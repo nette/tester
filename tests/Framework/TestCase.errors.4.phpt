@@ -2,7 +2,7 @@
 
 /**
  * @exitCode 255
- * @outputMatch #^Test::setUp,Exception: setUp\s+in#
+ * @outputMatch #^Test::setUp,× testMe\s+Exception: setUp\s+in#
  */
 
 declare(strict_types=1);

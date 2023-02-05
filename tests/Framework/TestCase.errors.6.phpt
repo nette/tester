@@ -2,7 +2,7 @@
 
 /**
  * @exitCode 255
- * @outputMatch #^Test::setUp,Test::testMe,Test::tearDown,Exception: tearDown\s+in#
+ * @outputMatch #^Test::setUp,Test::testMe,Test::tearDown,× testMe\s+Exception: tearDown\s+in#
  */
 
 declare(strict_types=1);

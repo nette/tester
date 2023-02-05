@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @outputMatch Test::setUp,Test::testMe,Test::tearDown
+ * @outputMatch Test::setUp,Test::testMe,Test::tearDown√ testMe
  */
 
 declare(strict_types=1);

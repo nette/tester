@@ -56,8 +56,12 @@ class TestCase
 			foreach ($methods as $method) {
 				try {
 					$this->runTest($method);
+					Environment::print(Dumper::color('lime', '√') . " $method");
 				} catch (TestCaseSkippedException $e) {
-					echo "\nSkipped:\n{$e->getMessage()}\n";
+					Environment::print("s $method {$e->getMessage()}");
+				} catch (\Throwable $e) {
+					Environment::print(Dumper::color('red', '×') . " $method\n\n");
+					throw $e;
 				}
 			}
 		}
