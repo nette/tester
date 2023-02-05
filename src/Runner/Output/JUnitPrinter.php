@@ -20,15 +20,9 @@ class JUnitPrinter implements Tester\Runner\OutputHandler
 {
 	/** @var resource */
 	private $file;
-
-	/** @var string */
-	private $buffer;
-
-	/** @var float */
-	private $startTime;
-
-	/** @var array */
-	private $results;
+	private string $buffer;
+	private float $startTime;
+	private array $results;
 
 
 	public function __construct(?string $file = null)
@@ -39,6 +33,7 @@ class JUnitPrinter implements Tester\Runner\OutputHandler
 
 	public function begin(): void
 	{
+		$this->buffer = '';
 		$this->results = [
 			Test::PASSED => 0,
 			Test::SKIPPED => 0,

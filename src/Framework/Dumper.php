@@ -16,14 +16,10 @@ namespace Tester;
  */
 class Dumper
 {
-	public static $maxLength = 70;
-
-	public static $maxDepth = 10;
-
-	public static $dumpDir = 'output';
-
-	public static $maxPathSegments = 3;
-
+	public static int $maxLength = 70;
+	public static int $maxDepth = 10;
+	public static string $dumpDir = 'output';
+	public static int $maxPathSegments = 3;
 	public static $pathSeparator;
 
 

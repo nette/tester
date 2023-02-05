@@ -40,14 +40,12 @@ class Assert
 		'%(\[.+\][+*?{},\d]*)%' => '$1', // range
 	];
 
-	/** @var bool expand patterns in match() and matchFile() */
-	public static $expandPatterns = true;
+	/** expand patterns in match() and matchFile() */
+	public static bool $expandPatterns = true;
 
 	/** @var callable  function (AssertException $exception): void */
 	public static $onFailure;
-
-	/** @var int  the count of assertions */
-	public static $counter = 0;
+	public static int $counter = 0;
 
 
 	/**

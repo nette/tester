@@ -20,32 +20,17 @@ use Tester\Runner\Test;
  */
 class ConsolePrinter implements Tester\Runner\OutputHandler
 {
-	/** @var Runner */
-	private $runner;
-
-	/** @var bool  display skipped tests information? */
-	private $displaySkipped = false;
+	private Runner $runner;
 
 	/** @var resource */
 	private $file;
-
-	/** @var string */
-	private $buffer;
-
-	/** @var float */
-	private $time;
-
-	/** @var int */
-	private $count;
-
-	/** @var array */
-	private $results;
-
-	/** @var string */
-	private $baseDir;
-
-	/** @var array */
-	private $symbols;
+	private bool $displaySkipped = false;
+	private string $buffer;
+	private float $time;
+	private int $count;
+	private array $results;
+	private ?string $baseDir;
+	private array $symbols;
 
 
 	public function __construct(
@@ -68,6 +53,7 @@ class ConsolePrinter implements Tester\Runner\OutputHandler
 	public function begin(): void
 	{
 		$this->count = 0;
+		$this->buffer = '';
 		$this->baseDir = null;
 		$this->results = [
 			Test::PASSED => 0,
@@ -132,6 +118,6 @@ class ConsolePrinter implements Tester\Runner\OutputHandler
 			. ($this->count !== $run ? ($this->count - $run) . ' not run, ' : '')
 			. sprintf('%0.1f', $this->time + microtime(true)) . ' seconds)' . Dumper::color() . "\n");
 
-		$this->buffer = null;
+		$this->buffer = '';
 	}
 }

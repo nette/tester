@@ -19,17 +19,11 @@ use Tester\Runner\Test;
  */
 class Logger implements Tester\Runner\OutputHandler
 {
-	/** @var Runner */
-	private $runner;
-
 	/** @var resource */
 	private $file;
-
-	/** @var int */
-	private $count;
-
-	/** @var array */
-	private $results;
+	private Runner $runner;
+	private int $count;
+	private array $results;
 
 
 	public function __construct(Runner $runner, ?string $file = null)

@@ -30,17 +30,10 @@ class Environment
 	/** Thread number when run tests in multi threads */
 	public const THREAD = 'NETTE_TESTER_THREAD';
 
-	/** @var bool */
-	public static $checkAssertions = false;
-
-	/** @var bool */
-	public static $useColors;
-
-	/** @var int initial output buffer level */
-	private static $obLevel;
-
-	/** @var int */
-	private static $exitCode = 0;
+	public static bool $checkAssertions = false;
+	public static bool $useColors;
+	private static int $obLevel;
+	private static int $exitCode = 0;
 
 
 	/**

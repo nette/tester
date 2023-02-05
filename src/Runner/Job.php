@@ -31,14 +31,11 @@ class Job
 		RUN_ASYNC = 1,
 		RUN_COLLECT_ERRORS = 2;
 
-	/** @var Test */
-	private $test;
-
-	/** @var PhpInterpreter */
-	private $interpreter;
+	private Test $test;
+	private PhpInterpreter $interpreter;
 
 	/** @var string[]  environment variables for test */
-	private $envVars;
+	private array $envVars;
 
 	/** @var resource|null */
 	private $proc;
@@ -48,15 +45,11 @@ class Job
 
 	/** @var resource|null */
 	private $stderr;
-
-	/** @var int */
-	private $exitCode = self::CODE_NONE;
+	private int $exitCode = self::CODE_NONE;
 
 	/** @var string[]  output headers */
-	private $headers = [];
-
-	/** @var float|null */
-	private $duration;
+	private array $headers = [];
+	private ?float $duration;
 
 
 	public function __construct(Test $test, PhpInterpreter $interpreter, ?array $envVars = null)

@@ -17,17 +17,10 @@ use Tester\Helpers;
  */
 class PhpInterpreter
 {
-	/** @var string */
-	private $commandLine;
-
-	/** @var bool is CGI? */
-	private $cgi;
-
-	/** @var \stdClass  created by info.php */
-	private $info;
-
-	/** @var string */
-	private $error;
+	private string $commandLine;
+	private bool $cgi;
+	private \stdClass $info;
+	private string $error;
 
 
 	public function __construct(string $path, array $args = [])

@@ -13,6 +13,7 @@ require __DIR__ . '/../../src/Runner/Runner.php';
 $runner = new Tester\Runner\Runner(createInterpreter());
 
 $jobs = Assert::with($runner, function () {
+	$this->result = true;
 	$this->findTests(__DIR__ . '/multiple/*.phptx');
 	return $this->jobs;
 });

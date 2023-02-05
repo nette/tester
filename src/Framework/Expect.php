@@ -49,8 +49,8 @@ namespace Tester;
  */
 class Expect
 {
-	/** @var array of self|\Closure|\stdClass */
-	private $constraints = [];
+	/** array<self|\Closure|\stdClass> */
+	private array $constraints = [];
 
 
 	public static function __callStatic(string $method, array $args): self

@@ -21,12 +21,8 @@ use Tester\TestCase;
 class TestHandler
 {
 	private const HttpOk = 200;
-
-	/** @var Runner */
-	private $runner;
-
-	/** @var string|null */
-	private $tempDir;
+	private Runner $runner;
+	private ?string $tempDir = null;
 
 
 	public function __construct(Runner $runner)

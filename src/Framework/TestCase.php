@@ -20,8 +20,7 @@ class TestCase
 		ListMethods = 'nette-tester-list-methods',
 		MethodPattern = '#^test[A-Z0-9_]#';
 
-	/** @var bool */
-	private $handleErrors = false;
+	private bool $handleErrors = false;
 
 	/** @var callable|false|null */
 	private $prevErrorHandler = false;

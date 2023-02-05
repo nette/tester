@@ -18,43 +18,25 @@ use Tester\Environment;
 class Runner
 {
 	/** @var string[]  paths to test files/directories */
-	public $paths = [];
+	public array $paths = [];
 
 	/** @var string[] */
-	public $ignoreDirs = ['vendor'];
-
-	/** @var int  run in parallel threads */
-	public $threadCount = 1;
-
-	/** @var TestHandler */
-	public $testHandler;
+	public array $ignoreDirs = ['vendor'];
+	public int $threadCount = 1;
+	public TestHandler $testHandler;
 
 	/** @var OutputHandler[] */
-	public $outputHandlers = [];
-
-	/** @var bool */
-	public $stopOnFail = false;
-
-	/** @var PhpInterpreter */
-	private $interpreter;
-
-	/** @var array */
-	private $envVars = [];
+	public array $outputHandlers = [];
+	public bool $stopOnFail = false;
+	private PhpInterpreter $interpreter;
+	private array $envVars = [];
 
 	/** @var Job[] */
-	private $jobs;
-
-	/** @var bool */
-	private $interrupted = false;
-
-	/** @var string|null */
-	private $tempDir;
-
-	/** @var bool */
-	private $result;
-
-	/** @var array */
-	private $lastResults = [];
+	private array $jobs;
+	private bool $interrupted = false;
+	private ?string $tempDir = null;
+	private bool $result;
+	private array $lastResults = [];
 
 
 	public function __construct(PhpInterpreter $interpreter)

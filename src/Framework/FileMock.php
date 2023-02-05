@@ -18,28 +18,17 @@ class FileMock
 	private const Protocol = 'mock';
 
 	/** @var string[] */
-	public static $files = [];
+	public static array $files = [];
 
 	/** @var resource used by PHP itself */
 	public $context;
 
-	/** @var string */
-	private $content;
-
-	/** @var int */
-	private $readingPos;
-
-	/** @var int */
-	private $writingPos;
-
-	/** @var bool */
-	private $appendMode;
-
-	/** @var bool */
-	private $isReadable;
-
-	/** @var bool */
-	private $isWritable;
+	private string $content;
+	private int $readingPos;
+	private int $writingPos;
+	private bool $appendMode;
+	private bool $isReadable;
+	private bool $isWritable;
 
 
 	/**
@@ -84,8 +73,9 @@ class FileMock
 			self::$files[$path] = '';
 		}
 
-		$this->content = &self::$files[$path];
-		$this->content = (string) $this->content;
+		$tmp = &self::$files[$path];
+		$tmp = (string) $tmp;
+		$this->content = &$tmp;
 		$this->appendMode = $m[1] === 'a';
 		$this->readingPos = 0;
 		$this->writingPos = $this->appendMode ? strlen($this->content) : 0;

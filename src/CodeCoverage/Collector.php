@@ -23,9 +23,7 @@ class Collector
 
 	/** @var resource */
 	private static $file;
-
-	/** @var string */
-	private static $engine;
+	private static string $engine;
 
 
 	public static function detectEngines(): array

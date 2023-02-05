@@ -20,17 +20,10 @@ use Tester\Helpers;
  */
 class CliTester
 {
-	/** @var array */
-	private $options;
-
-	/** @var PhpInterpreter */
-	private $interpreter;
-
-	/** @var bool */
-	private $debugMode = true;
-
-	/** @var string|null */
-	private $stdoutFormat;
+	private array $options;
+	private PhpInterpreter $interpreter;
+	private bool $debugMode = true;
+	private ?string $stdoutFormat = null;
 
 
 	public function run(): ?int
@@ -219,7 +212,7 @@ class CliTester
 		$runner = new Runner($this->interpreter);
 		$runner->paths = $this->options['paths'];
 		$runner->threadCount = max(1, (int) $this->options['-j']);
-		$runner->stopOnFail = $this->options['--stop-on-fail'];
+		$runner->stopOnFail = (bool) $this->options['--stop-on-fail'];
 
 		if ($this->options['--temp'] !== null) {
 			$runner->setTempDirectory($this->options['--temp']);

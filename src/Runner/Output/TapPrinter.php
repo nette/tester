@@ -20,9 +20,7 @@ class TapPrinter implements Tester\Runner\OutputHandler
 {
 	/** @var resource */
 	private $file;
-
-	/** @var array */
-	private $results;
+	private array $results;
 
 
 	public function __construct(?string $file = null)

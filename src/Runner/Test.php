@@ -21,26 +21,13 @@ class Test
 		PASSED = 2,
 		SKIPPED = 3;
 
-	/** @var string|null */
-	public $title;
-
-	/** @var string|null */
-	public $message;
-
-	/** @var string */
-	public $stdout = '';
-
-	/** @var string */
-	public $stderr = '';
-
-	/** @var string */
-	private $file;
-
-	/** @var int */
-	private $result = self::PREPARED;
-
-	/** @var float|null */
-	private $duration;
+	public ?string $title;
+	public ?string $message = null;
+	public string $stdout = '';
+	public string $stderr = '';
+	private string $file;
+	private int $result = self::PREPARED;
+	private ?float $duration = null;
 
 	/** @var string[]|string[][] */
 	private $args = [];

@@ -22,12 +22,8 @@ class HtmlGenerator extends AbstractGenerator
 		self::CODE_UNTESTED => 'u', // untested
 		self::CODE_DEAD => 'dead', // dead code
 	];
-
-	/** @var string */
-	private $title;
-
-	/** @var array */
-	private $files = [];
+	private ?string $title;
+	private array $files = [];
 
 
 	/**
