@@ -98,64 +98,66 @@ class CliTester
 		$outputFiles = [];
 
 		echo <<<'XX'
- _____ ___  ___ _____ ___  ___
-|_   _/ __)( __/_   _/ __)| _ )
-  |_| \___ /___) |_| \___ |_|_\  v2.5
+			 _____ ___  ___ _____ ___  ___
+			|_   _/ __)( __/_   _/ __)| _ )
+			  |_| \___ /___) |_| \___ |_|_\  v2.5
 
 
-XX;
+			XX;
 
-		$cmd = new CommandLine(<<<'XX'
-Usage:
-    tester [options] [<test file> | <directory>]...
+		$cmd = new CommandLine(
+			<<<'XX'
+				Usage:
+				    tester [options] [<test file> | <directory>]...
 
-Options:
-    -p <path>                    Specify PHP interpreter to run (default: php).
-    -c <path>                    Look for php.ini file (or look in directory) <path>.
-    -C                           Use system-wide php.ini.
-    -d <key=value>...            Define INI entry 'key' with value 'value'.
-    -s                           Show information about skipped tests.
-    --stop-on-fail               Stop execution upon the first failure.
-    -j <num>                     Run <num> jobs in parallel (default: 8).
-    -o <console|tap|junit|log|none>  (e.g. -o junit:output.xml)
-                                 Specify one or more output formats with optional file name.
-    -w | --watch <path>          Watch directory.
-    -i | --info                  Show tests environment info and exit.
-    --setup <path>               Script for runner setup.
-    --temp <path>                Path to temporary directory. Default by sys_get_temp_dir().
-    --colors [1|0]               Enable or disable colors.
-    --coverage <path>            Generate code coverage report to file.
-    --coverage-src <path>        Path to source code.
-    -h | --help                  This help.
+				Options:
+				    -p <path>                    Specify PHP interpreter to run (default: php).
+				    -c <path>                    Look for php.ini file (or look in directory) <path>.
+				    -C                           Use system-wide php.ini.
+				    -d <key=value>...            Define INI entry 'key' with value 'value'.
+				    -s                           Show information about skipped tests.
+				    --stop-on-fail               Stop execution upon the first failure.
+				    -j <num>                     Run <num> jobs in parallel (default: 8).
+				    -o <console|tap|junit|log|none>  (e.g. -o junit:output.xml)
+				                                 Specify one or more output formats with optional file name.
+				    -w | --watch <path>          Watch directory.
+				    -i | --info                  Show tests environment info and exit.
+				    --setup <path>               Script for runner setup.
+				    --temp <path>                Path to temporary directory. Default by sys_get_temp_dir().
+				    --colors [1|0]               Enable or disable colors.
+				    --coverage <path>            Generate code coverage report to file.
+				    --coverage-src <path>        Path to source code.
+				    -h | --help                  This help.
 
-XX
-		, [
-			'-c' => [CommandLine::Realpath => true],
-			'--watch' => [CommandLine::Repeatable => true, CommandLine::Realpath => true],
-			'--setup' => [CommandLine::Realpath => true],
-			'--temp' => [CommandLine::Realpath => true],
-			'paths' => [CommandLine::Repeatable => true, CommandLine::Value => getcwd()],
-			'--debug' => [],
-			'--cider' => [],
-			'--coverage-src' => [CommandLine::Realpath => true, CommandLine::Repeatable => true],
-			'-o' => [CommandLine::Repeatable => true, CommandLine::Normalizer => function ($arg) use (&$outputFiles) {
-				[$format, $file] = explode(':', $arg, 2) + [1 => null];
+				XX,
+			[
+				'-c' => [CommandLine::Realpath => true],
+				'--watch' => [CommandLine::Repeatable => true, CommandLine::Realpath => true],
+				'--setup' => [CommandLine::Realpath => true],
+				'--temp' => [CommandLine::Realpath => true],
+				'paths' => [CommandLine::Repeatable => true, CommandLine::Value => getcwd()],
+				'--debug' => [],
+				'--cider' => [],
+				'--coverage-src' => [CommandLine::Realpath => true, CommandLine::Repeatable => true],
+				'-o' => [CommandLine::Repeatable => true, CommandLine::Normalizer => function ($arg) use (&$outputFiles) {
+					[$format, $file] = explode(':', $arg, 2) + [1 => null];
 
-				if (isset($outputFiles[$file])) {
-					throw new \Exception(
-						$file === null
-							? 'Option -o <format> without file name parameter can be used only once.'
-							: "Cannot specify output by -o into file '$file' more then once."
-					);
-				} elseif ($file === null) {
-					$this->stdoutFormat = $format;
-				}
+					if (isset($outputFiles[$file])) {
+						throw new \Exception(
+							$file === null
+								? 'Option -o <format> without file name parameter can be used only once.'
+								: "Cannot specify output by -o into file '$file' more then once."
+						);
+					} elseif ($file === null) {
+						$this->stdoutFormat = $format;
+					}
 
-				$outputFiles[$file] = true;
+					$outputFiles[$file] = true;
 
-				return [$format, $file];
-			}],
-		]);
+					return [$format, $file];
+				}],
+			]
+		);
 
 		if (isset($_SERVER['argv'])) {
 			if (($tmp = array_search('-l', $_SERVER['argv'], true))

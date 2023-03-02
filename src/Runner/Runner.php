@@ -118,9 +118,10 @@ class Runner
 		}
 
 		if ($this->tempDir) {
-			usort($this->jobs, function (Job $a, Job $b): int {
-				return $this->getLastResult($a->getTest()) - $this->getLastResult($b->getTest());
-			});
+			usort(
+				$this->jobs,
+				fn(Job $a, Job $b): int => $this->getLastResult($a->getTest()) - $this->getLastResult($b->getTest())
+			);
 		}
 
 		$threads = range(1, $this->threadCount);

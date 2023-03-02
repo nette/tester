@@ -72,7 +72,7 @@ class Dumper
 			return "[$out]";
 
 		} elseif ($var instanceof \Throwable) {
-			return 'Exception ' . get_class($var) . ': ' . ($var->getCode() ? '#' . $var->getCode() . ' ' : '') . $var->getMessage();
+			return 'Exception ' . $var::class . ': ' . ($var->getCode() ? '#' . $var->getCode() . ' ' : '') . $var->getMessage();
 
 		} elseif ($var instanceof Expect) {
 			return $var->dump();
@@ -95,7 +95,7 @@ class Dumper
 	 */
 	private static function objectToLine($object): string
 	{
-		$line = get_class($object);
+		$line = $object::class;
 		if ($object instanceof \DateTime || $object instanceof \DateTimeInterface) {
 			$line .= '(' . $object->format('Y-m-d H:i:s O') . ')';
 		}
@@ -128,7 +128,7 @@ class Dumper
 	{
 		if (is_float($var)) {
 			$var = str_replace(',', '.', "$var");
-			return strpos($var, '.') === false ? $var . '.0' : $var;
+			return !str_contains($var, '.') ? $var . '.0' : $var;
 
 		} elseif (is_bool($var)) {
 			return $var ? 'true' : 'false';
@@ -173,7 +173,7 @@ class Dumper
 				}
 
 				unset($var[$marker]);
-				if (strpos($outShort, "\n") === false && strlen($outShort) < self::$maxLength) {
+				if (!str_contains($outShort, "\n") && strlen($outShort) < self::$maxLength) {
 					$line = $oldLine;
 					$out = $outShort;
 				}
@@ -192,7 +192,7 @@ class Dumper
 
 			$arr = (array) $var;
 			$space = str_repeat("\t", $level);
-			$class = get_class($var);
+			$class = $var::class;
 			$used = &$list[spl_object_hash($var)];
 
 			if (empty($arr)) {
@@ -356,7 +356,7 @@ class Dumper
 				'%2' => self::color('yellow') . self::toLine($expected) . self::color('white'),
 			]);
 		} else {
-			$message = ($e instanceof \ErrorException ? Helpers::errorTypeToString($e->getSeverity()) : get_class($e))
+			$message = ($e instanceof \ErrorException ? Helpers::errorTypeToString($e->getSeverity()) : $e::class)
 				. ': ' . preg_replace('#[\x00-\x09\x0B-\x1F]+#', ' ', $e->getMessage());
 		}
 

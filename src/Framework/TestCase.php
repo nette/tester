@@ -36,9 +36,10 @@ class TestCase
 			throw new \LogicException('Calling TestCase::run($method) is deprecated. Use TestCase::runTest($method) instead.');
 		}
 
-		$methods = array_values(preg_grep(self::MethodPattern, array_map(function (\ReflectionMethod $rm): string {
-			return $rm->getName();
-		}, (new \ReflectionObject($this))->getMethods())));
+		$methods = array_values(preg_grep(
+			self::MethodPattern,
+			array_map(fn(\ReflectionMethod $rm): string => $rm->getName(), (new \ReflectionObject($this))->getMethods())
+		));
 
 		if (isset($_SERVER['argv']) && ($tmp = preg_filter('#--method=([\w-]+)$#Ai', '$1', $_SERVER['argv']))) {
 			$method = reset($tmp);
@@ -153,7 +154,7 @@ class TestCase
 	 */
 	protected function getData(string $provider)
 	{
-		if (strpos($provider, '.') === false) {
+		if (!str_contains($provider, '.')) {
 			return $this->$provider();
 		} else {
 			$rc = new \ReflectionClass($this);
@@ -183,7 +184,7 @@ class TestCase
 
 	private function silentTearDown(): void
 	{
-		set_error_handler(function () {});
+		set_error_handler(fn() => null);
 		try {
 			$this->tearDown();
 		} catch (\Throwable $e) {
@@ -247,7 +248,7 @@ class TestCase
 
 			foreach ($res as $k => $set) {
 				if (!is_array($set)) {
-					$type = is_object($set) ? get_class($set) : gettype($set);
+					$type = is_object($set) ? $set::class : gettype($set);
 					throw new TestCaseException("Data provider $provider() item '$k' must be an array, $type given.");
 				}
 

@@ -27,9 +27,7 @@ $generator->render($output = Tester\FileMock::create('', 'xml'));
 $dom = new DOMDocument;
 $dom->load($output);
 $files = $sorted = iterator_to_array($dom->getElementsByTagName('file'));
-usort($sorted, function ($a, $b) {
-	return strcmp($a->getAttribute('name'), $b->getAttribute('name'));
-});
+usort($sorted, fn($a, $b) => strcmp($a->getAttribute('name'), $b->getAttribute('name')));
 foreach ($files as $file) {
 	$file->parentNode->replaceChild(array_shift($sorted)->cloneNode(true), $file);
 }

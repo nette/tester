@@ -85,9 +85,11 @@ class Environment
 						: @stream_isatty(STDOUT)) // @ may trigger error 'cannot cast a filtered stream on this system'
 				);
 
-		ob_start(function (string $s): string {
-			return self::$useColors ? $s : Dumper::removeColors($s);
-		}, 1, PHP_OUTPUT_HANDLER_FLUSHABLE);
+		ob_start(
+			fn(string $s): string => self::$useColors ? $s : Dumper::removeColors($s),
+			1,
+			PHP_OUTPUT_HANDLER_FLUSHABLE
+		);
 	}
 
 
@@ -191,7 +193,7 @@ class Environment
 	public static function bypassFinals(): void
 	{
 		FileMutator::addMutator(function (string $code): string {
-			if (strpos($code, 'final') !== false) {
+			if (str_contains($code, 'final')) {
 				$tokens = token_get_all($code, TOKEN_PARSE);
 				$code = '';
 				foreach ($tokens as $token) {

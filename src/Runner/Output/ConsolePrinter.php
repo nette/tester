@@ -85,7 +85,7 @@ class ConsolePrinter implements Tester\Runner\OutputHandler
 	{
 		if ($this->baseDir === null) {
 			$this->baseDir = dirname($test->getFile()) . DIRECTORY_SEPARATOR;
-		} elseif (strpos($test->getFile(), $this->baseDir) !== 0) {
+		} elseif (!str_starts_with($test->getFile(), $this->baseDir)) {
 			$common = array_intersect_assoc(
 				explode(DIRECTORY_SEPARATOR, $this->baseDir),
 				explode(DIRECTORY_SEPARATOR, $test->getFile())

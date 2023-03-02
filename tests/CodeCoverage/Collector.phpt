@@ -20,7 +20,7 @@ if (count($engines) < 1) {
 
 if ($engine === CodeCoverage\Collector::ENGINE_XDEBUG
 	&& version_compare($version, '3.0.0', '>=')
-	&& strpos(ini_get('xdebug.mode'), 'coverage') === false
+	&& !str_contains(ini_get('xdebug.mode'), 'coverage')
 ) {
 	Tester\Environment::skip('Requires xdebug.mode=coverage with Xdebug 3.');
 }

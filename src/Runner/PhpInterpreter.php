@@ -50,7 +50,7 @@ class PhpInterpreter
 		proc_close($proc);
 
 		$args = ' ' . implode(' ', array_map([Helpers::class, 'escapeArg'], $args));
-		if (strpos($output, 'phpdbg') !== false) {
+		if (str_contains($output, 'phpdbg')) {
 			$args = ' -qrrb -S cli' . $args;
 		}
 
