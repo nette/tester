@@ -29,7 +29,7 @@ Assert::same("type('string'),match('%d%')", $expectation->dump());
 
 Assert::exception(function () use ($expectation) {
 	$expectation->__invoke(123);
-}, Tester\AssertException::class, 'integer should be string');
+}, Tester\AssertException::class, 'int should be string');
 
 Assert::noError(function () use ($expectation) {
 	$expectation->__invoke('123');
@@ -47,7 +47,7 @@ Assert::same("type('string'),match('%d%')", $expectation->dump());
 
 Assert::exception(function () use ($expectation) {
 	$expectation->__invoke(123);
-}, Tester\AssertException::class, 'integer should be string');
+}, Tester\AssertException::class, 'int should be string');
 
 Assert::noError(function () use ($expectation) {
 	$expectation->__invoke('123');

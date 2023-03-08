@@ -281,10 +281,10 @@ class Assert
 			'int', 'integer', 'null', 'object', 'resource', 'scalar', 'string', ], true)
 		) {
 			if (!("is_$type")($value)) {
-				self::fail(self::describe(gettype($value) . " should be $type", $description));
+				self::fail(self::describe(get_debug_type($value) . " should be $type", $description));
 			}
 		} elseif (!$value instanceof $type) {
-			$actual = is_object($value) ? $value::class : gettype($value);
+			$actual = get_debug_type($value);
 			$type = is_object($type) ? $type::class : $type;
 			self::fail(self::describe("$actual should be instance of $type", $description));
 		}

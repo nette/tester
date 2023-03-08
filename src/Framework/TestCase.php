@@ -248,7 +248,7 @@ class TestCase
 
 			foreach ($res as $k => $set) {
 				if (!is_array($set)) {
-					$type = is_object($set) ? $set::class : gettype($set);
+					$type = get_debug_type($set);
 					throw new TestCaseException("Data provider $provider() item '$k' must be an array, $type given.");
 				}
 

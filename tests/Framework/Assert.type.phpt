@@ -12,7 +12,7 @@ $cases = [
 	['STDCLASS', new stdClass],
 	['x', new stdClass, 'stdClass should be instance of x'],
 	['Int', new stdClass, 'stdClass should be instance of Int'],
-	['int', new stdClass, 'object should be int'],
+	['int', new stdClass, 'stdClass should be int'],
 	['array', []],
 	['bool', true],
 	['callable', function () {}],
