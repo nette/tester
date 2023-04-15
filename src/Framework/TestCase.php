@@ -35,6 +35,7 @@ class TestCase
 			throw new \LogicException('Calling TestCase::run($method) is deprecated. Use TestCase::runTest($method) instead.');
 		}
 
+		Environment::setupColors();
 		$methods = array_values(preg_grep(
 			self::MethodPattern,
 			array_map(fn(\ReflectionMethod $rm): string => $rm->getName(), (new \ReflectionObject($this))->getMethods())
