@@ -46,7 +46,7 @@ class Environment
 	public const THREAD = self::VariableThread;
 
 	public static bool $checkAssertions = false;
-	public static bool $useColors;
+	public static bool $useColors = false;
 	private static int $exitCode = 0;
 
 
