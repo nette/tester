@@ -206,12 +206,10 @@ class Environment
 	{
 		FileMutator::addMutator(function (string $code): string {
 			if (str_contains($code, 'final')) {
-				$tokens = token_get_all($code, TOKEN_PARSE);
+				$tokens = \PhpToken::tokenize($code, TOKEN_PARSE);
 				$code = '';
 				foreach ($tokens as $token) {
-					$code .= is_array($token)
-						? ($token[0] === T_FINAL ? '' : $token[1])
-						: $token;
+					$code .= $token->is(T_FINAL) ? '' : $token->text;
 				}
 			}
 
