@@ -1,5 +1,6 @@
 parameters:
 	level: 5
-
 	paths:
 		- src
+	typeAliases:
+		Alias_TestResultState: 'Tester\Runner\Test::Passed|Tester\Runner\Test::Skipped|Tester\Runner\Test::Failed|Tester\Runner\Test::Prepared'

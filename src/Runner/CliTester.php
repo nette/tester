@@ -13,7 +13,7 @@ use Tester\CodeCoverage;
 use Tester\Dumper;
 use Tester\Environment;
 use Tester\Helpers;
-
+use Tester\Runner\Output\ConsolePrinter;
 
 /**
  * CLI Tester.
@@ -112,7 +112,7 @@ class CliTester
 				    -s                           Show information about skipped tests.
 				    --stop-on-fail               Stop execution upon the first failure.
 				    -j <num>                     Run <num> jobs in parallel (default: 8).
-				    -o <console|tap|junit|log|none>  (e.g. -o junit:output.xml)
+				    -o <console|console-lines|tap|junit|log|none>  (e.g. -o junit:output.xml)
 				                                 Specify one or more output formats with optional file name.
 				    -w | --watch <path>          Watch directory.
 				    -i | --info                  Show tests environment info and exit.
@@ -219,18 +219,14 @@ class CliTester
 		$runner->setTempDirectory($this->options['--temp']);
 
 		if ($this->stdoutFormat === null) {
-			$runner->outputHandlers[] = new Output\ConsolePrinter(
-				$runner,
-				(bool) $this->options['-s'],
-				'php://output',
-				(bool) $this->options['--cider']
-			);
+			$runner->outputHandlers[] = $this->buildConsolePrinter($runner, 'php://output', false);
 		}
 
 		foreach ($this->options['-o'] as $output) {
 			[$format, $file] = $output;
 			match ($format) {
-				'console' => $runner->outputHandlers[] = new Output\ConsolePrinter($runner, (bool) $this->options['-s'], $file, (bool) $this->options['--cider']),
+				'console' => $runner->outputHandlers[] = $this->buildConsolePrinter($runner, $file, false),
+				'console-lines' => $runner->outputHandlers[] = $this->buildConsolePrinter($runner, $file, true),
 				'tap' => $runner->outputHandlers[] = new Output\TapPrinter($file),
 				'junit' => $runner->outputHandlers[] = new Output\JUnitPrinter($file),
 				'log' => $runner->outputHandlers[] = new Output\Logger($runner, $file),
@@ -246,6 +242,25 @@ class CliTester
 		}
 
 		return $runner;
+	}
+
+	/**
+	 * Builds and returns a new `ConsolePrinter`.
+	 * @param bool $lineMode If `true`, reports each finished test on separate line.
+	 */
+	private function buildConsolePrinter(
+		Runner $runner,
+		?string $file,
+		bool $lineMode,
+	): ConsolePrinter
+	{
+		return new Output\ConsolePrinter(
+			$runner,
+			(bool) $this->options['-s'],
+			$file,
+			(bool) $this->options['--cider'],
+			$lineMode,
+		);
 	}
 
 

@@ -28,13 +28,22 @@ class Test
 		PASSED = self::Passed,
 		SKIPPED = self::Skipped;
 
+	private const PossibleResults = [
+		self::Prepared,
+		self::Failed,
+		self::Passed,
+		self::Skipped,
+	];
+
 	public ?string $title;
 	public ?string $message = null;
 	public string $stdout = '';
 	public string $stderr = '';
 	private string $file;
-	private int $result = self::Prepared;
 	private ?float $duration = null;
+
+	/** @phpstan-var Alias_TestResultState */
+	private int $result = self::Prepared;
 
 	/** @var string[]|string[][] */
 	private $args = [];
@@ -70,6 +79,9 @@ class Test
 	}
 
 
+	/**
+	 * @phpstan-return Alias_TestResultState
+	 */
 	public function getResult(): int
 	{
 		return $this->result;
@@ -123,12 +135,17 @@ class Test
 
 
 	/**
+	 * @phpstan-param Alias_TestResultState $result
 	 * @return static
 	 */
 	public function withResult(int $result, ?string $message, ?float $duration = null): self
 	{
 		if ($this->hasResult()) {
 			throw new \LogicException("Result of test is already set to $this->result with message '$this->message'.");
+		}
+
+		if (!in_array($result, self::PossibleResults, true)) {
+			throw new \LogicException("Invalid test result $result");
 		}
 
 		$me = clone $this;
