@@ -76,7 +76,7 @@ class Logger implements Tester\Runner\OutputHandler
 			. ($this->results[Test::Failed] ? ", {$this->results[Test::Failed]} failures" : '')
 			. ($this->results[Test::Skipped] ? ", {$this->results[Test::Skipped]} skipped" : '')
 			. ($this->count !== $run ? ', ' . ($this->count - $run) . ' not run' : '')
-			. ')'
+			. ')',
 		);
 	}
 }

@@ -19,7 +19,7 @@ $info = (object) [
 	'sapi' => PHP_SAPI,
 	'iniFiles' => array_merge(
 		($tmp = php_ini_loaded_file()) === false ? [] : [$tmp],
-		(function_exists('php_ini_scanned_files') && strlen($tmp = (string) php_ini_scanned_files())) ? explode(",\n", trim($tmp)) : []
+		(function_exists('php_ini_scanned_files') && strlen($tmp = (string) php_ini_scanned_files())) ? explode(",\n", trim($tmp)) : [],
 	),
 	'extensions' => $extensions,
 	'tempDir' => sys_get_temp_dir(),

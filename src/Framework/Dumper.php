@@ -38,7 +38,7 @@ class Dumper
 			return "$var";
 
 		} elseif (is_float($var)) {
-			return var_export($var, true);
+			return var_export($var, return: true);
 
 		} elseif (is_string($var)) {
 			if (preg_match('#^(.{' . self::$maxLength . '}).#su', $var, $m)) {
@@ -138,7 +138,7 @@ class Dumper
 
 			static $marker;
 			if ($marker === null) {
-				$marker = uniqid("\x00", true);
+				$marker = uniqid("\x00", more_entropy: true);
 			}
 
 			if (empty($var)) {
@@ -221,7 +221,7 @@ class Dumper
 			return '/* resource ' . get_resource_type($var) . ' */';
 
 		} else {
-			return var_export($var, true);
+			return var_export($var, return: true);
 		}
 	}
 
@@ -238,12 +238,10 @@ class Dumper
 		$utf8 = preg_match('##u', $s);
 		$escaped = preg_replace_callback(
 			$utf8 ? '#[\p{C}\\\\]#u' : '#[\x00-\x1F\x7F-\xFF\\\\]#',
-			function ($m) use ($special) {
-				return $special[$m[0]] ?? (strlen($m[0]) === 1
-						? '\x' . str_pad(strtoupper(dechex(ord($m[0]))), 2, '0', STR_PAD_LEFT) . ''
-						: '\u{' . strtoupper(ltrim(dechex(self::utf8Ord($m[0])), '0')) . '}');
-			},
-			$s
+			fn($m) => $special[$m[0]] ?? (strlen($m[0]) === 1
+				? '\x' . str_pad(strtoupper(dechex(ord($m[0]))), 2, '0', STR_PAD_LEFT) . ''
+				: '\u{' . strtoupper(ltrim(dechex(self::utf8Ord($m[0])), '0')) . '}'),
+			$s,
 		);
 		return $s === str_replace('\\\\', '\\', $escaped)
 			? "'" . preg_replace('#\'|\\\\(?=[\'\\\\]|$)#D', '\\\\$0', $s) . "'"
@@ -263,14 +261,12 @@ class Dumper
 		$utf8 = preg_match('##u', $s);
 		$escaped = preg_replace_callback(
 			$utf8 ? '#[\p{C}\']#u' : '#[\x00-\x1F\x7F-\xFF\']#',
-			function ($m) use ($special) {
-				return "\e[22m"
-					. ($special[$m[0]] ?? (strlen($m[0]) === 1
-						? '\x' . str_pad(strtoupper(dechex(ord($m[0]))), 2, '0', STR_PAD_LEFT)
-						: '\u{' . strtoupper(ltrim(dechex(self::utf8Ord($m[0])), '0')) . '}'))
-					. "\e[1m";
-			},
-			$s
+			fn($m) => "\e[22m"
+			. ($special[$m[0]] ?? (strlen($m[0]) === 1
+				? '\x' . str_pad(strtoupper(dechex(ord($m[0]))), 2, '0', STR_PAD_LEFT)
+				: '\u{' . strtoupper(ltrim(dechex(self::utf8Ord($m[0])), '0')) . '}'))
+			. "\e[1m",
+			$s,
 		);
 		return "'" . $escaped . "'";
 	}
@@ -326,7 +322,7 @@ class Dumper
 				for (; $i && $i < strlen($actual) && $actual[$i - 1] >= "\x80" && $actual[$i] >= "\x80" && $actual[$i] < "\xC0"; $i--);
 				$i = max(0, min(
 					$i - (int) (self::$maxLength / 3), // try to display 1/3 of shorter string
-					max(strlen($actual), strlen($expected)) - self::$maxLength + 3 // 3 = length of ...
+					max(strlen($actual), strlen($expected)) - self::$maxLength + 3, // 3 = length of ...
 				));
 				if ($i) {
 					$expected = substr_replace($expected, '...', 0, $i);
@@ -370,7 +366,7 @@ class Dumper
 						($item['file'] === $testFile ? self::color('white') : '')
 						. implode(
 							self::$pathSeparator ?? DIRECTORY_SEPARATOR,
-							array_slice(explode(DIRECTORY_SEPARATOR, $item['file']), -self::$maxPathSegments)
+							array_slice(explode(DIRECTORY_SEPARATOR, $item['file']), -self::$maxPathSegments),
 						)
 						. "($item[line])" . self::color('gray') . ' '
 					)

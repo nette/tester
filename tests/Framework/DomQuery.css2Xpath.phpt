@@ -52,11 +52,11 @@ test('variants', function () {
 test('descendant combinator', function () {
 	Assert::same(
 		"//div[@id='foo']//*[contains(concat(' ', normalize-space(@class), ' '), ' bar ')]",
-		DomQuery::css2xpath('div#foo .bar')
+		DomQuery::css2xpath('div#foo .bar'),
 	);
 	Assert::same(
 		'//div//*//p',
-		DomQuery::css2xpath('div * p')
+		DomQuery::css2xpath('div * p'),
 	);
 });
 
@@ -76,20 +76,22 @@ test('complex', function () {
 	Assert::same(
 		"//div[@id='foo']//span[contains(concat(' ', normalize-space(@class), ' '), ' bar ')]"
 		. "|//*[@id='bar']//li[contains(concat(' ', normalize-space(@class), ' '), ' baz ')]//a",
-		DomQuery::css2xpath('div#foo span.bar, #bar li.baz a')
+		DomQuery::css2xpath('div#foo span.bar, #bar li.baz a'),
 	);
 });
 
 
 test('pseudoclass', function () {
-	Assert::exception(function () {
-		DomQuery::css2xpath('a:first-child');
-	}, InvalidArgumentException::class);
+	Assert::exception(
+		fn() => DomQuery::css2xpath('a:first-child'),
+		InvalidArgumentException::class,
+	);
 });
 
 
 test('adjacent sibling combinator', function () {
-	Assert::exception(function () {
-		DomQuery::css2xpath('div + span');
-	}, InvalidArgumentException::class);
+	Assert::exception(
+		fn() => DomQuery::css2xpath('div + span'),
+		InvalidArgumentException::class,
+	);
 });

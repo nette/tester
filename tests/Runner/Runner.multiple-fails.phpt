@@ -52,35 +52,35 @@ $runner->run();
 
 Assert::match(
 	"No records in data provider file '%a%dataprovider-empty.phptx' for query 'non-existent'.",
-	$logger->results['dataprovider-empty.phptx'][1]
+	$logger->results['dataprovider-empty.phptx'][1],
 );
 Assert::same(Test::Failed, $logger->results['dataprovider-empty.phptx'][0]);
 
 
 Assert::match(
 	"Class MyTest in file '%a%testcase-no-methods.phptx' does not contain test methods.",
-	$logger->results['testcase-no-methods.phptx'][1]
+	$logger->results['testcase-no-methods.phptx'][1],
 );
 Assert::same(Test::Skipped, $logger->results['testcase-no-methods.phptx'][0]);
 
 
 Assert::match(
 	'Error: This test forgets to execute an assertion.',
-	trim(Dumper::removeColors($logger->results['testcase-not-call-run.phptx'][1]))
+	trim(Dumper::removeColors($logger->results['testcase-not-call-run.phptx'][1])),
 );
 Assert::same(Test::Failed, $logger->results['testcase-not-call-run.phptx'][0]);
 
 
 Assert::match(
 	"Skipped:\npre-skip",
-	trim($logger->results['testcase-pre-skip.phptx'][1])
+	trim($logger->results['testcase-pre-skip.phptx'][1]),
 );
 Assert::same(Test::Skipped, $logger->results['testcase-pre-skip.phptx'][0]);
 
 
 Assert::match(
 	"Failed: pre-fail\n%A%",
-	trim(Dumper::removeColors($logger->results['testcase-pre-fail.phptx'][1]))
+	trim(Dumper::removeColors($logger->results['testcase-pre-fail.phptx'][1])),
 );
 Assert::same(Test::Failed, $logger->results['testcase-pre-fail.phptx'][0]);
 
@@ -89,14 +89,14 @@ Assert::match(
 	defined('PHPDBG_VERSION')
 		? '%A%Parse error: %a% in %a%testcase-syntax-error.phptx on line %d%%A?%'
 		: 'Parse error: %a% in %a%testcase-syntax-error.phptx on line %d%%A?%',
-	trim($logger->results['testcase-syntax-error.phptx'][1])
+	trim($logger->results['testcase-syntax-error.phptx'][1]),
 );
 Assert::same(Test::Failed, $logger->results['testcase-syntax-error.phptx'][0]);
 
 
 Assert::match(
 	'foo',
-	trim($logger->results['testcase-skip.phptx'][1])
+	trim($logger->results['testcase-skip.phptx'][1]),
 );
 Assert::same(Test::Skipped, $logger->results['testcase-skip.phptx'][0]);
 

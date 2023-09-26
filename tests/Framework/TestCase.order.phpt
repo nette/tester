@@ -83,13 +83,15 @@ class FailingTest extends Tester\TestCase
 
 $test = new FailingTest;
 
-Assert::exception(function () use ($test) {
-	$test->runTest('testPublic');
-}, Tester\AssertException::class);
+Assert::exception(
+	fn() => $test->runTest('testPublic'),
+	Tester\AssertException::class,
+);
 
-Assert::exception(function () use ($test) {
-	$test->runTest('testPublicStatic');
-}, Tester\AssertException::class);
+Assert::exception(
+	fn() => $test->runTest('testPublicStatic'),
+	Tester\AssertException::class,
+);
 
 
 Assert::same([

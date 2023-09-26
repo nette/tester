@@ -24,17 +24,24 @@ class TestCaseTearDownException extends TestCaseTest
 }
 
 
-Assert::exception(function () {
-	$test = new TestCaseTest;
-	$test->runTest('testAssertion');
-}, Tester\AssertException::class, 'false should be true in testAssertion()');
+Assert::exception(
+	function () {
+		$test = new TestCaseTest;
+		$test->runTest('testAssertion');
+	},
+	Tester\AssertException::class,
+	'false should be true in testAssertion()',
+);
 
 
 $test = new TestCaseTearDownException;
-Assert::exception(function () use ($test) {
-	$test->tearDown();
-}, RuntimeException::class);
+Assert::exception(
+	fn() => $test->tearDown(),
+	RuntimeException::class,
+);
 
-Assert::exception(function () use ($test) {
-	$test->runTest('testAssertion');
-}, Tester\AssertException::class, 'false should be true in testAssertion()');
+Assert::exception(
+	fn() => $test->runTest('testAssertion'),
+	Tester\AssertException::class,
+	'false should be true in testAssertion()',
+);

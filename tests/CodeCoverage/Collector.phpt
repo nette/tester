@@ -35,9 +35,11 @@ Assert::false(CodeCoverage\Collector::isStarted());
 CodeCoverage\Collector::start($outputFile, $engine);
 Assert::true(CodeCoverage\Collector::isStarted());
 
-Assert::exception(function () use ($outputFile, $engine) {
-	CodeCoverage\Collector::start($outputFile, $engine);
-}, LogicException::class, 'Code coverage collector has been already started.');
+Assert::exception(
+	fn() => CodeCoverage\Collector::start($outputFile, $engine),
+	LogicException::class,
+	'Code coverage collector has been already started.',
+);
 
 $content = file_get_contents($outputFile);
 Assert::same('', $content);

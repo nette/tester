@@ -37,7 +37,7 @@ class TestCase
 
 		$methods = array_values(preg_grep(
 			self::MethodPattern,
-			array_map(fn(\ReflectionMethod $rm): string => $rm->getName(), (new \ReflectionObject($this))->getMethods())
+			array_map(fn(\ReflectionMethod $rm): string => $rm->getName(), (new \ReflectionObject($this))->getMethods()),
 		));
 
 		if (isset($_SERVER['argv']) && ($tmp = preg_filter('#--method=([\w-]+)$#Ai', '$1', $_SERVER['argv']))) {
@@ -145,7 +145,7 @@ class TestCase
 					$e->origMessage,
 					$method->getName(),
 					substr(Dumper::toLine($params), 1, -1),
-					is_string($k) ? (" (data set '" . explode('-', $k, 2)[1] . "')") : ''
+					is_string($k) ? (" (data set '" . explode('-', $k, 2)[1] . "')") : '',
 				));
 			}
 		}

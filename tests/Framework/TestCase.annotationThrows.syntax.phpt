@@ -28,10 +28,14 @@ class MyTest extends Tester\TestCase
 
 $test = new MyTest;
 
-Assert::exception(function () use ($test) {
-	$test->runTest('testThrowsNoClass');
-}, Tester\TestCaseException::class, 'Missing class name in @throws annotation for testThrowsNoClass().');
+Assert::exception(
+	fn() => $test->runTest('testThrowsNoClass'),
+	Tester\TestCaseException::class,
+	'Missing class name in @throws annotation for testThrowsNoClass().',
+);
 
-Assert::exception(function () use ($test) {
-	$test->runTest('testThrowsMultiple');
-}, Tester\TestCaseException::class, 'Annotation @throws for testThrowsMultiple() can be specified only once.');
+Assert::exception(
+	fn() => $test->runTest('testThrowsMultiple'),
+	Tester\TestCaseException::class,
+	'Annotation @throws for testThrowsMultiple() can be specified only once.',
+);

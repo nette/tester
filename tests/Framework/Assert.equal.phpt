@@ -62,30 +62,42 @@ $notEquals = [
 foreach ($equals as [$expected, $value]) {
 	Assert::equal($expected, $value);
 
-	Assert::exception(function () use ($expected, $value) {
-		Assert::notEqual($expected, $value);
-	}, Tester\AssertException::class, '%a% should not be equal to %a%');
+	Assert::exception(
+		fn() => Assert::notEqual($expected, $value),
+		Tester\AssertException::class,
+		'%a% should not be equal to %a%',
+	);
 }
 
 foreach ($notEquals as $fixture) {
 	[$expected, $value] = $fixture;
 	Assert::notEqual($expected, $value);
 
-	Assert::exception(function () use ($expected, $value) {
-		Assert::equal($expected, $value);
-	}, Tester\AssertException::class, $fixture[2] ?? '%a% should be equal to %a%');
+	Assert::exception(
+		fn() => Assert::equal($expected, $value),
+		Tester\AssertException::class,
+		$fixture[2] ?? '%a% should be equal to %a%',
+	);
 }
 
-Assert::exception(function () {
-	$rec = [];
-	$rec[] = &$rec;
-	Assert::equal($rec, $rec);
-}, Exception::class, 'Nesting level too deep or recursive dependency.');
+Assert::exception(
+	function () {
+		$rec = [];
+		$rec[] = &$rec;
+		Assert::equal($rec, $rec);
+	},
+	Exception::class,
+	'Nesting level too deep or recursive dependency.',
+);
 
-Assert::exception(function () {
-	Assert::equal(true, false, 'Custom description');
-}, Tester\AssertException::class, 'Custom description: %a% should be equal to %a%');
+Assert::exception(
+	fn() => Assert::equal(true, false, 'Custom description'),
+	Tester\AssertException::class,
+	'Custom description: %a% should be equal to %a%',
+);
 
-Assert::exception(function () {
-	Assert::notEqual(true, true, 'Custom description');
-}, Tester\AssertException::class, 'Custom description: %a% should not be equal to %a%');
+Assert::exception(
+	fn() => Assert::notEqual(true, true, 'Custom description'),
+	Tester\AssertException::class,
+	'Custom description: %a% should not be equal to %a%',
+);
