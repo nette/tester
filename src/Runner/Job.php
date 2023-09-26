@@ -109,7 +109,7 @@ class Job
 			$pipes,
 			dirname($this->test->getFile()),
 			null,
-			['bypass_shell' => true]
+			['bypass_shell' => true],
 		);
 
 		foreach (array_keys($this->envVars) as $name) {
@@ -124,7 +124,7 @@ class Job
 		}
 
 		if ($async) {
-			stream_set_blocking($this->stdout, false); // on Windows does not work with proc_open()
+			stream_set_blocking($this->stdout, enable: false); // on Windows does not work with proc_open()
 		} else {
 			while ($this->isRunning()) {
 				usleep(self::RunSleep); // stream_select() doesn't work with proc_open()

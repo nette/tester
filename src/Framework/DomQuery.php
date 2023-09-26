@@ -28,7 +28,7 @@ class DomQuery extends \SimpleXMLElement
 		$html = preg_replace_callback(
 			'#(<script(?=\s|>)(?:"[^"]*"|\'[^\']*\'|[^"\'>])*+>)(.*?)(</script>)#s',
 			fn(array $m): string => $m[1] . str_replace('</', '<\/', $m[2]) . $m[3],
-			$html
+			$html,
 		);
 
 		$dom = new \DOMDocument;

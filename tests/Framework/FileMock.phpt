@@ -33,9 +33,10 @@ test('Opening non-existing', function () {
 	foreach ($cases as $mode => $errors) {
 		FileMock::$files = [];
 
-		Assert::error(function () use ($mode) {
-			fopen('mock://none', $mode);
-		}, $errors);
+		Assert::error(
+			fn() => fopen('mock://none', $mode),
+			$errors,
+		);
 		Assert::count(count($errors) ? 0 : 1, FileMock::$files);
 	}
 });
@@ -61,9 +62,10 @@ test('Opening existing', function () {
 	];
 
 	foreach ($cases as $mode => $errors) {
-		Assert::error(function () use ($mode) {
-			fopen(FileMock::create(''), $mode);
-		}, $errors);
+		Assert::error(
+			fn() => fopen(FileMock::create(''), $mode),
+			$errors,
+		);
 	}
 });
 
@@ -204,9 +206,11 @@ test('Unlink', function () {
 	fopen($name = Tester\FileMock::create('foo'), 'r');
 	Assert::true(unlink($name));
 	Assert::false(@unlink($name));
-	Assert::error(function () use ($name) {
-		unlink($name);
-	}, E_USER_WARNING, "unlink($name): No such file");
+	Assert::error(
+		fn() => unlink($name),
+		E_USER_WARNING,
+		"unlink($name): No such file",
+	);
 });
 
 

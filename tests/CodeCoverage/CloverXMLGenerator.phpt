@@ -17,7 +17,7 @@ $coverageData = Tester\FileMock::create(serialize([
 	$coveredDir . DIRECTORY_SEPARATOR . 'Logger.php' => array_map('intval', preg_filter(
 		'~.*# (-?\d+)~',
 		'$1',
-		explode("\n", "\n" . file_get_contents($coveredDir . DIRECTORY_SEPARATOR . 'Logger.php'))
+		explode("\n", "\n" . file_get_contents($coveredDir . DIRECTORY_SEPARATOR . 'Logger.php')),
 	)),
 ]));
 

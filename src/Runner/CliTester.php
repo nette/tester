@@ -140,7 +140,7 @@ class CliTester
 						throw new \Exception(
 							$file === null
 								? 'Option -o <format> without file name parameter can be used only once.'
-								: "Cannot specify output by -o into file '$file' more then once."
+								: "Cannot specify output by -o into file '$file' more then once.",
 						);
 					} elseif ($file === null) {
 						$this->stdoutFormat = $format;
@@ -150,19 +150,19 @@ class CliTester
 
 					return [$format, $file];
 				}],
-			]
+			],
 		);
 
 		if (isset($_SERVER['argv'])) {
-			if (($tmp = array_search('-l', $_SERVER['argv'], true))
-				|| ($tmp = array_search('-log', $_SERVER['argv'], true))
-				|| ($tmp = array_search('--log', $_SERVER['argv'], true))
+			if (($tmp = array_search('-l', $_SERVER['argv'], strict: true))
+				|| ($tmp = array_search('-log', $_SERVER['argv'], strict: true))
+				|| ($tmp = array_search('--log', $_SERVER['argv'], strict: true))
 			) {
 				$_SERVER['argv'][$tmp] = '-o';
 				$_SERVER['argv'][$tmp + 1] = 'log:' . $_SERVER['argv'][$tmp + 1];
 			}
 
-			if ($tmp = array_search('--tap', $_SERVER['argv'], true)) {
+			if ($tmp = array_search('--tap', $_SERVER['argv'], strict: true)) {
 				unset($_SERVER['argv'][$tmp]);
 				$_SERVER['argv'] = array_merge($_SERVER['argv'], ['-o', 'tap']);
 			}
@@ -223,7 +223,7 @@ class CliTester
 				$runner,
 				(bool) $this->options['-s'],
 				'php://output',
-				(bool) $this->options['--cider']
+				(bool) $this->options['--cider'],
 			);
 		}
 

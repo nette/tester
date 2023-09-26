@@ -94,7 +94,7 @@ class Environment
 		ob_start(
 			fn(string $s): string => self::$useColors ? $s : Dumper::removeColors($s),
 			1,
-			PHP_OUTPUT_HANDLER_FLUSHABLE
+			PHP_OUTPUT_HANDLER_FLUSHABLE,
 		);
 	}
 

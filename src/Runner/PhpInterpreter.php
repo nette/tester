@@ -32,7 +32,7 @@ class PhpInterpreter
 			$pipes,
 			null,
 			null,
-			['bypass_shell' => true]
+			['bypass_shell' => true],
 		);
 		if ($proc === false) {
 			throw new \Exception("Cannot run PHP interpreter $path. Use -p option.");
@@ -55,7 +55,7 @@ class PhpInterpreter
 			$pipes,
 			null,
 			null,
-			['bypass_shell' => true]
+			['bypass_shell' => true],
 		);
 		$output = stream_get_contents($pipes[1]);
 		$this->error = trim(stream_get_contents($pipes[2]));
@@ -66,7 +66,7 @@ class PhpInterpreter
 		$parts = explode("\r\n\r\n", $output, 2);
 		$this->cgi = count($parts) === 2;
 		$this->info = @unserialize((string) strstr($parts[$this->cgi], 'O:8:"stdClass"'));
-		$this->error .= strstr($parts[$this->cgi], 'O:8:"stdClass"', true);
+		$this->error .= strstr($parts[$this->cgi], 'O:8:"stdClass"', before_needle: true);
 		if (!$this->info) {
 			throw new \Exception("Unable to detect PHP version (output: $output).");
 

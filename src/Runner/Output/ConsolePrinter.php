@@ -37,7 +37,7 @@ class ConsolePrinter implements Tester\Runner\OutputHandler
 		Runner $runner,
 		bool $displaySkipped = false,
 		?string $file = null,
-		bool $ciderMode = false
+		bool $ciderMode = false,
 	) {
 		$this->runner = $runner;
 		$this->displaySkipped = $displaySkipped;
@@ -74,7 +74,7 @@ class ConsolePrinter implements Tester\Runner\OutputHandler
 		} elseif (!str_starts_with($test->getFile(), $this->baseDir)) {
 			$common = array_intersect_assoc(
 				explode(DIRECTORY_SEPARATOR, $this->baseDir),
-				explode(DIRECTORY_SEPARATOR, $test->getFile())
+				explode(DIRECTORY_SEPARATOR, $test->getFile()),
 			);
 			$this->baseDir = '';
 			$prev = 0;

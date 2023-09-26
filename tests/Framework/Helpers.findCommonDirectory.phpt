@@ -47,10 +47,14 @@ if (is_dir('/')) {
 }
 
 
-Assert::exception(function () {
-	Helpers::findCommonDirectory(['']);
-}, RuntimeException::class, 'Path must not be empty.');
+Assert::exception(
+	fn() => Helpers::findCommonDirectory(['']),
+	RuntimeException::class,
+	'Path must not be empty.',
+);
 
-Assert::exception(function () {
-	Helpers::findCommonDirectory(['does-not-exist']);
-}, RuntimeException::class, "File or directory 'does-not-exist' does not exist.");
+Assert::exception(
+	fn() => Helpers::findCommonDirectory(['does-not-exist']),
+	RuntimeException::class,
+	"File or directory 'does-not-exist' does not exist.",
+);
