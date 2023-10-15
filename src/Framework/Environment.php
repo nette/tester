@@ -143,7 +143,7 @@ class Environment
 
 
 	/**
-	 * Creates global functions test(), setUp() and tearDown().
+	 * Creates global functions test(), testException(), setUp() and tearDown().
 	 */
 	public static function setupFunctions(): void
 	{

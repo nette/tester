@@ -29,23 +29,13 @@ test('', function () use ($key, $file) {
 });
 
 
-test('', function () use ($key, $file) {
+testException('', function () use ($key, $file) {
 	$_SERVER['argv'][$key] = "--dataprovider=bar|$file";
-
-	Assert::exception(
-		fn() => Environment::loadData(),
-		Exception::class,
-		"Missing dataset 'bar' from data provider '%a%'.",
-	);
-});
+	Environment::loadData();
+}, Exception::class, "Missing dataset 'bar' from data provider '%a%'.");
 
 
-test('', function () use ($key, $file) {
+testException('', function () use ($key, $file) {
 	unset($_SERVER['argv'][$key]);
-
-	Assert::exception(
-		fn() => Environment::loadData(),
-		Exception::class,
-		'Missing annotation @dataProvider.',
-	);
-});
+	Environment::loadData();
+}, Exception::class, 'Missing annotation @dataProvider.');
