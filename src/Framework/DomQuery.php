@@ -78,7 +78,7 @@ class DomQuery extends \SimpleXMLElement
 	 */
 	public static function css2xpath(string $css): string
 	{
-		$xpath = '//*';
+		$xpath = './/*';
 		preg_match_all(<<<'XX'
 			/
 				([#.:]?)([a-z][a-z0-9_-]*)|               # id, class, pseudoclass (1,2)
