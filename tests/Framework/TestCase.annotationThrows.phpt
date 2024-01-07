@@ -109,41 +109,58 @@ $test = new MyTest;
 $test->runTest('testThrows');
 $test->runTest('testThrowsMessage');
 
-Assert::exception(function () use ($test) {
-	$test->runTest('testThrowsButDont');
-}, Tester\AssertException::class, 'Exception was expected, but none was thrown in testThrowsButDont()');
+Assert::exception(
+	fn() => $test->runTest('testThrowsButDont'),
+	Tester\AssertException::class,
+	'Exception was expected, but none was thrown in testThrowsButDont()',
+);
 
-Assert::exception(function () use ($test) {
-	$test->runTest('testFailAssertPass');
-}, Tester\AssertException::class, 'failed in testFailAssertPass()');
+Assert::exception(
+	fn() => $test->runTest('testFailAssertPass'),
+	Tester\AssertException::class,
+	'failed in testFailAssertPass()',
+);
 
-Assert::exception(function () use ($test) {
-	$test->runTest('testThrowsBadClass');
-}, Tester\AssertException::class, 'MyException was expected but got Exception in testThrowsBadClass()');
+Assert::exception(
+	fn() => $test->runTest('testThrowsBadClass'),
+	Tester\AssertException::class,
+	'MyException was expected but got Exception in testThrowsBadClass()',
+);
 
-Assert::exception(function () use ($test) {
-	$test->runTest('testThrowsBadMessage');
-}, Tester\AssertException::class, "Exception with a message matching 'With message' was expected but got 'Bad message' in testThrowsBadMessage()");
+Assert::exception(
+	fn() => $test->runTest('testThrowsBadMessage'),
+	Tester\AssertException::class,
+	"Exception with a message matching 'With message' was expected but got 'Bad message' in testThrowsBadMessage()",
+);
 
-Assert::exception(function () use ($test) {
-	$test->runTest('testWithoutThrows');
-}, Exception::class);
+Assert::exception(
+	fn() => $test->runTest('testWithoutThrows'),
+	Exception::class,
+);
 
-Assert::exception(function () use ($test) {
-	$test->runTest('testThrowsWithDataprovider');
-}, Exception::class, "Exception was expected, but none was thrown in testThrowsWithDataprovider(1) (data set '0')");
+Assert::exception(
+	fn() => $test->runTest('testThrowsWithDataprovider'),
+	Exception::class,
+	"Exception was expected, but none was thrown in testThrowsWithDataprovider(1) (data set '0')",
+);
 
-Assert::exception(function () use ($test) {
-	$test->runTest('testUndefinedMethod');
-}, Tester\TestCaseException::class, "Method 'testUndefinedMethod' does not exist.");
+Assert::exception(
+	fn() => $test->runTest('testUndefinedMethod'),
+	Tester\TestCaseException::class,
+	"Method 'testUndefinedMethod' does not exist.",
+);
 
 $test->runTest('testNotice');
 $test->runTest('testNoticeMessage');
 
-Assert::exception(function () use ($test) {
-	$test->runTest('testBadError');
-}, Tester\AssertException::class, 'E_WARNING was expected, but E_NOTICE (Only variables should be assigned by reference) was generated in %a%testBadError()');
+Assert::exception(
+	fn() => $test->runTest('testBadError'),
+	Tester\AssertException::class,
+	'E_WARNING was expected, but E_NOTICE (Only variables should be assigned by reference) was generated in %a%testBadError()',
+);
 
-Assert::exception(function () use ($test) {
-	$test->runTest('testNoticeBadMessage');
-}, Tester\AssertException::class, "E_NOTICE with a message matching 'With message' was expected but got 'Only variables should be assigned by reference' in testNoticeBadMessage()");
+Assert::exception(
+	fn() => $test->runTest('testNoticeBadMessage'),
+	Tester\AssertException::class,
+	"E_NOTICE with a message matching 'With message' was expected but got 'Only variables should be assigned by reference' in testNoticeBadMessage()",
+);

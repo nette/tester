@@ -34,7 +34,7 @@ class DataProvider
 				throw new \Exception("Data provider '$file' did not return array or Traversable.");
 			}
 		} else {
-			$data = @parse_ini_file($file, true); // @ is escalated to exception
+			$data = @parse_ini_file($file, process_sections: true); // @ is escalated to exception
 			if ($data === false) {
 				throw new \Exception("Cannot parse data provider file '$file'.");
 			}

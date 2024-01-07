@@ -94,7 +94,7 @@ class ConsolePrinter implements Tester\Runner\OutputHandler
 		} elseif (!str_starts_with($test->getFile(), $this->baseDir)) {
 			$common = array_intersect_assoc(
 				explode(DIRECTORY_SEPARATOR, $this->baseDir),
-				explode(DIRECTORY_SEPARATOR, $test->getFile())
+				explode(DIRECTORY_SEPARATOR, $test->getFile()),
 			);
 			$this->baseDir = '';
 			$prev = 0;

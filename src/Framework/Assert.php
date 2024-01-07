@@ -298,7 +298,7 @@ class Assert
 		callable $function,
 		string $class,
 		?string $message = null,
-		$code = null
+		$code = null,
 	): ?\Throwable
 	{
 		self::$counter++;
@@ -332,7 +332,7 @@ class Assert
 		callable $function,
 		string $class,
 		?string $message = null,
-		mixed $code = null
+		mixed $code = null,
 	): ?\Throwable
 	{
 		return self::exception($function, $class, $message, $code);
@@ -346,7 +346,7 @@ class Assert
 	public static function error(
 		callable $function,
 		int|string|array $expectedType,
-		?string $expectedMessage = null
+		?string $expectedMessage = null,
 	): ?\Throwable
 	{
 		if (is_string($expectedType) && !preg_match('#^E_[A-Z_]+$#D', $expectedType)) {
@@ -474,7 +474,7 @@ class Assert
 		$actual = null,
 		$expected = null,
 		?\Throwable $previous = null,
-		?string $outputName = null
+		?string $outputName = null,
 	): void
 	{
 		$e = new AssertException($message, $expected, $actual, $previous);
@@ -584,7 +584,7 @@ class Assert
 		$high = strlen($actual);
 		while ($low <= $high) {
 			$mid = ($low + $high) >> 1;
-			if (!self::isMatching($patternX, substr($actual, 0, $mid), true)) {
+			if (!self::isMatching($patternX, substr($actual, 0, $mid), strict: true)) {
 				$high = $mid - 1;
 			} else {
 				$low = $mid + 1;
@@ -611,7 +611,7 @@ class Assert
 		bool $matchOrder,
 		bool $matchIdentity,
 		int $level = 0,
-		?\SplObjectStorage $objects = null
+		?\SplObjectStorage $objects = null,
 	): bool
 	{
 		switch (true) {

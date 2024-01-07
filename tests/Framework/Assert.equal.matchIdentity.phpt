@@ -63,9 +63,11 @@ foreach ($equals as [$expected, $value]) {
 }
 
 foreach ($notEquals as [$expected, $value]) {
-	Assert::exception(function () use ($expected, $value) {
-		Assert::equal($expected, $value, matchIdentity: true);
-	}, Tester\AssertException::class, '%a% should be %a%');
+	Assert::exception(
+		fn() => Assert::equal($expected, $value, matchIdentity: true),
+		Tester\AssertException::class,
+		'%a% should be %a%',
+	);
 }
 
 Assert::exception(function () {
@@ -74,6 +76,8 @@ Assert::exception(function () {
 	Assert::equal($rec, $rec, matchIdentity: true);
 }, Exception::class, 'Nesting level too deep or recursive dependency.');
 
-Assert::exception(function () {
-	Assert::equal(true, false, 'Custom description', matchIdentity: true);
-}, Tester\AssertException::class, 'Custom description: %a% should be %a%');
+Assert::exception(
+	fn() => Assert::equal(true, false, 'Custom description', matchIdentity: true),
+	Tester\AssertException::class,
+	'Custom description: %a% should be %a%',
+);

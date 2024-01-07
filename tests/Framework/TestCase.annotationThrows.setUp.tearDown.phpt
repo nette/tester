@@ -30,9 +30,11 @@ class FailingTestCase extends TestCase
 	}
 }
 
-Assert::exception(function () {
-	(new FailingTestCase)->run();
-}, Tester\AssertException::class, 'RuntimeException was expected but got Exception (FailingTestCase::testMe) in testMe()');
+Assert::exception(
+	fn() => (new FailingTestCase)->run(),
+	Tester\AssertException::class,
+	'RuntimeException was expected but got Exception (FailingTestCase::testMe) in testMe()',
+);
 
 
 
@@ -44,9 +46,11 @@ class SuccessButSetUpFails extends SuccessTestCase
 	}
 }
 
-Assert::exception(function () {
-	(new SuccessButSetUpFails)->run();
-}, Exception::class, 'SuccessButSetUpFails::setUp');
+Assert::exception(
+	fn() => (new SuccessButSetUpFails)->run(),
+	Exception::class,
+	'SuccessButSetUpFails::setUp',
+);
 
 
 
@@ -58,9 +62,11 @@ class SuccessButTearDownFails extends SuccessTestCase
 	}
 }
 
-Assert::exception(function () {
-	(new SuccessButTearDownFails)->run();
-}, Exception::class, 'SuccessButTearDownFails::tearDown');
+Assert::exception(
+	fn() => (new SuccessButTearDownFails)->run(),
+	Exception::class,
+	'SuccessButTearDownFails::tearDown',
+);
 
 
 
@@ -72,9 +78,11 @@ class FailingAndSetUpFails extends FailingTestCase
 	}
 }
 
-Assert::exception(function () {
-	(new FailingAndSetUpFails)->run();
-}, Exception::class, 'FailingAndSetUpFails::setUp');
+Assert::exception(
+	fn() => (new FailingAndSetUpFails)->run(),
+	Exception::class,
+	'FailingAndSetUpFails::setUp',
+);
 
 
 
@@ -87,6 +95,8 @@ class FailingAndTearDownFails extends FailingTestCase
 }
 
 // tearDown() exception is never thrown when @throws assertion fails
-Assert::exception(function () {
-	(new FailingAndTearDownFails)->run();
-}, Tester\AssertException::class, 'RuntimeException was expected but got Exception (FailingTestCase::testMe) in testMe()');
+Assert::exception(
+	fn() => (new FailingAndTearDownFails)->run(),
+	Tester\AssertException::class,
+	'RuntimeException was expected but got Exception (FailingTestCase::testMe) in testMe()',
+);

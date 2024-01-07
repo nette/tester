@@ -9,6 +9,4 @@ require __DIR__ . '/../bootstrap.php';
 
 Tester\Environment::bypassFinals();
 
-Assert::noError(function () {
-	file_put_contents(__DIR__ . '/fixtures/tmp', 'foo', LOCK_EX);
-});
+Assert::noError(fn() => file_put_contents(__DIR__ . '/fixtures/tmp', 'foo', LOCK_EX));
