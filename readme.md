@@ -223,7 +223,8 @@ Options:
     -s                           Show information about skipped tests.
     --stop-on-fail               Stop execution upon the first failure.
     -j <num>                     Run <num> jobs in parallel (default: 8).
-    -o <console|tap|junit|none>  Specify output format.
+    -o <console|console-lines|tap|junit|none>
+                                 Specify output format.
     -w | --watch <path>          Watch directory.
     -i | --info                  Show tests environment info and exit.
     --setup <path>               Script for runner setup.
