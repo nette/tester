@@ -9,6 +9,10 @@ use Tester\Environment;
 
 function test(string $description, Closure $closure): void
 {
+	if (($count = func_num_args()) > 2) {
+		throw new \Exception(__FUNCTION__ . "() expects 2 parameter, $count given.");
+	}
+
 	if ($fn = (new ReflectionFunction('setUp'))->getStaticVariables()['fn']) {
 		$fn();
 	}
