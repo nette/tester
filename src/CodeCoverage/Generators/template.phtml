@@ -77,9 +77,8 @@
 		text-decoration: none;
 	}
 
-	code {
-		display: block;
-		white-space: nowrap;
+	pre {
+		margin: 0;
 		position: relative;
 	}
 
@@ -247,14 +246,33 @@ foreach ($files as $id => $info) {
 	$currentId = "F{$id}";
 	assignArrayByPath($directories, $info, $currentId);
 
+	$html = highlight_string($code, true);
+	if (PHP_VERSION_ID < 80300) {  // Normalize to HTML introduced by PHP 8.3
+		$html = preg_replace(
+			[
+				'#^<code><span style="color: (.+?)">\n<span#',
+				'#<br />#',
+				'#&nbsp;#',
+				'#</span>\n</span>\n</code>$#'
+			],
+			[
+				'<code style="color: $1"><span',
+				"\n",
+				' ',
+				'</span></code>',
+			],
+			$html,
+		);
+		$html = "<pre>$html</pre>";
+	}
+
 	$data = (array) $info;
 	$data['digits'] = $digits;
 	$data['lineCount'] = $lineCount;
-	$data['content'] = strtr(highlight_string($code, true), [
-		'<code>' => "<code style='margin-left: {$digits}em'>",
+	$data['content'] = strtr($html, [
+		'<pre>' => "<pre style='margin-left: {$digits}em'>",
 		'<span style="color: ' => '<i class="',
 		'</span>' => '</i>',
-		'<br />' => '<br>',
 	]);
 	$jsonData[$currentId] = $data;
 } ?>
