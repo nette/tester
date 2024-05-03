@@ -66,7 +66,8 @@ class DomQuery extends \SimpleXMLElement
 	 */
 	public function find(string $selector): array
 	{
-		return $this->xpath(self::css2xpath($selector));
+		$base = str_starts_with($selector, '>') ? 'self' : 'descendant';
+		return $this->xpath($base . '::' . self::css2xpath($selector));
 	}
 
 
@@ -80,11 +81,20 @@ class DomQuery extends \SimpleXMLElement
 
 
 	/**
+	 * Determines if the current element matches the specified CSS selector.
+	 */
+	public function matches(string $selector): bool
+	{
+		return (bool) $this->xpath('self::' . self::css2xpath($selector));
+	}
+
+
+	/**
 	 * Converts a CSS selector into an XPath expression.
 	 */
 	public static function css2xpath(string $css): string
 	{
-		$xpath = './/*';
+		$xpath = '*';
 		preg_match_all(<<<'XX'
 			/
 				([#.:]?)([a-z][a-z0-9_-]*)|               # id, class, pseudoclass (1,2)
