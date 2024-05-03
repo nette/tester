@@ -71,7 +71,7 @@ class Helpers
 
 
 	/**
-	 * Parse phpDoc comment.
+	 * Parse the first docblock encountered in the provided string.
 	 * @internal
 	 */
 	public static function parseDocComment(string $s): array
