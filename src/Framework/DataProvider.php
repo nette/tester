@@ -11,13 +11,13 @@ namespace Tester;
 
 
 /**
- * Data provider helpers.
+ * Utility class for providing data from various sources for tests.
  * @internal
  */
 class DataProvider
 {
 	/**
-	 * @throws \Exception
+	 * Loads data from a specified file and filters them based on a query string. Supports both PHP files and INI files.
 	 */
 	public static function load(string $file, string $query = ''): array
 	{
@@ -50,6 +50,9 @@ class DataProvider
 	}
 
 
+	/**
+	 * Evaluates a query against a set of data keys to determine if the key matches the criteria.
+	 */
 	public static function testQuery(string $input, string $query): bool
 	{
 		$replaces = ['' => '=', '=>' => '>=', '=<' => '<='];
@@ -70,6 +73,9 @@ class DataProvider
 	}
 
 
+	/**
+	 * Compares two values using the specified operator.
+	 */
 	private static function compare(mixed $l, string $operator, mixed $r): bool
 	{
 		return match ($operator) {
@@ -85,7 +91,7 @@ class DataProvider
 
 
 	/**
-	 * @throws \Exception
+	 * Parses a data provider annotation from a test method to extract the file path and query.
 	 */
 	public static function parseAnnotation(string $annotation, string $file): array
 	{

@@ -7,10 +7,13 @@ use Tester\Dumper;
 use Tester\Environment;
 
 
+/**
+ * Executes a provided test closure, handling setup and teardown operations.
+ */
 function test(string $description, Closure $closure): void
 {
 	if (($count = func_num_args()) > 2) {
-		throw new \Exception(__FUNCTION__ . "() expects 2 parameter, $count given.");
+		throw new Exception(__FUNCTION__ . "() expects 2 parameters, $count given.");
 	}
 
 	if ($fn = (new ReflectionFunction('setUp'))->getStaticVariables()['fn']) {
@@ -36,6 +39,9 @@ function test(string $description, Closure $closure): void
 }
 
 
+/**
+ * Tests for exceptions thrown by a provided closure matching specific criteria.
+ */
 function testException(
 	string $description,
 	Closure $function,
@@ -59,6 +65,9 @@ function testException(
 }
 
 
+/**
+ * Registers a function to be called before each test execution.
+ */
 function setUp(?Closure $closure): void
 {
 	static $fn;
@@ -66,6 +75,9 @@ function setUp(?Closure $closure): void
 }
 
 
+/**
+ * Registers a function to be called after each test execution.
+ */
 function tearDown(?Closure $closure): void
 {
 	static $fn;

@@ -15,6 +15,9 @@ namespace Tester;
  */
 class DomQuery extends \SimpleXMLElement
 {
+	/**
+	 * Creates a DomQuery object from an HTML string.
+	 */
 	public static function fromHtml(string $html): self
 	{
 		if (!str_contains($html, '<')) {
@@ -48,6 +51,9 @@ class DomQuery extends \SimpleXMLElement
 	}
 
 
+	/**
+	 * Creates a DomQuery object from an XML string.
+	 */
 	public static function fromXml(string $xml): self
 	{
 		return simplexml_load_string($xml, self::class);
@@ -55,7 +61,7 @@ class DomQuery extends \SimpleXMLElement
 
 
 	/**
-	 * Returns array of descendants filtered by a selector.
+	 * Finds descendants of current element that match the given CSS selector.
 	 * @return DomQuery[]
 	 */
 	public function find(string $selector): array
@@ -65,7 +71,7 @@ class DomQuery extends \SimpleXMLElement
 
 
 	/**
-	 * Check the current document against a selector.
+	 * Checks if any descendant of current element matches the given selector.
 	 */
 	public function has(string $selector): bool
 	{
@@ -74,7 +80,7 @@ class DomQuery extends \SimpleXMLElement
 
 
 	/**
-	 * Transforms CSS expression to XPath.
+	 * Converts a CSS selector into an XPath expression.
 	 */
 	public static function css2xpath(string $css): string
 	{
