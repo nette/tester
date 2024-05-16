@@ -1,11 +1,11 @@
-[Nette Tester](https://tester.nette.org): enjoyable unit testing
-================================================================
+[![Nette Tester](https://github.com/nette/tester/assets/194960/19423421-c7e9-4bcb-a8cc-167003de2c70)](https://tester.nette.org)
 
 [![Downloads this Month](https://img.shields.io/packagist/dm/nette/tester.svg)](https://packagist.org/packages/nette/tester)
 [![Tests](https://github.com/nette/tester/workflows/Tests/badge.svg?branch=master)](https://github.com/nette/tester/actions)
 [![Latest Stable Version](https://poser.pugx.org/nette/tester/v/stable)](https://github.com/nette/tester/releases)
 [![License](https://img.shields.io/badge/license-New%20BSD-blue.svg)](https://github.com/nette/tester/blob/master/license.md)
 
+ <!---->
 
 Introduction
 ------------
@@ -16,6 +16,7 @@ the [Nette Framework](https://nette.org) and is capable of testing any PHP code.
 Documentation is available on the [Nette Tester website](https://tester.nette.org).
 Read the [blog](https://blog.nette.org/category/tester/) for new information.
 
+ <!---->
 
 [Support Tester](https://github.com/sponsors/dg)
 --------------------------------------------
@@ -26,6 +27,7 @@ Do you like Nette Tester? Are you looking forward to the new features?
 
 Thank you!
 
+ <!---->
 
 Installation
 ------------
@@ -38,14 +40,9 @@ composer require nette/tester --dev
 
 Alternatively, you can download the [tester.phar](https://github.com/nette/tester/releases) file.
 
-- Nette Tester 2.5 is compatible with PHP 8.0 to 8.3
-- Nette Tester 2.4 is compatible with PHP 7.2 to 8.2
-- Nette Tester 2.3 is compatible with PHP 7.1 to 8.0
-- Nette Tester 2.1 & 2.2 is compatible with PHP 7.1 to 7.3
-- Nette Tester 2.0 is compatible with PHP 5.6 to 7.3
+Nette Tester 2.5 is compatible with PHP 8.0 to 8.3. Collecting and processing code coverage information depends on Xdebug or PCOV extension, or PHPDBG SAPI.
 
-Collecting and processing code coverage information depends on Xdebug or PCOV extension, or PHPDBG SAPI.
-
+ <!---->
 
 Writing Tests
 -------------
@@ -96,6 +93,7 @@ OK (1 tests, 0 skipped, 0.0 seconds)
 Nette Tester prints dot for successful test, F for failed test
 and S when the test has been skipped.
 
+ <!---->
 
 Assertions
 ----------
@@ -153,6 +151,8 @@ Assert::with($h, function () {
 });
 ```
 
+ <!---->
+
 Tips and features
 -----------------
 
@@ -201,6 +201,7 @@ Assert::true($dom->has('input[name="password"]'));
 
 For more inspiration see how [Nette Tester tests itself](https://github.com/nette/tester/tree/master/tests).
 
+ <!---->
 
 Running tests
 -------------
