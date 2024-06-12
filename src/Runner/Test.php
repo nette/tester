@@ -43,7 +43,7 @@ class Test
 	public function __construct(string $file, ?string $title = null)
 	{
 		$this->file = $file;
-		$this->title = $title;
+		$this->title = $title !== null ? trim($title) : null;
 	}
 
 
@@ -97,6 +97,29 @@ class Test
 	public function getOutput(): string
 	{
 		return $this->stdout . ($this->stderr ? "\nSTDERR:\n" . $this->stderr : '');
+	}
+
+
+	public function withAppendedTitle(string $title): self
+	{
+		if ($this->hasResult()) {
+			throw new \LogicException('Cannot append title to test which already has a result.');
+		}
+
+		$title = trim($title);
+		$me = clone $this;
+
+		if ($title === '') {
+			return $me;
+		}
+
+		// At this point we're sure both $me->title and $title do not have
+		// leading/trailing whitespace.
+		$me->title = $me->title !== null
+			? "{$me->title} {$title}"
+			: $title;
+
+		return $me;
 	}
 
 

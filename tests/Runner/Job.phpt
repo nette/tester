@@ -28,3 +28,29 @@ test('', function () {
 		Assert::contains('Nette Tester', $job->getHeaders());
 	}
 });
+
+
+test('Appending title to a Test object w/o initial title', function () {
+	$testA = (new Test('Job.test.phptx'));
+	Assert::null($testA->title);
+
+	$testB = $testA->withAppendedTitle('title B');
+	Assert::notSame($testB, $testA);
+	Assert::same('title B', $testB->title);
+
+	$testC = $testB->withAppendedTitle(" \t    title C  ");
+	Assert::notSame($testC, $testB);
+	Assert::same('title B title C', $testC->title);
+});
+
+
+test('Appending title to a Test object w/ initial title', function () {
+	$testA = (new Test('Job.test.phptx', 'Initial title   '));
+	Assert::same('Initial title', $testA->title);
+
+	$testB = $testA->withAppendedTitle('   ');
+	Assert::same('Initial title', $testB->title);
+
+	$testC = $testB->withAppendedTitle(" \t    MEGATITLE  ");
+	Assert::same('Initial title MEGATITLE', $testC->title);
+});

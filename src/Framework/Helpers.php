@@ -71,7 +71,7 @@ class Helpers
 
 
 	/**
-	 * Parse phpDoc comment.
+	 * Parse the first docblock encountered in the provided string.
 	 * @internal
 	 */
 	public static function parseDocComment(string $s): array
@@ -81,10 +81,14 @@ class Helpers
 			return [];
 		}
 
+		// The first non-@tagged string encountered in a multiline docblock will
+		// be stored at index 0.
 		if (preg_match('#^[ \t\*]*+([^\s@].*)#mi', $content[1], $matches)) {
 			$options[0] = trim($matches[1]);
 		}
 
+		// Parse @tags and their arguments. If there are multiple identically
+		// named tags, their arguments will be returned as a list of string.
 		preg_match_all('#^[ \t\*]*@(\w+)([^\w\r\n].*)?#mi', $content[1], $matches, PREG_SET_ORDER);
 		foreach ($matches as $match) {
 			$ref = &$options[strtolower($match[1])];

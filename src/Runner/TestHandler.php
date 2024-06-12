@@ -228,7 +228,10 @@ class TestHandler
 		}
 
 		return array_map(
-			fn(string $method): Test => $test->withArguments(['method' => $method]),
+			fn(string $method): Test => $test
+				// Add the testcase method's name to the test's title.
+				->withAppendedTitle($method)
+				->withArguments(['method' => $method]),
 			$methods,
 		);
 	}
