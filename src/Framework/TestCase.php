@@ -213,8 +213,13 @@ class TestCase
 	{
 		Environment::$checkAssertions = false;
 		header('Content-Type: text/plain');
+
+		// Class name might contain NULL byte (e.g. for anonymous classes),
+		// which might mess up our output.
+		$cleanClassName = str_replace("\0", '', static::class);
+
 		echo "\n";
-		echo 'TestCase:' . static::class . "\n";
+		echo 'TestCase:' . $cleanClassName . "\n";
 		echo 'Method:' . implode("\nMethod:", $methods) . "\n";
 
 		$dependentFiles = [];
