@@ -228,7 +228,9 @@ class TestHandler
 		}
 
 		return array_map(
-			fn(string $method): Test => $test->withArguments(['method' => $method]),
+			fn(string $method): Test => $test
+				->withTitle("$test->title $method")
+				->withArguments(['method' => $method]),
 			$methods,
 		);
 	}

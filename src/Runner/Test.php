@@ -100,6 +100,18 @@ class Test
 	}
 
 
+	public function withTitle(string $title): self
+	{
+		if ($this->hasResult()) {
+			throw new \LogicException('Cannot change title to test which already has a result.');
+		}
+
+		$me = clone $this;
+		$me->title = $title;
+		return $me;
+	}
+
+
 	/**
 	 * @return static
 	 */
