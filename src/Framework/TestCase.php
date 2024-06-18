@@ -214,7 +214,7 @@ class TestCase
 		Environment::$checkAssertions = false;
 		header('Content-Type: text/plain');
 		echo "\n";
-		echo 'TestCase:' . static::class . "\n";
+		echo 'TestCase:' . get_debug_type($this) . "\n";
 		echo 'Method:' . implode("\nMethod:", $methods) . "\n";
 
 		$dependentFiles = [];
