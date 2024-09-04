@@ -104,8 +104,8 @@ Assert::same([
 $test = new MyTest;
 $test->runTest('testFileDataProvider');
 Assert::same([
-	['MyTest::testFileDataProvider', ['1', 'b']],
-	['MyTest::testFileDataProvider', ['a', '2']],
+	['MyTest::testFileDataProvider', [1, 'b']],
+	['MyTest::testFileDataProvider', ['a', 2]],
 ], $test->order);
 
 
