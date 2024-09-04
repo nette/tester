@@ -24,8 +24,8 @@ test('', function () {
 
 test('', function () {
 	$expect = [
-		'bar 1.2.3' => ['a' => '1'],
-		'bar' => ['b' => '2'],
+		'bar 1.2.3' => ['a' => 1],
+		'bar' => ['b' => 2],
 	];
 
 	Assert::same($expect, DataProvider::load('fixtures/dataprovider.query.ini', ' = bar'));
