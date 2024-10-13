@@ -176,7 +176,7 @@ class TestHandler
 		$methods = null;
 
 		if ($this->tempDir) {
-			$cacheFile = $this->tempDir . DIRECTORY_SEPARATOR . 'TestHandler.testCase.' . substr(md5($test->getSignature()), 0, 5) . '.list';
+			$cacheFile = $this->tempDir . DIRECTORY_SEPARATOR . 'TestHandler.testCase.' . md5($test->getSignature()) . '.list';
 			if (is_file($cacheFile)) {
 				$cache = unserialize(file_get_contents($cacheFile));
 
