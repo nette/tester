@@ -9,6 +9,8 @@ declare(strict_types=1);
 
 namespace Tester;
 
+use Dom;
+
 
 /**
  * DomQuery simplifies querying (X)HTML documents.
@@ -20,24 +22,33 @@ class DomQuery extends \SimpleXMLElement
 	 */
 	public static function fromHtml(string $html): self
 	{
-		if (!str_contains($html, '<')) {
-			$html = '<body>' . $html;
-		}
-
-		// parse these elements as void
-		$html = preg_replace('#<(keygen|source|track|wbr)(?=\s|>)((?:"[^"]*"|\'[^\']*\'|[^"\'>])*+)(?<!/)>#', '<$1$2 />', $html);
-
-		// fix parsing of </ inside scripts
-		$html = preg_replace_callback(
-			'#(<script(?=\s|>)(?:"[^"]*"|\'[^\']*\'|[^"\'>])*+>)(.*?)(</script>)#s',
-			fn(array $m): string => $m[1] . str_replace('</', '<\/', $m[2]) . $m[3],
-			$html,
-		);
-
-		$dom = new \DOMDocument;
 		$old = libxml_use_internal_errors(true);
 		libxml_clear_errors();
-		$dom->loadHTML($html);
+
+		if (PHP_VERSION_ID < 80400) {
+			if (!str_contains($html, '<')) {
+				$html = '<body>' . $html;
+			}
+
+			// parse these elements as void
+			$html = preg_replace('#<(keygen|source|track|wbr)(?=\s|>)((?:"[^"]*"|\'[^\']*\'|[^"\'>])*+)(?<!/)>#', '<$1$2 />', $html);
+
+			// fix parsing of </ inside scripts
+			$html = preg_replace_callback(
+				'#(<script(?=\s|>)(?:"[^"]*"|\'[^\']*\'|[^"\'>])*+>)(.*?)(</script>)#s',
+				fn(array $m): string => $m[1] . str_replace('</', '<\/', $m[2]) . $m[3],
+				$html,
+			);
+
+			$dom = new \DOMDocument;
+			$dom->loadHTML($html);
+		} else {
+			if (!preg_match('~<!DOCTYPE~i', $html)) {
+				$html = '<!DOCTYPE html>' . $html;
+			}
+			$dom = Dom\HTMLDocument::createFromString($html, Dom\HTML_NO_DEFAULT_NS);
+		}
+
 		$errors = libxml_get_errors();
 		libxml_use_internal_errors($old);
 
