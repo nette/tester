@@ -31,9 +31,11 @@ Assert::count(2, $results);
 Assert::type(DomQuery::class, $results[0]);
 Assert::type(DomQuery::class, $results[1]);
 
-// children
-$results = $dom->find(':scope > item');
-Assert::count(2, $results);
+if (PHP_VERSION_ID < 80400) { // TODO: not yet supported by Lexbor
+	// children
+	$results = $dom->find(':scope > item');
+	Assert::count(2, $results);
+}
 
 // has
 Assert::true($dom->has('#test1'));
