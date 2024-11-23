@@ -97,6 +97,24 @@ test('matches() checks if element matches selector', function () {
 	Assert::false($para->matches('.test'));
 });
 
+test('closest() finds nearest matching ancestor', function () {
+	$dom = DomQuery::fromHtml('
+        <div class="outer">
+            <div class="middle">
+                <div class="inner">
+                    <p>Test</p>
+                </div>
+            </div>
+        </div>
+    ');
+
+	$p = $dom->find('p')[0];
+	Assert::type(DomQuery::class, $p->closest('div'));
+	Assert::true($p->closest('div')->matches('.inner'));
+	Assert::true($p->closest('.outer')->matches('.outer'));
+	Assert::null($p->closest('span'));
+});
+
 test('find() returns empty array for no matches', function () {
 	$dom = DomQuery::fromHtml('<div></div>');
 	Assert::same([], $dom->find('nonexistent'));
