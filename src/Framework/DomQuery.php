@@ -116,6 +116,19 @@ class DomQuery extends \SimpleXMLElement
 
 
 	/**
+	 * Returns closest ancestor matching CSS selector.
+	 */
+	public function closest(string $selector): ?self
+	{
+		if (PHP_VERSION_ID < 80400) {
+			throw new \LogicException('Requires PHP 8.4 or newer.');
+		}
+		$el = Dom\import_simplexml($this)->closest($selector);
+		return $el ? simplexml_import_dom($el, self::class) : null;
+	}
+
+
+	/**
 	 * Converts a CSS selector into an XPath expression.
 	 */
 	public static function css2xpath(string $css): string
