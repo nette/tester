@@ -68,8 +68,9 @@ class DomQuery extends \SimpleXMLElement
 	 */
 	public function find(string $selector): array
 	{
-		$base = str_starts_with($selector, '>') ? 'self' : 'descendant';
-		return $this->xpath($base . '::' . self::css2xpath($selector));
+		return str_starts_with($selector, ':scope')
+			? $this->xpath('self::' . self::css2xpath(substr($selector, 6)))
+			: $this->xpath('descendant::' . self::css2xpath($selector));
 	}
 
 
