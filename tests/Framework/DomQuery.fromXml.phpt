@@ -32,7 +32,7 @@ Assert::type(DomQuery::class, $results[0]);
 Assert::type(DomQuery::class, $results[1]);
 
 // children
-$results = $dom->find('> item');
+$results = $dom->find(':scope > item');
 Assert::count(2, $results);
 
 // has
