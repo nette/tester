@@ -96,7 +96,7 @@ class MyTest extends Tester\TestCase
 
 
 	/**
-	 * @dataprovider dataProvider
+	 * @dataProvider dataProvider
 	 * @throws Exception
 	 */
 	public function testThrowsWithDataprovider($x)

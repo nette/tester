@@ -20,7 +20,7 @@ class Helpers
 	 */
 	public static function purge(string $dir): void
 	{
-		if (preg_match('#^(\w:)?[/\\\\]?$#', $dir)) {
+		if (preg_match('#^(\w:)?[/\\\]?$#', $dir)) {
 			throw new \InvalidArgumentException('Directory must not be an empty string or root path.');
 		}
 
