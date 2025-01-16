@@ -36,7 +36,7 @@ class Assert
 		'%f%' => '[+-]?\.?\d+\.?\d*(?:[Ee][+-]?\d+)?', // floating point number
 		'%h%' => '[0-9a-fA-F]+', // one or more HEX digits
 		'%w%' => '[0-9a-zA-Z_]+', //one or more alphanumeric characters
-		'%ds%' => '[\\\\/]',    // directory separator
+		'%ds%' => '[\\\/]',    // directory separator
 		'%(\[.+\][+*?{},\d]*)%' => '$1', // range
 	];
 
@@ -517,7 +517,7 @@ class Assert
 			$utf8 = preg_match('#\x80-\x{10FFFF}]#u', $pattern) ? 'u' : '';
 			$suffix = ($strict ? '$#DsU' : '\s*$#sU') . $utf8;
 			$patterns = static::$patterns + [
-				'[.\\\\+*?[^$(){|\#]' => '\$0', // preg quoting
+				'[.\\\+*?[^$(){|\#]' => '\$0', // preg quoting
 				'\x00' => '\x00',
 				'[\t ]*\r?\n' => '[\t ]*\r?\n', // right trim
 			];
