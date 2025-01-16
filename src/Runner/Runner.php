@@ -91,7 +91,7 @@ class Runner
 		if ($this->tempDir) {
 			usort(
 				$this->jobs,
-				fn(Job $a, Job $b): int => $this->getLastResult($a->getTest()) - $this->getLastResult($b->getTest())
+				fn(Job $a, Job $b): int => $this->getLastResult($a->getTest()) - $this->getLastResult($b->getTest()),
 			);
 		}
 
