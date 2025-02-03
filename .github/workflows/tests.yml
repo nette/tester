@@ -27,9 +27,9 @@ jobs:
             - run: src/tester tests -s -C
               shell: bash
             - if: failure()
-              uses: actions/upload-artifact@v3
+              uses: actions/upload-artifact@v4
               with:
-                  name: output
+                  name: output-${{ matrix.php }}-${{ matrix.os }}
                   path: tests/**/output
 
 
