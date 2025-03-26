@@ -4,6 +4,7 @@
 [![Tests](https://github.com/nette/tester/workflows/Tests/badge.svg?branch=master)](https://github.com/nette/tester/actions)
 [![Latest Stable Version](https://poser.pugx.org/nette/tester/v/stable)](https://github.com/nette/tester/releases)
 [![License](https://img.shields.io/badge/license-New%20BSD-blue.svg)](https://github.com/nette/tester/blob/master/license.md)
+[![libs.tech recommends](https://libs.tech/project/5750476/badge.svg)](https://libs.tech/project/5750476/tester)
 
  <!---->
 
