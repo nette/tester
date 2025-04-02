@@ -182,9 +182,14 @@ class Dumper
 				return "/* Anonymous class defined in file {$rc->getFileName()} on line {$rc->getStartLine()} */";
 			}
 
+			$class = $var::class;
+
+			if ($var instanceof \UnitEnum) {
+				return "$class::{$var->name}";
+			}
+
 			$arr = (array) $var;
 			$space = str_repeat("\t", $level);
-			$class = $var::class;
 			$used = &$list[spl_object_hash($var)];
 
 			if (empty($arr)) {
