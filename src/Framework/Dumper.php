@@ -180,6 +180,9 @@ class Dumper
 			$rc = new \ReflectionFunction($var);
 			return "/* Closure defined in file {$rc->getFileName()} on line {$rc->getStartLine()} */";
 
+		} elseif ($var instanceof \UnitEnum) {
+			return $var::class . '::' . $var->name;
+
 		} elseif (is_object($var)) {
 			if (($rc = new \ReflectionObject($var))->isAnonymous()) {
 				return "/* Anonymous class defined in file {$rc->getFileName()} on line {$rc->getStartLine()} */";
