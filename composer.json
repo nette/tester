@@ -23,7 +23,7 @@
 	},
 	"require-dev": {
 		"ext-simplexml": "*",
-		"phpstan/phpstan": "^1.0"
+		"phpstan/phpstan-nette": "^2.0@stable"
 	},
 	"autoload": {
 		"classmap": ["src/"]
