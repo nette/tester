@@ -9,6 +9,9 @@ declare(strict_types=1);
 
 namespace Tester;
 
+use function array_slice, count, defined;
+use const DIRECTORY_SEPARATOR, PREG_SET_ORDER;
+
 
 /**
  * Test helpers.

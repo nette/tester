@@ -9,6 +9,8 @@ declare(strict_types=1);
 
 namespace Tester\Runner;
 
+use function array_map, implode, is_array, is_int;
+
 
 /**
  * Test represents one result.

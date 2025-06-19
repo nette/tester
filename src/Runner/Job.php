@@ -10,6 +10,8 @@ declare(strict_types=1);
 namespace Tester\Runner;
 
 use Tester\Helpers;
+use function count, is_array, is_resource;
+use const DIRECTORY_SEPARATOR;
 
 
 /**

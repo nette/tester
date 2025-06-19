@@ -9,6 +9,8 @@ declare(strict_types=1);
 
 namespace Tester\CodeCoverage;
 use pcov;
+use function defined, in_array;
+use const LOCK_EX, LOCK_UN, XDEBUG_CC_DEAD_CODE, XDEBUG_CC_UNUSED;
 
 
 /**

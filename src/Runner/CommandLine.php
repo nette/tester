@@ -9,6 +9,9 @@ declare(strict_types=1);
 
 namespace Tester\Runner;
 
+use function array_slice, call_user_func, count, in_array, is_array;
+use const PREG_SET_ORDER;
+
 
 /**
  * Stupid command line arguments parser.

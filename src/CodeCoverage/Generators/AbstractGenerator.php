@@ -10,6 +10,8 @@ declare(strict_types=1);
 namespace Tester\CodeCoverage\Generators;
 
 use Tester\Helpers;
+use function in_array, is_array;
+use const ARRAY_FILTER_USE_KEY, STDOUT;
 
 
 /**

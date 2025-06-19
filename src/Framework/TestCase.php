@@ -9,6 +9,8 @@ declare(strict_types=1);
 
 namespace Tester;
 
+use function count, func_get_args, func_num_args, is_array, is_string, sprintf;
+
 
 /**
  * Single test case.

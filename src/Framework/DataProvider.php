@@ -9,6 +9,9 @@ declare(strict_types=1);
 
 namespace Tester;
 
+use function is_array;
+use const DIRECTORY_SEPARATOR, INI_SCANNER_TYPED, PATHINFO_EXTENSION, PREG_SET_ORDER;
+
 
 /**
  * Utility class for providing data from various sources for tests.

@@ -12,6 +12,8 @@ namespace Tester\CodeCoverage\Generators;
 use DOMDocument;
 use DOMElement;
 use Tester\CodeCoverage\PhpParser;
+use function count;
+use const FILE_SKIP_EMPTY_LINES;
 
 
 class CloverXMLGenerator extends AbstractGenerator

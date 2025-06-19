@@ -13,6 +13,8 @@ use Tester;
 use Tester\Dumper;
 use Tester\Runner\Runner;
 use Tester\Runner\Test;
+use function sprintf, strlen;
+use const DIRECTORY_SEPARATOR;
 
 
 /**

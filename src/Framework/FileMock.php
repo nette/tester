@@ -9,6 +9,9 @@ declare(strict_types=1);
 
 namespace Tester;
 
+use function in_array, strlen;
+use const SEEK_CUR, SEEK_END, STREAM_META_TOUCH;
+
 
 /**
  * Mock files.

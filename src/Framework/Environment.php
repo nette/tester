@@ -9,6 +9,9 @@ declare(strict_types=1);
 
 namespace Tester;
 
+use function array_key_exists, count, in_array;
+use const LOCK_EX, PHP_OUTPUT_HANDLER_FLUSHABLE, PHP_SAPI, STDOUT, T_FINAL, TOKEN_PARSE;
+
 
 /**
  * Testing environment.

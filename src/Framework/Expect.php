@@ -9,6 +9,8 @@ declare(strict_types=1);
 
 namespace Tester;
 
+use function implode, is_string, lcfirst, preg_match;
+
 
 /**
  * Expectations for more complex assertions formulation.

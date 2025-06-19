@@ -10,6 +10,8 @@ declare(strict_types=1);
 namespace Tester\Runner;
 
 use Tester\Environment;
+use function count, in_array;
+use const DIRECTORY_SEPARATOR, GLOB_ONLYDIR, PATHINFO_FILENAME;
 
 
 /**

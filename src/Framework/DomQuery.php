@@ -9,6 +9,8 @@ declare(strict_types=1);
 
 namespace Tester;
 
+use const PREG_SET_ORDER;
+
 
 /**
  * DomQuery simplifies querying (X)HTML documents.

@@ -13,6 +13,8 @@ use Tester;
 use Tester\Dumper;
 use Tester\Helpers;
 use Tester\TestCase;
+use function count, in_array, is_array;
+use const DIRECTORY_SEPARATOR;
 
 
 /**

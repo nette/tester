@@ -9,6 +9,9 @@ declare(strict_types=1);
 
 namespace Tester;
 
+use function addcslashes, array_reverse, array_slice, array_splice, dechex, dirname, explode, file, file_put_contents, get_resource_type, implode, is_array, is_bool, is_float, is_int, is_object, is_resource, is_string, ltrim, max, md5, method_exists, min, mkdir, ord, pathinfo, preg_match, preg_replace, preg_replace_callback, spl_object_hash, str_contains, str_pad, str_repeat, str_replace, strlen, strpos, strrpos, strtoupper, strtr, substr, substr_count, substr_replace, trim, uniqid, var_export;
+use const DIRECTORY_SEPARATOR, PATHINFO_FILENAME, STR_PAD_LEFT;
+
 
 /**
  * Dumps PHP variables.
