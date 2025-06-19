@@ -26,6 +26,8 @@ class DomQuery extends \SimpleXMLElement
 			$html = '<body>' . $html;
 		}
 
+		$html = @mb_convert_encoding($html, 'HTML', 'UTF-8'); // @ - deprecated
+
 		// parse these elements as void
 		$html = preg_replace('#<(keygen|source|track|wbr)(?=\s|>)((?:"[^"]*"|\'[^\']*\'|[^"\'>])*+)(?<!/)>#', '<$1$2 />', $html);
 

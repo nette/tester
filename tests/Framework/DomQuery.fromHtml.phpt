@@ -38,3 +38,7 @@ Assert::true($q->has('script[type]'));
 
 $q = @DomQuery::fromHtml('<custom-element></custom-element>');
 Assert::true($q->has('custom-element'));
+
+
+$q = DomQuery::fromHtml('<p>žluťoučký</p>');
+Assert::same('žluťoučký', (string) $q->find('p')[0]);
