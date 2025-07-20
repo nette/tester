@@ -3,7 +3,6 @@
 declare(strict_types=1);
 
 use Tester\Assert;
-use Tester\Dumper;
 
 require __DIR__ . '/../bootstrap.php';
 
@@ -87,17 +86,7 @@ foreach ($matches as [$expected, $actual]) {
 }
 
 foreach ($notMatches as [$expected, $actual, $expected2, $actual2]) {
-	$expected3 = str_replace('%', '%%', $expected2);
-	$actual3 = str_replace('%', '%%', $actual2);
-
-	$ex = Assert::exception(
-		fn() => Assert::match($expected, $actual),
-		Tester\AssertException::class,
-		Dumper::toLine($actual3) . ' should match ' . Dumper::toLine($expected3),
-	);
-
-	Assert::same($expected2, $ex->expected);
-	Assert::same($actual2, $ex->actual);
+	Assert::notMatch($expected, $actual);
 }
 
 

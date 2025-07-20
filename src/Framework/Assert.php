@@ -449,6 +449,19 @@ class Assert
 	}
 
 
+	public static function notMatch(string $pattern, string $actual, ?string $description = null): void
+	{
+		self::$counter++;
+		if (self::isMatching($pattern, $actual)) {
+			if (self::$expandPatterns) {
+				[$pattern, $actual] = self::expandMatchingPatterns($pattern, $actual);
+			}
+
+			self::fail(self::describe('%1 should not match %2', $description), $actual, $pattern);
+		}
+	}
+
+
 	/**
 	 * Asserts that a string matches a given pattern stored in file.
 	 */
