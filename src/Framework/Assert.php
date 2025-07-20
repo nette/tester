@@ -483,6 +483,22 @@ class Assert
 
 
 	/**
+	 * Creates HTTP request for chaining expectations.
+	 */
+	public static function fetch(
+		string $url,
+		string $method = 'GET',
+		array $headers = [],
+		array $cookies = [],
+		bool $follow = false,
+		?string $body = null,
+	): HttpAssert
+	{
+		return HttpAssert::fetch($url, $method, $headers, $cookies, $follow, $body);
+	}
+
+
+	/**
 	 * Assertion that fails.
 	 */
 	public static function fail(

@@ -16,6 +16,7 @@ require __DIR__ . '/Framework/FileMock.php';
 require __DIR__ . '/Framework/TestCase.php';
 require __DIR__ . '/Framework/FileMutator.php';
 require __DIR__ . '/Framework/Expect.php';
+require __DIR__ . '/Framework/HttpAssert.php';
 require __DIR__ . '/CodeCoverage/Collector.php';
 require __DIR__ . '/Runner/Job.php';
 
