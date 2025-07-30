@@ -70,7 +70,10 @@ abstract class AbstractGenerator
 			throw new \Exception("Unable to write to file '$file'.");
 		}
 
-		ob_start(function (string $buffer) use ($handle) { fwrite($handle, $buffer); }, 4096);
+		ob_start(function (string $buffer) use ($handle) {
+			fwrite($handle, $buffer);
+			return '';
+		}, 4096);
 		try {
 			$this->renderSelf();
 		} catch (\Throwable $e) {
