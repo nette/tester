@@ -550,7 +550,7 @@ class Assert
 		$res = preg_match($pattern, (string) $actual);
 		ini_set('pcre.backtrack_limit', $old);
 		if ($res === false || preg_last_error()) {
-			throw new \Exception('Error while executing regular expression. (PREG Error Code ' . preg_last_error() . ')');
+			throw new \Exception('Error while executing regular expression. (' . preg_last_error_msg() . ')');
 		}
 
 		return (bool) $res;
