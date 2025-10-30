@@ -419,7 +419,7 @@ class Dumper
 			'navy' => '0;34', 'blue' => '1;34', 'green' => '0;32', 'lime' => '1;32',
 			'teal' => '0;36', 'aqua' => '1;36', 'maroon' => '0;31', 'red' => '1;31',
 			'purple' => '0;35', 'fuchsia' => '1;35', 'olive' => '0;33', 'yellow' => '1;33',
-			null => '0',
+			'' => '0',
 		];
 		$c = explode('/', $color);
 		return "\e["
