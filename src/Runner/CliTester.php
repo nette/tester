@@ -136,15 +136,15 @@ class CliTester
 				'--cider' => [],
 				'--coverage-src' => [CommandLine::RealPath => true, CommandLine::Repeatable => true],
 				'-o' => [CommandLine::Repeatable => true, CommandLine::Normalizer => function ($arg) use (&$outputFiles) {
-					[$format, $file] = explode(':', $arg, 2) + [1 => null];
+					[$format, $file] = explode(':', $arg, 2) + [1 => ''];
 
 					if (isset($outputFiles[$file])) {
 						throw new \Exception(
-							$file === null
+							$file === ''
 								? 'Option -o <format> without file name parameter can be used only once.'
 								: "Cannot specify output by -o into file '$file' more then once.",
 						);
-					} elseif ($file === null) {
+					} elseif ($file === '') {
 						$this->stdoutFormat = $format;
 					}
 
