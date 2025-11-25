@@ -138,7 +138,7 @@ class CliTester
 				'-o' => [CommandLine::Repeatable => true, CommandLine::Normalizer => function ($arg) use (&$outputFiles) {
 					[$format, $file] = explode(':', $arg, 2) + [1 => null];
 
-					if (isset($outputFiles[$file])) {
+					if (isset($outputFiles[$file ?? ''])) {
 						throw new \Exception(
 							$file === null
 								? 'Option -o <format> without file name parameter can be used only once.'
@@ -148,7 +148,7 @@ class CliTester
 						$this->stdoutFormat = $format;
 					}
 
-					$outputFiles[$file] = true;
+					$outputFiles[$file ?? ''] = true;
 
 					return [$format, $file];
 				}],
