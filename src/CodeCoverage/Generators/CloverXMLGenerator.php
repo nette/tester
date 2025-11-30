@@ -199,6 +199,7 @@ class CloverXMLGenerator extends AbstractGenerator
 		return $stats;
 	}
 
+
 	private function calculateStructuralMetrics(array $structuralLines, ?array $coverageData = null): \stdClass
 	{
 		$stats = (object) [
