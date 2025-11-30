@@ -209,7 +209,7 @@ class CloverXMLGenerator extends AbstractGenerator
 			'coveredElementCount' => null,
 		];
 
-		if ($coverageData === null) { // Never loaded file
+		if ($coverageData === null) { // Never loaded file should return empty stats
 			return $stats;
 		}
 
