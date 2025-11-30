@@ -199,7 +199,6 @@ class CloverXMLGenerator extends AbstractGenerator
 		return $stats;
 	}
 
-
 	private function calculateStructuralMetrics(array $structuralLines, ?array $coverageData = null): \stdClass
 	{
 		$stats = (object) [
@@ -207,7 +206,6 @@ class CloverXMLGenerator extends AbstractGenerator
 			'coveredStatementCount' => 0,
 			'elementCount' => null,
 			'coveredElementCount' => null,
-			'coveredLines' => [],
 		];
 
 		if ($coverageData === null) { // Never loaded file
@@ -218,7 +216,6 @@ class CloverXMLGenerator extends AbstractGenerator
 			if (isset($coverageData[$line]) && $coverageData[$line] !== self::LineDead) {
 				$stats->statementCount++;
 				if ($coverageData[$line] > 0) {
-					$stats->coveredLines[] = $line;
 					$stats->coveredStatementCount++;
 				}
 			}
