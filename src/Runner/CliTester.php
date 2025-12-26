@@ -39,7 +39,7 @@ class CliTester
 		$this->debugMode = (bool) $this->options['--debug'];
 		if (isset($this->options['--colors'])) {
 			Environment::$useColors = (bool) $this->options['--colors'];
-		} elseif (in_array($this->stdoutFormat, ['tap', 'junit'], true)) {
+		} elseif (in_array($this->stdoutFormat, ['tap', 'junit'], strict: true)) {
 			Environment::$useColors = false;
 		}
 
@@ -196,7 +196,7 @@ class CliTester
 			echo "Note: No php.ini is used.\n";
 		}
 
-		if (in_array($this->stdoutFormat, ['tap', 'junit'], true)) {
+		if (in_array($this->stdoutFormat, ['tap', 'junit'], strict: true)) {
 			array_push($args, '-d', 'html_errors=off');
 		}
 
@@ -287,7 +287,7 @@ class CliTester
 
 	private function finishCodeCoverage(string $file): void
 	{
-		if (!in_array($this->stdoutFormat, ['none', 'tap', 'junit'], true)) {
+		if (!in_array($this->stdoutFormat, ['none', 'tap', 'junit'], strict: true)) {
 			echo 'Generating code coverage report... ';
 		}
 
@@ -312,7 +312,7 @@ class CliTester
 			$state = [];
 			foreach ($this->options['--watch'] as $directory) {
 				foreach (new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($directory)) as $file) {
-					if (substr($file->getExtension(), 0, 3) === 'php' && substr($file->getBasename(), 0, 1) !== '.') {
+					if (str_starts_with($file->getExtension(), 'php') && !str_starts_with($file->getBasename(), '.')) {
 						$state[(string) $file] = @filemtime((string) $file); // @ file could be deleted in the meantime
 					}
 				}

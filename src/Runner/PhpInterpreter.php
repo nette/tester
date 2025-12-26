@@ -77,10 +77,7 @@ class PhpInterpreter
 	}
 
 
-	/**
-	 * @return static
-	 */
-	public function withPhpIniOption(string $name, ?string $value = null): self
+	public function withPhpIniOption(string $name, ?string $value = null): static
 	{
 		$me = clone $this;
 		$me->commandLine .= ' -d ' . Helpers::escapeArg($name . ($value === null ? '' : "=$value"));
@@ -127,6 +124,6 @@ class PhpInterpreter
 
 	public function hasExtension(string $name): bool
 	{
-		return in_array(strtolower($name), array_map('strtolower', $this->info->extensions), true);
+		return in_array(strtolower($name), array_map('strtolower', $this->info->extensions), strict: true);
 	}
 }

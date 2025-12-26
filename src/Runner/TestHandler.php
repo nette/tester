@@ -23,13 +23,12 @@ use const DIRECTORY_SEPARATOR;
 class TestHandler
 {
 	private const HttpOk = 200;
-	private Runner $runner;
 	private ?string $tempDir = null;
 
 
-	public function __construct(Runner $runner)
-	{
-		$this->runner = $runner;
+	public function __construct(
+		private Runner $runner,
+	) {
 	}
 
 
@@ -173,7 +172,7 @@ class TestHandler
 	}
 
 
-	private function initiateTestCase(Test $test, $foo, PhpInterpreter $interpreter)
+	private function initiateTestCase(Test $test, $foo, PhpInterpreter $interpreter): Test|array
 	{
 		$methods = null;
 
@@ -201,7 +200,7 @@ class TestHandler
 			$job->setTempDirectory($this->tempDir);
 			$job->run();
 
-			if (in_array($job->getExitCode(), [Job::CodeError, Job::CodeFail, Job::CodeSkip], true)) {
+			if (in_array($job->getExitCode(), [Job::CodeError, Job::CodeFail, Job::CodeSkip], strict: true)) {
 				return $test->withResult($job->getExitCode() === Job::CodeSkip ? Test::Skipped : Test::Failed, $job->getTest()->getOutput());
 			}
 
