@@ -144,7 +144,7 @@ class Runner
 
 		if (is_dir($path)) {
 			foreach (glob(str_replace('[', '[[]', $path) . '/*', GLOB_ONLYDIR) ?: [] as $dir) {
-				if (in_array(basename($dir), $this->ignoreDirs, true)) {
+				if (in_array(basename($dir), $this->ignoreDirs, strict: true)) {
 					continue;
 				}
 
@@ -157,7 +157,7 @@ class Runner
 		} else {
 			foreach (glob(str_replace('[', '[[]', $path)) ?: [] as $file) {
 				if (is_file($file)) {
-					$this->testHandler->initiate(realpath($file));
+					$this->testHandler->initiate(realpath($file) ?: $file);
 				}
 			}
 		}

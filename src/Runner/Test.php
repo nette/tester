@@ -114,10 +114,7 @@ class Test
 	}
 
 
-	/**
-	 * @return static
-	 */
-	public function withArguments(array $args): self
+	public function withArguments(array $args): static
 	{
 		if ($this->hasResult()) {
 			throw new \LogicException('Cannot change arguments of test which already has a result.');
@@ -136,10 +133,7 @@ class Test
 	}
 
 
-	/**
-	 * @return static
-	 */
-	public function withResult(int $result, ?string $message, ?float $duration = null): self
+	public function withResult(int $result, ?string $message, ?float $duration = null): static
 	{
 		if ($this->hasResult()) {
 			throw new \LogicException("Result of test is already set to $this->result with message '$this->message'.");

@@ -37,12 +37,12 @@ abstract class AbstractGenerator
 	 */
 	public function __construct(string $file, array $sources = [])
 	{
-		$this->data = @unserialize(Helpers::readFile($file)); // @ - unserialization may fail
-		if (!is_array($this->data)) {
+		$data = @unserialize(Helpers::readFile($file)); // @ - unserialization may fail
+		if (!is_array($data)) {
 			throw new \Exception("Content of file '$file' is invalid.");
 		}
 
-		$this->data = array_filter($this->data, fn(string $path): bool => @is_file($path), ARRAY_FILTER_USE_KEY);
+		$this->data = array_filter($data, fn(string $path): bool => @is_file($path), ARRAY_FILTER_USE_KEY);
 
 		if (!$sources) {
 			$sources = [Helpers::findCommonDirectory(array_keys($this->data))];
@@ -108,7 +108,7 @@ abstract class AbstractGenerator
 		return new \CallbackFilterIterator(
 			$iterator,
 			fn(\SplFileInfo $file): bool => $file->getBasename()[0] !== '.'  // . or .. or .gitignore
-				&& in_array($file->getExtension(), $this->acceptFiles, true),
+				&& in_array($file->getExtension(), $this->acceptFiles, strict: true),
 		);
 	}
 

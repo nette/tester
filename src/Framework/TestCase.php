@@ -189,10 +189,10 @@ class TestCase
 	 */
 	private function silentTearDown(): void
 	{
-		set_error_handler(fn() => null);
+		set_error_handler(fn() => true);
 		try {
 			$this->tearDown();
-		} catch (\Throwable $e) {
+		} catch (\Throwable) {
 		}
 
 		restore_error_handler();

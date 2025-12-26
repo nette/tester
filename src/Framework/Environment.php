@@ -114,9 +114,9 @@ class Environment
 
 		set_exception_handler([self::class, 'handleException']);
 
-		set_error_handler(function (int $severity, string $message, string $file, int $line): ?bool {
+		set_error_handler(function (int $severity, string $message, string $file, int $line): bool {
 			if (
-				in_array($severity, [E_RECOVERABLE_ERROR, E_USER_ERROR], true)
+				in_array($severity, [E_RECOVERABLE_ERROR, E_USER_ERROR], strict: true)
 				|| ($severity & error_reporting()) === $severity
 			) {
 				self::handleException(new \ErrorException($message, 0, $severity, $file, $line));
@@ -130,7 +130,7 @@ class Environment
 
 			$error = error_get_last();
 			register_shutdown_function(function () use ($error): void {
-				if (in_array($error['type'] ?? null, [E_ERROR, E_CORE_ERROR, E_COMPILE_ERROR, E_PARSE], true)) {
+				if (in_array($error['type'] ?? null, [E_ERROR, E_CORE_ERROR, E_COMPILE_ERROR, E_PARSE], strict: true)) {
 					if (($error['type'] & error_reporting()) !== $error['type']) { // show fatal errors hidden by @shutup
 						self::print("\n" . Dumper::color('white/red', "Fatal error: $error[message] in $error[file] on line $error[line]"));
 					}

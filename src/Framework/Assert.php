@@ -119,7 +119,7 @@ class Assert
 	{
 		self::$counter++;
 		if (is_array($actual)) {
-			if (!in_array($needle, $actual, true)) {
+			if (!in_array($needle, $actual, strict: true)) {
 				self::fail(self::describe('%1 should contain %2', $description), $actual, $needle);
 			}
 		} elseif (!is_string($needle)) {
@@ -138,7 +138,7 @@ class Assert
 	{
 		self::$counter++;
 		if (is_array($actual)) {
-			if (in_array($needle, $actual, true)) {
+			if (in_array($needle, $actual, strict: true)) {
 				self::fail(self::describe('%1 should not contain %2', $description), $actual, $needle);
 			}
 		} elseif (!is_string($needle)) {
@@ -281,7 +281,7 @@ class Assert
 				self::fail(self::describe("%1 should be $type", $description), $value);
 			}
 		} elseif (in_array($type, ['array', 'bool', 'callable', 'float',
-			'int', 'integer', 'null', 'object', 'resource', 'scalar', 'string', ], true)
+			'int', 'integer', 'null', 'object', 'resource', 'scalar', 'string', ], strict: true)
 		) {
 			if (!("is_$type")($value)) {
 				self::fail(self::describe(get_debug_type($value) . " should be $type", $description));
@@ -372,7 +372,7 @@ class Assert
 
 		set_error_handler(function (int $severity, string $message, string $file, int $line) use (&$expected) {
 			if (($severity & error_reporting()) !== $severity) {
-				return;
+				return false;
 			}
 
 			$errorStr = Helpers::errorTypeToString($severity) . ($message ? " ($message)" : '');
@@ -386,6 +386,8 @@ class Assert
 			} elseif ($expectedMessage && !self::isMatching($expectedMessage, $message)) {
 				self::fail("$expectedTypeStr with a message matching %2 was expected but got %1", $message, $expectedMessage);
 			}
+
+			return true;
 		});
 
 		reset($expected);
@@ -574,7 +576,7 @@ class Assert
 		}
 
 		foreach (['%A%', '%A?%'] as $greedyPattern) {
-			if (substr($patternX, -strlen($greedyPattern)) === $greedyPattern) {
+			if (str_ends_with($patternX, $greedyPattern)) {
 				$patternX = substr($patternX, 0, -strlen($greedyPattern));
 				$patternY = "$patternX%A?%";
 				$patternZ = $greedyPattern . $patternZ;

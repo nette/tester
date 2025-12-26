@@ -67,21 +67,22 @@ class PhpInterpreter
 
 		$parts = explode("\r\n\r\n", $output, 2);
 		$this->cgi = count($parts) === 2;
-		$this->info = @unserialize((string) strstr($parts[$this->cgi], 'O:8:"stdClass"'));
-		$this->error .= strstr($parts[$this->cgi], 'O:8:"stdClass"', before_needle: true);
-		if (!$this->info) {
+		$output = $parts[(int) $this->cgi];
+		$pos = strpos($output, 'O:8:"stdClass"');
+		$info = $pos === false ? false : @unserialize(substr($output, $pos));
+		if (!$info) {
 			throw new \Exception("Unable to detect PHP version (output: $output).");
+		}
 
-		} elseif ($this->cgi && $this->error) {
+		$this->info = $info;
+		$this->error .= substr($output, 0, $pos);
+		if ($this->cgi && $this->error) {
 			$this->error .= "\n(note that PHP CLI generates better error messages)";
 		}
 	}
 
 
-	/**
-	 * @return static
-	 */
-	public function withPhpIniOption(string $name, ?string $value = null): self
+	public function withPhpIniOption(string $name, ?string $value = null): static
 	{
 		$me = clone $this;
 		$me->commandLine .= ' -d ' . Helpers::escapeArg($name . ($value === null ? '' : "=$value"));
@@ -128,6 +129,6 @@ class PhpInterpreter
 
 	public function hasExtension(string $name): bool
 	{
-		return in_array(strtolower($name), array_map('strtolower', $this->info->extensions), true);
+		return in_array(strtolower($name), array_map('strtolower', $this->info->extensions), strict: true);
 	}
 }

@@ -358,7 +358,7 @@ class Dumper
 			. (isset($stored) ? 'diff ' . Helpers::escapeArg($stored[0]) . ' ' . Helpers::escapeArg($stored[1]) . "\n\n" : '');
 
 		foreach ($trace as $item) {
-			$item += ['file' => null, 'class' => null, 'type' => null, 'function' => null];
+			$item += ['file' => null, 'line' => null, 'class' => null, 'type' => null, 'function' => null];
 			if ($e instanceof AssertException && $item['file'] === __DIR__ . DIRECTORY_SEPARATOR . 'Assert.php') {
 				continue;
 			}

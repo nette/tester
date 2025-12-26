@@ -45,12 +45,12 @@ class Job
 
 	/** @var string[]  output headers */
 	private array $headers = [];
-	private ?float $duration;
+	private float $duration;
 
 
 	public function __construct(Test $test, PhpInterpreter $interpreter, ?array $envVars = null)
 	{
-		if ($test->getResult() !== Test::Prepared) {
+		if ($test->hasResult()) {
 			throw new \LogicException("Test '{$test->getSignature()}' already has result '{$test->getResult()}'.");
 		}
 
@@ -99,7 +99,7 @@ class Job
 				: Helpers::escapeArg($value);
 		}
 
-		$this->duration = -microtime(true);
+		$this->duration = -microtime(as_float: true);
 		$this->proc = proc_open(
 			$this->interpreter->getCommandLine()
 			. ' -d register_argc_argv=on ' . Helpers::escapeArg($this->test->getFile()) . ' ' . implode(' ', $args),
@@ -151,7 +151,7 @@ class Job
 			return true;
 		}
 
-		$this->duration += microtime(true);
+		$this->duration += microtime(as_float: true);
 
 		fclose($this->stdout);
 		if ($this->stderrFile) {

@@ -22,11 +22,8 @@ use const DIRECTORY_SEPARATOR;
  */
 class ConsolePrinter implements Tester\Runner\OutputHandler
 {
-	private Runner $runner;
-
 	/** @var resource */
 	private $file;
-	private bool $displaySkipped = false;
 	private string $buffer;
 	private float $time;
 	private int $count;
@@ -36,14 +33,12 @@ class ConsolePrinter implements Tester\Runner\OutputHandler
 
 
 	public function __construct(
-		Runner $runner,
-		bool $displaySkipped = false,
+		private Runner $runner,
+		private bool $displaySkipped = false,
 		?string $file = null,
 		bool $ciderMode = false,
 		private bool $lineMode = false,
 	) {
-		$this->runner = $runner;
-		$this->displaySkipped = $displaySkipped;
 		$this->file = fopen($file ?? 'php://output', 'w') ?: throw new \RuntimeException("Cannot open file '$file' for writing.");
 		$this->symbols = match (true) {
 			$ciderMode => [Test::Passed => '🍏', Test::Skipped => 's', Test::Failed => '🍎'],
@@ -58,12 +53,8 @@ class ConsolePrinter implements Tester\Runner\OutputHandler
 		$this->count = 0;
 		$this->buffer = '';
 		$this->baseDir = null;
-		$this->results = [
-			Test::Passed => 0,
-			Test::Skipped => 0,
-			Test::Failed => 0,
-		];
-		$this->time = -microtime(true);
+		$this->results = [Test::Passed => 0, Test::Skipped => 0, Test::Failed => 0];
+		$this->time = -microtime(as_float: true);
 		fwrite($this->file, $this->runner->getInterpreter()->getShortInfo()
 			. ' | ' . $this->runner->getInterpreter()->getCommandLine()
 			. " | {$this->runner->threadCount} thread" . ($this->runner->threadCount > 1 ? 's' : '') . "\n\n");
@@ -96,20 +87,21 @@ class ConsolePrinter implements Tester\Runner\OutputHandler
 
 	public function finish(Test $test): void
 	{
-		$this->results[$test->getResult()]++;
+		$result = $test->getResult();
+		$this->results[$result]++;
 		fwrite(
 			$this->file,
 			$this->lineMode
 				? $this->generateFinishLine($test)
-				: $this->symbols[$test->getResult()],
+				: $this->symbols[$result],
 		);
 
 		$title = ($test->title ? "$test->title | " : '') . substr($test->getSignature(), strlen($this->baseDir));
 		$message = '   ' . str_replace("\n", "\n   ", trim((string) $test->message)) . "\n\n";
 		$message = preg_replace('/^   $/m', '', $message);
-		if ($test->getResult() === Test::Failed) {
+		if ($result === Test::Failed) {
 			$this->buffer .= Dumper::color('red', "-- FAILED: $title") . "\n$message";
-		} elseif ($test->getResult() === Test::Skipped && $this->displaySkipped) {
+		} elseif ($result === Test::Skipped && $this->displaySkipped) {
 			$this->buffer .= "-- Skipped: $title\n$message";
 		}
 	}
@@ -125,7 +117,7 @@ class ConsolePrinter implements Tester\Runner\OutputHandler
 			. ($this->results[Test::Failed] ? $this->results[Test::Failed] . ' failure' . ($this->results[Test::Failed] > 1 ? 's' : '') . ', ' : '')
 			. ($this->results[Test::Skipped] ? $this->results[Test::Skipped] . ' skipped, ' : '')
 			. ($this->count !== $run ? ($this->count - $run) . ' not run, ' : '')
-			. sprintf('%0.1f', $this->time + microtime(true)) . ' seconds)' . Dumper::color() . "\n");
+			. sprintf('%0.1f', $this->time + microtime(as_float: true)) . ' seconds)' . Dumper::color() . "\n");
 
 		$this->buffer = '';
 	}
@@ -134,7 +126,6 @@ class ConsolePrinter implements Tester\Runner\OutputHandler
 	private function generateFinishLine(Test $test): string
 	{
 		$result = $test->getResult();
-
 		$shortFilePath = str_replace($this->baseDir, '', $test->getFile());
 		$shortDirPath = dirname($shortFilePath) . DIRECTORY_SEPARATOR;
 		$basename = basename($shortFilePath);
