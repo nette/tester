@@ -127,6 +127,6 @@ class PhpInterpreter
 
 	public function hasExtension(string $name): bool
 	{
-		return in_array(strtolower($name), array_map('strtolower', $this->info->extensions), true);
+		return in_array(strtolower($name), array_map('strtolower', $this->info->extensions), strict: true);
 	}
 }

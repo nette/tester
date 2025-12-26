@@ -108,9 +108,9 @@ class Helpers
 	 */
 	public static function errorTypeToString(int $type): string
 	{
-		$consts = get_defined_constants(true);
+		$consts = get_defined_constants(categorize: true);
 		foreach ($consts['Core'] as $name => $val) {
-			if ($type === $val && substr($name, 0, 2) === 'E_') {
+			if ($type === $val && str_starts_with($name, 'E_')) {
 				return $name;
 			}
 		}

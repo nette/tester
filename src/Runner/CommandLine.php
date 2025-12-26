@@ -54,7 +54,7 @@ class CommandLine
 			$opts = $this->options[$name] ?? [];
 			$this->options[$name] = $opts + [
 				self::Argument => (bool) end($m[2]),
-				self::Optional => isset($line[2]) || (substr(end($m[2]), 0, 1) === '[') || isset($opts[self::Value]),
+				self::Optional => isset($line[2]) || (str_starts_with(end($m[2]), '[')) || isset($opts[self::Value]),
 				self::Repeatable => (bool) end($m[3]),
 				self::Enum => count($enums = explode('|', trim(end($m[2]), '<[]>'))) > 1 ? $enums : null,
 				self::Value => $line[2] ?? null,
@@ -126,7 +126,7 @@ class CommandLine
 
 			if (
 				!empty($opt[self::Enum])
-				&& !in_array(is_array($arg) ? reset($arg) : $arg, $opt[self::Enum], true)
+				&& !in_array(is_array($arg) ? reset($arg) : $arg, $opt[self::Enum], strict: true)
 				&& !(
 					$opt[self::Optional]
 					&& $arg === true

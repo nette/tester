@@ -192,7 +192,7 @@ class TestCase
 		set_error_handler(fn() => null);
 		try {
 			$this->tearDown();
-		} catch (\Throwable $e) {
+		} catch (\Throwable) {
 		}
 
 		restore_error_handler();

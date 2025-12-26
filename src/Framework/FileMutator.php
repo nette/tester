@@ -125,20 +125,13 @@ class FileMutator
 
 	public function stream_metadata(string $path, int $option, $value): bool
 	{
-		switch ($option) {
-			case STREAM_META_TOUCH:
-				return $this->native('touch', $path, $value[0] ?? time(), $value[1] ?? time());
-			case STREAM_META_OWNER_NAME:
-			case STREAM_META_OWNER:
-				return $this->native('chown', $path, $value);
-			case STREAM_META_GROUP_NAME:
-			case STREAM_META_GROUP:
-				return $this->native('chgrp', $path, $value);
-			case STREAM_META_ACCESS:
-				return $this->native('chmod', $path, $value);
-		}
-
-		return false;
+		return match ($option) {
+			STREAM_META_TOUCH => $this->native('touch', $path, $value[0] ?? time(), $value[1] ?? time()),
+			STREAM_META_OWNER_NAME, STREAM_META_OWNER => $this->native('chown', $path, $value),
+			STREAM_META_GROUP_NAME, STREAM_META_GROUP => $this->native('chgrp', $path, $value),
+			STREAM_META_ACCESS => $this->native('chmod', $path, $value),
+			default => false,
+		};
 	}
 
 
@@ -168,7 +161,7 @@ class FileMutator
 	}
 
 
-	public function stream_read(int $count)
+	public function stream_read(int $count): string|false
 	{
 		return fread($this->handle, $count);
 	}
@@ -186,7 +179,7 @@ class FileMutator
 	}
 
 
-	public function stream_stat()
+	public function stream_stat(): array|false
 	{
 		return fstat($this->handle);
 	}
@@ -204,7 +197,7 @@ class FileMutator
 	}
 
 
-	public function stream_write(string $data)
+	public function stream_write(string $data): int|false
 	{
 		return fwrite($this->handle, $data);
 	}
