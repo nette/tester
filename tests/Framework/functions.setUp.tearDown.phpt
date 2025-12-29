@@ -47,3 +47,11 @@ testException('testException with setUp/tearDown', function () {
 }, Exception::class);
 Assert::same(3, $setUpCalled);
 Assert::same(3, $tearDownCalled);
+
+
+// Test that setUp and tearDown are called after testNoError()
+testNoError('testNoError with setUp/tearDown', function () {
+	Assert::true(true);
+});
+Assert::same(4, $setUpCalled);
+Assert::same(4, $tearDownCalled);
