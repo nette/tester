@@ -51,18 +51,7 @@ function testException(
 	$code = null,
 ): void
 {
-	try {
-		Assert::exception($function, $class, $message, $code);
-		if ($description !== '') {
-			Environment::print(Dumper::color('lime', '√') . " $description");
-		}
-
-	} catch (Throwable $e) {
-		if ($description !== '') {
-			Environment::print(Dumper::color('red', '×') . " $description\n\n");
-		}
-		throw $e;
-	}
+	test($description, fn() => Assert::exception($function, $class, $message, $code));
 }
 
 
