@@ -31,10 +31,11 @@ function test(string $description, Closure $closure): void
 			Environment::print(Dumper::color('red', '×') . " $description\n\n");
 		}
 		throw $e;
-	}
 
-	if ($fn = (new ReflectionFunction('tearDown'))->getStaticVariables()['fn']) {
-		$fn();
+	} finally {
+		if ($fn = (new ReflectionFunction('tearDown'))->getStaticVariables()['fn']) {
+			$fn();
+		}
 	}
 }
 
