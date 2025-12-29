@@ -35,3 +35,9 @@ Assert::exception(
 );
 Assert::same(2, $setUpCalled); // setUp should have been called
 Assert::same(2, $tearDownCalled); // tearDown should have been called despite the failure
+
+
+// Test that setUp and tearDown are called after testException()
+testException('testException with setUp/tearDown', fn() => throw new Exception('Expected'), Exception::class);
+Assert::same(3, $setUpCalled);
+Assert::same(3, $tearDownCalled);
