@@ -57,6 +57,19 @@ function testException(
 
 
 /**
+ * Tests that a provided closure does not generate any errors or exceptions.
+ */
+function testNoError(string $description, Closure $function): void
+{
+	if (($count = func_num_args()) > 2) {
+		throw new Exception(__FUNCTION__ . "() expects 2 parameters, $count given.");
+	}
+
+	test($description, fn() => Assert::noError($function));
+}
+
+
+/**
  * Registers a function to be called before each test execution.
  */
 function setUp(?Closure $closure): void
