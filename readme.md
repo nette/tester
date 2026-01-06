@@ -40,7 +40,7 @@ composer require nette/tester --dev
 
 Alternatively, you can download the [tester.phar](https://github.com/nette/tester/releases) file.
 
-Nette Tester 2.5 is compatible with PHP 8.0 to 8.5. Collecting and processing code coverage information depends on Xdebug or PCOV extension, or PHPDBG SAPI.
+Nette Tester 2.6 is compatible with PHP 8.0 to 8.5. Collecting and processing code coverage information depends on Xdebug or PCOV extension, or PHPDBG SAPI.
 
  <!---->
 
@@ -83,7 +83,7 @@ Now we run tests from command-line using the `tester` command:
 > tester
  _____ ___  ___ _____ ___  ___
 |_   _/ __)( __/_   _/ __)| _ )
-  |_| \___ /___) |_| \___ |_|_\  v2.5
+  |_| \___ /___) |_| \___ |_|_\  v2.6
 
 PHP 8.2.0 | php -n | 8 threads
 .
