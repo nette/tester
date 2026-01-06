@@ -24,7 +24,7 @@ jobs:
             - run: composer install --no-progress --prefer-dist
             - run: src/tester --info
               shell: bash
-            - run: src/tester tests -s -C
+            - run: src/tester tests -s
               shell: bash
             - if: failure()
               uses: actions/upload-artifact@v4
@@ -59,7 +59,7 @@ jobs:
                   coverage: none
 
             - run: composer install --no-progress --prefer-dist
-            - run: src/tester -p phpdbg tests -s -C --coverage ./coverage.xml --coverage-src ./src
+            - run: src/tester -p phpdbg tests -s --coverage ./coverage.xml --coverage-src ./src
             - run: wget https://github.com/php-coveralls/php-coveralls/releases/download/v2.4.3/php-coveralls.phar
             - env:
                   COVERALLS_REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}

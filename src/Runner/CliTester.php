@@ -109,8 +109,8 @@ class CliTester
 
 				Options:
 				    -p <path>                    Specify PHP interpreter to run (default: php).
-				    -c <path>                    Look for php.ini file (or look in directory) <path>.
-				    -C                           Use system-wide php.ini.
+				    -c <path>                    Use custom php.ini, ignore system configuration.
+				    -C                           With -c, include system configuration as well.
 				    -d <key=value>...            Define INI entry 'key' with value 'value'.
 				    -s                           Show information about skipped tests.
 				    --stop-on-fail               Stop execution upon the first failure.
@@ -190,11 +190,12 @@ class CliTester
 
 	private function createPhpInterpreter(): void
 	{
-		$args = $this->options['-C'] ? [] : ['-n'];
+		$args = [];
 		if ($this->options['-c']) {
+			if (!$this->options['-C']) {
+				$args[] = '-n';
+			}
 			array_push($args, '-c', $this->options['-c']);
-		} elseif (!$this->options['--info'] && !$this->options['-C']) {
-			echo "Note: No php.ini is used.\n";
 		}
 
 		if (in_array($this->stdoutFormat, ['tap', 'junit'], strict: true)) {

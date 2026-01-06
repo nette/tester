@@ -85,7 +85,7 @@ Now we run tests from command-line using the `tester` command:
 |_   _/ __)( __/_   _/ __)| _ )
   |_| \___ /___) |_| \___ |_|_\  v2.6
 
-PHP 8.2.0 | php -n | 8 threads
+PHP 8.2.0 | php | 8 threads
 .
 OK (1 tests, 0 skipped, 0.0 seconds)
 ```
@@ -217,8 +217,8 @@ Usage:
 
 Options:
     -p <path>                    Specify PHP interpreter to run (default: php).
-    -c <path>                    Look for php.ini file (or look in directory) <path>.
-    -C                           Use system-wide php.ini.
+    -c <path>                    Use custom php.ini, ignore system configuration.
+    -C                           With -c, include system configuration as well.
     -l | --log <path>            Write log to file <path>.
     -d <key=value>...            Define INI entry 'key' with value 'val'.
     -s                           Show information about skipped tests.

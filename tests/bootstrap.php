@@ -14,12 +14,9 @@ Tester\Environment::setupFunctions();
 
 function createInterpreter(): PhpInterpreter
 {
-	$args = strlen((string) php_ini_scanned_files())
-		? []
-		: ['-n'];
-
-	if (php_ini_loaded_file()) {
-		array_push($args, '-c', php_ini_loaded_file());
+	$args = [];
+	if ($file = php_ini_loaded_file()) {
+		array_push($args, '-n', '-c', $file);
 	}
 
 	return new PhpInterpreter(PHP_BINARY, $args);
