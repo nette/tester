@@ -3,7 +3,9 @@
 .github export-ignore
 ncs.* export-ignore
 phpstan.neon export-ignore
+CLAUDE.md export-ignore
 tests/ export-ignore
 
 *.sh eol=lf
+src/tester eol=lf
 *.php* diff=php linguist-language=PHP

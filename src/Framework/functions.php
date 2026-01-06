@@ -31,10 +31,11 @@ function test(string $description, Closure $closure): void
 			Environment::print(Dumper::color('red', '×') . " $description\n\n");
 		}
 		throw $e;
-	}
 
-	if ($fn = (new ReflectionFunction('tearDown'))->getStaticVariables()['fn']) {
-		$fn();
+	} finally {
+		if ($fn = (new ReflectionFunction('tearDown'))->getStaticVariables()['fn']) {
+			$fn();
+		}
 	}
 }
 
@@ -50,18 +51,20 @@ function testException(
 	$code = null,
 ): void
 {
-	try {
-		Assert::exception($function, $class, $message, $code);
-		if ($description !== '') {
-			Environment::print(Dumper::color('lime', '√') . " $description");
-		}
+	test($description, fn() => Assert::exception($function, $class, $message, $code));
+}
 
-	} catch (Throwable $e) {
-		if ($description !== '') {
-			Environment::print(Dumper::color('red', '×') . " $description\n\n");
-		}
-		throw $e;
+
+/**
+ * Tests that a provided closure does not generate any errors or exceptions.
+ */
+function testNoError(string $description, Closure $function): void
+{
+	if (($count = func_num_args()) > 2) {
+		throw new Exception(__FUNCTION__ . "() expects 2 parameters, $count given.");
 	}
+
+	test($description, fn() => Assert::noError($function));
 }
 
 

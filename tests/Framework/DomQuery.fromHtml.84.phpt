@@ -131,7 +131,7 @@ test('handles malformed HTML gracefully', function () {
 
 test('handles HTML entities in attributes', function () {
 	$dom = DomQuery::fromHtml('<div data-test="&quot;quoted&quot;">Test</div>');
-	Assert::true($dom->find('div')[0]->matches('[data-test="\\"quoted\\""]'));
+	Assert::true($dom->find('div')[0]->matches('[data-test="\"quoted\""]'));
 });
 
 test('handles UTF-8', function () {

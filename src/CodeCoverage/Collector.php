@@ -56,7 +56,7 @@ class Collector
 		} elseif (!in_array(
 			$engine,
 			array_map(fn(array $engineInfo) => $engineInfo[0], self::detectEngines()),
-			true,
+			strict: true,
 		)) {
 			throw new \LogicException("Code coverage engine '$engine' is not supported.");
 		}

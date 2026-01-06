@@ -44,7 +44,7 @@ class ConsolePrinter implements Tester\Runner\OutputHandler
 	) {
 		$this->runner = $runner;
 		$this->displaySkipped = $displaySkipped;
-		$this->file = fopen($file ?: 'php://output', 'w');
+		$this->file = fopen($file ?? 'php://output', 'w');
 		$this->symbols = match (true) {
 			$ciderMode => [Test::Passed => '🍏', Test::Skipped => 's', Test::Failed => '🍎'],
 			$lineMode => [Test::Passed => Dumper::color('lime', 'OK'), Test::Skipped => Dumper::color('yellow', 'SKIP'), Test::Failed => Dumper::color('white/red', 'FAIL')],
@@ -63,7 +63,7 @@ class ConsolePrinter implements Tester\Runner\OutputHandler
 			Test::Skipped => 0,
 			Test::Failed => 0,
 		];
-		$this->time = -microtime(true);
+		$this->time = -microtime(as_float: true);
 		fwrite($this->file, $this->runner->getInterpreter()->getShortInfo()
 			. ' | ' . $this->runner->getInterpreter()->getCommandLine()
 			. " | {$this->runner->threadCount} thread" . ($this->runner->threadCount > 1 ? 's' : '') . "\n\n");
@@ -125,7 +125,7 @@ class ConsolePrinter implements Tester\Runner\OutputHandler
 			. ($this->results[Test::Failed] ? $this->results[Test::Failed] . ' failure' . ($this->results[Test::Failed] > 1 ? 's' : '') . ', ' : '')
 			. ($this->results[Test::Skipped] ? $this->results[Test::Skipped] . ' skipped, ' : '')
 			. ($this->count !== $run ? ($this->count - $run) . ' not run, ' : '')
-			. sprintf('%0.1f', $this->time + microtime(true)) . ' seconds)' . Dumper::color() . "\n");
+			. sprintf('%0.1f', $this->time + microtime(as_float: true)) . ' seconds)' . Dumper::color() . "\n");
 
 		$this->buffer = '';
 	}

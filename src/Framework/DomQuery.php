@@ -23,7 +23,7 @@ class DomQuery extends \SimpleXMLElement
 	 */
 	public static function fromHtml(string $html): self
 	{
-		$old = libxml_use_internal_errors(true);
+		$old = libxml_use_internal_errors(use_errors: true);
 		libxml_clear_errors();
 
 		if (PHP_VERSION_ID < 80400) {
