@@ -85,4 +85,14 @@ class Console
 	{
 		return preg_replace('/\e\[[0-?]*[ -\/]*[@-~]|\e\][^\x07]*(\x07|\e\\\)/', '', $text);
 	}
+
+
+	/**
+	 * Returns display width of string (number of terminal columns).
+	 */
+	public static function textWidth(string $text): int
+	{
+		return preg_match_all('/./su', $text)
+			+ preg_match_all('/[\x{1F300}-\x{1F9FF}]/u', $text); // emoji are 2-wide
+	}
 }
