@@ -83,11 +83,18 @@ class PhpInterpreter
 	}
 
 
-	public function withPhpIniOption(string $name, ?string $value = null): static
+	/** @param string[]  $args */
+	public function withArguments(array $args): static
 	{
 		$me = clone $this;
-		$me->commandLine .= ' -d ' . Helpers::escapeArg($name . ($value === null ? '' : "=$value"));
+		$me->commandLine .= ' ' . implode(' ', array_map([Helpers::class, 'escapeArg'], $args));
 		return $me;
+	}
+
+
+	public function withPhpIniOption(string $name, ?string $value = null): static
+	{
+		return $this->withArguments(['-d ' . $name . ($value === null ? '' : "=$value")]);
 	}
 
 

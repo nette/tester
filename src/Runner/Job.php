@@ -93,17 +93,12 @@ class Job
 			putenv("$name=$value");
 		}
 
-		$args = [];
-		foreach ($this->test->getArguments() as $value) {
-			$args[] = is_array($value)
-				? Helpers::escapeArg("--$value[0]=$value[1]")
-				: Helpers::escapeArg($value);
-		}
-
+		$args = array_map(fn($arg) => is_array($arg) ? "--$arg[0]=$arg[1]" : $arg, $this->test->getArguments());
 		$this->duration = -microtime(as_float: true);
 		$this->proc = proc_open(
-			$this->interpreter->getCommandLine()
-			. ' -d register_argc_argv=on ' . Helpers::escapeArg($this->test->getFile()) . ' ' . implode(' ', $args),
+			$this->interpreter
+				->withArguments(['-d register_argc_argv=on', $this->test->getFile(), ...$args])
+				->getCommandLine(),
 			[
 				['pipe', 'r'],
 				['pipe', 'w'],
