@@ -140,7 +140,7 @@ class ConsolePrinter implements Tester\Runner\OutputHandler
 		// failed tests messages will be printed after all tests are finished
 		$message = '';
 		if ($result !== Test::Failed && $test->message) {
-			$indent = str_repeat(' ', mb_strlen($header));
+			$indent = str_repeat(' ', Ansi::textWidth($header));
 			$message = preg_match('#\n#', $test->message)
 				? "\n$indent" . preg_replace('#\r?\n#', '\0' . $indent, $test->message)
 				: Ansi::colorize("[$test->message]", 'olive');

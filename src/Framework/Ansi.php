@@ -91,4 +91,14 @@ class Ansi
 	{
 		return "\e[0m";
 	}
+
+
+	/**
+	 * Returns display width of string (number of terminal columns).
+	 */
+	public static function textWidth(string $text): int
+	{
+		return preg_match_all('/./su', $text)
+			+ preg_match_all('/[\x{1F300}-\x{1F9FF}]/u', $text); // emoji are 2-wide
+	}
 }
