@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use Tester\Assert;
+use Tester\Console;
 use Tester\Runner\Test;
 
 require __DIR__ . '/../bootstrap.php';
@@ -50,4 +51,4 @@ Assert::same([Test::Passed, null], $logger->results['shutdown.exitCode.b.phptx']
 Assert::same([Test::Skipped, 'just skipping'], $logger->results['skip.phptx']);
 
 Assert::same(Test::Failed, $logger->results['shutdown.assert.phptx'][0]);
-Assert::match("Failed: 'b' should be%A%", Tester\Dumper::removeColors($logger->results['shutdown.assert.phptx'][1]));
+Assert::match("Failed: 'b' should be%A%", Console::stripAnsi($logger->results['shutdown.assert.phptx'][1]));

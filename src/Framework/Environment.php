@@ -86,16 +86,10 @@ class Environment
 	{
 		self::$useColors = getenv(self::VariableColors) !== false
 			? (bool) getenv(self::VariableColors)
-			: (PHP_SAPI === 'cli' || PHP_SAPI === 'phpdbg')
-				&& getenv('NO_COLOR') === false // https://no-color.org
-				&& (getenv('FORCE_COLOR')
-					|| (function_exists('sapi_windows_vt100_support')
-						? sapi_windows_vt100_support(STDOUT)
-						: @stream_isatty(STDOUT)) // @ may trigger error 'cannot cast a filtered stream on this system'
-				);
+			: Console::supportsColors();
 
 		ob_start(
-			fn(string $s): string => self::$useColors ? $s : Dumper::removeColors($s),
+			fn(string $s): string => self::$useColors ? $s : Console::stripAnsi($s),
 			1,
 			PHP_OUTPUT_HANDLER_FLUSHABLE,
 		);
@@ -132,13 +126,13 @@ class Environment
 			register_shutdown_function(function () use ($error): void {
 				if (in_array($error['type'] ?? null, [E_ERROR, E_CORE_ERROR, E_COMPILE_ERROR, E_PARSE], strict: true)) {
 					if (($error['type'] & error_reporting()) !== $error['type']) { // show fatal errors hidden by @shutup
-						self::print("\n" . Dumper::color('white/red', "Fatal error: $error[message] in $error[file] on line $error[line]"));
+						self::print("\n" . Console::colorize("Fatal error: $error[message] in $error[file] on line $error[line]", 'white/red'));
 					}
 				} elseif (self::$checkAssertions && !Assert::$counter) {
-					self::print("\n" . Dumper::color('white/red', 'Error: This test forgets to execute an assertion.'));
+					self::print("\n" . Console::colorize('Error: This test forgets to execute an assertion.', 'white/red'));
 					self::exit(Runner\Job::CodeFail);
 				} elseif (!getenv(self::VariableRunner) && self::$exitCode !== Runner\Job::CodeSkip) {
-					self::print("\n" . (self::$exitCode ? Dumper::color('white/red', 'FAILURE') : Dumper::color('white/green', 'OK')));
+					self::print("\n" . (self::$exitCode ? Console::colorize('FAILURE', 'white/red') : Console::colorize('OK', 'white/green')));
 				}
 			});
 		});
@@ -267,7 +261,7 @@ class Environment
 	{
 		$s = $s === '' || str_ends_with($s, "\n") ? $s : $s . "\n";
 		if (PHP_SAPI === 'cli' || PHP_SAPI === 'phpdbg') {
-			fwrite(STDOUT, self::$useColors ? $s : Dumper::removeColors($s));
+			fwrite(STDOUT, self::$useColors ? $s : Console::stripAnsi($s));
 		} else {
 			echo $s;
 		}

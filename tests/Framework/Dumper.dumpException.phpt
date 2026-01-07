@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use Tester\Assert;
+use Tester\Console;
 
 require __DIR__ . '/../bootstrap.php';
 
@@ -30,5 +31,5 @@ $cases = [
 
 foreach ($cases as $message => $closure) {
 	$e = Assert::exception($closure, Tester\AssertException::class);
-	Assert::match($message . "\n%A%", Tester\Dumper::removeColors(Tester\Dumper::dumpException($e)));
+	Assert::match($message . "\n%A%", Console::stripAnsi(Tester\Dumper::dumpException($e)));
 }
