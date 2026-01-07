@@ -32,7 +32,7 @@ $runner->setEnvironmentVariable(Tester\Environment::VariableColors, '0');
 $runner->paths[] = __DIR__ . '/cases/*.phptx';
 $runner->outputHandlers[] = new Output\ConsolePrinter($runner, false, $console = FileMock::create(''));
 $runner->outputHandlers[] = new Output\ConsolePrinter($runner, true, $consoleWithSkipped = FileMock::create(''));
-$runner->outputHandlers[] = new Output\ConsolePrinter($runner, false, $consoleLines = FileMock::create(''), false, true);
+$runner->outputHandlers[] = new Output\ConsolePrinter($runner, false, $consoleLines = FileMock::create(''), mode: Output\ConsolePrinter::ModeLines);
 $runner->outputHandlers[] = new Output\JUnitPrinter($jUnit = FileMock::create(''));
 $runner->outputHandlers[] = new Output\Logger($runner, $logger = FileMock::create(''));
 $runner->outputHandlers[] = new Output\TapPrinter($tap = FileMock::create(''));
