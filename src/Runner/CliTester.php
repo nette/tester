@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 namespace Tester\Runner;
 
+use Tester\Ansi;
 use Tester\CodeCoverage;
 use Tester\Dumper;
 use Tester\Environment;
@@ -209,7 +210,7 @@ class CliTester
 		$this->interpreter = new PhpInterpreter($this->options['-p'], $args);
 
 		if ($error = $this->interpreter->getStartupError()) {
-			echo Dumper::color('red', "PHP startup error: $error") . "\n";
+			echo Ansi::colorize("PHP startup error: $error", 'red') . "\n";
 		}
 	}
 
@@ -341,7 +342,7 @@ class CliTester
 				$idle .= ' sec';
 			}
 
-			echo 'Watching ' . implode(', ', $this->options['--watch']) . " (idle for $idle) " . str_repeat('.', ++$counter % 5) . "    \r";
+			echo 'Watching ' . implode(', ', $this->options['--watch']) . " (idle for $idle) " . str_repeat('.', ++$counter % 5) . Ansi::clearLine();
 			sleep(2);
 		}
 	}
@@ -375,7 +376,7 @@ class CliTester
 		echo "\n";
 		echo $this->debugMode
 			? Dumper::dumpException($e)
-			: Dumper::color('white/red', 'Error: ' . $e->getMessage());
+			: Ansi::colorize('Error: ' . $e->getMessage(), 'white/red');
 		echo "\n";
 	}
 

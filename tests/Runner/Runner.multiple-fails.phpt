@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
+use Tester\Ansi;
 use Tester\Assert;
-use Tester\Dumper;
 use Tester\Runner\Runner;
 use Tester\Runner\Test;
 
@@ -66,7 +66,7 @@ Assert::same(Test::Skipped, $logger->results['testcase-no-methods.phptx'][0]);
 
 Assert::match(
 	'Error: This test forgets to execute an assertion.',
-	trim(Dumper::removeColors($logger->results['testcase-not-call-run.phptx'][1])),
+	trim(Ansi::stripAnsi($logger->results['testcase-not-call-run.phptx'][1])),
 );
 Assert::same(Test::Failed, $logger->results['testcase-not-call-run.phptx'][0]);
 
@@ -80,7 +80,7 @@ Assert::same(Test::Skipped, $logger->results['testcase-pre-skip.phptx'][0]);
 
 Assert::match(
 	"Failed: pre-fail\n%A%",
-	trim(Dumper::removeColors($logger->results['testcase-pre-fail.phptx'][1])),
+	trim(Ansi::stripAnsi($logger->results['testcase-pre-fail.phptx'][1])),
 );
 Assert::same(Test::Failed, $logger->results['testcase-pre-fail.phptx'][0]);
 

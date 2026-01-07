@@ -6,8 +6,8 @@
 
 declare(strict_types=1);
 
+use Tester\Ansi;
 use Tester\Assert;
-use Tester\Dumper;
 use Tester\FileMock;
 use Tester\Runner\Output;
 use Tester\Runner\Runner;
@@ -38,9 +38,9 @@ $runner->outputHandlers[] = new Output\Logger($runner, $logger = FileMock::creat
 $runner->outputHandlers[] = new Output\TapPrinter($tap = FileMock::create(''));
 $runner->run();
 
-Assert::matchFile(__DIR__ . '/OutputHandlers.expect.console.txt', Dumper::removeColors(file_get_contents($console)));
-Assert::matchFile(__DIR__ . '/OutputHandlers.expect.consoleWithSkip.txt', Dumper::removeColors(file_get_contents($consoleWithSkipped)));
-Assert::matchFile(__DIR__ . '/OutputHandlers.expect.consoleLines.txt', Dumper::removeColors(file_get_contents($consoleLines)));
+Assert::matchFile(__DIR__ . '/OutputHandlers.expect.console.txt', Ansi::stripAnsi(file_get_contents($console)));
+Assert::matchFile(__DIR__ . '/OutputHandlers.expect.consoleWithSkip.txt', Ansi::stripAnsi(file_get_contents($consoleWithSkipped)));
+Assert::matchFile(__DIR__ . '/OutputHandlers.expect.consoleLines.txt', Ansi::stripAnsi(file_get_contents($consoleLines)));
 Assert::matchFile(__DIR__ . '/OutputHandlers.expect.jUnit.xml', file_get_contents($jUnit));
 Assert::matchFile(__DIR__ . '/OutputHandlers.expect.logger.txt', file_get_contents($logger));
 Assert::matchFile(__DIR__ . '/OutputHandlers.expect.tap.txt', file_get_contents($tap));

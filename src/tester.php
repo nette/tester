@@ -20,6 +20,7 @@ require __DIR__ . '/Runner/Output/Logger.php';
 require __DIR__ . '/Runner/Output/TapPrinter.php';
 require __DIR__ . '/Runner/Output/ConsolePrinter.php';
 require __DIR__ . '/Runner/Output/JUnitPrinter.php';
+require __DIR__ . '/Framework/Ansi.php';
 require __DIR__ . '/Framework/Helpers.php';
 require __DIR__ . '/Framework/Environment.php';
 require __DIR__ . '/Framework/Assert.php';

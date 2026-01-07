@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
+use Tester\Ansi;
 use Tester\Assert;
-use Tester\Dumper;
 use Tester\Environment;
 
 
@@ -23,12 +23,12 @@ function test(string $description, Closure $closure): void
 	try {
 		$closure();
 		if ($description !== '') {
-			Environment::print(Dumper::color('lime', '√') . " $description");
+			Environment::print(Ansi::colorize('√', 'lime') . " $description");
 		}
 
 	} catch (Throwable $e) {
 		if ($description !== '') {
-			Environment::print(Dumper::color('red', '×') . " $description\n\n");
+			Environment::print(Ansi::colorize('×', 'red') . " $description\n\n");
 		}
 		throw $e;
 

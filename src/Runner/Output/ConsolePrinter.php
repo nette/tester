@@ -10,7 +10,7 @@ declare(strict_types=1);
 namespace Tester\Runner\Output;
 
 use Tester;
-use Tester\Dumper;
+use Tester\Ansi;
 use Tester\Runner\Runner;
 use Tester\Runner\Test;
 use function sprintf, strlen;
@@ -44,8 +44,8 @@ class ConsolePrinter implements Tester\Runner\OutputHandler
 		$this->file = fopen($file ?? 'php://output', 'w') ?: throw new \RuntimeException("Cannot open file '$file' for writing.");
 		$this->symbols = match (true) {
 			$ciderMode => [Test::Passed => '🍏', Test::Skipped => 's', Test::Failed => '🍎'],
-			$lineMode => [Test::Passed => Dumper::color('lime', 'OK'), Test::Skipped => Dumper::color('yellow', 'SKIP'), Test::Failed => Dumper::color('white/red', 'FAIL')],
-			default => [Test::Passed => '.', Test::Skipped => 's', Test::Failed => Dumper::color('white/red', 'F')],
+			$lineMode => [Test::Passed => Ansi::colorize('OK', 'lime'), Test::Skipped => Ansi::colorize('SKIP', 'yellow'), Test::Failed => Ansi::colorize('FAIL', 'white/red')],
+			default => [Test::Passed => '.', Test::Skipped => 's', Test::Failed => Ansi::colorize('F', 'white/red')],
 		};
 	}
 
@@ -102,7 +102,7 @@ class ConsolePrinter implements Tester\Runner\OutputHandler
 		$message = '   ' . str_replace("\n", "\n   ", trim((string) $test->message)) . "\n\n";
 		$message = preg_replace('/^   $/m', '', $message);
 		if ($result === Test::Failed) {
-			$this->buffer .= Dumper::color('red', "-- FAILED: $title") . "\n$message";
+			$this->buffer .= Ansi::colorize("-- FAILED: $title", 'red') . "\n$message";
 		} elseif ($result === Test::Skipped && $this->displaySkipped) {
 			$this->buffer .= "-- Skipped: $title\n$message";
 		}
@@ -114,12 +114,12 @@ class ConsolePrinter implements Tester\Runner\OutputHandler
 		$run = array_sum($this->results);
 		fwrite($this->file, !$this->count ? "No tests found\n" :
 			"\n\n" . $this->buffer . "\n"
-			. ($this->results[Test::Failed] ? Dumper::color('white/red') . 'FAILURES!' : Dumper::color('white/green') . 'OK')
+			. ($this->results[Test::Failed] ? Ansi::color('white/red') . 'FAILURES!' : Ansi::color('white/green') . 'OK')
 			. " ($this->count test" . ($this->count > 1 ? 's' : '') . ', '
 			. ($this->results[Test::Failed] ? $this->results[Test::Failed] . ' failure' . ($this->results[Test::Failed] > 1 ? 's' : '') . ', ' : '')
 			. ($this->results[Test::Skipped] ? $this->results[Test::Skipped] . ' skipped, ' : '')
 			. ($this->count !== $run ? ($this->count - $run) . ' not run, ' : '')
-			. sprintf('%0.1f', $this->time + microtime(as_float: true)) . ' seconds)' . Dumper::color() . "\n");
+			. sprintf('%0.1f', $this->time + microtime(as_float: true)) . ' seconds)' . Ansi::reset() . "\n");
 
 		$this->buffer = '';
 	}
@@ -132,12 +132,12 @@ class ConsolePrinter implements Tester\Runner\OutputHandler
 		$shortDirPath = dirname($shortFilePath) . DIRECTORY_SEPARATOR;
 		$basename = basename($shortFilePath);
 		$fileText = $result === Test::Failed
-			? Dumper::color('red', $shortDirPath) . Dumper::color('white/red', $basename)
-			: Dumper::color('gray', $shortDirPath) . Dumper::color('silver', $basename);
+			? Ansi::colorize($shortDirPath, 'red') . Ansi::colorize($basename, 'white/red')
+			: Ansi::colorize($shortDirPath, 'gray') . Ansi::colorize($basename, 'silver');
 
 		$header = '· ';
 		$titleText = $test->title
-			? Dumper::color('fuchsia', " [$test->title]")
+			? Ansi::colorize(" [$test->title]", 'fuchsia')
 			: '';
 
 		// failed tests messages will be printed after all tests are finished
@@ -146,7 +146,7 @@ class ConsolePrinter implements Tester\Runner\OutputHandler
 			$indent = str_repeat(' ', mb_strlen($header));
 			$message = preg_match('#\n#', $test->message)
 				? "\n$indent" . preg_replace('#\r?\n#', '\0' . $indent, $test->message)
-				: Dumper::color('olive', "[$test->message]");
+				: Ansi::colorize("[$test->message]", 'olive');
 		}
 
 		return sprintf(
@@ -157,7 +157,7 @@ class ConsolePrinter implements Tester\Runner\OutputHandler
 			$fileText,
 			$titleText,
 			$this->symbols[$result],
-			Dumper::color('gray', sprintf('in %.2f s', $test->getDuration())),
+			Ansi::colorize(sprintf('in %.2f s', $test->getDuration()), 'gray'),
 			$message,
 		);
 	}
