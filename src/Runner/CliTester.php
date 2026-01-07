@@ -227,8 +227,7 @@ class CliTester
 			$runner->outputHandlers[] = new Output\ConsolePrinter(
 				$runner,
 				(bool) $this->options['-s'],
-				'php://output',
-				(bool) $this->options['--cider'],
+				mode: $this->options['--cider'] ? Output\ConsolePrinter::ModeCider : Output\ConsolePrinter::ModeDots,
 			);
 		}
 
@@ -239,8 +238,7 @@ class CliTester
 					$runner,
 					(bool) $this->options['-s'],
 					$file,
-					(bool) $this->options['--cider'],
-					$format === 'console-lines',
+					mode: $format === 'console-lines' ? Output\ConsolePrinter::ModeLines : Output\ConsolePrinter::ModeDots,
 				),
 				'tap' => $runner->outputHandlers[] = new Output\TapPrinter($file),
 				'junit' => $runner->outputHandlers[] = new Output\JUnitPrinter($file),
