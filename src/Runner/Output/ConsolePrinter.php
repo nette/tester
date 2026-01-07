@@ -22,6 +22,10 @@ use const DIRECTORY_SEPARATOR;
  */
 class ConsolePrinter implements Tester\Runner\OutputHandler
 {
+	public const ModeDots = 1;
+	public const ModeCider = 2;
+	public const ModeLines = 3;
+
 	/** @var resource */
 	private $file;
 	private string $buffer;
@@ -31,22 +35,15 @@ class ConsolePrinter implements Tester\Runner\OutputHandler
 	/** @var array<int, int>  result type (Test::*) => count */
 	private array $results;
 	private ?string $baseDir;
-	private array $symbols;
 
 
 	public function __construct(
 		private Runner $runner,
 		private bool $displaySkipped = false,
 		?string $file = null,
-		bool $ciderMode = false,
-		private bool $lineMode = false,
+		private int $mode = self::ModeDots,
 	) {
 		$this->file = fopen($file ?? 'php://output', 'w');
-		$this->symbols = match (true) {
-			$ciderMode => [Test::Passed => '🍏', Test::Skipped => 's', Test::Failed => '🍎'],
-			$lineMode => [Test::Passed => Console::colorize('OK', 'lime'), Test::Skipped => Console::colorize('SKIP', 'yellow'), Test::Failed => Console::colorize('FAIL', 'white/red')],
-			default => [Test::Passed => '.', Test::Skipped => 's', Test::Failed => Console::colorize('F', 'white/red')],
-		};
 	}
 
 
@@ -91,12 +88,11 @@ class ConsolePrinter implements Tester\Runner\OutputHandler
 	{
 		$result = $test->getResult();
 		$this->results[$result]++;
-		fwrite(
-			$this->file,
-			$this->lineMode
-				? $this->generateFinishLine($test)
-				: $this->symbols[$result],
-		);
+		fwrite($this->file, match ($this->mode) {
+			self::ModeDots => [Test::Passed => '.', Test::Skipped => 's', Test::Failed => Console::colorize('F', 'white/red')][$result],
+			self::ModeCider => [Test::Passed => '🍏', Test::Skipped => 's', Test::Failed => '🍎'][$result],
+			self::ModeLines => $this->generateFinishLine($test),
+		});
 
 		$title = ($test->title ? "$test->title | " : '') . substr($test->getSignature(), strlen($this->baseDir));
 		$message = '   ' . str_replace("\n", "\n   ", trim((string) $test->message)) . "\n\n";
@@ -156,7 +152,9 @@ class ConsolePrinter implements Tester\Runner\OutputHandler
 			$this->count,
 			$fileText,
 			$titleText,
-			$this->symbols[$result],
+			match ($result) {
+				Test::Passed => Console::colorize('OK', 'lime'), Test::Skipped => Console::colorize('SKIP', 'yellow'), Test::Failed => Console::colorize('FAIL', 'white/red')
+			},
 			Console::colorize(sprintf('in %.2f s', $test->getDuration()), 'gray'),
 			$message,
 		);
