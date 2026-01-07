@@ -12,6 +12,8 @@ namespace Tester\Runner;
 
 /**
  * Runner output.
+ * @method void jobStarted(Job $job) called when a job starts running
+ * @method void tick(Job[] $running) called periodically during test execution
  */
 interface OutputHandler
 {

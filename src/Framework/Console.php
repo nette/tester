@@ -9,7 +9,7 @@ declare(strict_types=1);
 
 namespace Tester;
 
-use const PHP_SAPI, STDOUT;
+use const PHP_SAPI, STDOUT, STR_PAD_BOTH, STR_PAD_LEFT, STR_PAD_RIGHT;
 
 
 /**
@@ -97,11 +97,69 @@ class Console
 
 
 	/**
+	 * Returns ANSI sequence to move cursor up.
+	 */
+	public static function cursorUp(int $lines): string
+	{
+		return "\e[{$lines}A";
+	}
+
+
+	/**
 	 * Returns display width of string (number of terminal columns).
 	 */
 	public static function textWidth(string $text): int
 	{
+		$text = self::stripAnsi($text);
 		return preg_match_all('/./su', $text)
 			+ preg_match_all('/[\x{1F300}-\x{1F9FF}]/u', $text); // emoji are 2-wide
+	}
+
+
+	/**
+	 * Pads text to specified display width.
+	 */
+	public static function pad(
+		string $text,
+		int $width,
+		string $char = ' ',
+		int $type = STR_PAD_RIGHT,
+	): string
+	{
+		$padding = $width - self::textWidth($text);
+		if ($padding <= 0) {
+			return $text;
+		}
+
+		return match ($type) {
+			STR_PAD_LEFT => str_repeat($char, $padding) . $text,
+			STR_PAD_RIGHT => $text . str_repeat($char, $padding),
+			STR_PAD_BOTH => str_repeat($char, intdiv($padding, 2)) . $text . str_repeat($char, $padding - intdiv($padding, 2)),
+		};
+	}
+
+
+	/**
+	 * Truncates text to max display width, adding ellipsis if needed.
+	 */
+	public static function truncate(string $text, int $maxWidth, string $ellipsis = '…'): string
+	{
+		if (self::textWidth($text) <= $maxWidth) {
+			return $text;
+		}
+
+		$maxWidth -= self::textWidth($ellipsis);
+		$res = '';
+		$width = 0;
+		foreach (preg_split('//u', $text, -1, PREG_SPLIT_NO_EMPTY) as $char) {
+			$charWidth = preg_match('/[\x{1F300}-\x{1F9FF}]/u', $char) ? 2 : 1;
+			if ($width + $charWidth > $maxWidth) {
+				break;
+			}
+			$res .= $char;
+			$width += $charWidth;
+		}
+
+		return $res . $ellipsis;
 	}
 }

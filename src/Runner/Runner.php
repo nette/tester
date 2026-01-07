@@ -43,6 +43,8 @@ class Runner
 
 	/** @var array<string, int>  test signature => result (Test::Prepared|Passed|Failed|Skipped) */
 	private array $lastResults = [];
+	private int $jobCount = 0;
+	private int $finishedCount = 0;
 
 
 	public function __construct(PhpInterpreter $interpreter)
@@ -94,6 +96,8 @@ class Runner
 		foreach ($this->paths as $path) {
 			$this->findTests($path);
 		}
+		$this->finishedCount = 0;
+		$this->jobCount = count($this->jobs);
 
 		if ($this->tempDir) {
 			usort(
@@ -103,7 +107,6 @@ class Runner
 		}
 
 		$threads = range(1, $this->threadCount);
-
 		$async = $this->threadCount > 1 && count($this->jobs) > 1;
 
 		try {
@@ -111,10 +114,20 @@ class Runner
 				while ($threads && $this->jobs) {
 					$running[] = $job = array_shift($this->jobs);
 					$job->setEnvironmentVariable(Environment::VariableThread, (string) array_shift($threads));
+					foreach ($this->outputHandlers as $handler) {
+						if (method_exists($handler, 'jobStarted')) {
+							$handler->jobStarted($job);
+						}
+					}
 					$job->run(async: $async);
 				}
 
 				if ($async) {
+					foreach ($this->outputHandlers as $handler) {
+						if (method_exists($handler, 'tick')) {
+							$handler->tick($running);
+						}
+					}
 					usleep(Job::RunSleep); // stream_select() doesn't work with proc_open()
 				}
 
@@ -125,6 +138,7 @@ class Runner
 
 					if (!$job->isRunning()) {
 						$threads[] = $job->getEnvironmentVariable(Environment::VariableThread);
+						$this->finishedCount++;
 						$this->testHandler->assess($job);
 						unset($running[$key]);
 					}
@@ -212,6 +226,18 @@ class Runner
 	public function getInterpreter(): PhpInterpreter
 	{
 		return $this->interpreter;
+	}
+
+
+	public function getJobCount(): int
+	{
+		return $this->jobCount;
+	}
+
+
+	public function getFinishedCount(): int
+	{
+		return $this->finishedCount;
 	}
 
 
