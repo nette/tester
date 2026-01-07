@@ -76,6 +76,9 @@ class CliTester
 
 		ob_end_flush();
 
+		echo Console::showCursor(false);
+		register_shutdown_function(fn() => print Console::showCursor(true));
+
 		if ($this->options['--watch']) {
 			$this->watch($runner);
 			return 0;

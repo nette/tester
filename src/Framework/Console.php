@@ -88,6 +88,15 @@ class Console
 
 
 	/**
+	 * Returns ANSI sequence to show or hide cursor.
+	 */
+	public static function showCursor(bool $visible): string
+	{
+		return $visible ? "\e[?25h" : "\e[?25l";
+	}
+
+
+	/**
 	 * Returns display width of string (number of terminal columns).
 	 */
 	public static function textWidth(string $text): int
