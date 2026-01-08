@@ -23,6 +23,8 @@ class Logger implements Tester\Runner\OutputHandler
 	private $file;
 	private Runner $runner;
 	private int $count;
+
+	/** @var array<int, int>  result type (Test::*) => count */
 	private array $results;
 
 

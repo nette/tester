@@ -25,6 +25,8 @@ class HtmlGenerator extends AbstractGenerator
 		self::LineDead => 'dead', // dead code
 	];
 	private ?string $title;
+
+	/** @var array<string, array{file: string, lines: array<int, int>, covered: int, total: int, percent: float}> */
 	private array $files = [];
 
 

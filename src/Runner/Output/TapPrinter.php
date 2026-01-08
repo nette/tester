@@ -20,6 +20,8 @@ class TapPrinter implements Tester\Runner\OutputHandler
 {
 	/** @var resource */
 	private $file;
+
+	/** @var array<int, int>  result type (Test::*) => count */
 	private array $results;
 
 

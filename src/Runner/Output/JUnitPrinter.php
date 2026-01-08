@@ -24,6 +24,8 @@ class JUnitPrinter implements Tester\Runner\OutputHandler
 	private $file;
 	private string $buffer;
 	private float $startTime;
+
+	/** @var array<int, int>  result type (Test::*) => count */
 	private array $results;
 
 

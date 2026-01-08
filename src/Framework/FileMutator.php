@@ -179,6 +179,7 @@ class FileMutator
 	}
 
 
+	/** @return array<int|string, int>|false */
 	public function stream_stat(): array|false
 	{
 		return fstat($this->handle);

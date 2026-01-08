@@ -165,12 +165,14 @@ class FileMock
 	}
 
 
+	/** @return array<string, int> */
 	public function stream_stat(): array
 	{
 		return ['mode' => 0100666, 'size' => strlen($this->content)];
 	}
 
 
+	/** @return array<string, int>|false */
 	public function url_stat(string $path, int $flags): array|false
 	{
 		return isset(self::$files[$path])

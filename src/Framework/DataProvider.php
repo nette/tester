@@ -21,6 +21,7 @@ class DataProvider
 {
 	/**
 	 * Loads data from a specified file and filters them based on a query string. Supports both PHP files and INI files.
+	 * @return array<string, mixed>
 	 */
 	public static function load(string $file, string $query = ''): array
 	{
@@ -95,6 +96,7 @@ class DataProvider
 
 	/**
 	 * Parses a data provider annotation from a test method to extract the file path and query.
+	 * @return array{string, string, bool}  [file path, query, optional]
 	 */
 	public static function parseAnnotation(string $annotation, string $file): array
 	{

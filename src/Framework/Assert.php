@@ -558,6 +558,7 @@ class Assert
 
 
 	/**
+	 * @return array{string, string}  [expanded pattern, expanded actual]
 	 * @internal
 	 */
 	public static function expandMatchingPatterns(string $pattern, string $actual): array

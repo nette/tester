@@ -38,6 +38,7 @@ class CommandLine
 	private string $help;
 
 
+	/** @param array<string, array<string, mixed>>  $defaults */
 	public function __construct(string $help, array $defaults = [])
 	{
 		$this->help = $help;
@@ -72,6 +73,10 @@ class CommandLine
 	}
 
 
+	/**
+	 * @param  ?string[] $args
+	 * @return array<string, mixed>
+	 */
 	public function parse(?array $args = null): array
 	{
 		if ($args === null) {
