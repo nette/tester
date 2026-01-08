@@ -172,6 +172,10 @@ class PhpParser
 	}
 
 
+	/**
+	 * @param \PhpToken[]  $tokens
+	 * @param int[]|int  $take
+	 */
 	private static function fetch(array &$tokens, array|int $take): ?string
 	{
 		$res = null;

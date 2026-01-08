@@ -35,6 +35,8 @@ class Test
 	public string $stdout = '';
 	public string $stderr = '';
 	private string $file;
+
+	/** @var self::Prepared|self::Failed|self::Passed|self::Skipped */
 	private int $result = self::Prepared;
 	private ?float $duration = null;
 
@@ -72,6 +74,7 @@ class Test
 	}
 
 
+	/** @return self::Failed|self::Passed|self::Skipped */
 	public function getResult(): int
 	{
 		return $this->result;
@@ -114,6 +117,7 @@ class Test
 	}
 
 
+	/** @param array<int|string, int|string|string[]>  $args */
 	public function withArguments(array $args): static
 	{
 		if ($this->hasResult()) {
@@ -133,6 +137,7 @@ class Test
 	}
 
 
+	/** @param self::Failed|self::Passed|self::Skipped  $result */
 	public function withResult(int $result, ?string $message, ?float $duration = null): static
 	{
 		if ($this->hasResult()) {

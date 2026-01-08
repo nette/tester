@@ -23,7 +23,7 @@ class Dumper
 	public static int $maxDepth = 10;
 	public static string $dumpDir = 'output';
 	public static int $maxPathSegments = 3;
-	public static $pathSeparator;
+	public static ?string $pathSeparator = null;
 
 
 	/**
@@ -119,6 +119,7 @@ class Dumper
 	}
 
 
+	/** @param mixed[]  $list */
 	private static function _toPhp(mixed &$var, array &$list = [], int $level = 0, int &$line = 1): string
 	{
 		if (is_float($var)) {

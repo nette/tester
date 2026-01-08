@@ -41,13 +41,14 @@ function test(string $description, Closure $closure): void
 
 /**
  * Tests for exceptions thrown by a provided closure matching specific criteria.
+ * @param  class-string<\Throwable>  $class
  */
 function testException(
 	string $description,
 	Closure $function,
 	string $class,
 	?string $message = null,
-	$code = null,
+	int|string|null $code = null,
 ): void
 {
 	try {

@@ -24,8 +24,13 @@ abstract class AbstractGenerator
 		LineTested = 1,
 		LineUntested = -1;
 
+	/** @var string[]  file extensions to accept */
 	public array $acceptFiles = ['php', 'phpt', 'phtml'];
+
+	/** @var array<string, array<int, int>>  file path => line number => coverage count */
 	protected array $data;
+
+	/** @var string[]  source paths */
 	protected array $sources;
 	protected int $totalSum = 0;
 	protected int $coveredSum = 0;
@@ -33,7 +38,7 @@ abstract class AbstractGenerator
 
 	/**
 	 * @param  string  $file  path to coverage.dat file
-	 * @param  array   $sources  paths to covered source files or directories
+	 * @param  string[]  $sources  paths to covered source files or directories
 	 */
 	public function __construct(string $file, array $sources = [])
 	{
@@ -113,7 +118,10 @@ abstract class AbstractGenerator
 	}
 
 
-	/** @deprecated  */
+	/**
+	 * @param string[] $files
+	 * @deprecated
+	 */
 	protected static function getCommonFilesPath(array $files): string
 	{
 		return Helpers::findCommonDirectory($files);

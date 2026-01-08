@@ -28,6 +28,7 @@ class Collector
 	private static string $engine;
 
 
+	/** @return array<array{string, string}>  [engine name, version] */
 	public static function detectEngines(): array
 	{
 		return array_filter([
@@ -115,6 +116,7 @@ class Collector
 
 	/**
 	 * Collects information about code coverage.
+	 * @return array{array<string, array<int, int>>, array<string, array<int, int>>}  [positive, negative]
 	 */
 	private static function collectPCOV(): array
 	{
@@ -148,6 +150,7 @@ class Collector
 
 	/**
 	 * Collects information about code coverage.
+	 * @return array{array<string, array<int, int>>, array<string, array<int, int>>}  [positive, negative]
 	 */
 	private static function collectXdebug(): array
 	{
@@ -179,6 +182,7 @@ class Collector
 
 	/**
 	 * Collects information about code coverage.
+	 * @return array{array<string, array<int, int>>, array<string, array<int, int>>}  [positive, negative]
 	 */
 	private static function collectPhpDbg(): array
 	{

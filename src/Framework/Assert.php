@@ -21,8 +21,8 @@ class Assert
 	/** used by equal() for comparing floats */
 	private const Epsilon = 1e-10;
 
-	/** used by match(); in values, each $ followed by number is backreference */
-	public static $patterns = [
+	/** @var array<string, string> used by match(); in values, each $ followed by number is backreference */
+	public static array $patterns = [
 		'%%' => '%',            // one % character
 		'%a%' => '[^\r\n]+',    // one or more of anything except the end of line characters
 		'%a\?%' => '[^\r\n]*',  // zero or more of anything except the end of line characters
@@ -46,7 +46,7 @@ class Assert
 	/** expand patterns in match() and matchFile() */
 	public static bool $expandPatterns = true;
 
-	/** @var callable  function (AssertException $exception): void */
+	/** @var ?(callable(AssertException): void) */
 	public static $onFailure;
 	public static int $counter = 0;
 
@@ -114,6 +114,7 @@ class Assert
 
 	/**
 	 * Asserts that a haystack (string or array) contains an expected needle.
+	 * @param mixed[]|string  $actual
 	 */
 	public static function contains(mixed $needle, array|string $actual, ?string $description = null): void
 	{
@@ -133,6 +134,7 @@ class Assert
 
 	/**
 	 * Asserts that a haystack (string or array) does not contain an expected needle.
+	 * @param mixed[]|string  $actual
 	 */
 	public static function notContains(mixed $needle, array|string $actual, ?string $description = null): void
 	{
@@ -152,6 +154,7 @@ class Assert
 
 	/**
 	 * Asserts that a haystack has an expected key.
+	 * @param mixed[]  $actual
 	 */
 	public static function hasKey(string|int $key, array $actual, ?string $description = null): void
 	{
@@ -164,6 +167,7 @@ class Assert
 
 	/**
 	 * Asserts that a haystack doesn't have an expected key.
+	 * @param mixed[]  $actual
 	 */
 	public static function hasNotKey(string|int $key, array $actual, ?string $description = null): void
 	{
@@ -260,6 +264,7 @@ class Assert
 
 	/**
 	 * Asserts the number of items in an array or Countable.
+	 * @param mixed[]  $value
 	 */
 	public static function count(int $count, array|\Countable $value, ?string $description = null): void
 	{
@@ -296,12 +301,13 @@ class Assert
 
 	/**
 	 * Asserts that a function throws exception of given type and its message matches given pattern.
+	 * @param  class-string<\Throwable>  $class
 	 */
 	public static function exception(
 		callable $function,
 		string $class,
 		?string $message = null,
-		$code = null,
+		int|string|null $code = null,
 	): ?\Throwable
 	{
 		self::$counter++;
@@ -330,6 +336,7 @@ class Assert
 
 	/**
 	 * Asserts that a function throws exception of given type and its message matches given pattern. Alias for exception().
+	 * @param  class-string<\Throwable>  $class
 	 */
 	public static function throws(
 		callable $function,
@@ -344,6 +351,7 @@ class Assert
 
 	/**
 	 * Asserts that a function generates one or more PHP errors or throws exceptions.
+	 * @param  int|string|mixed[]  $expectedType
 	 * @throws \Exception
 	 */
 	public static function error(
@@ -353,6 +361,7 @@ class Assert
 	): ?\Throwable
 	{
 		if (is_string($expectedType) && !preg_match('#^E_[A-Z_]+$#D', $expectedType)) {
+			/** @var class-string<\Throwable> $expectedType */
 			return static::exception($function, $expectedType, $expectedMessage);
 		}
 
@@ -486,8 +495,8 @@ class Assert
 	 */
 	public static function fail(
 		string $message,
-		$actual = null,
-		$expected = null,
+		mixed $actual = null,
+		mixed $expected = null,
 		?\Throwable $previous = null,
 		?string $outputName = null,
 	): void
@@ -510,6 +519,7 @@ class Assert
 
 	/**
 	 * Executes function that can access private and protected members of given object via $this.
+	 * @param object|class-string $objectOrClass
 	 */
 	public static function with(object|string $objectOrClass, \Closure $closure): mixed
 	{
@@ -557,6 +567,7 @@ class Assert
 
 
 	/**
+	 * @return array{string, string}  [expanded pattern, expanded actual]
 	 * @internal
 	 */
 	public static function expandMatchingPatterns(string $pattern, string $actual): array
@@ -619,6 +630,7 @@ class Assert
 	/**
 	 * Compares two structures and checks expectations. The identity of objects, the order of keys
 	 * in the arrays and marginally different floats are ignored.
+	 * @param ?\SplObjectStorage<object, object>  $objects
 	 */
 	private static function isEqual(
 		mixed $expected,

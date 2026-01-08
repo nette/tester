@@ -32,6 +32,8 @@ class Runner
 	public array $outputHandlers = [];
 	public bool $stopOnFail = false;
 	private PhpInterpreter $interpreter;
+
+	/** @var array<string, string>  environment variables for test processes */
 	private array $envVars = [];
 
 	/** @var Job[] */
@@ -39,6 +41,8 @@ class Runner
 	private bool $interrupted = false;
 	private ?string $tempDir = null;
 	private bool $result;
+
+	/** @var array<string, int>  test signature => result (Test::Prepared|Passed|Failed|Skipped) */
 	private array $lastResults = [];
 
 
@@ -55,6 +59,7 @@ class Runner
 	}
 
 
+	/** @return array<string, string> */
 	public function getEnvironmentVariables(): array
 	{
 		return $this->envVars;

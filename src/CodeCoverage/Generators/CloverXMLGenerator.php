@@ -19,6 +19,7 @@ use const FILE_SKIP_EMPTY_LINES;
 
 class CloverXMLGenerator extends AbstractGenerator
 {
+	/** @var array<string, string>  metric name => XML attribute name */
 	private static array $metricAttributesMap = [
 		'packageCount' => 'packages',
 		'fileCount' => 'files',
@@ -158,6 +159,7 @@ class CloverXMLGenerator extends AbstractGenerator
 	}
 
 
+	/** @param ?array<int, int>  $coverageData  line number => coverage count */
 	private function calculateClassMetrics(\stdClass $info, ?array $coverageData = null): \stdClass
 	{
 		$stats = (object) [
@@ -189,6 +191,10 @@ class CloverXMLGenerator extends AbstractGenerator
 	}
 
 
+	/**
+	 * @param  ?array<int, int>  $coverageData  line number => coverage count
+	 * @return array{int, int}   [line count, covered line count]
+	 */
 	private static function analyzeMethod(\stdClass $info, ?array $coverageData = null): array
 	{
 		$count = 0;

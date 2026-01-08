@@ -58,6 +58,7 @@ class Helpers
 
 	/**
 	 * Find common directory for given paths. All files or directories must exist.
+	 * @param  string[]  $paths
 	 * @return string  Empty when not found. Slash and back slash chars normalized to DIRECTORY_SEPARATOR.
 	 * @internal
 	 */
@@ -90,6 +91,7 @@ class Helpers
 
 	/**
 	 * Parse the first docblock encountered in the provided string.
+	 * @return mixed[]  annotation name => value(s)
 	 * @internal
 	 */
 	public static function parseDocComment(string $s): array

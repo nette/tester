@@ -22,6 +22,7 @@ use const PATHINFO_EXTENSION, PHP_SAPI;
  */
 class CliTester
 {
+	/** @var array<string, mixed>  parsed command-line options */
 	private array $options;
 	private PhpInterpreter $interpreter;
 	private bool $debugMode = true;

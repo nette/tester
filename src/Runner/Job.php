@@ -48,6 +48,7 @@ class Job
 	private float $duration;
 
 
+	/** @param ?array<string, string>  $envVars */
 	public function __construct(Test $test, PhpInterpreter $interpreter, ?array $envVars = null)
 	{
 		if ($test->hasResult()) {

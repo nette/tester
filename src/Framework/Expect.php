@@ -51,10 +51,11 @@ use function implode, is_string, lcfirst, preg_match;
  */
 class Expect
 {
-	/** array<self|\Closure|\stdClass> */
+	/** @var array<self|(callable(mixed): bool)|\stdClass> */
 	private array $constraints = [];
 
 
+	/** @param mixed[]  $args */
 	public static function __callStatic(string $method, array $args): self
 	{
 		$me = new self;
@@ -63,12 +64,14 @@ class Expect
 	}
 
 
+	/** @param callable(mixed): bool  $constraint  returns false to indicate failure */
 	public static function that(callable $constraint): self
 	{
 		return (new self)->and($constraint);
 	}
 
 
+	/** @param mixed[]  $args */
 	public function __call(string $method, array $args): self
 	{
 		if (preg_match('#^and([A-Z]\w+)#', $method, $m)) {
@@ -80,6 +83,7 @@ class Expect
 	}
 
 
+	/** @param callable(mixed): bool  $constraint  returns false to indicate failure */
 	public function and(callable $constraint): self
 	{
 		$this->constraints[] = $constraint;

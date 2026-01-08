@@ -27,7 +27,7 @@ class CommandLine
 		Normalizer = 'normalizer',
 		Value = 'default';
 
-	/** @var array[] */
+	/** @var array<string, array<string, mixed>> */
 	private array $options = [];
 
 	/** @var string[] */
@@ -38,6 +38,7 @@ class CommandLine
 	private string $help;
 
 
+	/** @param array<string, array<string, mixed>>  $defaults */
 	public function __construct(string $help, array $defaults = [])
 	{
 		$this->help = $help;
@@ -73,6 +74,10 @@ class CommandLine
 	}
 
 
+	/**
+	 * @param  string[]|null  $args
+	 * @return array<string, mixed>
+	 */
 	public function parse(?array $args = null): array
 	{
 		if ($args === null) {
@@ -169,6 +174,7 @@ class CommandLine
 	}
 
 
+	/** @param array<string, mixed>  $opt */
 	public function checkArg(array $opt, mixed &$arg): void
 	{
 		if (!empty($opt[self::Normalizer])) {

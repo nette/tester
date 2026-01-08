@@ -20,6 +20,7 @@ class HttpAssert
 	private function __construct(
 		private string $body,
 		private int $code,
+		/** @var array<string, string> */
 		private array $headers,
 	) {
 	}
@@ -27,6 +28,8 @@ class HttpAssert
 
 	/**
 	 * Creates HTTP request, executes it and returns HttpTest instance for chaining expectations.
+	 * @param  string[]  $headers  headers as 'Name: Value' strings or name => value pairs
+	 * @param  array<string, string>  $cookies  cookie name => value pairs
 	 */
 	public static function fetch(
 		string $url,
@@ -94,6 +97,7 @@ class HttpAssert
 
 	/**
 	 * Asserts HTTP response code matches expectation.
+	 * @param int|\Closure(int): bool  $expected
 	 */
 	public function expectCode(int|\Closure $expected): self
 	{
@@ -109,6 +113,7 @@ class HttpAssert
 
 	/**
 	 * Asserts HTTP response code does not match expectation.
+	 * @param int|\Closure(int): bool  $expected
 	 */
 	public function denyCode(int|\Closure $expected): self
 	{
@@ -124,6 +129,7 @@ class HttpAssert
 
 	/**
 	 * Asserts HTTP response header matches expectation.
+	 * @param string|\Closure(string): bool|null  $expected
 	 */
 	public function expectHeader(
 		string $name,
@@ -151,6 +157,7 @@ class HttpAssert
 
 	/**
 	 * Asserts HTTP response header does not match expectation.
+	 * @param string|\Closure(string): bool|null  $expected
 	 */
 	public function denyHeader(
 		string $name,
@@ -182,6 +189,7 @@ class HttpAssert
 
 	/**
 	 * Asserts HTTP response body matches expectation.
+	 * @param string|\Closure(string): bool|null  $expected
 	 */
 	public function expectBody(
 		string|\Closure|null $expected = null,
@@ -205,6 +213,7 @@ class HttpAssert
 
 	/**
 	 * Asserts HTTP response body does not match expectation.
+	 * @param string|\Closure(string): bool|null  $expected
 	 */
 	public function denyBody(
 		string|\Closure|null $expected = null,

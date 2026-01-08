@@ -24,6 +24,7 @@ class PhpInterpreter
 	private string $error;
 
 
+	/** @param string[]  $args */
 	public function __construct(string $path, array $args = [])
 	{
 		$this->commandLine = Helpers::escapeArg($path);
@@ -102,6 +103,7 @@ class PhpInterpreter
 	}
 
 
+	/** @return array<array{string, string}>  [engine name, version] */
 	public function getCodeCoverageEngines(): array
 	{
 		return $this->info->codeCoverageEngines;

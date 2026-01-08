@@ -193,6 +193,7 @@ class Environment
 
 	/**
 	 * Returns current test annotations.
+	 * @return array<string, mixed>
 	 */
 	public static function getTestAnnotations(): array
 	{
@@ -224,6 +225,7 @@ class Environment
 
 	/**
 	 * Loads data according to the file annotation or specified by Tester\Runner\TestHandler::initiateDataProvider()
+	 * @return array<string, mixed>
 	 */
 	public static function loadData(): array
 	{
