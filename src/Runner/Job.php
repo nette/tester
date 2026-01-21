@@ -11,7 +11,7 @@ namespace Tester\Runner;
 
 use Tester\Helpers;
 use function count, is_array, is_resource;
-use const DIRECTORY_SEPARATOR;
+use const DIRECTORY_SEPARATOR, PHP_OS_FAMILY, PHP_VERSION_ID;
 
 
 /**
@@ -130,7 +130,7 @@ class Job
 			stream_set_blocking($this->stdout, enable: false); // on Windows does not work with proc_open()
 		} else {
 			while ($this->isRunning()) {
-				usleep(self::RunSleep); // stream_select() doesn't work with proc_open()
+				usleep(self::RunSleep);
 			}
 		}
 	}
@@ -145,7 +145,23 @@ class Job
 			return false;
 		}
 
-		$this->test->stdout .= stream_get_contents($this->stdout);
+		// PHP 8.5+ Windows: stream_select() works with pipes (PeekNamedPipe fix),
+		if (PHP_OS_FAMILY === 'Windows' && PHP_VERSION_ID >= 80500) {
+			$read = [$this->stdout];
+			$w = $e = [];
+			while (@stream_select($read, $w, $e, 0, 0) > 0) {
+				$chunk = fread($this->stdout, 8192);
+				if ($chunk === false || $chunk === '') {
+					break;
+				}
+				$this->test->stdout .= $chunk;
+				$read = [$this->stdout];
+			}
+		} else {
+			// Linux/macOS: stream_get_contents() works without blocking
+			// Windows < 8.5: blocks, but is necessary to prevent deadlock when output exceeds pipe buffer (~64KB)
+			$this->test->stdout .= stream_get_contents($this->stdout);
+		}
 
 		$status = proc_get_status($this->proc);
 		if ($status['running']) {
@@ -215,5 +231,24 @@ class Job
 		return $this->duration > 0
 			? $this->duration
 			: null;
+	}
+
+
+	/**
+	 * Waits for activity on any of the running jobs.
+	 * @param  self[]  $jobs
+	 */
+	public static function waitForActivity(array $jobs): void
+	{
+		if (PHP_OS_FAMILY === 'Windows' && PHP_VERSION_ID < 80500) {
+			usleep(self::RunSleep);
+			return;
+		}
+
+		$streams = array_filter(array_map(fn($job) => $job->stdout, $jobs));
+		if ($streams) {
+			$w = $e = [];
+			@stream_select($streams, $w, $e, 0, self::RunSleep);
+		}
 	}
 }

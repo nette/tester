@@ -116,7 +116,7 @@ class Runner
 				}
 
 				if ($async) {
-					usleep(Job::RunSleep); // stream_select() doesn't work with proc_open()
+					Job::waitForActivity($running);
 				}
 
 				foreach ($running as $key => $job) {
