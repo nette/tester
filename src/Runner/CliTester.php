@@ -76,6 +76,9 @@ class CliTester
 
 		ob_end_flush();
 
+		echo Ansi::hideCursor();
+		register_shutdown_function(fn() => print Ansi::showCursor());
+
 		if ($this->options['--watch']) {
 			$this->watch($runner);
 			return 0;

@@ -66,6 +66,18 @@ class Ansi
 	}
 
 
+	public static function showCursor(): string
+	{
+		return "\e[?25h";
+	}
+
+
+	public static function hideCursor(): string
+	{
+		return "\e[?25l";
+	}
+
+
 	/**
 	 * Returns ANSI sequence to clear from cursor to end of line.
 	 */
