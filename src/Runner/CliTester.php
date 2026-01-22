@@ -265,7 +265,7 @@ class CliTester
 		}
 
 		file_put_contents($this->options['--coverage'], '');
-		$file = realpath($this->options['--coverage']);
+		$file = realpath($this->options['--coverage']) ?: throw new \RuntimeException("Cannot resolve path '{$this->options['--coverage']}'.");
 
 		[$engine, $version] = reset($engines);
 

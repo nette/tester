@@ -112,7 +112,7 @@ class Job
 			dirname($this->test->getFile()),
 			null,
 			['bypass_shell' => true],
-		);
+		) ?: throw new \RuntimeException('Cannot start test process.');
 
 		foreach (array_keys($this->envVars) as $name) {
 			putenv($name);

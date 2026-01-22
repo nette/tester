@@ -29,7 +29,7 @@ class Logger implements Tester\Runner\OutputHandler
 	public function __construct(Runner $runner, ?string $file = null)
 	{
 		$this->runner = $runner;
-		$this->file = fopen($file ?? 'php://output', 'w');
+		$this->file = fopen($file ?? 'php://output', 'w') ?: throw new \RuntimeException("Cannot open file '$file' for writing.");
 	}
 
 

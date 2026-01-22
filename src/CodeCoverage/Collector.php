@@ -61,7 +61,7 @@ class Collector
 			throw new \LogicException("Code coverage engine '$engine' is not supported.");
 		}
 
-		self::$file = fopen($file, 'c+');
+		self::$file = fopen($file, 'c+') ?: throw new \RuntimeException("Cannot open file '$file' for code coverage.");
 		self::$engine = $engine;
 		self::{'start' . $engine}();
 

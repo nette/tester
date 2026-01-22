@@ -29,7 +29,7 @@ class JUnitPrinter implements Tester\Runner\OutputHandler
 
 	public function __construct(?string $file = null)
 	{
-		$this->file = fopen($file ?? 'php://output', 'w');
+		$this->file = fopen($file ?? 'php://output', 'w') ?: throw new \RuntimeException("Cannot open file '$file' for writing.");
 	}
 
 

@@ -57,7 +57,8 @@ class PhpInterpreter
 			null,
 			null,
 			['bypass_shell' => true],
-		);
+		) ?: throw new \Exception("Unable to run $path.");
+
 		$output = stream_get_contents($pipes[1]);
 		$this->error = trim(stream_get_contents($pipes[2]));
 		if (proc_close($proc)) {

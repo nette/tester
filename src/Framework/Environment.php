@@ -185,7 +185,8 @@ class Environment
 		static $locks;
 		$file = "$path/lock-" . md5($name);
 		if (!isset($locks[$file])) {
-			flock($locks[$file] = fopen($file, 'w'), LOCK_EX);
+			$locks[$file] = fopen($file, 'w') ?: throw new \RuntimeException("Unable to create lock file '$file'.");
+			flock($locks[$file], LOCK_EX);
 		}
 	}
 

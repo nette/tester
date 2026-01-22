@@ -44,7 +44,7 @@ class ConsolePrinter implements Tester\Runner\OutputHandler
 	) {
 		$this->runner = $runner;
 		$this->displaySkipped = $displaySkipped;
-		$this->file = fopen($file ?? 'php://output', 'w');
+		$this->file = fopen($file ?? 'php://output', 'w') ?: throw new \RuntimeException("Cannot open file '$file' for writing.");
 		$this->symbols = match (true) {
 			$ciderMode => [Test::Passed => '🍏', Test::Skipped => 's', Test::Failed => '🍎'],
 			$lineMode => [Test::Passed => Dumper::color('lime', 'OK'), Test::Skipped => Dumper::color('yellow', 'SKIP'), Test::Failed => Dumper::color('white/red', 'FAIL')],
