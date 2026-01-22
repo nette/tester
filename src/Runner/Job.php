@@ -154,7 +154,10 @@ class Job
 
 		$this->duration += microtime(as_float: true);
 
+		stream_set_blocking($this->stdout, true);
+		$this->test->stdout .= stream_get_contents($this->stdout);
 		fclose($this->stdout);
+
 		if ($this->stderrFile) {
 			$this->test->stderr .= Helpers::readFile($this->stderrFile);
 			unlink($this->stderrFile);
