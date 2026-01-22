@@ -75,7 +75,7 @@ class Test
 	/** @return self::Failed|self::Passed|self::Skipped */
 	public function getResult(): int
 	{
-		return $this->result;
+		return $this->result ?: throw new \LogicException('Result is not set yet.');
 	}
 
 
