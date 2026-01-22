@@ -1,4 +1,4 @@
-name: Static Analysis (only informative)
+name: Static Analysis
 
 on: [push, pull_request]
 
