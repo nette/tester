@@ -1,6 +1,12 @@
 parameters:
-	level: 5
+	level: 6
 	errorFormat: raw
 
 	paths:
 		- src
+
+	excludePaths:
+		- src/Framework/FileMutator.php
+
+includes:
+	- phpstan-baseline.neon

@@ -101,6 +101,7 @@ class Assert
 	public static function notEqual(mixed $expected, mixed $actual, ?string $description = null): void
 	{
 		self::$counter++;
+		$res = false;
 		try {
 			$res = self::isEqual($expected, $actual, matchOrder: false, matchIdentity: false);
 		} catch (AssertException $e) {
@@ -577,6 +578,7 @@ class Assert
 		}
 
 		$parts = preg_split('#(%)#', $pattern, -1, PREG_SPLIT_DELIM_CAPTURE);
+		$patternX = $patternY = $patternZ = '';
 		for ($i = count($parts); $i >= 0; $i--) {
 			$patternX = implode('', array_slice($parts, 0, $i));
 			$patternY = "$patternX%A?%";

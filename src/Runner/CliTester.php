@@ -312,6 +312,7 @@ class CliTester
 	{
 		$prev = [];
 		$counter = 0;
+		$time = time();
 		while (true) {
 			$state = [];
 			foreach ($this->options['--watch'] as $directory) {

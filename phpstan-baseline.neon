@@ -1,0 +1,103 @@
+parameters:
+	ignoreErrors:
+		-
+			message: '#^Argument of an invalid type stdClass supplied for foreach, only iterables are supported\.$#'
+			identifier: foreach.nonIterable
+			count: 2
+			path: src/CodeCoverage/Generators/CloverXMLGenerator.php
+
+		-
+			message: '#^Call to an undefined method \(\(TNode of DOMNode\)\|false\)\:\:setAttribute\(\)\.$#'
+			identifier: method.notFound
+			count: 9
+			path: src/CodeCoverage/Generators/CloverXMLGenerator.php
+
+		-
+			message: '#^Parameter \#1 \$element of static method Tester\\CodeCoverage\\Generators\\CloverXMLGenerator\:\:setMetricAttributes\(\) expects DOMElement, \(\(TNode of DOMNode\)\|false\) given\.$#'
+			identifier: argument.type
+			count: 3
+			path: src/CodeCoverage/Generators/CloverXMLGenerator.php
+
+		-
+			message: '#^Closure invoked with 1 parameter, 0 required\.$#'
+			identifier: arguments.count
+			count: 1
+			path: src/Framework/DataProvider.php
+
+		-
+			message: '#^Method Tester\\DomQuery\:\:closest\(\) should return Tester\\DomQuery\|null but returns SimpleXMLElement\|null\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Framework/DomQuery.php
+
+		-
+			message: '#^Method Tester\\DomQuery\:\:find\(\) should return array\<Tester\\DomQuery\> but returns array\<int, SimpleXMLElement\|null\>\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Framework/DomQuery.php
+
+		-
+			message: '#^Method Tester\\DomQuery\:\:fromHtml\(\) should return Tester\\DomQuery but returns SimpleXMLElement\|null\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Framework/DomQuery.php
+
+		-
+			message: '#^Method Tester\\DomQuery\:\:fromXml\(\) should return Tester\\DomQuery but returns SimpleXMLElement\|false\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Framework/DomQuery.php
+
+		-
+			message: '#^Offset 7 does not exist on array\{0\: string, 1\: non\-empty\-string, 2\: ''''\|''0'', 3\: ''0'', 4\?\: non\-empty\-string, 5\?\: non\-empty\-string, 6\: non\-empty\-string\}\.$#'
+			identifier: offsetAccess.notFound
+			count: 1
+			path: src/Framework/DomQuery.php
+
+		-
+			message: '#^Parameter \#1 \$node of function simplexml_import_dom expects DOMNode, Dom\\Element given\.$#'
+			identifier: argument.type
+			count: 2
+			path: src/Framework/DomQuery.php
+
+		-
+			message: '#^Strict comparison using \=\=\= between non\-empty\-string and '''' will always evaluate to false\.$#'
+			identifier: identical.alwaysFalse
+			count: 1
+			path: src/Framework/DomQuery.php
+
+		-
+			message: '#^Variable \$ref in isset\(\) always exists and is not nullable\.$#'
+			identifier: isset.variable
+			count: 1
+			path: src/Framework/Helpers.php
+
+		-
+			message: '#^Anonymous function has an unused use \$runner\.$#'
+			identifier: closure.unusedUse
+			count: 1
+			path: src/Runner/CliTester.php
+
+		-
+			message: '#^Closure invoked with 1 parameter, 0 required\.$#'
+			identifier: arguments.count
+			count: 1
+			path: src/Runner/CliTester.php
+
+		-
+			message: '#^While loop condition is always true\.$#'
+			identifier: while.alwaysTrue
+			count: 1
+			path: src/Runner/CliTester.php
+
+		-
+			message: '#^If condition is always false\.$#'
+			identifier: if.alwaysFalse
+			count: 1
+			path: src/Runner/Runner.php
+
+		-
+			message: '#^Constant PHPDBG_VERSION not found\.$#'
+			identifier: constant.notFound
+			count: 1
+			path: src/Runner/info.php
