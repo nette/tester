@@ -237,7 +237,7 @@ $jsonData = [];
 $directories = [];
 $allLinesCount = 0;
 foreach ($files as $id => $info) {
-	$code = file_get_contents($info->file);
+	$code = Tester\Helpers::readFile($info->file);
 	$lineCount = substr_count($code, "\n") + 1;
 	$digits = ceil(log10($lineCount)) + 1;
 

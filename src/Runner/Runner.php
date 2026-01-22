@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace Tester\Runner;
 
 use Tester\Environment;
+use Tester\Helpers;
 use function count, in_array;
 use const DIRECTORY_SEPARATOR, GLOB_ONLYDIR, PATHINFO_FILENAME;
 
@@ -219,7 +220,7 @@ class Runner
 
 		$file = $this->getLastResultFilename($test);
 		if (is_file($file)) {
-			return $this->lastResults[$signature] = (int) file_get_contents($file);
+			return $this->lastResults[$signature] = (int) Helpers::readFile($file);
 		}
 
 		return $this->lastResults[$signature] = Test::Prepared;

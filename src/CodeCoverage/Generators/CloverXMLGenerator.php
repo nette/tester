@@ -12,6 +12,7 @@ namespace Tester\CodeCoverage\Generators;
 use DOMDocument;
 use DOMElement;
 use Tester\CodeCoverage\PhpParser;
+use Tester\Helpers;
 use function count;
 use const FILE_SKIP_EMPTY_LINES;
 
@@ -95,7 +96,7 @@ class CloverXMLGenerator extends AbstractGenerator
 			$elFileMetrics = $elFile->appendChild($doc->createElement('metrics'));
 
 			try {
-				$code = $parser->parse(file_get_contents($file));
+				$code = $parser->parse(Helpers::readFile($file));
 			} catch (\ParseError $e) {
 				throw new \ParseError($e->getMessage() . ' in file ' . $file);
 			}

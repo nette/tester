@@ -155,7 +155,7 @@ class Job
 
 		fclose($this->stdout);
 		if ($this->stderrFile) {
-			$this->test->stderr .= file_get_contents($this->stderrFile);
+			$this->test->stderr .= Helpers::readFile($this->stderrFile);
 			unlink($this->stderrFile);
 		}
 

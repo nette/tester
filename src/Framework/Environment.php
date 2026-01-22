@@ -197,7 +197,7 @@ class Environment
 	{
 		$trace = debug_backtrace();
 		return ($file = $trace[count($trace) - 1]['file'] ?? null)
-			? Helpers::parseDocComment(file_get_contents($file)) + ['file' => $file]
+			? Helpers::parseDocComment(Helpers::readFile($file)) + ['file' => $file]
 			: [];
 	}
 

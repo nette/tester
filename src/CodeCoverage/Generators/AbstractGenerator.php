@@ -37,11 +37,7 @@ abstract class AbstractGenerator
 	 */
 	public function __construct(string $file, array $sources = [])
 	{
-		if (!is_file($file)) {
-			throw new \Exception("File '$file' is missing.");
-		}
-
-		$this->data = @unserialize(file_get_contents($file)); // @ is escalated to exception
+		$this->data = @unserialize(Helpers::readFile($file)); // @ - unserialization may fail
 		if (!is_array($this->data)) {
 			throw new \Exception("Content of file '$file' is invalid.");
 		}

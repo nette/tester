@@ -180,7 +180,7 @@ class TestHandler
 		if ($this->tempDir) {
 			$cacheFile = $this->tempDir . DIRECTORY_SEPARATOR . 'TestHandler.testCase.' . md5($test->getSignature()) . '.list';
 			if (is_file($cacheFile)) {
-				$cache = unserialize(file_get_contents($cacheFile));
+				$cache = unserialize(Helpers::readFile($cacheFile));
 
 				$valid = true;
 				foreach ($cache['files'] as $path => $mTime) {
@@ -280,7 +280,7 @@ class TestHandler
 			return $job->getTest()->withResult(Test::Failed, "Missing matching file '$file'.");
 		}
 
-		return $this->assessOutputMatch($job, file_get_contents($file));
+		return $this->assessOutputMatch($job, Helpers::readFile($file));
 	}
 
 
@@ -300,7 +300,7 @@ class TestHandler
 
 	private function getAnnotations(string $file): array
 	{
-		$annotations = Helpers::parseDocComment(file_get_contents($file));
+		$annotations = Helpers::parseDocComment(Helpers::readFile($file));
 		$testTitle = isset($annotations[0])
 			? preg_replace('#^TEST:\s*#i', '', $annotations[0])
 			: null;

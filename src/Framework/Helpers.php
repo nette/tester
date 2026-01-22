@@ -19,6 +19,21 @@ use const DIRECTORY_SEPARATOR, PREG_SET_ORDER;
 class Helpers
 {
 	/**
+	 * Reads entire file into a string.
+	 * @throws \Exception
+	 */
+	public static function readFile(string $file): string
+	{
+		$content = @file_get_contents($file); // @ is escalated to exception
+		if ($content === false) {
+			throw new \Exception("Unable to read file '$file'.");
+		}
+
+		return $content;
+	}
+
+
+	/**
 	 * Purges directory.
 	 */
 	public static function purge(string $dir): void
