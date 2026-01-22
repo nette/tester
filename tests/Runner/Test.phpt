@@ -23,7 +23,11 @@ test('', function () {
 	Assert::same([], $test->getArguments());
 	Assert::same('some/Test.phpt', $test->getSignature());
 	Assert::false($test->hasResult());
-	Assert::same(Test::Prepared, $test->getResult());
+	Assert::exception(
+		fn() => $test->getResult(),
+		LogicException::class,
+		'Result is not set yet.',
+	);
 	Assert::null($test->getDuration());
 });
 
