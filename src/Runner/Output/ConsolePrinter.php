@@ -110,7 +110,8 @@ class ConsolePrinter implements Tester\Runner\OutputHandler
 		$message = '   ' . str_replace("\n", "\n   ", trim((string) $test->message)) . "\n\n";
 		$message = preg_replace('/^   $/m', '', $message);
 		if ($result === Test::Failed) {
-			$this->buffer .= Ansi::colorize("-- FAILED: $title", 'red') . "\n$message";
+			$linkedTitle = Ansi::link($title, Ansi::fileUrl($test->getFile()));
+			$this->buffer .= Ansi::colorize("-- FAILED: $linkedTitle", 'red') . "\n$message";
 		} elseif ($result === Test::Skipped && $this->displaySkipped) {
 			$this->buffer .= "-- Skipped: $title\n$message";
 		}
@@ -145,9 +146,11 @@ class ConsolePrinter implements Tester\Runner\OutputHandler
 		$shortFilePath = str_replace((string) $this->baseDir, '', $test->getFile());
 		$shortDirPath = dirname($shortFilePath) . DIRECTORY_SEPARATOR;
 		$basename = basename($shortFilePath);
+		$fileUrl = Ansi::fileUrl($test->getFile());
+		$linkedBasename = Ansi::link($basename, $fileUrl);
 		$fileText = $result === Test::Failed
-			? Ansi::colorize($shortDirPath, 'red') . Ansi::colorize($basename, 'white/red')
-			: Ansi::colorize($shortDirPath, 'gray') . Ansi::colorize($basename, 'silver');
+			? Ansi::colorize($shortDirPath, 'red') . Ansi::colorize($linkedBasename, 'white/red')
+			: Ansi::colorize($shortDirPath, 'gray') . Ansi::colorize($linkedBasename, 'silver');
 
 		$header = '· ';
 		$titleText = $test->title

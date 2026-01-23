@@ -47,6 +47,27 @@ class Ansi
 
 
 	/**
+	 * Wraps text with OSC 8 hyperlink sequence.
+	 * Supported by: Windows Terminal, iTerm2, GNOME Terminal, Konsole, VS Code Terminal.
+	 * Unsupported terminals display just the text.
+	 */
+	public static function link(string $text, string $url): string
+	{
+		return "\e]8;;{$url}\e\\{$text}\e]8;;\e\\";
+	}
+
+
+	/**
+	 * Creates file:// URL from absolute path.
+	 */
+	public static function fileUrl(string $path): string
+	{
+		$path = strtr($path, '\\', '/');
+		return 'file:///' . ltrim($path, '/');
+	}
+
+
+	/**
 	 * Returns ANSI sequence to turn on bold text.
 	 */
 	public static function boldOn(): string
@@ -113,7 +134,7 @@ class Ansi
 	 */
 	public static function stripAnsi(string $text): string
 	{
-		return preg_replace('/\e\[[0-?]*[ -\/]*[@-~]|\e\][^\x07]*(\x07|\e\\\)/', '', $text);
+		return preg_replace('/\e\[[0-?]*[ -\/]*[@-~]|\e\][^\x07]*?(\x07|\e\\\)/', '', $text);
 	}
 
 
