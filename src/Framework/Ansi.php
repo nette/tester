@@ -58,12 +58,13 @@ class Ansi
 
 
 	/**
-	 * Creates file:// URL from absolute path.
+	 * Creates file:// URL from absolute path, optionally with line number.
 	 */
-	public static function fileUrl(string $path): string
+	public static function fileUrl(string $path, ?int $line = null): string
 	{
 		$path = strtr($path, '\\', '/');
-		return 'file:///' . ltrim($path, '/');
+		$url = 'file:///' . ltrim($path, '/');
+		return $line !== null ? "$url:$line" : $url;
 	}
 
 

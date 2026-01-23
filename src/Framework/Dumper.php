@@ -366,11 +366,14 @@ class Dumper
 				. ($item['file']
 					? (
 						($item['file'] === $testFile ? Ansi::color('white') : '')
-						. implode(
-							self::$pathSeparator ?? DIRECTORY_SEPARATOR,
-							array_slice(explode(DIRECTORY_SEPARATOR, $item['file']), -self::$maxPathSegments),
+						. Ansi::link(
+							implode(
+								self::$pathSeparator ?? DIRECTORY_SEPARATOR,
+								array_slice(explode(DIRECTORY_SEPARATOR, $item['file']), -self::$maxPathSegments),
+							) . "($item[line])",
+							Ansi::fileUrl($item['file'], $item['line']),
 						)
-						. "($item[line])" . Ansi::color('gray') . ' '
+						. Ansi::color('gray') . ' '
 					)
 					: '[internal function]'
 				)
