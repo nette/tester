@@ -112,7 +112,7 @@ class Environment
 		ini_set('html_errors', '0');
 		ini_set('log_errors', '0');
 
-		set_exception_handler([self::class, 'handleException']);
+		set_exception_handler(self::handleException(...));
 
 		set_error_handler(function (int $severity, string $message, string $file, int $line): bool {
 			if (
@@ -126,7 +126,7 @@ class Environment
 		});
 
 		register_shutdown_function(function (): void {
-			Assert::$onFailure = [self::class, 'handleException'];
+			Assert::$onFailure = self::handleException(...);
 
 			$error = error_get_last();
 			register_shutdown_function(function () use ($error): void {

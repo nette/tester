@@ -102,7 +102,7 @@ class TestCase
 			: [$args];
 
 		if ($this->prevErrorHandler === false) {
-			$this->prevErrorHandler = set_error_handler(function (int $severity): ?bool {
+			$this->prevErrorHandler = set_error_handler(function (int $severity): bool {
 				if ($this->handleErrors && ($severity & error_reporting()) === $severity) {
 					$this->handleErrors = false;
 					$this->silentTearDown();

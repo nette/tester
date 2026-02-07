@@ -67,7 +67,7 @@ class Collector
 		self::{'start' . $engine}();
 
 		register_shutdown_function(function (): void {
-			register_shutdown_function([self::class, 'save']);
+			register_shutdown_function(self::save(...));
 		});
 	}
 

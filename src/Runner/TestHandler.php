@@ -96,7 +96,6 @@ class TestHandler
 			}
 
 			foreach ((array) $annotations[$m[1]] as $arg) {
-				/** @var Test|null $res */
 				if ($res = $this->$method($job, $arg)) {
 					$this->runner->finishTest($res);
 					return;
