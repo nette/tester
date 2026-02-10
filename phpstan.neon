@@ -1,6 +1,5 @@
 parameters:
 	level: 6
-	errorFormat: raw
 
 	paths:
 		- src
