@@ -28,7 +28,7 @@ class CommandLine
 	/** @var array<string, array<string, mixed>> */
 	private array $options = [];
 
-	/** @var string[] */
+	/** @var array<string, string> */
 	private array $aliases = [];
 
 	/** @var string[] */

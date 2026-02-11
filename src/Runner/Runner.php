@@ -18,15 +18,15 @@ use const DIRECTORY_SEPARATOR, GLOB_ONLYDIR, PATHINFO_FILENAME;
  */
 class Runner
 {
-	/** @var string[]  paths to test files/directories */
+	/** @var list<string>  paths to test files/directories */
 	public array $paths = [];
 
-	/** @var string[] */
+	/** @var list<string> */
 	public array $ignoreDirs = ['vendor'];
 	public int $threadCount = 1;
 	public TestHandler $testHandler;
 
-	/** @var OutputHandler[] */
+	/** @var list<OutputHandler> */
 	public array $outputHandlers = [];
 	public bool $stopOnFail = false;
 	private PhpInterpreter $interpreter;

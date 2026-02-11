@@ -142,7 +142,7 @@ class TestHandler
 	}
 
 
-	/** @return Test[]|Test */
+	/** @return list<Test>|Test */
 	private function initiateDataProvider(Test $test, string $provider): array|Test
 	{
 		try {
@@ -162,7 +162,7 @@ class TestHandler
 	}
 
 
-	/** @return Test[] */
+	/** @return list<Test> */
 	private function initiateMultiple(Test $test, string $count): array
 	{
 		return array_map(
@@ -172,7 +172,7 @@ class TestHandler
 	}
 
 
-	/** @return Test|Test[] */
+	/** @return Test|list<Test> */
 	private function initiateTestCase(Test $test, mixed $value, PhpInterpreter $interpreter): Test|array
 	{
 		$methods = null;
@@ -298,7 +298,7 @@ class TestHandler
 	}
 
 
-	/** @return array{array<string, mixed>, ?string}  [annotations, test title] */
+	/** @return array{array<string|string[]>, ?string}  [annotations, test title] */
 	private function getAnnotations(string $file): array
 	{
 		$annotations = Helpers::parseDocComment(Helpers::readFile($file));
