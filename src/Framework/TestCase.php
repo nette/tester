@@ -24,7 +24,7 @@ class TestCase
 
 	private bool $handleErrors = false;
 
-	/** @var callable|false|null */
+	/** @var (callable(int, string, string, int): bool)|false|null */
 	private $prevErrorHandler = false;
 
 
@@ -242,7 +242,7 @@ class TestCase
 	/**
 	 * Prepares test data from specified data providers or default method parameters if no provider is specified.
 	 * @param  string[]  $dataprovider
-	 * @return array<string|int, array<string, mixed>>
+	 * @return array<array<string, mixed>>
 	 */
 	private function prepareTestData(\ReflectionMethod $method, array $dataprovider): array
 	{

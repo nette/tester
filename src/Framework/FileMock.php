@@ -20,7 +20,7 @@ class FileMock
 {
 	private const Protocol = 'mock';
 
-	/** @var string[] */
+	/** @var array<string, string> */
 	public static array $files = [];
 
 	/** @var resource used by PHP itself */

@@ -265,7 +265,7 @@ class Assert
 
 	/**
 	 * Asserts the number of items in an array or Countable.
-	 * @param mixed[]  $value
+	 * @param mixed[]|\Countable  $value
 	 */
 	public static function count(int $count, array|\Countable $value, ?string $description = null): void
 	{
@@ -302,7 +302,10 @@ class Assert
 
 	/**
 	 * Asserts that a function throws exception of given type and its message matches given pattern.
-	 * @param  class-string<\Throwable>  $class
+	 * @template T of \Throwable
+	 * @param callable(): void  $function
+	 * @param class-string<T>  $class
+	 * @return T|null
 	 */
 	public static function exception(
 		callable $function,
@@ -337,7 +340,10 @@ class Assert
 
 	/**
 	 * Asserts that a function throws exception of given type and its message matches given pattern. Alias for exception().
-	 * @param  class-string<\Throwable>  $class
+	 * @template T of \Throwable
+	 * @param callable(): void  $function
+	 * @param class-string<T>  $class
+	 * @return T|null
 	 */
 	public static function throws(
 		callable $function,
@@ -352,7 +358,8 @@ class Assert
 
 	/**
 	 * Asserts that a function generates one or more PHP errors or throws exceptions.
-	 * @param  int|string|mixed[]  $expectedType
+	 * @param callable(): void  $function
+	 * @param int|string|mixed[]  $expectedType
 	 * @throws \Exception
 	 */
 	public static function error(
@@ -419,6 +426,7 @@ class Assert
 
 	/**
 	 * Asserts that a function does not generate PHP errors and does not throw exceptions.
+	 * @param callable(): void  $function
 	 */
 	public static function noError(callable $function): void
 	{
@@ -520,7 +528,10 @@ class Assert
 
 	/**
 	 * Executes function that can access private and protected members of given object via $this.
-	 * @param object|class-string $objectOrClass
+	 * @template TReturn
+	 * @param object|class-string  $objectOrClass
+	 * @param \Closure(): TReturn  $closure
+	 * @return TReturn
 	 */
 	public static function with(object|string $objectOrClass, \Closure $closure): mixed
 	{

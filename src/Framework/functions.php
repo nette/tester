@@ -9,6 +9,7 @@ use Tester\Environment;
 
 /**
  * Executes a provided test closure, handling setup and teardown operations.
+ * @param \Closure(): mixed  $closure
  */
 function test(string $description, Closure $closure): void
 {
@@ -42,7 +43,8 @@ function test(string $description, Closure $closure): void
 
 /**
  * Tests for exceptions thrown by a provided closure matching specific criteria.
- * @param  class-string<\Throwable>  $class
+ * @param \Closure(): void  $function
+ * @param class-string<\Throwable>  $class
  */
 function testException(
 	string $description,
@@ -58,6 +60,7 @@ function testException(
 
 /**
  * Tests that a provided closure does not generate any errors or exceptions.
+ * @param \Closure(): void  $function
  */
 function testNoError(string $description, Closure $function): void
 {
@@ -71,6 +74,7 @@ function testNoError(string $description, Closure $function): void
 
 /**
  * Registers a function to be called before each test execution.
+ * @param (\Closure(): void)|null  $closure
  */
 function setUp(?Closure $closure): void
 {
@@ -81,6 +85,7 @@ function setUp(?Closure $closure): void
 
 /**
  * Registers a function to be called after each test execution.
+ * @param (\Closure(): void)|null  $closure
  */
 function tearDown(?Closure $closure): void
 {

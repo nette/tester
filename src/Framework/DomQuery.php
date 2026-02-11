@@ -76,7 +76,7 @@ class DomQuery extends \SimpleXMLElement
 
 	/**
 	 * Returns array of elements matching CSS selector.
-	 * @return DomQuery[]
+	 * @return list<self>
 	 */
 	public function find(string $selector): array
 	{

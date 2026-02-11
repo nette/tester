@@ -24,7 +24,7 @@ abstract class AbstractGenerator
 		LineTested = 1,
 		LineUntested = -1;
 
-	/** @var string[]  file extensions to accept */
+	/** @var list<string>  file extensions to accept */
 	public array $acceptFiles = ['php', 'phpt', 'phtml'];
 
 	/** @var array<string, array<int, int>>  file path => line number => coverage count */

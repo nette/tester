@@ -32,7 +32,7 @@ class ConsolePrinter implements Tester\Runner\OutputHandler
 	private float $time;
 	private int $count;
 
-	/** @var array<int, int>  result type (Test::*) => count */
+	/** @var array<Test::Passed|Test::Skipped|Test::Failed, int>  result type => count */
 	private array $results;
 	private ?string $baseDir;
 

@@ -43,7 +43,7 @@ class Job
 	private ?string $stderrFile;
 	private int $exitCode = self::CodeNone;
 
-	/** @var string[]  output headers */
+	/** @var array<string, string>  output headers */
 	private array $headers = [];
 	private float $duration;
 
@@ -210,7 +210,7 @@ class Job
 
 	/**
 	 * Returns output headers.
-	 * @return string[]
+	 * @return array<string, string>
 	 */
 	public function getHeaders(): array
 	{
