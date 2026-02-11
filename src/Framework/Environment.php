@@ -191,7 +191,7 @@ class Environment
 
 	/**
 	 * Returns current test annotations.
-	 * @return array<string, mixed>
+	 * @return array<string|string[]>
 	 */
 	public static function getTestAnnotations(): array
 	{
