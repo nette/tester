@@ -89,7 +89,7 @@ class Helpers
 
 	/**
 	 * Parse the first docblock encountered in the provided string.
-	 * @return mixed[]  annotation name => value(s)
+	 * @return array<string|string[]>  annotation name => value(s)
 	 * @internal
 	 */
 	public static function parseDocComment(string $s): array

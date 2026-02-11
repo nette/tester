@@ -49,7 +49,7 @@ use function implode, is_string, lcfirst, preg_match;
  */
 class Expect
 {
-	/** @var array<self|(callable(mixed): bool)|\stdClass> */
+	/** @var list<self|(callable(mixed): bool)|\stdClass> */
 	private array $constraints = [];
 
 
@@ -62,8 +62,8 @@ class Expect
 	}
 
 
-	/** @param callable(mixed): bool  $constraint  returns false to indicate failure */
-	public static function that(callable $constraint): self
+	/** @param (callable(mixed): bool)|self  $constraint  returns false to indicate failure */
+	public static function that(callable|self $constraint): self
 	{
 		return (new self)->and($constraint);
 	}
@@ -81,8 +81,8 @@ class Expect
 	}
 
 
-	/** @param callable(mixed): bool  $constraint  returns false to indicate failure */
-	public function and(callable $constraint): self
+	/** @param (callable(mixed): bool)|self  $constraint  returns false to indicate failure */
+	public function and(callable|self $constraint): self
 	{
 		$this->constraints[] = $constraint;
 		return $this;

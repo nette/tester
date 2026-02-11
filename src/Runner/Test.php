@@ -38,7 +38,7 @@ class Test
 	private int $result = self::Prepared;
 	private ?float $duration = null;
 
-	/** @var string[]|string[][] */
+	/** @var list<string|array{string, string}> */
 	private $args = [];
 
 
@@ -56,7 +56,7 @@ class Test
 
 
 	/**
-	 * @return string[]|string[][]
+	 * @return list<string|array{string, string}>
 	 */
 	public function getArguments(): array
 	{
@@ -115,7 +115,7 @@ class Test
 	}
 
 
-	/** @param array<int|string, int|string|string[]>  $args */
+	/** @param array<int|string|array<int|string>>  $args */
 	public function withArguments(array $args): static
 	{
 		if ($this->hasResult()) {

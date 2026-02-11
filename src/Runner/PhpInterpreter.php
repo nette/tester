@@ -22,7 +22,7 @@ class PhpInterpreter
 	private string $error;
 
 
-	/** @param string[]  $args */
+	/** @param list<string>  $args */
 	public function __construct(string $path, array $args = [])
 	{
 		$this->commandLine = Helpers::escapeArg($path);
@@ -81,7 +81,7 @@ class PhpInterpreter
 	}
 
 
-	/** @param string[]  $args */
+	/** @param list<string>  $args */
 	public function withArguments(array $args): static
 	{
 		$me = clone $this;
