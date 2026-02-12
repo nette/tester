@@ -58,7 +58,8 @@ class PhpParser
 	{
 		$tokens = \PhpToken::tokenize($code, TOKEN_PARSE);
 
-		$level = $classLevel = $functionLevel = null;
+		$level = 0;
+		$classLevel = $functionLevel = null;
 		$namespace = '';
 		$line = 1;
 

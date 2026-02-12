@@ -1,11 +1,28 @@
 parameters:
-	level: 6
+	level: 8
 
 	paths:
 		- src
 
 	excludePaths:
 		- src/Framework/FileMutator.php
+
+	ignoreErrors:
+		- # DomQuery: PHP 8.4 Dom\Element API not in PHPStan stubs
+			identifier: method.notFound
+			path: src/Framework/DomQuery.php
+		- # DomQuery: SimpleXMLElement subclass return types
+			identifier: return.type
+			path: src/Framework/DomQuery.php
+		- # DomQuery: regex match group offsets
+			identifier: offsetAccess.notFound
+			path: src/Framework/DomQuery.php
+		- # DomQuery: simplexml_import_dom accepts Dom\Node in PHP 8.4
+			identifier: argument.type
+			path: src/Framework/DomQuery.php
+		- # DomQuery: regex analysis false positive
+			identifier: identical.alwaysFalse
+			path: src/Framework/DomQuery.php
 
 includes:
 	- phpstan-baseline.neon

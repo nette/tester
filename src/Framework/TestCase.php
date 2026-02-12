@@ -42,7 +42,9 @@ class TestCase
 			array_map(fn(\ReflectionMethod $rm): string => $rm->getName(), (new \ReflectionObject($this))->getMethods()),
 		));
 
-		if (isset($_SERVER['argv']) && ($tmp = preg_filter('#--method=([\w-]+)$#Ai', '$1', $_SERVER['argv']))) {
+		/** @var list<string> $argv */
+		$argv = $_SERVER['argv'] ?? [];
+		if ($argv && ($tmp = preg_filter('#--method=([\w-]+)$#Ai', '$1', $argv))) {
 			$method = reset($tmp);
 			if ($method === self::ListMethods) {
 				$this->sendMethodList($methods);
@@ -123,13 +125,13 @@ class TestCase
 				try {
 					if ($info['throws']) {
 						$e = Assert::error(function () use ($method, $params): void {
-							[$this, $method->getName()](...$params);
+							$this->{$method->getName()}(...$params);
 						}, ...$throws);
 						if ($e instanceof AssertException) {
 							throw $e;
 						}
 					} else {
-						[$this, $method->getName()](...$params);
+						$this->{$method->getName()}(...$params);
 					}
 				} catch (\Throwable $e) {
 					$this->handleErrors = false;
@@ -160,7 +162,7 @@ class TestCase
 			return $this->$provider();
 		} else {
 			$rc = new \ReflectionClass($this);
-			[$file, $query] = DataProvider::parseAnnotation($provider, $rc->getFileName());
+			[$file, $query] = DataProvider::parseAnnotation($provider, (string) $rc->getFileName());
 			return DataProvider::load($file, $query);
 		}
 	}

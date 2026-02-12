@@ -7,16 +7,10 @@ parameters:
 			path: src/CodeCoverage/Generators/CloverXMLGenerator.php
 
 		-
-			message: '#^Call to an undefined method \(\(TNode of DOMNode\)\|false\)\:\:setAttribute\(\)\.$#'
-			identifier: method.notFound
-			count: 9
-			path: src/CodeCoverage/Generators/CloverXMLGenerator.php
-
-		-
-			message: '#^Parameter \#1 \$element of static method Tester\\CodeCoverage\\Generators\\CloverXMLGenerator\:\:setMetricAttributes\(\) expects DOMElement, \(\(TNode of DOMNode\)\|false\) given\.$#'
-			identifier: argument.type
-			count: 3
-			path: src/CodeCoverage/Generators/CloverXMLGenerator.php
+			message: '#^Method Tester\\Assert\:\:exception\(\) should return \(T of Throwable\)\|null but returns Throwable\|null\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Framework/Assert.php
 
 		-
 			message: '#^Closure invoked with 1 parameter, 0 required\.$#'
@@ -25,46 +19,10 @@ parameters:
 			path: src/Framework/DataProvider.php
 
 		-
-			message: '#^Method Tester\\DomQuery\:\:closest\(\) should return Tester\\DomQuery\|null but returns SimpleXMLElement\|null\.$#'
-			identifier: return.type
-			count: 1
-			path: src/Framework/DomQuery.php
-
-		-
-			message: '#^Method Tester\\DomQuery\:\:find\(\) should return array\<Tester\\DomQuery\> but returns array\<int, SimpleXMLElement\|null\>\.$#'
-			identifier: return.type
-			count: 1
-			path: src/Framework/DomQuery.php
-
-		-
-			message: '#^Method Tester\\DomQuery\:\:fromHtml\(\) should return Tester\\DomQuery but returns SimpleXMLElement\|null\.$#'
-			identifier: return.type
-			count: 1
-			path: src/Framework/DomQuery.php
-
-		-
-			message: '#^Method Tester\\DomQuery\:\:fromXml\(\) should return Tester\\DomQuery but returns SimpleXMLElement\|false\.$#'
-			identifier: return.type
-			count: 1
-			path: src/Framework/DomQuery.php
-
-		-
-			message: '#^Offset 7 does not exist on array\{0\: string, 1\: non\-empty\-string, 2\: ''''\|''0'', 3\: ''0'', 4\?\: non\-empty\-string, 5\?\: non\-empty\-string, 6\: non\-empty\-string\}\.$#'
-			identifier: offsetAccess.notFound
-			count: 1
-			path: src/Framework/DomQuery.php
-
-		-
-			message: '#^Parameter \#1 \$node of function simplexml_import_dom expects DOMNode, Dom\\Element given\.$#'
+			message: '#^Parameter \#2 \$file of static method Tester\\DataProvider\:\:parseAnnotation\(\) expects string, array\<string\>\|string given\.$#'
 			identifier: argument.type
-			count: 2
-			path: src/Framework/DomQuery.php
-
-		-
-			message: '#^Strict comparison using \=\=\= between non\-empty\-string and '''' will always evaluate to false\.$#'
-			identifier: identical.alwaysFalse
 			count: 1
-			path: src/Framework/DomQuery.php
+			path: src/Framework/Environment.php
 
 		-
 			message: '#^Variable \$ref in isset\(\) always exists and is not nullable\.$#'
@@ -89,6 +47,24 @@ parameters:
 			identifier: while.alwaysTrue
 			count: 1
 			path: src/Runner/CliTester.php
+
+		-
+			message: '#^Method Tester\\Runner\\CommandLine\:\:parse\(\) should return array\<string, mixed\> but returns array\<int\|string, mixed\>\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Runner/CommandLine.php
+
+		-
+			message: '#^Offset string\|true might not exist on array\<string, array\<string, mixed\>\>\.$#'
+			identifier: offsetAccess.notFound
+			count: 1
+			path: src/Runner/CommandLine.php
+
+		-
+			message: '#^Parameter \#3 \$length of function substr expects int\|null, int\<0, max\>\|false given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Runner/PhpInterpreter.php
 
 		-
 			message: '#^If condition is always false\.$#'

@@ -160,19 +160,23 @@ class CliTester
 			],
 		);
 
-		if (isset($_SERVER['argv'])) {
-			if (($tmp = array_search('-l', $_SERVER['argv'], strict: true))
-				|| ($tmp = array_search('-log', $_SERVER['argv'], strict: true))
-				|| ($tmp = array_search('--log', $_SERVER['argv'], strict: true))
+		/** @var list<string> $argv */
+		$argv = $_SERVER['argv'] ?? [];
+		if ($argv) {
+			if (($tmp = array_search('-l', $argv, strict: true))
+				|| ($tmp = array_search('-log', $argv, strict: true))
+				|| ($tmp = array_search('--log', $argv, strict: true))
 			) {
-				$_SERVER['argv'][$tmp] = '-o';
-				$_SERVER['argv'][$tmp + 1] = 'log:' . $_SERVER['argv'][$tmp + 1];
+				$argv[$tmp] = '-o';
+				$argv[$tmp + 1] = 'log:' . $argv[$tmp + 1];
 			}
 
-			if ($tmp = array_search('--tap', $_SERVER['argv'], strict: true)) {
-				unset($_SERVER['argv'][$tmp]);
-				$_SERVER['argv'] = array_merge($_SERVER['argv'], ['-o', 'tap']);
+			if ($tmp = array_search('--tap', $argv, strict: true)) {
+				unset($argv[$tmp]);
+				$argv = array_merge($argv, ['-o', 'tap']);
 			}
+
+			$_SERVER['argv'] = $argv;
 		}
 
 		$this->options = $cmd->parse();

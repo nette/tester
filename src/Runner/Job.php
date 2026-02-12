@@ -158,6 +158,7 @@ class Job
 			$this->test->stdout .= stream_get_contents($this->stdout);
 		}
 
+		assert($this->proc !== null);
 		$status = proc_get_status($this->proc);
 		if ($status['running']) {
 			return true;

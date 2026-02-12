@@ -13,7 +13,7 @@ use Tester;
 use Tester\Dumper;
 use Tester\Helpers;
 use Tester\TestCase;
-use function count, in_array, is_array;
+use function count, in_array, is_array, is_string;
 use const DIRECTORY_SEPARATOR;
 
 
@@ -138,8 +138,8 @@ class TestHandler
 
 	private function initiatePhpIni(Test $test, string $pair, PhpInterpreter &$interpreter): void
 	{
-		[$name, $value] = explode('=', $pair, 2) + [1 => null];
-		$interpreter = $interpreter->withPhpIniOption($name, $value);
+		$parts = explode('=', $pair, 2);
+		$interpreter = $interpreter->withPhpIniOption($parts[0], $parts[1] ?? null);
 	}
 
 
@@ -230,12 +230,12 @@ class TestHandler
 			}
 		}
 
-		return array_map(
+		return array_values(array_map(
 			fn(string $method): Test => $test
 				->withTitle(trim("$test->title $method"))
 				->withArguments(['method' => $method]),
 			$methods,
-		);
+		));
 	}
 
 
@@ -303,7 +303,7 @@ class TestHandler
 	private function getAnnotations(string $file): array
 	{
 		$annotations = Helpers::parseDocComment(Helpers::readFile($file));
-		$testTitle = isset($annotations[0])
+		$testTitle = is_string($annotations[0] ?? null)
 			? preg_replace('#^TEST:\s*#i', '', $annotations[0])
 			: null;
 		return [$annotations, $testTitle];

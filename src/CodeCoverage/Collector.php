@@ -32,9 +32,9 @@ class Collector
 	public static function detectEngines(): array
 	{
 		return array_filter([
-			extension_loaded('pcov') ? [self::EnginePcov, phpversion('pcov')] : null,
-			defined('PHPDBG_VERSION') ? [self::EnginePhpdbg, PHPDBG_VERSION] : null,
-			extension_loaded('xdebug') ? [self::EngineXdebug, phpversion('xdebug')] : null,
+			extension_loaded('pcov') ? [self::EnginePcov, (string) phpversion('pcov')] : null,
+			defined('PHPDBG_VERSION') ? [self::EnginePhpdbg, (string) PHPDBG_VERSION] : null,
+			extension_loaded('xdebug') ? [self::EngineXdebug, (string) phpversion('xdebug')] : null,
 		]);
 	}
 
@@ -186,7 +186,9 @@ class Collector
 	 */
 	private static function collectPhpDbg(): array
 	{
+		/** @var array<string, array<int, int>> $positive */
 		$positive = phpdbg_end_oplog();
+		/** @var array<string, array<int, int>> $negative */
 		$negative = phpdbg_get_executable();
 
 		foreach ($positive as $file => &$lines) {

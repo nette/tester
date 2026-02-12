@@ -95,7 +95,7 @@ class ConsolePrinter implements Tester\Runner\OutputHandler
 			self::ModeLines => $this->generateFinishLine($test),
 		});
 
-		$title = ($test->title ? "$test->title | " : '') . substr($test->getSignature(), strlen($this->baseDir));
+		$title = ($test->title ? "$test->title | " : '') . substr($test->getSignature(), strlen((string) $this->baseDir));
 		$message = '   ' . str_replace("\n", "\n   ", trim((string) $test->message)) . "\n\n";
 		$message = preg_replace('/^   $/m', '', $message);
 		if ($result === Test::Failed) {
@@ -125,7 +125,7 @@ class ConsolePrinter implements Tester\Runner\OutputHandler
 	private function generateFinishLine(Test $test): string
 	{
 		$result = $test->getResult();
-		$shortFilePath = str_replace($this->baseDir, '', $test->getFile());
+		$shortFilePath = str_replace((string) $this->baseDir, '', $test->getFile());
 		$shortDirPath = dirname($shortFilePath) . DIRECTORY_SEPARATOR;
 		$basename = basename($shortFilePath);
 		$fileText = $result === Test::Failed

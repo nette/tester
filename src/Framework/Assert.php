@@ -558,13 +558,14 @@ class Assert
 				'\x00' => '\x00',
 				'[\t ]*\r?\n' => '[\t ]*\r?\n', // right trim
 			];
-			$pattern = '#^' . preg_replace_callback('#' . implode('|', array_keys($patterns)) . '#U' . $utf8, function ($m) use ($patterns) {
+			$pattern = '#^' . preg_replace_callback('#' . implode('|', array_keys($patterns)) . '#U' . $utf8, function ($m) use ($patterns): string {
 				foreach ($patterns as $re => $replacement) {
 					$s = preg_replace("#^$re$#D", str_replace('\\', '\\\\', $replacement), $m[0], 1, $count);
 					if ($count) {
-						return $s;
+						return $s ?? $m[0];
 					}
 				}
+				return $m[0];
 			}, rtrim($pattern, " \t\n\r")) . $suffix;
 		}
 

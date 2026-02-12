@@ -40,12 +40,11 @@ class HttpAssert
 		?string $body = null,
 	): self
 	{
-		$ch = curl_init();
-		curl_setopt($ch, CURLOPT_URL, $url);
+		$ch = curl_init($url);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 		curl_setopt($ch, CURLOPT_HEADER, true);
 		curl_setopt($ch, CURLOPT_FOLLOWLOCATION, $follow);
-		curl_setopt($ch, CURLOPT_CUSTOMREQUEST, strtoupper($method));
+		curl_setopt($ch, CURLOPT_CUSTOMREQUEST, strtoupper($method) ?: 'GET');
 
 		if ($headers) {
 			$headerList = [];
@@ -64,15 +63,15 @@ class HttpAssert
 		}
 
 		if ($cookies) {
-			$cookieString = '';
+			$pairs = [];
 			foreach ($cookies as $name => $value) {
-				$cookieString .= "$name=$value; ";
+				$pairs[] = "$name=$value";
 			}
-			curl_setopt($ch, CURLOPT_COOKIE, rtrim($cookieString, '; '));
+			curl_setopt($ch, CURLOPT_COOKIE, implode('; ', $pairs));
 		}
 
 		$response = curl_exec($ch);
-		if ($response === false) {
+		if (!is_string($response)) {
 			throw new \Exception('HTTP request failed: ' . curl_error($ch));
 		}
 

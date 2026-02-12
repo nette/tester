@@ -86,7 +86,7 @@ class CloverXMLGenerator extends AbstractGenerator
 
 			if (empty($this->data[$file])) {
 				$coverageData = null;
-				$this->totalSum += count(file($file, FILE_SKIP_EMPTY_LINES));
+				$this->totalSum += count(file($file, FILE_SKIP_EMPTY_LINES) ?: []);
 			} else {
 				$coverageData = $this->data[$file];
 			}
@@ -201,7 +201,7 @@ class CloverXMLGenerator extends AbstractGenerator
 		$coveredCount = 0;
 
 		if ($coverageData === null) { // Never loaded file
-			$count = max(1, $info->end - $info->start - 2);
+			$count = (int) max(1, $info->end - $info->start - 2);
 		} else {
 			for ($i = $info->start; $i <= $info->end; $i++) {
 				if (isset($coverageData[$i]) && $coverageData[$i] !== self::LineDead) {
