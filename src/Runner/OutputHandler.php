@@ -10,6 +10,8 @@ namespace Tester\Runner;
 
 /**
  * Receives test lifecycle events from the runner to produce output.
+ * @method void jobStarted(Job $job) called when a job starts running
+ * @method void tick(Job[] $running) called periodically during test execution
  */
 interface OutputHandler
 {
