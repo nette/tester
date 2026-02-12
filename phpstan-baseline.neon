@@ -67,6 +67,18 @@ parameters:
 			path: src/Runner/PhpInterpreter.php
 
 		-
+			message: '#^Call to function method_exists\(\) with Tester\\Runner\\OutputHandler and ''jobStarted'' will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: src/Runner/Runner.php
+
+		-
+			message: '#^Call to function method_exists\(\) with Tester\\Runner\\OutputHandler and ''tick'' will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: src/Runner/Runner.php
+
+		-
 			message: '#^If condition is always false\.$#'
 			identifier: if.alwaysFalse
 			count: 1
