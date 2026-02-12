@@ -46,3 +46,7 @@ parameters:
 		- # False positive: $interrupted is mutated transitively through $this->testHandler->assess() -> Runner::finishTest(); PHPStan cannot track cross-method property mutation.
 			identifier: if.alwaysFalse
 			path: src/Runner/Runner.php
+
+		- # Intentional: jobStarted() and tick() are optional OutputHandler hooks declared via @method; only some implementations provide them, so the method_exists() check is required.
+			identifier: function.alreadyNarrowedType
+			path: src/Runner/Runner.php
