@@ -44,6 +44,8 @@ class Runner
 
 	/** @var array<string, int>  test signature => result (Test::Prepared|Passed|Failed|Skipped) */
 	private array $lastResults = [];
+	private int $jobCount = 0;
+	private int $finishedCount = 0;
 
 
 	public function __construct(
@@ -95,6 +97,7 @@ class Runner
 		$running = [];
 		try {
 			$this->jobs = [];
+			$this->finishedCount = $this->jobCount = 0;
 			foreach ($this->paths as $path) {
 				$this->findTests($path);
 			}
@@ -114,16 +117,28 @@ class Runner
 				while ($threads && $this->jobs && !$this->interrupted) {
 					$running[] = $job = array_shift($this->jobs);
 					$job->setEnvironmentVariable(Environment::VariableThread, (string) array_shift($threads));
+					foreach ($this->outputHandlers as $handler) {
+						if (method_exists($handler, 'jobStarted')) {
+							$handler->jobStarted($job);
+						}
+					}
 					$job->run(async: $async);
 				}
 
 				if ($async) {
+					foreach ($this->outputHandlers as $handler) {
+						if (method_exists($handler, 'tick')) {
+							$handler->tick($running);
+						}
+					}
+
 					Job::waitForActivity($running);
 				}
 
 				foreach ($running as $key => $job) {
 					if (!$job->isRunning()) {
 						$threads[] = $job->getEnvironmentVariable(Environment::VariableThread);
+						$this->finishedCount++;
 						unset($running[$key]);
 						if (isset($this->jobCallbacks[$job])) {
 							($this->jobCallbacks[$job])($job);
@@ -193,6 +208,7 @@ class Runner
 	public function addJob(Job $job, ?\Closure $onFinished = null): void
 	{
 		$this->jobs[] = $job;
+		$this->jobCount++;
 		if ($onFinished) {
 			$this->jobCallbacks[$job] = $onFinished;
 		}
@@ -234,6 +250,18 @@ class Runner
 	public function getInterpreter(): PhpInterpreter
 	{
 		return $this->interpreter;
+	}
+
+
+	public function getJobCount(): int
+	{
+		return $this->jobCount;
+	}
+
+
+	public function getFinishedCount(): int
+	{
+		return $this->finishedCount;
 	}
 
 
