@@ -48,7 +48,7 @@ class CommandLine
 				throw new \InvalidArgumentException("Unable to parse '$line[1]'.");
 			}
 
-			$name = end($m[1]);
+			$name = (string) end($m[1]);
 			$opts = $this->options[$name] ?? [];
 			$arg = (string) end($m[2]);
 			$this->options[$name] = $opts + [
@@ -103,12 +103,10 @@ class CommandLine
 				continue;
 			}
 
-			[$name, $arg] = strpos($arg, '=') ? explode('=', $arg, 2) : [$arg, true];
+			[$name, $arg] = strpos($arg, '=') !== false ? explode('=', $arg, 2) : [$arg, true];
 
-			if (isset($this->aliases[$name])) {
-				$name = $this->aliases[$name];
-
-			} elseif (!isset($this->options[$name])) {
+			$name = $this->aliases[$name] ?? $name;
+			if (!isset($this->options[$name])) {
 				throw new \Exception("Unknown option $name.");
 			}
 

@@ -66,8 +66,10 @@ class Environment
 		$annotations = self::getTestAnnotations();
 		self::$checkAssertions = !isset($annotations['outputmatch']) && !isset($annotations['outputmatchfile']);
 
-		if (getenv(self::VariableCoverage) && getenv(self::VariableCoverageEngine)) {
-			CodeCoverage\Collector::start(getenv(self::VariableCoverage), getenv(self::VariableCoverageEngine));
+		$coverageFile = getenv(self::VariableCoverage);
+		$coverageEngine = getenv(self::VariableCoverageEngine);
+		if ($coverageFile && $coverageEngine) {
+			CodeCoverage\Collector::start($coverageFile, $coverageEngine);
 		}
 
 		if (getenv('TERMINAL_EMULATOR') === 'JetBrains-JediTerm') {
@@ -197,7 +199,7 @@ class Environment
 	{
 		$trace = debug_backtrace();
 		return ($file = $trace[count($trace) - 1]['file'] ?? null)
-			? Helpers::parseDocComment(Helpers::readFile($file)) + ['file' => $file]
+			? ['file' => $file] + Helpers::parseDocComment(Helpers::readFile($file))
 			: [];
 	}
 
@@ -227,7 +229,9 @@ class Environment
 	 */
 	public static function loadData(): array
 	{
-		if (isset($_SERVER['argv']) && ($tmp = preg_filter('#--dataprovider=(.*)#Ai', '$1', $_SERVER['argv']))) {
+		/** @var list<string> $argv */
+		$argv = $_SERVER['argv'] ?? [];
+		if ($argv && ($tmp = preg_filter('#--dataprovider=(.*)#Ai', '$1', $argv))) {
 			[$key, $file] = explode('|', reset($tmp), 2);
 			$data = DataProvider::load($file);
 			if (!array_key_exists($key, $data)) {
@@ -243,7 +247,8 @@ class Environment
 		}
 
 		$provider = (array) $annotations['dataprovider'];
-		[$file, $query] = DataProvider::parseAnnotation($provider[0], $annotations['file']);
+		$files = (array) $annotations['file'];
+		[$file, $query] = DataProvider::parseAnnotation($provider[0], (string) reset($files));
 
 		$data = DataProvider::load($file, $query);
 		if (!$data) {

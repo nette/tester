@@ -83,7 +83,7 @@ class CloverXMLGenerator extends AbstractGenerator
 
 			if (empty($this->data[$file])) {
 				$coverageData = null;
-				$this->totalSum += count(file($file, FILE_SKIP_EMPTY_LINES));
+				$this->totalSum += count(file($file, FILE_SKIP_EMPTY_LINES) ?: []);
 			} else {
 				$coverageData = $this->data[$file];
 			}
@@ -198,7 +198,7 @@ class CloverXMLGenerator extends AbstractGenerator
 		$coveredCount = 0;
 
 		if ($coverageData === null) { // Never loaded file
-			$count = max(1, $info->end - $info->start - 2);
+			$count = (int) max(1, $info->end - $info->start - 2);
 		} else {
 			for ($i = $info->start; $i <= $info->end; $i++) {
 				if (isset($coverageData[$i]) && $coverageData[$i] !== self::LineDead) {
@@ -216,7 +216,7 @@ class CloverXMLGenerator extends AbstractGenerator
 
 	private static function appendMetrics(\stdClass $summary, \stdClass $add): void
 	{
-		foreach ($add as $name => $value) {
+		foreach (get_object_vars($add) as $name => $value) {
 			$summary->{$name} += $value;
 		}
 	}
@@ -224,7 +224,7 @@ class CloverXMLGenerator extends AbstractGenerator
 
 	private static function setMetricAttributes(DOMElement $element, \stdClass $metrics): void
 	{
-		foreach ($metrics as $name => $value) {
+		foreach (get_object_vars($metrics) as $name => $value) {
 			$element->setAttribute(self::$metricAttributesMap[$name], (string) $value);
 		}
 	}

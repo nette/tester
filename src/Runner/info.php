@@ -13,7 +13,7 @@ natcasesort($extensions);
 $info = (object) [
 	'binary' => defined('PHP_BINARY') ? PHP_BINARY : null,
 	'version' => PHP_VERSION,
-	'phpDbgVersion' => $isPhpDbg ? PHPDBG_VERSION : null,
+	'phpDbgVersion' => $isPhpDbg ? constant('PHPDBG_VERSION') : null,
 	'sapi' => PHP_SAPI,
 	'iniFiles' => array_merge(
 		($tmp = php_ini_loaded_file()) === false ? [] : [$tmp],

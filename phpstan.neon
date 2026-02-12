@@ -1,6 +1,5 @@
 parameters:
-	level: 6
-	errorFormat: raw
+	level: 8
 
 	paths:
 		- src
@@ -8,5 +7,42 @@ parameters:
 	excludePaths:
 		- src/Framework/FileMutator.php
 
-includes:
-	- phpstan-baseline.neon
+	ignoreErrors:
+		- # DomQuery: PHP 8.4 Dom\Element API not in PHPStan stubs
+			identifier: method.notFound
+			path: src/Framework/DomQuery.php
+		- # DomQuery: SimpleXMLElement subclass return types
+			identifier: return.type
+			path: src/Framework/DomQuery.php
+		- # DomQuery: regex match group offsets
+			identifier: offsetAccess.notFound
+			path: src/Framework/DomQuery.php
+		- # DomQuery: simplexml_import_dom accepts Dom\Node in PHP 8.4
+			identifier: argument.type
+			path: src/Framework/DomQuery.php
+		- # DomQuery: regex analysis false positive
+			identifier: identical.alwaysFalse
+			path: src/Framework/DomQuery.php
+
+		- # Edge case: with a registered onFailure handler exception() may return a Throwable that is not T; the documented contract still holds for the throw-on-failure default behaviour.
+			message: '#^Method Tester\\Assert\:\:exception\(\) should return \(T of Throwable\)\|null but returns Throwable\|null\.$#'
+			identifier: return.type
+			path: src/Framework/Assert.php
+
+		- # Intentional: arrow/anonymous fn receives the file path via func_get_arg() so the included file is not given any local variables in scope.
+			identifier: arguments.count
+			paths:
+				- src/Framework/DataProvider.php
+				- src/Runner/CliTester.php
+
+		- # Intentional: $runner is used inside the included --setup script, not in the closure body itself.
+			identifier: closure.unusedUse
+			path: src/Runner/CliTester.php
+
+		- # Intentional infinite loop for the --watch mode.
+			identifier: while.alwaysTrue
+			path: src/Runner/CliTester.php
+
+		- # False positive: $interrupted is mutated transitively through $this->testHandler->assess() -> Runner::finishTest(); PHPStan cannot track cross-method property mutation.
+			identifier: if.alwaysFalse
+			path: src/Runner/Runner.php

@@ -93,10 +93,10 @@ class HtmlGenerator extends AbstractGenerator
 				$this->totalSum += $total;
 				$this->coveredSum += $covered;
 			} else {
-				$this->totalSum += count(file($entry, FILE_SKIP_EMPTY_LINES));
+				$this->totalSum += count(file($entry, FILE_SKIP_EMPTY_LINES) ?: []);
 			}
 
-			$light = $total ? $total < 5 : count(file($entry)) < 50;
+			$light = $total ? $total < 5 : count(file($entry) ?: []) < 50;
 			$this->files[] = (object) [
 				'name' => str_replace($commonSourcesPath, '', $entry),
 				'file' => $entry,
