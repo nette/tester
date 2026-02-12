@@ -49,7 +49,7 @@ class CommandLine
 				throw new \InvalidArgumentException("Unable to parse '$line[1]'.");
 			}
 
-			$name = end($m[1]);
+			$name = (string) end($m[1]);
 			$opts = $this->options[$name] ?? [];
 			$arg = (string) end($m[2]);
 			$this->options[$name] = $opts + [
@@ -79,6 +79,7 @@ class CommandLine
 	public function parse(?array $args = null): array
 	{
 		if ($args === null) {
+			/** @var list<string> $args */
 			$args = isset($_SERVER['argv']) ? array_slice($_SERVER['argv'], 1) : [];
 		}
 
@@ -104,7 +105,7 @@ class CommandLine
 				continue;
 			}
 
-			[$name, $arg] = strpos($arg, '=') ? explode('=', $arg, 2) : [$arg, true];
+			[$name, $arg] = strpos($arg, '=') !== false ? explode('=', $arg, 2) : [$arg, true];
 
 			if (isset($this->aliases[$name])) {
 				$name = $this->aliases[$name];

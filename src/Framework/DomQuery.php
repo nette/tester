@@ -79,9 +79,9 @@ class DomQuery extends \SimpleXMLElement
 	public function find(string $selector): array
 	{
 		if (PHP_VERSION_ID < 80400) {
-			return str_starts_with($selector, ':scope')
+			return (str_starts_with($selector, ':scope')
 				? $this->xpath('self::' . self::css2xpath(substr($selector, 6)))
-				: $this->xpath('descendant::' . self::css2xpath($selector));
+				: $this->xpath('descendant::' . self::css2xpath($selector))) ?: [];
 		}
 
 		return array_map(

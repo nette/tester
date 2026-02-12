@@ -297,7 +297,7 @@ class Dumper
 		$trace = $e->getTrace();
 		array_splice($trace, 0, $e instanceof \ErrorException ? 1 : 0, [['file' => $e->getFile(), 'line' => $e->getLine()]]);
 
-		$testFile = null;
+		$testFile = $e->getFile();
 		foreach (array_reverse($trace) as $item) {
 			if (isset($item['file'])) { // in case of shutdown handler, we want to skip inner-code blocks and debugging calls
 				$testFile = $item['file'];
@@ -362,8 +362,8 @@ class Dumper
 				continue;
 			}
 
-			$line = $item['class'] === Assert::class && method_exists($item['class'], $item['function'])
-				&& strpos($tmp = file($item['file'])[$item['line'] - 1], "::$item[function](") ? $tmp : null;
+			$line = $item['class'] === Assert::class && isset($item['function'], $item['file']) && method_exists($item['class'], $item['function'])
+				&& strpos($tmp = (file($item['file']) ?: [])[$item['line'] - 1] ?? '', "::$item[function](") ? $tmp : null;
 
 			$s .= 'in '
 				. ($item['file']
