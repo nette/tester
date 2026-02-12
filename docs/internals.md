@@ -144,7 +144,14 @@ that strips ANSI when colors are off** — so ordinary `echo` is filtered centra
 appear even when the buffer is in an odd state.
 
 On the runner side, `ConsolePrinter` has three modes: **dots** (default), **lines**
-(`-o console-lines`), and **cider** (hidden `--cider` flag, not in `--help`).
+(`-o console-lines`), and **cider** (hidden `--cider` flag, not in `--help`) — a
+live ANSI panel with a progress bar, one row per thread, and a 🍏/🍎 summary,
+redrawn in place via cursor moves. Cider needs parallelism; with fewer than 2
+threads it silently falls back to lines. The panel is driven by **optional,
+duck-typed `OutputHandler` hooks**: `Runner` calls `jobStarted(Job)` and
+`tick(Job[] $running)` only via `method_exists` — they are not part of the
+`OutputHandler` interface, so adding a runner→handler hook means duck-typing,
+not extending the interface.
 
 ## FileMutator: a `file://` stream wrapper, and the re-entrancy dance
 
@@ -174,4 +181,5 @@ when touching this class (it is `@internal` and excluded from PHPStan).
 | Coverage merge semantics | `CodeCoverage\Collector::save` |
 | Exit-code + env-var bridge | `Environment::handleException`/`exit`, `Job::Code*` (Skip=177, Fail=178, Error=255) |
 | Color decision & output channels | `Environment::setupColors`/`print` |
+| Console modes incl. cider, duck-typed hooks | `Output\ConsolePrinter`, `Runner::run` (`method_exists`) |
 | Final-stripping loader | `FileMutator` (`stream_open`, `native`), `Environment::bypassFinals` |

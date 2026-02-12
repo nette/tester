@@ -58,3 +58,7 @@ parameters:
 			identifier: if.alwaysFalse
 			count: 1
 			path: src/Runner/Runner.php
+
+		- # Intentional: jobStarted() and tick() are optional OutputHandler hooks declared via @method; only some implementations provide them, so the method_exists() check is required.
+			identifier: function.alreadyNarrowedType
+			path: src/Runner/Runner.php
