@@ -57,7 +57,7 @@ abstract class AbstractGenerator
 			}
 		}
 
-		$this->sources = array_map('realpath', $sources);
+		$this->sources = array_map(fn($s) => (string) realpath($s), $sources);
 	}
 
 

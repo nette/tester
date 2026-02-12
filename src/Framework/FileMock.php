@@ -210,7 +210,7 @@ class FileMock
 	{
 		$bt = debug_backtrace(0, 3);
 		if (isset($bt[2]['function'])) {
-			$message = $bt[2]['function'] . '(' . @$bt[2]['args'][0] . '): ' . $message;
+			$message = $bt[2]['function'] . '(' . ($bt[2]['args'][0] ?? '') . '): ' . $message;
 		}
 
 		trigger_error($message, E_USER_WARNING);
