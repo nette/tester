@@ -79,9 +79,6 @@ class CloverXMLGenerator extends AbstractGenerator
 			'coveredConditionalCount' => 0,
 		];
 
-		// Prepare metrics for lines outside class/struct definitions
-		$structuralLines = array_fill(1, $code->linesOfCode + 1, true);
-
 		foreach ($this->getSourceIterator() as $file) {
 			$file = (string) $file;
 
@@ -118,6 +115,9 @@ class CloverXMLGenerator extends AbstractGenerator
 				'conditionalCount' => 0,
 				'coveredConditionalCount' => 0,
 			];
+
+			// Prepare metrics for lines outside class/struct definitions
+			$structuralLines = array_fill(1, $code->linesOfCode + 1, true);
 
 			foreach (array_merge($code->classes, $code->traits) as $name => $info) { // TODO: interfaces?
 				$elClass = $elFile->appendChild($doc->createElement('class'));
@@ -203,6 +203,10 @@ class CloverXMLGenerator extends AbstractGenerator
 	}
 
 
+	/**
+	 * @param array<int, bool>  $structuralLines  line number => covered flag
+	 * @param ?array<int, int>  $coverageData  line number => coverage count
+	 */
 	private function calculateStructuralMetrics(array $structuralLines, ?array $coverageData = null): \stdClass
 	{
 		$stats = (object) [
