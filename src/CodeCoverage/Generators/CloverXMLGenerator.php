@@ -79,6 +79,9 @@ class CloverXMLGenerator extends AbstractGenerator
 			'coveredConditionalCount' => 0,
 		];
 
+		// Prepare metrics for lines outside class/struct definitions
+		$structuralLines = array_fill(1, $code->linesOfCode + 1, true);
+
 		foreach ($this->getSourceIterator() as $file) {
 			$file = (string) $file;
 
@@ -127,9 +130,19 @@ class CloverXMLGenerator extends AbstractGenerator
 
 				$elClassMetrics = $elClass->appendChild($doc->createElement('metrics'));
 				$classMetrics = $this->calculateClassMetrics($info, $coverageData);
+
+				// mark all lines inside iterated class as non-structurals
+				for ($index = $info->start + 1; $index <= $info->end; $index++) { // + 1 to skip function name
+						unset($structuralLines[$index]);
+				}
+
 				self::setMetricAttributes($elClassMetrics, $classMetrics);
 				self::appendMetrics($fileMetrics, $classMetrics);
 			}
+
+			//plain metrics - procedural style
+			$structMetrics = $this->calculateStructuralMetrics($structuralLines, $coverageData);
+			self::appendMetrics($fileMetrics, $structMetrics);
 
 			self::setMetricAttributes($elFileMetrics, $fileMetrics);
 
@@ -152,7 +165,6 @@ class CloverXMLGenerator extends AbstractGenerator
 			self::appendMetrics($projectMetrics, $fileMetrics);
 		}
 
-		// TODO: What about reported (covered) lines outside of class/trait definition?
 		self::setMetricAttributes($elProjectMetrics, $projectMetrics);
 
 		echo $doc->saveXML();
@@ -186,6 +198,35 @@ class CloverXMLGenerator extends AbstractGenerator
 
 		$stats->elementCount = $stats->methodCount + $stats->statementCount;
 		$stats->coveredElementCount = $stats->coveredMethodCount + $stats->coveredStatementCount;
+
+		return $stats;
+	}
+
+
+	private function calculateStructuralMetrics(array $structuralLines, ?array $coverageData = null): \stdClass
+	{
+		$stats = (object) [
+			'statementCount' => 0,
+			'coveredStatementCount' => 0,
+			'elementCount' => null,
+			'coveredElementCount' => null,
+		];
+
+		if ($coverageData === null) { // Never loaded file should return empty stats
+			return $stats;
+		}
+
+		foreach ($structuralLines as $line => $val) {
+			if (isset($coverageData[$line]) && $coverageData[$line] !== self::LineDead) {
+				$stats->statementCount++;
+				if ($coverageData[$line] > 0) {
+					$stats->coveredStatementCount++;
+				}
+			}
+		}
+
+		$stats->elementCount = $stats->statementCount;
+		$stats->coveredElementCount = $stats->coveredStatementCount;
 
 		return $stats;
 	}
