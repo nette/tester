@@ -44,6 +44,11 @@ $runner->paths[] = __DIR__ . '/edge/*.phptx';
 $runner->outputHandlers[] = $logger = new Logger;
 $runner->run();
 
+// PHPDBG redirects stderr to stdout, making output format verification unreliable
+if (defined('PHPDBG_VERSION')) {
+	Tester\Environment::skip('Not compatible with PHPDBG (does not process register_shutdown_function at all, so the exit code always stays 0).');
+}
+
 Assert::same([Test::Failed, 'Exited with error code 231 (expected 0)'], $logger->results['shutdown.exitCode.a.phptx']);
 
 Assert::same([Test::Passed, null], $logger->results['shutdown.exitCode.b.phptx']);
