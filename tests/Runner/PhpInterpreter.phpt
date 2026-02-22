@@ -37,6 +37,22 @@ Assert::count($count, $engines);
 
 // createInterpreter() uses same php.ini as parent
 if (!$interpreter->isCgi()) {
-	$output = shell_exec($interpreter->withArguments(['-r echo php_ini_loaded_file();'])->getCommandLine());
+	if (defined('PHPDBG_VERSION')) {
+		// PHPDBG does not support -r for inline code; use -s '' to read from stdin instead
+		$proc = proc_open(
+			$interpreter->withArguments(['-s', ''])->getCommandLine(),
+			[['pipe', 'r'], ['pipe', 'w'], ['pipe', 'w']],
+			$pipes,
+			null,
+			null,
+			['bypass_shell' => true],
+		);
+		fwrite($pipes[0], '<?php echo php_ini_loaded_file();');
+		fclose($pipes[0]);
+		$output = stream_get_contents($pipes[1]);
+		proc_close($proc);
+	} else {
+		$output = shell_exec($interpreter->withArguments(['-r echo php_ini_loaded_file();'])->getCommandLine());
+	}
 	Assert::same(php_ini_loaded_file(), $output);
 }

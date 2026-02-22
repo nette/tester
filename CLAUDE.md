@@ -7,7 +7,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 Nette Tester is a lightweight, standalone PHP testing framework designed for simplicity, speed, and process isolation. It runs tests in parallel by default (8 threads) and supports code coverage through Xdebug, PCOV, or PHPDBG.
 
 **Key characteristics:**
-- Zero external dependencies (pure PHP 8.0+)
+- Zero external dependencies (pure PHP 8.1+)
 - Each test runs in a completely isolated PHP process
 - Annotation-driven test configuration
 - Self-hosting (uses itself for testing)
@@ -864,7 +864,7 @@ src/tester tests/NamespaceOne
 
 GitHub Actions workflow tests across:
 - 3 operating systems (Ubuntu, Windows, macOS)
-- 6 PHP versions (8.0 - 8.5)
+- 5 PHP versions (8.1 - 8.5)
 - 18 total combinations
 
 This extensive matrix ensures compatibility across all supported environments.

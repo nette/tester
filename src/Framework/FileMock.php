@@ -168,7 +168,7 @@ class FileMock
 	/** @return array<string, int> */
 	public function stream_stat(): array
 	{
-		return ['mode' => 0100666, 'size' => strlen($this->content)];
+		return ['mode' => 0o100666, 'size' => strlen($this->content)];
 	}
 
 
@@ -176,7 +176,7 @@ class FileMock
 	public function url_stat(string $path, int $flags): array|false
 	{
 		return isset(self::$files[$path])
-			? ['mode' => 0100666, 'size' => strlen(self::$files[$path])]
+			? ['mode' => 0o100666, 'size' => strlen(self::$files[$path])]
 			: false;
 	}
 

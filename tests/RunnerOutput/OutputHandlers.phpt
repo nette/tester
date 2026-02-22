@@ -13,6 +13,12 @@ use Tester\Runner\Output;
 use Tester\Runner\Runner;
 
 require __DIR__ . '/../bootstrap.php';
+
+// PHPDBG redirects stderr to stdout, making output format verification unreliable
+if (defined('PHPDBG_VERSION')) {
+	Tester\Environment::skip('Not compatible with PHPDBG (stderr is redirected to stdout).');
+}
+
 require __DIR__ . '/../../src/Runner/Test.php';
 require __DIR__ . '/../../src/Runner/TestHandler.php';
 require __DIR__ . '/../../src/Runner/Runner.php';

@@ -10,7 +10,7 @@ require __DIR__ . '/../bootstrap.php';
 Tester\Environment::bypassFinals();
 
 Assert::error(
-	fn() => chmod('unknown', 0777),
+	fn() => chmod('unknown', 0o777),
 	E_WARNING,
 );
 

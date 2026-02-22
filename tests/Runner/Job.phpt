@@ -20,8 +20,15 @@ test('appending arguments to Test', function () {
 	Assert::same($test, $job->getTest());
 	Assert::same(231, $job->getExitCode());
 
-	Assert::same('Args: one, --two=1, three, --two=2+stdout', $job->getTest()->stdout);
-	Assert::same('+stderr1+stderr2', $job->getTest()->stderr);
+	// PHPDBG has a bug where php://stderr writes are always routed to stdout (fd 1),
+	// so stderr content appears interleaved in stdout in the order it was written
+	if (defined('PHPDBG_VERSION')) {
+		Assert::same('Args: one, --two=1, three, --two=2+stderr1+stdout+stderr2', $job->getTest()->stdout);
+		Assert::same('', $job->getTest()->stderr);
+	} else {
+		Assert::same('Args: one, --two=1, three, --two=2+stdout', $job->getTest()->stdout);
+		Assert::same('+stderr1+stderr2', $job->getTest()->stderr);
+	}
 	Assert::type('float', $job->getDuration());
 
 	if (PHP_SAPI !== 'cli') {

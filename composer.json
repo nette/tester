@@ -19,13 +19,13 @@
 		}
 	],
 	"require": {
-		"php": "8.0 - 8.5"
+		"php": "8.1 - 8.5"
 	},
 	"require-dev": {
 		"ext-simplexml": "*",
 		"phpstan/phpstan": "^2.1@stable",
 		"phpstan/extension-installer": "^1.4@stable",
-		"nette/phpstan-rules": "^1.0"
+		"nette/phpstan-rules": "^1.0@dev"
 	},
 	"autoload": {
 		"classmap": ["src/"],
