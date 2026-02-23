@@ -1,10 +1,8 @@
-<?php
+<?php declare(strict_types=1);
 
 /**
  * TEST: Output handlers.
  */
-
-declare(strict_types=1);
 
 use Tester\Ansi;
 use Tester\Assert;

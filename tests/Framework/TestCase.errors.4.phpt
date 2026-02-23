@@ -1,11 +1,9 @@
-<?php
+<?php declare(strict_types=1);
 
 /**
  * @exitCode 255
  * @outputMatch #^Test::setUp,× testMe\s+Exception: setUp\s+in#
  */
-
-declare(strict_types=1);
 
 require __DIR__ . '/../bootstrap.php';
 

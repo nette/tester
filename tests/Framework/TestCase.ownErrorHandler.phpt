@@ -1,10 +1,8 @@
-<?php
+<?php declare(strict_types=1);
 
 /**
  * TEST: Prevent loop in error handling. The #268 regression.
  */
-
-declare(strict_types=1);
 
 use Tester\Assert;
 
