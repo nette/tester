@@ -7,7 +7,7 @@
 
 namespace Tester;
 
-use function curl_error, curl_exec, curl_getinfo, curl_init, curl_setopt, explode, is_int, is_string, rtrim, str_contains, strtoupper, substr, trim;
+use function curl_error, curl_exec, curl_getinfo, curl_init, curl_setopt, explode, is_int, is_string, str_contains, strtoupper, substr, trim;
 
 
 /**

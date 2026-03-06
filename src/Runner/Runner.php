@@ -10,7 +10,7 @@ namespace Tester\Runner;
 use Tester\Environment;
 use Tester\Helpers;
 use function count, in_array;
-use const DIRECTORY_SEPARATOR, GLOB_ONLYDIR, PATHINFO_FILENAME;
+use const DIRECTORY_SEPARATOR;
 
 
 /**

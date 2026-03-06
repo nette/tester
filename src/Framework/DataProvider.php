@@ -8,7 +8,7 @@
 namespace Tester;
 
 use function is_array;
-use const DIRECTORY_SEPARATOR, INI_SCANNER_TYPED, PATHINFO_EXTENSION, PREG_SET_ORDER;
+use const DIRECTORY_SEPARATOR;
 
 
 /**

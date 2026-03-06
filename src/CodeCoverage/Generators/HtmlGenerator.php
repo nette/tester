@@ -9,7 +9,7 @@ namespace Tester\CodeCoverage\Generators;
 
 use Tester\Helpers;
 use function count;
-use const DIRECTORY_SEPARATOR, FILE_SKIP_EMPTY_LINES;
+use const DIRECTORY_SEPARATOR;
 
 
 /**
