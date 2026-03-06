@@ -8,7 +8,7 @@
 namespace Tester;
 
 use function array_slice, count, defined;
-use const DIRECTORY_SEPARATOR, PREG_SET_ORDER;
+use const DIRECTORY_SEPARATOR;
 
 
 /**

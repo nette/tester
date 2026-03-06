@@ -12,7 +12,6 @@ use DOMElement;
 use Tester\CodeCoverage\PhpParser;
 use Tester\Helpers;
 use function count;
-use const FILE_SKIP_EMPTY_LINES;
 
 
 class CloverXMLGenerator extends AbstractGenerator

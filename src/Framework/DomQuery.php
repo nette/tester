@@ -8,7 +8,7 @@
 namespace Tester;
 
 use Dom;
-use const PHP_VERSION_ID, PREG_SET_ORDER;
+use const PHP_VERSION_ID;
 
 
 /**

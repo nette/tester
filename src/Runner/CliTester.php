@@ -13,7 +13,7 @@ use Tester\Dumper;
 use Tester\Environment;
 use Tester\Helpers;
 use function count, in_array;
-use const PATHINFO_EXTENSION, PHP_SAPI;
+use const PHP_SAPI;
 
 
 /**

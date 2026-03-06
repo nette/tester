@@ -8,7 +8,6 @@
 namespace Tester;
 
 use function abs, array_key_exists, array_keys, array_shift, array_slice, basename, constant, count, current, error_reporting, func_num_args, get_debug_type, implode, in_array, ini_set, is_array, is_finite, is_float, is_int, is_nan, is_object, is_string, ksort, max, next, preg_last_error, preg_match, preg_replace, preg_replace_callback, preg_split, range, reset, restore_error_handler, rtrim, set_error_handler, str_contains, str_replace, strlen, substr;
-use const PREG_SPLIT_DELIM_CAPTURE, SORT_STRING;
 
 
 /**
