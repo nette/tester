@@ -13,7 +13,7 @@ use Tester\Runner\Test;
 
 
 /**
- * Verbose logger.
+ * Logs all test results including passed tests to a file or stdout.
  */
 class Logger implements Tester\Runner\OutputHandler
 {

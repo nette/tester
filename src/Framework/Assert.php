@@ -11,7 +11,7 @@ use function abs, array_key_exists, array_keys, array_shift, array_slice, basena
 
 
 /**
- * Assertion test helpers.
+ * Provides assertion methods for verifying values in tests.
  */
 class Assert
 {
@@ -49,7 +49,7 @@ class Assert
 
 
 	/**
-	 * Asserts that two values are equal and have the same type and identity of objects.
+	 * Asserts that two values are identical (===).
 	 */
 	public static function same(mixed $expected, mixed $actual, ?string $description = null): void
 	{
@@ -61,7 +61,7 @@ class Assert
 
 
 	/**
-	 * Asserts that two values are not equal or do not have the same type and identity of objects.
+	 * Asserts that two values are not identical (!==).
 	 */
 	public static function notSame(mixed $expected, mixed $actual, ?string $description = null): void
 	{
@@ -73,8 +73,7 @@ class Assert
 
 
 	/**
-	 * Asserts that two values are equal and checks expectations. The identity of objects,
-	 * the order of keys in the arrays and marginally different floats are ignored by default.
+	 * Asserts that two values are equal, ignoring object identity, array key order, and tiny float differences by default.
 	 */
 	public static function equal(
 		mixed $expected,
@@ -92,8 +91,7 @@ class Assert
 
 
 	/**
-	 * Asserts that two values are not equal and checks expectations. The identity of objects,
-	 * the order of keys in the arrays and marginally different floats are ignored.
+	 * Asserts that two values are not equal (same loose comparison rules as equal()).
 	 */
 	public static function notEqual(mixed $expected, mixed $actual, ?string $description = null): void
 	{
@@ -111,7 +109,7 @@ class Assert
 
 
 	/**
-	 * Asserts that a haystack (string or array) contains an expected needle.
+	 * Asserts that a string contains a substring, or an array contains an element (strict).
 	 * @param mixed[]|string  $actual
 	 */
 	public static function contains(mixed $needle, array|string $actual, ?string $description = null): void
@@ -131,7 +129,7 @@ class Assert
 
 
 	/**
-	 * Asserts that a haystack (string or array) does not contain an expected needle.
+	 * Asserts that a string does not contain a substring, or an array does not contain an element (strict).
 	 * @param mixed[]|string  $actual
 	 */
 	public static function notContains(mixed $needle, array|string $actual, ?string $description = null): void
@@ -151,7 +149,7 @@ class Assert
 
 
 	/**
-	 * Asserts that a haystack has an expected key.
+	 * Asserts that an array has the given key.
 	 * @param mixed[]  $actual
 	 */
 	public static function hasKey(string|int $key, array $actual, ?string $description = null): void
@@ -164,7 +162,7 @@ class Assert
 
 
 	/**
-	 * Asserts that a haystack doesn't have an expected key.
+	 * Asserts that an array does not have the given key.
 	 * @param mixed[]  $actual
 	 */
 	public static function hasNotKey(string|int $key, array $actual, ?string $description = null): void
@@ -177,7 +175,7 @@ class Assert
 
 
 	/**
-	 * Asserts that a value is true.
+	 * Asserts that a value is strictly true (=== true).
 	 */
 	public static function true(mixed $actual, ?string $description = null): void
 	{
@@ -189,7 +187,7 @@ class Assert
 
 
 	/**
-	 * Asserts that a value is false.
+	 * Asserts that a value is strictly false (=== false).
 	 */
 	public static function false(mixed $actual, ?string $description = null): void
 	{
@@ -201,7 +199,7 @@ class Assert
 
 
 	/**
-	 * Asserts that a value is null.
+	 * Asserts that a value is strictly null (=== null).
 	 */
 	public static function null(mixed $actual, ?string $description = null): void
 	{
@@ -213,7 +211,7 @@ class Assert
 
 
 	/**
-	 * Asserts that a value is not null.
+	 * Asserts that a value is not null (!== null).
 	 */
 	public static function notNull(mixed $actual, ?string $description = null): void
 	{
@@ -225,7 +223,7 @@ class Assert
 
 
 	/**
-	 * Asserts that a value is Not a Number.
+	 * Asserts that a value is NAN. Use only this method for NAN checks, as NAN !== NAN.
 	 */
 	public static function nan(mixed $actual, ?string $description = null): void
 	{
@@ -237,7 +235,7 @@ class Assert
 
 
 	/**
-	 * Asserts that a value is truthy.
+	 * Asserts that a value is truthy (non-empty, non-zero, non-null, non-false).
 	 */
 	public static function truthy(mixed $actual, ?string $description = null): void
 	{
@@ -249,7 +247,7 @@ class Assert
 
 
 	/**
-	 * Asserts that a value is falsey.
+	 * Asserts that a value is falsy (empty string, 0, null, false, empty array).
 	 */
 	public static function falsey(mixed $actual, ?string $description = null): void
 	{
@@ -261,7 +259,7 @@ class Assert
 
 
 	/**
-	 * Asserts the number of items in an array or Countable.
+	 * Asserts that an array or Countable has the expected number of items.
 	 * @param mixed[]|\Countable  $value
 	 */
 	public static function count(int $count, array|\Countable $value, ?string $description = null): void
@@ -274,7 +272,7 @@ class Assert
 
 
 	/**
-	 * Asserts that a value is of given class, interface or built-in type.
+	 * Asserts that a value is of the given built-in type, class, or interface.
 	 */
 	public static function type(string|object $type, mixed $value, ?string $description = null): void
 	{
@@ -336,7 +334,7 @@ class Assert
 
 
 	/**
-	 * Asserts that a function throws exception of given type and its message matches given pattern. Alias for exception().
+	 * Alias for exception(). Asserts that a function throws an exception of the given type.
 	 * @template T of \Throwable
 	 * @param callable(): void  $function
 	 * @param class-string<T>  $class
@@ -354,7 +352,7 @@ class Assert
 
 
 	/**
-	 * Asserts that a function generates one or more PHP errors or throws exceptions.
+	 * Asserts that a function generates one or more PHP errors matching the expected types and messages.
 	 * @param callable(): void  $function
 	 * @param int|string|mixed[]  $expectedType
 	 * @throws \Exception
@@ -422,7 +420,7 @@ class Assert
 
 
 	/**
-	 * Asserts that a function does not generate PHP errors and does not throw exceptions.
+	 * Asserts that a function generates no PHP errors and throws no exceptions.
 	 * @param callable(): void  $function
 	 */
 	public static function noError(callable $function): void
@@ -466,6 +464,10 @@ class Assert
 	}
 
 
+	/**
+	 * Asserts that a string does not match a given pattern.
+	 * @param  string  $pattern  mask|regexp; only delimiters ~ and # are supported for regexp
+	 */
 	public static function notMatch(string $pattern, string $actual, ?string $description = null): void
 	{
 		self::$counter++;
@@ -480,7 +482,7 @@ class Assert
 
 
 	/**
-	 * Asserts that a string matches a given pattern stored in file.
+	 * Asserts that a string matches a pattern loaded from a file.
 	 */
 	public static function matchFile(string $file, string $actual, ?string $description = null): void
 	{
@@ -497,7 +499,7 @@ class Assert
 
 
 	/**
-	 * Assertion that fails.
+	 * Throws AssertException with given message, triggering any registered onFailure handler.
 	 */
 	public static function fail(
 		string $message,
@@ -524,7 +526,7 @@ class Assert
 
 
 	/**
-	 * Executes function that can access private and protected members of given object via $this.
+	 * Runs a closure bound to the given object, granting access to its private and protected members.
 	 * @template TReturn
 	 * @param object|class-string  $objectOrClass
 	 * @param \Closure(): TReturn  $closure

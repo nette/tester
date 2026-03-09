@@ -17,7 +17,7 @@ use const PHP_SAPI;
 
 
 /**
- * CLI Tester.
+ * Parses CLI options, configures the runner, and executes the test suite.
  */
 class CliTester
 {

@@ -12,7 +12,7 @@ use const DIRECTORY_SEPARATOR;
 
 
 /**
- * Test helpers.
+ * Utility methods for file I/O, path handling, annotation parsing, and shell escaping.
  */
 class Helpers
 {
@@ -32,7 +32,7 @@ class Helpers
 
 
 	/**
-	 * Purges directory.
+	 * Creates directory if it does not exist and deletes all its contents.
 	 */
 	public static function purge(string $dir): void
 	{
@@ -55,9 +55,9 @@ class Helpers
 
 
 	/**
-	 * Find common directory for given paths. All files or directories must exist.
+	 * Finds the common ancestor directory of the given paths. All paths must exist.
 	 * @param  string[]  $paths
-	 * @return string  Empty when not found. Slash and back slash chars normalized to DIRECTORY_SEPARATOR.
+	 * @return string  empty string when not found; separators normalized to DIRECTORY_SEPARATOR
 	 * @internal
 	 */
 	public static function findCommonDirectory(array $paths): string
@@ -88,7 +88,7 @@ class Helpers
 
 
 	/**
-	 * Parse the first docblock encountered in the provided string.
+	 * Parses the first docblock in a string into an array of annotation values.
 	 * @return array<string|string[]>  annotation name => value(s)
 	 * @internal
 	 */
@@ -135,7 +135,7 @@ class Helpers
 
 
 	/**
-	 * Escape a string to be used as a shell argument.
+	 * Escapes a string for safe use as a shell argument.
 	 * @internal
 	 */
 	public static function escapeArg(string $s): string

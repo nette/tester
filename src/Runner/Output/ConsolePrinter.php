@@ -16,7 +16,7 @@ use const DIRECTORY_SEPARATOR;
 
 
 /**
- * Console printer.
+ * Prints test progress and results to the console in dots, lines, or cider mode.
  */
 class ConsolePrinter implements Tester\Runner\OutputHandler
 {

@@ -12,7 +12,7 @@ use Tester\Runner\Test;
 
 
 /**
- * Test Anything Protocol, http://testanything.org
+ * Outputs test results in Test Anything Protocol format (http://testanything.org).
  */
 class TapPrinter implements Tester\Runner\OutputHandler
 {

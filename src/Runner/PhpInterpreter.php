@@ -12,7 +12,7 @@ use function count, in_array;
 
 
 /**
- * PHP command-line executable.
+ * Wraps a PHP executable and its resolved version, extensions, and command-line options.
  */
 class PhpInterpreter
 {
@@ -81,7 +81,10 @@ class PhpInterpreter
 	}
 
 
-	/** @param string[]  $args */
+	/**
+	 * Returns a new instance with additional command-line arguments appended.
+	 * @param string[]  $args
+	 */
 	public function withArguments(array $args): static
 	{
 		$me = clone $this;
@@ -90,6 +93,9 @@ class PhpInterpreter
 	}
 
 
+	/**
+	 * Returns a new instance with a -d INI option appended to the command line.
+	 */
 	public function withPhpIniOption(string $name, ?string $value = null): static
 	{
 		return $this->withArguments(['-d ' . $name . ($value === null ? '' : "=$value")]);

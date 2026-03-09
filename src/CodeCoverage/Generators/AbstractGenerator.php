@@ -12,7 +12,7 @@ use function in_array, is_array;
 
 
 /**
- * Code coverage report generator.
+ * Base class for code coverage report generators.
  */
 abstract class AbstractGenerator
 {

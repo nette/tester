@@ -9,7 +9,7 @@ namespace Tester;
 
 
 /**
- * Assertion exception.
+ * Carries assertion failure details including the actual and expected values.
  */
 class AssertException extends \Exception
 {

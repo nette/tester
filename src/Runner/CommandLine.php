@@ -11,7 +11,7 @@ use function array_slice, call_user_func, count, in_array, is_array;
 
 
 /**
- * Stupid command line arguments parser.
+ * Command-line arguments parser.
  */
 class CommandLine
 {

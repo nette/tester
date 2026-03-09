@@ -14,7 +14,7 @@ use const DIRECTORY_SEPARATOR;
 
 
 /**
- * Test runner.
+ * Discovers tests, schedules parallel jobs, and aggregates results.
  */
 class Runner
 {
@@ -185,7 +185,7 @@ class Runner
 
 
 	/**
-	 * Writes to output handlers.
+	 * Notifies all output handlers that a test has finished, updates the result cache, and stops on failure if configured.
 	 */
 	public function finishTest(Test $test): void
 	{
