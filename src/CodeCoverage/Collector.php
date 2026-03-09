@@ -11,7 +11,7 @@ use function defined, in_array;
 
 
 /**
- * Code coverage collector.
+ * Collects code coverage data from a test process and merges it into a shared file.
  */
 class Collector
 {
@@ -70,7 +70,7 @@ class Collector
 
 
 	/**
-	 * Flushes all gathered information. Effective only with PHPDBG collector.
+	 * Writes collected coverage to file and resets the oplog. Only effective with the PHPDBG engine.
 	 */
 	public static function flush(): void
 	{
@@ -81,7 +81,7 @@ class Collector
 
 
 	/**
-	 * Saves information about code coverage. Can be called repeatedly to free memory.
+	 * Merges the current coverage data into the shared coverage file using an exclusive lock.
 	 * @throws \LogicException
 	 */
 	public static function save(): void

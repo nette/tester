@@ -11,7 +11,7 @@ use function in_array, strlen;
 
 
 /**
- * Mock files.
+ * In-memory stream wrapper for testing file operations without touching the filesystem.
  */
 class FileMock
 {
@@ -32,7 +32,8 @@ class FileMock
 
 
 	/**
-	 * @return string  file name
+	 * Creates an in-memory virtual file with the given content and returns its mock:// URL.
+	 * @return string  mock:// URL usable with standard file functions
 	 */
 	public static function create(string $content = '', ?string $extension = null): string
 	{

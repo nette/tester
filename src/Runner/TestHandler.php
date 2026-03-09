@@ -16,7 +16,7 @@ use const DIRECTORY_SEPARATOR;
 
 
 /**
- * Default test behavior.
+ * Processes test annotations to initiate test variants and assess their results.
  */
 class TestHandler
 {

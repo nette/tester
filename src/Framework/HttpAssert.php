@@ -25,7 +25,7 @@ class HttpAssert
 
 
 	/**
-	 * Creates HTTP request, executes it and returns HttpTest instance for chaining expectations.
+	 * Sends an HTTP request and returns an HttpAssert instance for chaining assertions.
 	 * @param  string[]  $headers  headers as 'Name: Value' strings or name => value pairs
 	 * @param  array<string, string>  $cookies  cookie name => value pairs
 	 */
@@ -94,7 +94,7 @@ class HttpAssert
 
 
 	/**
-	 * Asserts HTTP response code matches expectation.
+	 * Asserts that the HTTP response code matches the expectation.
 	 * @param int|\Closure(int): bool  $expected
 	 */
 	public function expectCode(int|\Closure $expected): self
@@ -110,7 +110,7 @@ class HttpAssert
 
 
 	/**
-	 * Asserts HTTP response code does not match expectation.
+	 * Asserts that the HTTP response code does not match the expectation.
 	 * @param int|\Closure(int): bool  $expected
 	 */
 	public function denyCode(int|\Closure $expected): self
@@ -126,7 +126,7 @@ class HttpAssert
 
 
 	/**
-	 * Asserts HTTP response header matches expectation.
+	 * Asserts that a response header exists and optionally matches the expectation.
 	 * @param string|\Closure(string): bool|null  $expected
 	 */
 	public function expectHeader(
@@ -154,7 +154,7 @@ class HttpAssert
 
 
 	/**
-	 * Asserts HTTP response header does not match expectation.
+	 * Asserts that a response header does not exist or does not match the expectation.
 	 * @param string|\Closure(string): bool|null  $expected
 	 */
 	public function denyHeader(
@@ -186,7 +186,7 @@ class HttpAssert
 
 
 	/**
-	 * Asserts HTTP response body matches expectation.
+	 * Asserts that the response body matches the expectation.
 	 * @param string|\Closure(string): bool|null  $expected
 	 */
 	public function expectBody(
@@ -210,7 +210,7 @@ class HttpAssert
 
 
 	/**
-	 * Asserts HTTP response body does not match expectation.
+	 * Asserts that the response body does not match the expectation.
 	 * @param string|\Closure(string): bool|null  $expected
 	 */
 	public function denyBody(

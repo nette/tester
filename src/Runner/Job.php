@@ -13,7 +13,7 @@ use const DIRECTORY_SEPARATOR, PHP_OS_FAMILY, PHP_VERSION_ID;
 
 
 /**
- * Single test job.
+ * Spawns an isolated PHP process for a single test and captures its output and exit code.
  */
 class Job
 {

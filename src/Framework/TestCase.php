@@ -11,7 +11,7 @@ use function count, func_get_args, func_num_args, is_array, is_string, sprintf;
 
 
 /**
- * Single test case.
+ * Base class for xUnit-style test cases with setUp/tearDown hooks and data provider support.
  */
 class TestCase
 {
@@ -69,8 +69,8 @@ class TestCase
 
 
 	/**
-	 * Executes a specified test method within this test case, handling data providers and errors.
-	 * @param  ?array<string, mixed>  $args  arguments provided for the test method, bypassing data provider if provided.
+	 * Runs a single test method, resolving data providers and handling errors.
+	 * @param  ?array<string, mixed>  $args  if provided, bypasses data provider and uses these arguments directly
 	 */
 	public function runTest(string $method, ?array $args = null): void
 	{
@@ -183,7 +183,7 @@ class TestCase
 
 
 	/**
-	 * Executes the tearDown method and suppresses any errors, ensuring clean teardown in all cases.
+	 * Runs tearDown() while suppressing all errors and exceptions.
 	 */
 	private function silentTearDown(): void
 	{
@@ -198,7 +198,7 @@ class TestCase
 
 
 	/**
-	 * Skips the current test, optionally providing a reason for skipping.
+	 * Skips the current test with an optional reason message.
 	 */
 	protected function skip(string $message = ''): void
 	{
@@ -207,7 +207,7 @@ class TestCase
 
 
 	/**
-	 * Outputs a list of all test methods in the current test case. Used for Runner.
+	 * Prints the list of test methods to stdout for the runner to discover.
 	 * @param string[]  $methods
 	 */
 	private function sendMethodList(array $methods): void
@@ -238,7 +238,7 @@ class TestCase
 
 
 	/**
-	 * Prepares test data from specified data providers or default method parameters if no provider is specified.
+	 * Builds the list of argument sets for a test method from its data providers.
 	 * @param  string[]  $dataprovider
 	 * @return array<array<string, mixed>>
 	 */
@@ -283,14 +283,14 @@ class TestCase
 }
 
 /**
- * Errors specific to TestCase operations.
+ * Signals a TestCase configuration or runtime error.
  */
 class TestCaseException extends \Exception
 {
 }
 
 /**
- * Exception thrown when a test case or a test method is skipped.
+ * Signals that a test method was skipped.
  */
 class TestCaseSkippedException extends \Exception
 {

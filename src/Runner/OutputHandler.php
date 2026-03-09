@@ -9,7 +9,7 @@ namespace Tester\Runner;
 
 
 /**
- * Runner output.
+ * Receives test lifecycle events from the runner to produce output.
  */
 interface OutputHandler
 {

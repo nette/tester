@@ -11,7 +11,7 @@ use function array_map, implode, is_array, is_int;
 
 
 /**
- * Test represents one result.
+ * Immutable value object representing a single test and its execution result.
  */
 class Test
 {
@@ -95,7 +95,7 @@ class Test
 
 
 	/**
-	 * Full output (stdout + stderr)
+	 * Returns combined stdout and stderr output.
 	 */
 	public function getOutput(): string
 	{

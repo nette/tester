@@ -13,7 +13,7 @@ use function sprintf;
 
 
 /**
- * JUnit xml format printer.
+ * Outputs test results in JUnit XML format.
  */
 class JUnitPrinter implements Tester\Runner\OutputHandler
 {

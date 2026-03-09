@@ -25,7 +25,7 @@ class Dumper
 
 
 	/**
-	 * Dumps information about a variable in readable format.
+	 * Converts a variable to a compact single-line string representation.
 	 */
 	public static function toLine(mixed $var): string
 	{
@@ -85,9 +85,6 @@ class Dumper
 	}
 
 
-	/**
-	 * Formats object to line.
-	 */
 	private static function objectToLine(object $object): string
 	{
 		$line = $object::class;
@@ -100,7 +97,7 @@ class Dumper
 
 
 	/**
-	 * Dumps variable in PHP format.
+	 * Converts a variable to a pretty-printed PHP representation.
 	 */
 	public static function toPhp(mixed $var): string
 	{
@@ -108,9 +105,6 @@ class Dumper
 	}
 
 
-	/**
-	 * Returns object's stripped hash.
-	 */
 	private static function hash(object $object): string
 	{
 		return '#' . substr(md5(spl_object_hash($object)), 0, 4);
@@ -292,6 +286,9 @@ class Dumper
 	}
 
 
+	/**
+	 * Formats an exception with its message, trace, and diff command into a human-readable string.
+	 */
 	public static function dumpException(\Throwable $e): string
 	{
 		$trace = $e->getTrace();
@@ -393,7 +390,7 @@ class Dumper
 
 
 	/**
-	 * Dumps data to folder 'output'.
+	 * Saves assertion dump to the output directory (configured by $dumpDir).
 	 */
 	public static function saveOutput(string $testFile, mixed $content, string $suffix = ''): string
 	{

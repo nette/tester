@@ -16,19 +16,19 @@ use const PHP_OUTPUT_HANDLER_FLUSHABLE, PHP_SAPI;
  */
 class Environment
 {
-	/** Should Test use console colors? */
+	/** Enable console colors (1 = yes, 0 = no) */
 	public const VariableColors = 'NETTE_TESTER_COLORS';
 
-	/** Test is run by Runner */
+	/** Set when the test is run by Runner */
 	public const VariableRunner = 'NETTE_TESTER_RUNNER';
 
-	/** Code coverage engine */
+	/** Code coverage engine name */
 	public const VariableCoverageEngine = 'NETTE_TESTER_COVERAGE_ENGINE';
 
-	/** Code coverage file */
+	/** Path to the code coverage file */
 	public const VariableCoverage = 'NETTE_TESTER_COVERAGE';
 
-	/** Thread number when run tests in multi threads */
+	/** Thread number in parallel execution */
 	public const VariableThread = 'NETTE_TESTER_THREAD';
 
 	/** @deprecated use Environment::VariableColors */
@@ -52,7 +52,7 @@ class Environment
 
 
 	/**
-	 * Configures testing environment.
+	 * Sets up error handling, colors, code coverage, and assertion tracking for the test process.
 	 */
 	public static function setup(): void
 	{
@@ -78,7 +78,7 @@ class Environment
 
 
 	/**
-	 * Configures colored output.
+	 * Detects whether ANSI colors should be used and wraps output buffer to strip them when not.
 	 */
 	public static function setupColors(): void
 	{
@@ -101,7 +101,7 @@ class Environment
 
 
 	/**
-	 * Configures PHP error handling.
+	 * Sets error_reporting, exception handler, and shutdown handler for clean test output.
 	 */
 	public static function setupErrors(): void
 	{
@@ -175,8 +175,8 @@ class Environment
 
 
 	/**
-	 * Locks the parallel tests.
-	 * @param  string  $path  lock store directory
+	 * Prevents two parallel tests with the same name from running at the same time.
+	 * @param  string  $path  directory where the lock file is created
 	 */
 	public static function lock(string $name = '', string $path = ''): void
 	{
@@ -190,7 +190,7 @@ class Environment
 
 
 	/**
-	 * Returns current test annotations.
+	 * Returns annotations from the top-level test file's docblock.
 	 * @return array<string|string[]>
 	 */
 	public static function getTestAnnotations(): array
@@ -203,7 +203,7 @@ class Environment
 
 
 	/**
-	 * Removes keyword final from source codes.
+	 * Strips the `final` keyword from PHP source files on load, allowing subclassing of final classes.
 	 */
 	public static function bypassFinals(): void
 	{
@@ -222,7 +222,7 @@ class Environment
 
 
 	/**
-	 * Loads data according to the file annotation or specified by Tester\Runner\TestHandler::initiateDataProvider()
+	 * Returns the current data set passed via @dataProvider annotation or --dataprovider CLI argument.
 	 * @return array<string, mixed>
 	 */
 	public static function loadData(): array

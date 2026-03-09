@@ -11,7 +11,7 @@ use function implode, is_string, lcfirst, preg_match;
 
 
 /**
- * Expectations for more complex assertions formulation.
+ * Builds a chain of Assert constraints to use inside Assert::equal() for partial value matching.
  *
  * @method static self same($expected)
  * @method static self notSame($expected)

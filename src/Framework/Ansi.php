@@ -64,12 +64,18 @@ class Ansi
 	}
 
 
+	/**
+	 * Returns ANSI sequence to show the cursor.
+	 */
 	public static function showCursor(): string
 	{
 		return "\e[?25h";
 	}
 
 
+	/**
+	 * Returns ANSI sequence to hide the cursor.
+	 */
 	public static function hideCursor(): string
 	{
 		return "\e[?25l";
