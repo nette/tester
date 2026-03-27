@@ -38,7 +38,7 @@ class Logger implements Tester\Runner\OutputHandler
 		$this->count = 0;
 		$this->results = [Test::Passed => 0, Test::Skipped => 0, Test::Failed => 0];
 		fwrite($this->file, 'PHP ' . $this->runner->getInterpreter()->getVersion()
-			. ' | ' . $this->runner->getInterpreter()->getCommandLine()
+			. ' | ' . $this->runner->getInterpreter()->getCommandLineStr()
 			. " | {$this->runner->threadCount} threads\n\n");
 	}
 

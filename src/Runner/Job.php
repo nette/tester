@@ -95,7 +95,7 @@ class Job
 		$this->duration = -microtime(as_float: true);
 		$this->proc = proc_open(
 			$this->interpreter
-				->withArguments(['-d register_argc_argv=on', $this->test->getFile(), ...$args])
+				->withArguments(['-d', 'register_argc_argv=on', $this->test->getFile(), ...$args])
 				->getCommandLine(),
 			[
 				['pipe', 'r'],

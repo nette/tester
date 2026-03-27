@@ -16,7 +16,7 @@ use function count, in_array;
  */
 class PhpInterpreter
 {
-	private string $commandLine;
+	private array $commandLine;
 	private bool $cgi;
 	private \stdClass $info;
 	private string $error;
@@ -25,14 +25,10 @@ class PhpInterpreter
 	/** @param string[]  $args */
 	public function __construct(string $path, array $args = [])
 	{
-		$this->commandLine = Helpers::escapeArg($path);
 		$proc = @proc_open( // @ is escalated to exception
-			$this->commandLine . ' --version',
+			[$path, '--version'],
 			[['pipe', 'r'], ['pipe', 'w'], ['pipe', 'w']],
 			$pipes,
-			null,
-			null,
-			['bypass_shell' => true],
 		);
 		if ($proc === false) {
 			throw new \Exception("Cannot run PHP interpreter $path. Use -p option.");
@@ -42,20 +38,22 @@ class PhpInterpreter
 		$output = stream_get_contents($pipes[1]);
 		proc_close($proc);
 
-		$args = ' ' . implode(' ', array_map([Helpers::class, 'escapeArg'], $args));
+		$this->commandLine = array_merge([$path], $args);
 		if (str_contains($output, 'phpdbg')) {
-			$args = ' -qrrb -S cli' . $args;
+			array_push($this->commandLine, '-qrrb', '-S', 'cli');
 		}
 
-		$this->commandLine .= rtrim($args);
-
 		$proc = proc_open(
-			$this->commandLine . ' -d register_argc_argv=on ' . Helpers::escapeArg(__DIR__ . '/info.php') . ' serialized',
+			array_merge(
+				$this->commandLine,
+				[
+					'-d', 'register_argc_argv=on',
+					__DIR__ . '/info.php',
+					'serialized',
+				],
+			),
 			[['pipe', 'r'], ['pipe', 'w'], ['pipe', 'w']],
 			$pipes,
-			null,
-			null,
-			['bypass_shell' => true],
 		) ?: throw new \Exception("Unable to run $path.");
 
 		$output = stream_get_contents($pipes[1]);
@@ -88,7 +86,7 @@ class PhpInterpreter
 	public function withArguments(array $args): static
 	{
 		$me = clone $this;
-		$me->commandLine .= ' ' . implode(' ', array_map([Helpers::class, 'escapeArg'], $args));
+		array_push($me->commandLine, ...$args);
 		return $me;
 	}
 
@@ -98,13 +96,19 @@ class PhpInterpreter
 	 */
 	public function withPhpIniOption(string $name, ?string $value = null): static
 	{
-		return $this->withArguments(['-d ' . $name . ($value === null ? '' : "=$value")]);
+		return $this->withArguments(['-d', $name . ($value === null ? '' : "=$value")]);
 	}
 
 
-	public function getCommandLine(): string
+	public function getCommandLine(): array
 	{
 		return $this->commandLine;
+	}
+
+
+	public function getCommandLineStr(): string
+	{
+		return implode(' ', array_map([Helpers::class, 'escapeArg'], $this->commandLine));
 	}
 
 
