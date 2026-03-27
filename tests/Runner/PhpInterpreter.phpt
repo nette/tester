@@ -35,6 +35,6 @@ Assert::count($count, $engines);
 
 // createInterpreter() uses same php.ini as parent
 if (!$interpreter->isCgi()) {
-	$output = shell_exec($interpreter->withArguments(['-r echo php_ini_loaded_file();'])->getCommandLine());
+	$output = shell_exec($interpreter->withArguments(['-r', 'echo php_ini_loaded_file();'])->getCommandLineStr());
 	Assert::same(php_ini_loaded_file(), $output);
 }
