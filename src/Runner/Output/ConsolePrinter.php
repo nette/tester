@@ -67,7 +67,7 @@ class ConsolePrinter implements Tester\Runner\OutputHandler
 			$this->mode = self::ModeLines;
 		}
 		fwrite($this->file, $this->runner->getInterpreter()->getShortInfo()
-			. ' | ' . $this->runner->getInterpreter()->getCommandLine()
+			. ' | ' . $this->runner->getInterpreter()->getCommandLineStr()
 			. " | {$this->runner->threadCount} thread" . ($this->runner->threadCount > 1 ? 's' : '') . "\n\n");
 	}
 
