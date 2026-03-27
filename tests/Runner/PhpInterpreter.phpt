@@ -10,6 +10,9 @@ Assert::true($interpreter->hasExtension('DaTe'));
 Assert::false($interpreter->hasExtension('foo-bar'));
 
 Assert::contains(PHP_BINARY, $interpreter->getCommandLine());
+Assert::type('list', $interpreter->getCommand());
+Assert::same(PHP_BINARY, $interpreter->getCommand()[0]);
+Assert::same([...$interpreter->getCommand(), '-v'], $interpreter->withArguments(['-v'])->getCommand());
 Assert::same(PHP_VERSION, $interpreter->getVersion());
 Assert::same(str_contains(PHP_SAPI, 'cgi'), $interpreter->isCgi());
 
@@ -35,6 +38,6 @@ Assert::count($count, $engines);
 
 // createInterpreter() uses same php.ini as parent
 if (!$interpreter->isCgi()) {
-	$output = shell_exec($interpreter->withArguments(['-r echo php_ini_loaded_file();'])->getCommandLine());
+	$output = shell_exec($interpreter->withArguments(['-r', 'echo php_ini_loaded_file();'])->getCommandLine());
 	Assert::same(php_ini_loaded_file(), $output);
 }

@@ -95,8 +95,8 @@ class Job
 		$this->duration = -microtime(as_float: true);
 		$this->proc = proc_open(
 			$this->interpreter
-				->withArguments(['-d register_argc_argv=on', $this->test->getFile(), ...$args])
-				->getCommandLine(),
+				->withArguments(['-d', 'register_argc_argv=on', $this->test->getFile(), ...$args])
+				->getCommand(),
 			[
 				['pipe', 'r'],
 				['pipe', 'w'],
@@ -104,8 +104,6 @@ class Job
 			],
 			$pipes,
 			dirname($this->test->getFile()),
-			null,
-			['bypass_shell' => true],
 		) ?: throw new \RuntimeException('Cannot start test process.');
 
 		foreach (array_keys($this->envVars) as $name) {

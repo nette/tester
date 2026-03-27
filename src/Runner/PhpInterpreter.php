@@ -8,7 +8,7 @@
 namespace Tester\Runner;
 
 use Tester\Helpers;
-use function count, in_array;
+use function array_map, count, explode, implode, in_array, str_contains;
 
 
 /**
@@ -16,7 +16,8 @@ use function count, in_array;
  */
 class PhpInterpreter
 {
-	private string $commandLine;
+	/** @var list<string> */
+	private array $commandLine;
 	private bool $cgi;
 	private \stdClass $info;
 	private string $error;
@@ -25,14 +26,10 @@ class PhpInterpreter
 	/** @param list<string>  $args */
 	public function __construct(string $path, array $args = [])
 	{
-		$this->commandLine = Helpers::escapeArg($path);
 		$proc = @proc_open( // @ is escalated to exception
-			$this->commandLine . ' --version',
+			[$path, '--version'],
 			[['pipe', 'r'], ['pipe', 'w'], ['pipe', 'w']],
 			$pipes,
-			null,
-			null,
-			['bypass_shell' => true],
 		);
 		if ($proc === false) {
 			throw new \Exception("Cannot run PHP interpreter $path. Use -p option.");
@@ -42,20 +39,16 @@ class PhpInterpreter
 		$output = stream_get_contents($pipes[1]);
 		proc_close($proc);
 
-		$args = ' ' . implode(' ', array_map([Helpers::class, 'escapeArg'], $args));
 		if (str_contains($output, 'phpdbg')) {
-			$args = ' -qrrb -S cli' . $args;
+			$args = ['-qrrb', '-S', 'cli', ...$args];
 		}
 
-		$this->commandLine .= rtrim($args);
+		$this->commandLine = [$path, ...$args];
 
 		$proc = proc_open(
-			$this->commandLine . ' -d register_argc_argv=on ' . Helpers::escapeArg(__DIR__ . '/info.php') . ' serialized',
+			[...$this->commandLine, '-d', 'register_argc_argv=on', __DIR__ . '/info.php', 'serialized'],
 			[['pipe', 'r'], ['pipe', 'w'], ['pipe', 'w']],
 			$pipes,
-			null,
-			null,
-			['bypass_shell' => true],
 		) ?: throw new \Exception("Unable to run $path.");
 
 		$output = stream_get_contents($pipes[1]);
@@ -88,7 +81,7 @@ class PhpInterpreter
 	public function withArguments(array $args): static
 	{
 		$me = clone $this;
-		$me->commandLine .= ' ' . implode(' ', array_map([Helpers::class, 'escapeArg'], $args));
+		$me->commandLine = [...$me->commandLine, ...$args];
 		return $me;
 	}
 
@@ -98,11 +91,18 @@ class PhpInterpreter
 	 */
 	public function withPhpIniOption(string $name, ?string $value = null): static
 	{
-		return $this->withArguments(['-d ' . $name . ($value === null ? '' : "=$value")]);
+		return $this->withArguments(['-d', $name . ($value === null ? '' : "=$value")]);
 	}
 
 
 	public function getCommandLine(): string
+	{
+		return implode(' ', array_map([Helpers::class, 'escapeArg'], $this->commandLine));
+	}
+
+
+	/** @return list<string> */
+	public function getCommand(): array
 	{
 		return $this->commandLine;
 	}
