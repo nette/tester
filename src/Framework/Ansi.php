@@ -1,11 +1,9 @@
-<?php
+<?php declare(strict_types=1);
 
 /**
  * This file is part of the Nette Tester.
  * Copyright (c) 2009 David Grudl (https://davidgrudl.com)
  */
-
-declare(strict_types=1);
 
 namespace Tester;
 
@@ -49,6 +47,28 @@ class Ansi
 
 
 	/**
+	 * Wraps text with OSC 8 hyperlink sequence.
+	 * Supported by: Windows Terminal, iTerm2, GNOME Terminal, Konsole, VS Code Terminal.
+	 * Unsupported terminals display just the text.
+	 */
+	public static function link(string $text, string $url): string
+	{
+		return "\e]8;;{$url}\e\\{$text}\e]8;;\e\\";
+	}
+
+
+	/**
+	 * Creates file:// URL from absolute path, optionally with line number.
+	 */
+	public static function fileUrl(string $path, ?int $line = null): string
+	{
+		$path = strtr($path, '\\', '/');
+		$url = 'file:///' . ltrim($path, '/');
+		return $line !== null ? "$url:$line" : $url;
+	}
+
+
+	/**
 	 * Returns ANSI sequence to turn on bold text.
 	 */
 	public static function boldOn(): string
@@ -66,15 +86,38 @@ class Ansi
 	}
 
 
+	/**
+	 * Returns ANSI sequence to show the cursor.
+	 */
 	public static function showCursor(): string
 	{
 		return "\e[?25h";
 	}
 
 
+	/**
+	 * Returns ANSI sequence to hide the cursor.
+	 */
 	public static function hideCursor(): string
 	{
 		return "\e[?25l";
+	}
+
+
+	/**
+	 * Returns ANSI sequence to move the cursor by the given number of columns (x) and rows (y).
+	 */
+	public static function cursorMove(int $x = 0, int $y = 0): string
+	{
+		return match (true) {
+			$x < 0 => "\e[" . (-$x) . 'D',
+			$x > 0 => "\e[{$x}C",
+			default => '',
+		} . match (true) {
+			$y < 0 => "\e[" . (-$y) . 'A',
+			$y > 0 => "\e[{$y}B",
+			default => '',
+		};
 	}
 
 
@@ -92,7 +135,7 @@ class Ansi
 	 */
 	public static function stripAnsi(string $text): string
 	{
-		return preg_replace('/\e\[[0-?]*[ -\/]*[@-~]|\e\][^\x07]*(\x07|\e\\\)/', '', $text);
+		return preg_replace('/\e\[[0-?]*[ -\/]*[@-~]|\e\][^\x07]*?(\x07|\e\\\)/', '', $text);
 	}
 
 
@@ -110,7 +153,57 @@ class Ansi
 	 */
 	public static function textWidth(string $text): int
 	{
+		$text = self::stripAnsi($text);
 		return preg_match_all('/./su', $text)
 			+ preg_match_all('/[\x{1F300}-\x{1F9FF}]/u', $text); // emoji are 2-wide
+	}
+
+
+	/**
+	 * Pads text to specified display width.
+	 * @param STR_PAD_LEFT|STR_PAD_RIGHT|STR_PAD_BOTH  $type
+	 */
+	public static function pad(
+		string $text,
+		int $width,
+		string $char = ' ',
+		int $type = STR_PAD_RIGHT,
+	): string
+	{
+		$padding = $width - self::textWidth($text);
+		if ($padding <= 0) {
+			return $text;
+		}
+
+		return match ($type) {
+			STR_PAD_LEFT => str_repeat($char, $padding) . $text,
+			STR_PAD_RIGHT => $text . str_repeat($char, $padding),
+			STR_PAD_BOTH => str_repeat($char, intdiv($padding, 2)) . $text . str_repeat($char, $padding - intdiv($padding, 2)),
+		};
+	}
+
+
+	/**
+	 * Truncates text to max display width, adding ellipsis if needed.
+	 */
+	public static function truncate(string $text, int $maxWidth, string $ellipsis = '…'): string
+	{
+		if (self::textWidth($text) <= $maxWidth) {
+			return $text;
+		}
+
+		$maxWidth -= self::textWidth($ellipsis);
+		$res = '';
+		$width = 0;
+		foreach (preg_split('//u', $text, -1, PREG_SPLIT_NO_EMPTY) as $char) {
+			$charWidth = preg_match('/[\x{1F300}-\x{1F9FF}]/u', $char) ? 2 : 1;
+			if ($width + $charWidth > $maxWidth) {
+				break;
+			}
+			$res .= $char;
+			$width += $charWidth;
+		}
+
+		return $res . $ellipsis;
 	}
 }

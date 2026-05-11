@@ -1,34 +1,32 @@
-<?php
+<?php declare(strict_types=1);
 
 /**
  * This file is part of the Nette Tester.
  * Copyright (c) 2009 David Grudl (https://davidgrudl.com)
  */
 
-declare(strict_types=1);
-
 namespace Tester\Runner;
 
 use Tester\Environment;
 use Tester\Helpers;
 use function count, in_array;
-use const DIRECTORY_SEPARATOR, GLOB_ONLYDIR, PATHINFO_FILENAME;
+use const DIRECTORY_SEPARATOR;
 
 
 /**
- * Test runner.
+ * Discovers tests, schedules parallel jobs, and aggregates results.
  */
 class Runner
 {
-	/** @var string[]  paths to test files/directories */
+	/** @var list<string>  paths to test files/directories */
 	public array $paths = [];
 
-	/** @var string[] */
+	/** @var list<string> */
 	public array $ignoreDirs = ['vendor'];
 	public int $threadCount = 1;
 	public TestHandler $testHandler;
 
-	/** @var OutputHandler[] */
+	/** @var list<OutputHandler> */
 	public array $outputHandlers = [];
 	public bool $stopOnFail = false;
 	private PhpInterpreter $interpreter;
@@ -44,6 +42,8 @@ class Runner
 
 	/** @var array<string, int>  test signature => result (Test::Prepared|Passed|Failed|Skipped) */
 	private array $lastResults = [];
+	private int $jobCount = 0;
+	private int $finishedCount = 0;
 
 
 	public function __construct(PhpInterpreter $interpreter)
@@ -95,6 +95,8 @@ class Runner
 		foreach ($this->paths as $path) {
 			$this->findTests($path);
 		}
+		$this->finishedCount = 0;
+		$this->jobCount = count($this->jobs);
 
 		if ($this->tempDir) {
 			usort(
@@ -104,7 +106,6 @@ class Runner
 		}
 
 		$threads = range(1, $this->threadCount);
-
 		$async = $this->threadCount > 1 && count($this->jobs) > 1;
 
 		try {
@@ -112,10 +113,21 @@ class Runner
 				while ($threads && $this->jobs) {
 					$running[] = $job = array_shift($this->jobs);
 					$job->setEnvironmentVariable(Environment::VariableThread, (string) array_shift($threads));
+					foreach ($this->outputHandlers as $handler) {
+						if (method_exists($handler, 'jobStarted')) {
+							$handler->jobStarted($job);
+						}
+					}
 					$job->run(async: $async);
 				}
 
 				if ($async) {
+					foreach ($this->outputHandlers as $handler) {
+						if (method_exists($handler, 'tick')) {
+							$handler->tick($running);
+						}
+					}
+
 					Job::waitForActivity($running);
 				}
 
@@ -126,6 +138,7 @@ class Runner
 
 					if (!$job->isRunning()) {
 						$threads[] = $job->getEnvironmentVariable(Environment::VariableThread);
+						$this->finishedCount++;
 						$this->testHandler->assess($job);
 						unset($running[$key]);
 					}
@@ -187,7 +200,7 @@ class Runner
 
 
 	/**
-	 * Writes to output handlers.
+	 * Notifies all output handlers that a test has finished, updates the result cache, and stops on failure if configured.
 	 */
 	public function finishTest(Test $test): void
 	{
@@ -213,6 +226,18 @@ class Runner
 	public function getInterpreter(): PhpInterpreter
 	{
 		return $this->interpreter;
+	}
+
+
+	public function getJobCount(): int
+	{
+		return $this->jobCount;
+	}
+
+
+	public function getFinishedCount(): int
+	{
+		return $this->finishedCount;
 	}
 
 

@@ -1,11 +1,9 @@
-<?php
+<?php declare(strict_types=1);
 
 /**
  * This file is part of the Nette Tester.
  * Copyright (c) 2009 David Grudl (https://davidgrudl.com)
  */
-
-declare(strict_types=1);
 
 namespace Tester\CodeCoverage\Generators;
 
@@ -14,7 +12,6 @@ use DOMElement;
 use Tester\CodeCoverage\PhpParser;
 use Tester\Helpers;
 use function count;
-use const FILE_SKIP_EMPTY_LINES;
 
 
 class CloverXMLGenerator extends AbstractGenerator
@@ -86,7 +83,7 @@ class CloverXMLGenerator extends AbstractGenerator
 
 			if (empty($this->data[$file])) {
 				$coverageData = null;
-				$this->totalSum += count(file($file, FILE_SKIP_EMPTY_LINES));
+				$this->totalSum += count(file($file, FILE_SKIP_EMPTY_LINES) ?: []);
 			} else {
 				$coverageData = $this->data[$file];
 			}
@@ -201,7 +198,7 @@ class CloverXMLGenerator extends AbstractGenerator
 		$coveredCount = 0;
 
 		if ($coverageData === null) { // Never loaded file
-			$count = max(1, $info->end - $info->start - 2);
+			$count = (int) max(1, $info->end - $info->start - 2);
 		} else {
 			for ($i = $info->start; $i <= $info->end; $i++) {
 				if (isset($coverageData[$i]) && $coverageData[$i] !== self::LineDead) {

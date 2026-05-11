@@ -1,11 +1,9 @@
-<?php
+<?php declare(strict_types=1);
 
 /**
  * This file is part of the Nette Tester.
  * Copyright (c) 2009 David Grudl (https://davidgrudl.com)
  */
-
-declare(strict_types=1);
 
 namespace Tester\Runner;
 
@@ -15,11 +13,11 @@ use Tester\Dumper;
 use Tester\Environment;
 use Tester\Helpers;
 use function count, in_array;
-use const PATHINFO_EXTENSION, PHP_SAPI;
+use const PHP_SAPI;
 
 
 /**
- * CLI Tester.
+ * Parses CLI options, configures the runner, and executes the test suite.
  */
 class CliTester
 {
@@ -160,19 +158,23 @@ class CliTester
 			],
 		);
 
-		if (isset($_SERVER['argv'])) {
-			if (($tmp = array_search('-l', $_SERVER['argv'], strict: true))
-				|| ($tmp = array_search('-log', $_SERVER['argv'], strict: true))
-				|| ($tmp = array_search('--log', $_SERVER['argv'], strict: true))
+		/** @var list<string> $argv */
+		$argv = $_SERVER['argv'] ?? [];
+		if ($argv) {
+			if (($tmp = array_search('-l', $argv, strict: true))
+				|| ($tmp = array_search('-log', $argv, strict: true))
+				|| ($tmp = array_search('--log', $argv, strict: true))
 			) {
-				$_SERVER['argv'][$tmp] = '-o';
-				$_SERVER['argv'][$tmp + 1] = 'log:' . $_SERVER['argv'][$tmp + 1];
+				$argv[$tmp] = '-o';
+				$argv[$tmp + 1] = 'log:' . $argv[$tmp + 1];
 			}
 
-			if ($tmp = array_search('--tap', $_SERVER['argv'], strict: true)) {
-				unset($_SERVER['argv'][$tmp]);
-				$_SERVER['argv'] = array_merge($_SERVER['argv'], ['-o', 'tap']);
+			if ($tmp = array_search('--tap', $argv, strict: true)) {
+				unset($argv[$tmp]);
+				$argv = array_merge($argv, ['-o', 'tap']);
 			}
+
+			$_SERVER['argv'] = $argv;
 		}
 
 		$this->options = $cmd->parse();
@@ -265,7 +267,7 @@ class CliTester
 	{
 		$engines = $this->interpreter->getCodeCoverageEngines();
 		if (count($engines) < 1) {
-			throw new \Exception("Code coverage functionality requires Xdebug or PCOV extension or PHPDBG SAPI (used {$this->interpreter->getCommandLine()})");
+			throw new \Exception("Code coverage functionality requires Xdebug or PCOV extension or PHPDBG SAPI (used {$this->interpreter->getCommandLineStr()})");
 		}
 
 		file_put_contents($this->options['--coverage'], '');

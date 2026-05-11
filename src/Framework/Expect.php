@@ -1,11 +1,9 @@
-<?php
+<?php declare(strict_types=1);
 
 /**
  * This file is part of the Nette Tester.
  * Copyright (c) 2009 David Grudl (https://davidgrudl.com)
  */
-
-declare(strict_types=1);
 
 namespace Tester;
 
@@ -13,7 +11,7 @@ use function implode, is_string, lcfirst, preg_match;
 
 
 /**
- * Expectations for more complex assertions formulation.
+ * Builds a chain of Assert constraints to use inside Assert::equal() for partial value matching.
  *
  * @method static self same($expected)
  * @method static self notSame($expected)
@@ -51,7 +49,7 @@ use function implode, is_string, lcfirst, preg_match;
  */
 class Expect
 {
-	/** @var array<self|(callable(mixed): bool)|\stdClass> */
+	/** @var list<self|(callable(mixed): bool)|\stdClass> */
 	private array $constraints = [];
 
 
@@ -83,8 +81,8 @@ class Expect
 	}
 
 
-	/** @param callable(mixed): bool  $constraint  returns false to indicate failure */
-	public function and(callable $constraint): self
+	/** @param (callable(mixed): bool)|self  $constraint  returns false to indicate failure */
+	public function and(callable|self $constraint): self
 	{
 		$this->constraints[] = $constraint;
 		return $this;

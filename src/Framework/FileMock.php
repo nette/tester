@@ -1,26 +1,23 @@
-<?php
+<?php declare(strict_types=1);
 
 /**
  * This file is part of the Nette Tester.
  * Copyright (c) 2009 David Grudl (https://davidgrudl.com)
  */
 
-declare(strict_types=1);
-
 namespace Tester;
 
 use function in_array, strlen;
-use const SEEK_CUR, SEEK_END, STREAM_META_TOUCH;
 
 
 /**
- * Mock files.
+ * In-memory stream wrapper for testing file operations without touching the filesystem.
  */
 class FileMock
 {
 	private const Protocol = 'mock';
 
-	/** @var string[] */
+	/** @var array<string, string> */
 	public static array $files = [];
 
 	/** @var resource used by PHP itself */
@@ -35,7 +32,8 @@ class FileMock
 
 
 	/**
-	 * @return string  file name
+	 * Creates an in-memory virtual file with the given content and returns its mock:// URL.
+	 * @return string  mock:// URL usable with standard file functions
 	 */
 	public static function create(string $content = '', ?string $extension = null): string
 	{
@@ -212,7 +210,7 @@ class FileMock
 	{
 		$bt = debug_backtrace(0, 3);
 		if (isset($bt[2]['function'])) {
-			$message = $bt[2]['function'] . '(' . @$bt[2]['args'][0] . '): ' . $message;
+			$message = $bt[2]['function'] . '(' . ($bt[2]['args'][0] ?? '') . '): ' . $message;
 		}
 
 		trigger_error($message, E_USER_WARNING);

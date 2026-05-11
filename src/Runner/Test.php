@@ -1,11 +1,9 @@
-<?php
+<?php declare(strict_types=1);
 
 /**
  * This file is part of the Nette Tester.
  * Copyright (c) 2009 David Grudl (https://davidgrudl.com)
  */
-
-declare(strict_types=1);
 
 namespace Tester\Runner;
 
@@ -13,7 +11,7 @@ use function array_map, implode, is_array, is_int;
 
 
 /**
- * Test represents one result.
+ * Immutable value object representing a single test and its execution result.
  */
 class Test
 {
@@ -40,7 +38,7 @@ class Test
 	private int $result = self::Prepared;
 	private ?float $duration = null;
 
-	/** @var string[]|string[][] */
+	/** @var list<string|array{string, string}> */
 	private $args = [];
 
 
@@ -58,7 +56,7 @@ class Test
 
 
 	/**
-	 * @return string[]|string[][]
+	 * @return list<string|array{string, string}>
 	 */
 	public function getArguments(): array
 	{
@@ -77,7 +75,7 @@ class Test
 	/** @return self::Failed|self::Passed|self::Skipped */
 	public function getResult(): int
 	{
-		return $this->result;
+		return $this->result ?: throw new \LogicException('Result is not set yet.');
 	}
 
 
@@ -97,7 +95,7 @@ class Test
 
 
 	/**
-	 * Full output (stdout + stderr)
+	 * Returns combined stdout and stderr output.
 	 */
 	public function getOutput(): string
 	{
@@ -117,7 +115,7 @@ class Test
 	}
 
 
-	/** @param array<int|string, int|string|string[]>  $args */
+	/** @param array<int|string|array<int|string>>  $args */
 	public function withArguments(array $args): static
 	{
 		if ($this->hasResult()) {

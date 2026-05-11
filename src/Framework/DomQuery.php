@@ -1,16 +1,14 @@
-<?php
+<?php declare(strict_types=1);
 
 /**
  * This file is part of the Nette Tester.
  * Copyright (c) 2009 David Grudl (https://davidgrudl.com)
  */
 
-declare(strict_types=1);
-
 namespace Tester;
 
 use Dom;
-use const PHP_VERSION_ID, PREG_SET_ORDER;
+use const PHP_VERSION_ID;
 
 
 /**
@@ -76,14 +74,14 @@ class DomQuery extends \SimpleXMLElement
 
 	/**
 	 * Returns array of elements matching CSS selector.
-	 * @return DomQuery[]
+	 * @return list<self>
 	 */
 	public function find(string $selector): array
 	{
 		if (PHP_VERSION_ID < 80400) {
-			return str_starts_with($selector, ':scope')
+			return (str_starts_with($selector, ':scope')
 				? $this->xpath('self::' . self::css2xpath(substr($selector, 6)))
-				: $this->xpath('descendant::' . self::css2xpath($selector));
+				: $this->xpath('descendant::' . self::css2xpath($selector))) ?: [];
 		}
 
 		return array_map(

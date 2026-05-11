@@ -1,10 +1,8 @@
-<?php
+<?php declare(strict_types=1);
 
 /**
  * @phpVersion 8.1
  */
-
-declare(strict_types=1);
 
 use Tester\Assert;
 use Tester\Dumper;

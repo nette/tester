@@ -1,15 +1,13 @@
-<?php
+<?php declare(strict_types=1);
 
 /**
  * This file is part of the Nette Tester.
  * Copyright (c) 2009 David Grudl (https://davidgrudl.com)
  */
 
-declare(strict_types=1);
-
 namespace Tester;
 
-use function curl_error, curl_exec, curl_getinfo, curl_init, curl_setopt, explode, is_int, is_string, rtrim, str_contains, strtoupper, substr, trim;
+use function curl_error, curl_exec, curl_getinfo, curl_init, curl_setopt, explode, is_int, is_string, str_contains, strtoupper, substr, trim;
 
 
 /**
@@ -27,7 +25,7 @@ class HttpAssert
 
 
 	/**
-	 * Creates HTTP request, executes it and returns HttpTest instance for chaining expectations.
+	 * Sends an HTTP request and returns an HttpAssert instance for chaining assertions.
 	 * @param  string[]  $headers  headers as 'Name: Value' strings or name => value pairs
 	 * @param  array<string, string>  $cookies  cookie name => value pairs
 	 */
@@ -40,12 +38,11 @@ class HttpAssert
 		?string $body = null,
 	): self
 	{
-		$ch = curl_init();
-		curl_setopt($ch, CURLOPT_URL, $url);
+		$ch = curl_init($url);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 		curl_setopt($ch, CURLOPT_HEADER, true);
 		curl_setopt($ch, CURLOPT_FOLLOWLOCATION, $follow);
-		curl_setopt($ch, CURLOPT_CUSTOMREQUEST, strtoupper($method));
+		curl_setopt($ch, CURLOPT_CUSTOMREQUEST, strtoupper($method) ?: 'GET');
 
 		if ($headers) {
 			$headerList = [];
@@ -64,15 +61,15 @@ class HttpAssert
 		}
 
 		if ($cookies) {
-			$cookieString = '';
+			$pairs = [];
 			foreach ($cookies as $name => $value) {
-				$cookieString .= "$name=$value; ";
+				$pairs[] = "$name=$value";
 			}
-			curl_setopt($ch, CURLOPT_COOKIE, rtrim($cookieString, '; '));
+			curl_setopt($ch, CURLOPT_COOKIE, implode('; ', $pairs));
 		}
 
 		$response = curl_exec($ch);
-		if ($response === false) {
+		if (!is_string($response)) {
 			throw new \Exception('HTTP request failed: ' . curl_error($ch));
 		}
 
@@ -96,7 +93,7 @@ class HttpAssert
 
 
 	/**
-	 * Asserts HTTP response code matches expectation.
+	 * Asserts that the HTTP response code matches the expectation.
 	 * @param int|\Closure(int): bool  $expected
 	 */
 	public function expectCode(int|\Closure $expected): self
@@ -112,7 +109,7 @@ class HttpAssert
 
 
 	/**
-	 * Asserts HTTP response code does not match expectation.
+	 * Asserts that the HTTP response code does not match the expectation.
 	 * @param int|\Closure(int): bool  $expected
 	 */
 	public function denyCode(int|\Closure $expected): self
@@ -128,7 +125,7 @@ class HttpAssert
 
 
 	/**
-	 * Asserts HTTP response header matches expectation.
+	 * Asserts that a response header exists and optionally matches the expectation.
 	 * @param string|\Closure(string): bool|null  $expected
 	 */
 	public function expectHeader(
@@ -156,7 +153,7 @@ class HttpAssert
 
 
 	/**
-	 * Asserts HTTP response header does not match expectation.
+	 * Asserts that a response header does not exist or does not match the expectation.
 	 * @param string|\Closure(string): bool|null  $expected
 	 */
 	public function denyHeader(
@@ -188,7 +185,7 @@ class HttpAssert
 
 
 	/**
-	 * Asserts HTTP response body matches expectation.
+	 * Asserts that the response body matches the expectation.
 	 * @param string|\Closure(string): bool|null  $expected
 	 */
 	public function expectBody(
@@ -212,7 +209,7 @@ class HttpAssert
 
 
 	/**
-	 * Asserts HTTP response body does not match expectation.
+	 * Asserts that the response body does not match the expectation.
 	 * @param string|\Closure(string): bool|null  $expected
 	 */
 	public function denyBody(

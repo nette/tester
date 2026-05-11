@@ -1,11 +1,9 @@
-<?php
+<?php declare(strict_types=1);
 
 /**
  * This file is part of the Nette Tester.
  * Copyright (c) 2009 David Grudl (https://davidgrudl.com)
  */
-
-declare(strict_types=1);
 
 namespace Tester;
 
@@ -13,7 +11,7 @@ use function count, func_get_args, func_num_args, is_array, is_string, sprintf;
 
 
 /**
- * Single test case.
+ * Base class for xUnit-style test cases with setUp/tearDown hooks and data provider support.
  */
 class TestCase
 {
@@ -24,7 +22,7 @@ class TestCase
 
 	private bool $handleErrors = false;
 
-	/** @var callable|false|null */
+	/** @var (callable(int, string, string, int): bool)|false|null */
 	private $prevErrorHandler = false;
 
 
@@ -42,7 +40,9 @@ class TestCase
 			array_map(fn(\ReflectionMethod $rm): string => $rm->getName(), (new \ReflectionObject($this))->getMethods()),
 		));
 
-		if (isset($_SERVER['argv']) && ($tmp = preg_filter('#--method=([\w-]+)$#Ai', '$1', $_SERVER['argv']))) {
+		/** @var list<string> $argv */
+		$argv = $_SERVER['argv'] ?? [];
+		if ($argv && ($tmp = preg_filter('#--method=([\w-]+)$#Ai', '$1', $argv))) {
 			$method = reset($tmp);
 			if ($method === self::ListMethods) {
 				$this->sendMethodList($methods);
@@ -71,8 +71,8 @@ class TestCase
 
 
 	/**
-	 * Executes a specified test method within this test case, handling data providers and errors.
-	 * @param  ?array<string, mixed>  $args  arguments provided for the test method, bypassing data provider if provided.
+	 * Runs a single test method, resolving data providers and handling errors.
+	 * @param  ?array<string, mixed>  $args  if provided, bypasses data provider and uses these arguments directly
 	 */
 	public function runTest(string $method, ?array $args = null): void
 	{
@@ -102,7 +102,7 @@ class TestCase
 			: [$args];
 
 		if ($this->prevErrorHandler === false) {
-			$this->prevErrorHandler = set_error_handler(function (int $severity): ?bool {
+			$this->prevErrorHandler = set_error_handler(function (int $severity): bool {
 				if ($this->handleErrors && ($severity & error_reporting()) === $severity) {
 					$this->handleErrors = false;
 					$this->silentTearDown();
@@ -123,13 +123,13 @@ class TestCase
 				try {
 					if ($info['throws']) {
 						$e = Assert::error(function () use ($method, $params): void {
-							[$this, $method->getName()](...$params);
+							$this->{$method->getName()}(...$params);
 						}, ...$throws);
 						if ($e instanceof AssertException) {
 							throw $e;
 						}
 					} else {
-						[$this, $method->getName()](...$params);
+						$this->{$method->getName()}(...$params);
 					}
 				} catch (\Throwable $e) {
 					$this->handleErrors = false;
@@ -160,32 +160,26 @@ class TestCase
 			return $this->$provider();
 		} else {
 			$rc = new \ReflectionClass($this);
-			[$file, $query] = DataProvider::parseAnnotation($provider, $rc->getFileName());
+			[$file, $query] = DataProvider::parseAnnotation($provider, (string) $rc->getFileName());
 			return DataProvider::load($file, $query);
 		}
 	}
 
 
-	/**
-	 * Setup logic to be executed before each test method. Override in subclasses for specific behaviors.
-	 * @return void
-	 */
+	/** @return void */
 	protected function setUp()
 	{
 	}
 
 
-	/**
-	 * Teardown logic to be executed after each test method. Override in subclasses to release resources.
-	 * @return void
-	 */
+	/** @return void */
 	protected function tearDown()
 	{
 	}
 
 
 	/**
-	 * Executes the tearDown method and suppresses any errors, ensuring clean teardown in all cases.
+	 * Runs tearDown() while suppressing all errors and exceptions.
 	 */
 	private function silentTearDown(): void
 	{
@@ -200,7 +194,7 @@ class TestCase
 
 
 	/**
-	 * Skips the current test, optionally providing a reason for skipping.
+	 * Skips the current test with an optional reason message.
 	 */
 	protected function skip(string $message = ''): void
 	{
@@ -209,7 +203,7 @@ class TestCase
 
 
 	/**
-	 * Outputs a list of all test methods in the current test case. Used for Runner.
+	 * Prints the list of test methods to stdout for the runner to discover.
 	 * @param string[]  $methods
 	 */
 	private function sendMethodList(array $methods): void
@@ -240,9 +234,9 @@ class TestCase
 
 
 	/**
-	 * Prepares test data from specified data providers or default method parameters if no provider is specified.
+	 * Builds the list of argument sets for a test method from its data providers.
 	 * @param  string[]  $dataprovider
-	 * @return array<string|int, array<string, mixed>>
+	 * @return array<array<string, mixed>>
 	 */
 	private function prepareTestData(\ReflectionMethod $method, array $dataprovider): array
 	{
@@ -285,14 +279,14 @@ class TestCase
 }
 
 /**
- * Errors specific to TestCase operations.
+ * Signals a TestCase configuration or runtime error.
  */
 class TestCaseException extends \Exception
 {
 }
 
 /**
- * Exception thrown when a test case or a test method is skipped.
+ * Signals that a test method was skipped.
  */
 class TestCaseSkippedException extends \Exception
 {

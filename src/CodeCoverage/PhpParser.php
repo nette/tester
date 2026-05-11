@@ -1,16 +1,13 @@
-<?php
+<?php declare(strict_types=1);
 
 /**
  * This file is part of the Nette Tester.
  * Copyright (c) 2009 David Grudl (https://davidgrudl.com)
  */
 
-declare(strict_types=1);
-
 namespace Tester\CodeCoverage;
 
 use function ord;
-use const T_ABSTRACT, T_CLASS, T_COMMENT, T_CONSTANT_ENCAPSED_STRING, T_CURLY_OPEN, T_DOC_COMMENT, T_DOLLAR_OPEN_CURLY_BRACES, T_FUNCTION, T_INTERFACE, T_NAME_QUALIFIED, T_NAMESPACE, T_PRIVATE, T_PROTECTED, T_PUBLIC, T_STRING, T_TRAIT, T_WHITESPACE, TOKEN_PARSE;
 
 
 /**
@@ -58,7 +55,8 @@ class PhpParser
 	{
 		$tokens = \PhpToken::tokenize($code, TOKEN_PARSE);
 
-		$level = $classLevel = $functionLevel = null;
+		$level = 0;
+		$classLevel = $functionLevel = null;
 		$namespace = '';
 		$line = 1;
 

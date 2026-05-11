@@ -1,22 +1,19 @@
-<?php
+<?php declare(strict_types=1);
 
 /**
  * This file is part of the Nette Tester.
  * Copyright (c) 2009 David Grudl (https://davidgrudl.com)
  */
 
-declare(strict_types=1);
-
 namespace Tester\Runner\Output;
 
 use Tester;
 use Tester\Runner\Test;
 use function sprintf;
-use const ENT_COMPAT, ENT_HTML5;
 
 
 /**
- * JUnit xml format printer.
+ * Outputs test results in JUnit XML format.
  */
 class JUnitPrinter implements Tester\Runner\OutputHandler
 {
@@ -54,7 +51,7 @@ class JUnitPrinter implements Tester\Runner\OutputHandler
 		$this->results[$test->getResult()]++;
 		$this->buffer .= "\t\t<testcase classname=\"" . htmlspecialchars($test->getSignature()) . '" name="' . htmlspecialchars($test->getSignature()) . '"';
 		$this->buffer .= match ($test->getResult()) {
-			Test::Failed => ">\n\t\t\t<failure message=\"" . htmlspecialchars($test->message, ENT_COMPAT | ENT_HTML5) . "\"/>\n\t\t</testcase>\n",
+			Test::Failed => ">\n\t\t\t<failure message=\"" . htmlspecialchars($test->message ?? '', ENT_COMPAT | ENT_HTML5) . "\"/>\n\t\t</testcase>\n",
 			Test::Skipped => ">\n\t\t\t<skipped/>\n\t\t</testcase>\n",
 			Test::Passed => "/>\n",
 		};

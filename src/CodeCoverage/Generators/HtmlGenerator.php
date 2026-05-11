@@ -1,17 +1,15 @@
-<?php
+<?php declare(strict_types=1);
 
 /**
  * This file is part of the Nette Tester.
  * Copyright (c) 2009 David Grudl (https://davidgrudl.com)
  */
 
-declare(strict_types=1);
-
 namespace Tester\CodeCoverage\Generators;
 
 use Tester\Helpers;
 use function count;
-use const DIRECTORY_SEPARATOR, FILE_SKIP_EMPTY_LINES;
+use const DIRECTORY_SEPARATOR;
 
 
 /**
@@ -95,10 +93,10 @@ class HtmlGenerator extends AbstractGenerator
 				$this->totalSum += $total;
 				$this->coveredSum += $covered;
 			} else {
-				$this->totalSum += count(file($entry, FILE_SKIP_EMPTY_LINES));
+				$this->totalSum += count(file($entry, FILE_SKIP_EMPTY_LINES) ?: []);
 			}
 
-			$light = $total ? $total < 5 : count(file($entry)) < 50;
+			$light = $total ? $total < 5 : count(file($entry) ?: []) < 50;
 			$this->files[] = (object) [
 				'name' => str_replace($commonSourcesPath, '', $entry),
 				'file' => $entry,

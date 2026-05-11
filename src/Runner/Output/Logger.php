@@ -1,11 +1,9 @@
-<?php
+<?php declare(strict_types=1);
 
 /**
  * This file is part of the Nette Tester.
  * Copyright (c) 2009 David Grudl (https://davidgrudl.com)
  */
-
-declare(strict_types=1);
 
 namespace Tester\Runner\Output;
 
@@ -15,7 +13,7 @@ use Tester\Runner\Test;
 
 
 /**
- * Verbose logger.
+ * Logs all test results including passed tests to a file or stdout.
  */
 class Logger implements Tester\Runner\OutputHandler
 {
@@ -40,7 +38,7 @@ class Logger implements Tester\Runner\OutputHandler
 		$this->count = 0;
 		$this->results = [Test::Passed => 0, Test::Skipped => 0, Test::Failed => 0];
 		fwrite($this->file, 'PHP ' . $this->runner->getInterpreter()->getVersion()
-			. ' | ' . $this->runner->getInterpreter()->getCommandLine()
+			. ' | ' . $this->runner->getInterpreter()->getCommandLineStr()
 			. " | {$this->runner->threadCount} threads\n\n");
 	}
 

@@ -1,10 +1,8 @@
-<?php
+<?php declare(strict_types=1);
 
 /**
  * @outputMatch Test::setUp,Test::testMe,Test::tearDown√ testMe
  */
-
-declare(strict_types=1);
 
 require __DIR__ . '/../bootstrap.php';
 

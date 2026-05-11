@@ -1,11 +1,9 @@
-<?php
+<?php declare(strict_types=1);
 
 /**
  * This file is part of the Nette Tester.
  * Copyright (c) 2009 David Grudl (https://davidgrudl.com)
  */
-
-declare(strict_types=1);
 
 namespace Tester\Runner;
 
@@ -15,7 +13,7 @@ use const DIRECTORY_SEPARATOR, PHP_OS_FAMILY, PHP_VERSION_ID;
 
 
 /**
- * Single test job.
+ * Spawns an isolated PHP process for a single test and captures its output and exit code.
  */
 class Job
 {
@@ -43,7 +41,7 @@ class Job
 	private ?string $stderrFile;
 	private int $exitCode = self::CodeNone;
 
-	/** @var string[]  output headers */
+	/** @var array<string, string>  output headers */
 	private array $headers = [];
 	private float $duration;
 
@@ -97,7 +95,7 @@ class Job
 		$this->duration = -microtime(as_float: true);
 		$this->proc = proc_open(
 			$this->interpreter
-				->withArguments(['-d register_argc_argv=on', $this->test->getFile(), ...$args])
+				->withArguments(['-d', 'register_argc_argv=on', $this->test->getFile(), ...$args])
 				->getCommandLine(),
 			[
 				['pipe', 'r'],
@@ -158,6 +156,7 @@ class Job
 			$this->test->stdout .= stream_get_contents($this->stdout);
 		}
 
+		assert($this->proc !== null);
 		$status = proc_get_status($this->proc);
 		if ($status['running']) {
 			return true;
@@ -210,7 +209,7 @@ class Job
 
 	/**
 	 * Returns output headers.
-	 * @return string[]
+	 * @return array<string, string>
 	 */
 	public function getHeaders(): array
 	{

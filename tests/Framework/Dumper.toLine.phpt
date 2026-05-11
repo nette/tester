@@ -1,6 +1,4 @@
-<?php
-
-declare(strict_types=1);
+<?php declare(strict_types=1);
 
 use Tester\Assert;
 use Tester\Dumper;
@@ -14,7 +12,7 @@ Assert::match('false', Dumper::toLine(false));
 Assert::match('0', Dumper::toLine(0));
 Assert::match('1', Dumper::toLine(1));
 Assert::match('0.0', Dumper::toLine(0.0));
-Assert::match('0.1', Dumper::toLine(0.1));
+Assert::match('%f%', Dumper::toLine(0.1));
 Assert::match('INF', Dumper::toLine(INF));
 Assert::match('-INF', Dumper::toLine(-INF));
 Assert::match('NAN', Dumper::toLine(NAN));

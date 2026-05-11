@@ -1,20 +1,17 @@
-<?php
+<?php declare(strict_types=1);
 
 /**
  * This file is part of the Nette Tester.
  * Copyright (c) 2009 David Grudl (https://davidgrudl.com)
  */
 
-declare(strict_types=1);
-
 namespace Tester\CodeCoverage;
 use pcov;
 use function defined, in_array;
-use const LOCK_EX, LOCK_UN, XDEBUG_CC_DEAD_CODE, XDEBUG_CC_UNUSED;
 
 
 /**
- * Code coverage collector.
+ * Collects code coverage data from a test process and merges it into a shared file.
  */
 class Collector
 {
@@ -32,9 +29,9 @@ class Collector
 	public static function detectEngines(): array
 	{
 		return array_filter([
-			extension_loaded('pcov') ? [self::EnginePcov, phpversion('pcov')] : null,
-			defined('PHPDBG_VERSION') ? [self::EnginePhpdbg, PHPDBG_VERSION] : null,
-			extension_loaded('xdebug') ? [self::EngineXdebug, phpversion('xdebug')] : null,
+			extension_loaded('pcov') ? [self::EnginePcov, (string) phpversion('pcov')] : null,
+			defined('PHPDBG_VERSION') ? [self::EnginePhpdbg, (string) PHPDBG_VERSION] : null,
+			extension_loaded('xdebug') ? [self::EngineXdebug, (string) phpversion('xdebug')] : null,
 		]);
 	}
 
@@ -73,7 +70,7 @@ class Collector
 
 
 	/**
-	 * Flushes all gathered information. Effective only with PHPDBG collector.
+	 * Writes collected coverage to file and resets the oplog. Only effective with the PHPDBG engine.
 	 */
 	public static function flush(): void
 	{
@@ -84,7 +81,7 @@ class Collector
 
 
 	/**
-	 * Saves information about code coverage. Can be called repeatedly to free memory.
+	 * Merges the current coverage data into the shared coverage file using an exclusive lock.
 	 * @throws \LogicException
 	 */
 	public static function save(): void
@@ -186,7 +183,9 @@ class Collector
 	 */
 	private static function collectPhpDbg(): array
 	{
+		/** @var array<string, array<int, int>> $positive */
 		$positive = phpdbg_end_oplog();
+		/** @var array<string, array<int, int>> $negative */
 		$negative = phpdbg_get_executable();
 
 		foreach ($positive as $file => &$lines) {

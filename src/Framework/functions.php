@@ -1,6 +1,4 @@
-<?php
-
-declare(strict_types=1);
+<?php declare(strict_types=1);
 
 use Tester\Ansi;
 use Tester\Assert;
@@ -8,7 +6,8 @@ use Tester\Environment;
 
 
 /**
- * Executes a provided test closure, handling setup and teardown operations.
+ * Runs a labeled test closure, calling setUp and tearDown around it.
+ * @param \Closure(): mixed  $closure
  */
 function test(string $description, Closure $closure): void
 {
@@ -41,8 +40,9 @@ function test(string $description, Closure $closure): void
 
 
 /**
- * Tests for exceptions thrown by a provided closure matching specific criteria.
- * @param  class-string<\Throwable>  $class
+ * Runs a labeled test that asserts the closure throws a specific exception.
+ * @param \Closure(): void  $function
+ * @param class-string<\Throwable>  $class
  */
 function testException(
 	string $description,
@@ -57,7 +57,8 @@ function testException(
 
 
 /**
- * Tests that a provided closure does not generate any errors or exceptions.
+ * Runs a labeled test that asserts the closure generates no errors or exceptions.
+ * @param \Closure(): void  $function
  */
 function testNoError(string $description, Closure $function): void
 {
@@ -70,7 +71,8 @@ function testNoError(string $description, Closure $function): void
 
 
 /**
- * Registers a function to be called before each test execution.
+ * Sets the closure to call before each test() invocation.
+ * @param (\Closure(): void)|null  $closure
  */
 function setUp(?Closure $closure): void
 {
@@ -80,7 +82,8 @@ function setUp(?Closure $closure): void
 
 
 /**
- * Registers a function to be called after each test execution.
+ * Sets the closure to call after each test() invocation.
+ * @param (\Closure(): void)|null  $closure
  */
 function tearDown(?Closure $closure): void
 {

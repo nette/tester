@@ -1,21 +1,18 @@
-<?php
+<?php declare(strict_types=1);
 
 /**
  * This file is part of the Nette Tester.
  * Copyright (c) 2009 David Grudl (https://davidgrudl.com)
  */
 
-declare(strict_types=1);
-
 namespace Tester\CodeCoverage\Generators;
 
 use Tester\Helpers;
 use function in_array, is_array;
-use const ARRAY_FILTER_USE_KEY, STDOUT;
 
 
 /**
- * Code coverage report generator.
+ * Base class for code coverage report generators.
  */
 abstract class AbstractGenerator
 {
@@ -24,7 +21,7 @@ abstract class AbstractGenerator
 		LineTested = 1,
 		LineUntested = -1;
 
-	/** @var string[]  file extensions to accept */
+	/** @var list<string>  file extensions to accept */
 	public array $acceptFiles = ['php', 'phpt', 'phtml'];
 
 	/** @var array<string, array<int, int>>  file path => line number => coverage count */
@@ -60,7 +57,7 @@ abstract class AbstractGenerator
 			}
 		}
 
-		$this->sources = array_map('realpath', $sources);
+		$this->sources = array_map(fn($s) => (string) realpath($s), $sources);
 	}
 
 

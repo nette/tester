@@ -1,20 +1,17 @@
-<?php
+<?php declare(strict_types=1);
 
 /**
  * This file is part of the Nette Tester.
  * Copyright (c) 2009 David Grudl (https://davidgrudl.com)
  */
 
-declare(strict_types=1);
-
 namespace Tester\Runner;
 
 use function array_slice, call_user_func, count, in_array, is_array;
-use const PREG_SET_ORDER;
 
 
 /**
- * Stupid command line arguments parser.
+ * Command-line arguments parser.
  */
 class CommandLine
 {
@@ -30,7 +27,7 @@ class CommandLine
 	/** @var array<string, array<string, mixed>> */
 	private array $options = [];
 
-	/** @var string[] */
+	/** @var array<string, string> */
 	private array $aliases = [];
 
 	/** @var string[] */
@@ -51,7 +48,7 @@ class CommandLine
 				throw new \InvalidArgumentException("Unable to parse '$line[1]'.");
 			}
 
-			$name = end($m[1]);
+			$name = (string) end($m[1]);
 			$opts = $this->options[$name] ?? [];
 			$arg = (string) end($m[2]);
 			$this->options[$name] = $opts + [
@@ -81,6 +78,7 @@ class CommandLine
 	public function parse(?array $args = null): array
 	{
 		if ($args === null) {
+			/** @var list<string> $args */
 			$args = isset($_SERVER['argv']) ? array_slice($_SERVER['argv'], 1) : [];
 		}
 
@@ -106,7 +104,7 @@ class CommandLine
 				continue;
 			}
 
-			[$name, $arg] = strpos($arg, '=') ? explode('=', $arg, 2) : [$arg, true];
+			[$name, $arg] = strpos($arg, '=') !== false ? explode('=', $arg, 2) : [$arg, true];
 
 			if (isset($this->aliases[$name])) {
 				$name = $this->aliases[$name];

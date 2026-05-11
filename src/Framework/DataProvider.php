@@ -1,26 +1,24 @@
-<?php
+<?php declare(strict_types=1);
 
 /**
  * This file is part of the Nette Tester.
  * Copyright (c) 2009 David Grudl (https://davidgrudl.com)
  */
 
-declare(strict_types=1);
-
 namespace Tester;
 
 use function is_array;
-use const DIRECTORY_SEPARATOR, INI_SCANNER_TYPED, PATHINFO_EXTENSION, PREG_SET_ORDER;
+use const DIRECTORY_SEPARATOR;
 
 
 /**
- * Utility class for providing data from various sources for tests.
+ * Loads and filters test data from PHP or INI files.
  * @internal
  */
 class DataProvider
 {
 	/**
-	 * Loads data from a specified file and filters them based on a query string. Supports both PHP files and INI files.
+	 * Loads data sets from a PHP or INI file, optionally filtered by a query string.
 	 * @return array<string, mixed>
 	 */
 	public static function load(string $file, string $query = ''): array
@@ -55,7 +53,7 @@ class DataProvider
 
 
 	/**
-	 * Evaluates a query against a set of data keys to determine if the key matches the criteria.
+	 * Checks whether a data-set key matches the query filter criteria.
 	 */
 	public static function testQuery(string $input, string $query): bool
 	{
@@ -77,9 +75,6 @@ class DataProvider
 	}
 
 
-	/**
-	 * Compares two values using the specified operator.
-	 */
 	private static function compare(mixed $l, string $operator, mixed $r): bool
 	{
 		return match ($operator) {
@@ -95,7 +90,7 @@ class DataProvider
 
 
 	/**
-	 * Parses a data provider annotation from a test method to extract the file path and query.
+	 * Parses a @dataProvider annotation value into its file path, query, and optional flag.
 	 * @return array{string, string, bool}  [file path, query, optional]
 	 */
 	public static function parseAnnotation(string $annotation, string $file): array

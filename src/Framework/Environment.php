@@ -1,16 +1,14 @@
-<?php
+<?php declare(strict_types=1);
 
 /**
  * This file is part of the Nette Tester.
  * Copyright (c) 2009 David Grudl (https://davidgrudl.com)
  */
 
-declare(strict_types=1);
-
 namespace Tester;
 
 use function array_key_exists, count, in_array;
-use const LOCK_EX, PHP_OUTPUT_HANDLER_FLUSHABLE, PHP_SAPI, STDOUT, T_FINAL, TOKEN_PARSE;
+use const PHP_OUTPUT_HANDLER_FLUSHABLE, PHP_SAPI;
 
 
 /**
@@ -18,19 +16,19 @@ use const LOCK_EX, PHP_OUTPUT_HANDLER_FLUSHABLE, PHP_SAPI, STDOUT, T_FINAL, TOKE
  */
 class Environment
 {
-	/** Should Test use console colors? */
+	/** Enable console colors (1 = yes, 0 = no) */
 	public const VariableColors = 'NETTE_TESTER_COLORS';
 
-	/** Test is run by Runner */
+	/** Set when the test is run by Runner */
 	public const VariableRunner = 'NETTE_TESTER_RUNNER';
 
-	/** Code coverage engine */
+	/** Code coverage engine name */
 	public const VariableCoverageEngine = 'NETTE_TESTER_COVERAGE_ENGINE';
 
-	/** Code coverage file */
+	/** Path to the code coverage file */
 	public const VariableCoverage = 'NETTE_TESTER_COVERAGE';
 
-	/** Thread number when run tests in multi threads */
+	/** Thread number in parallel execution */
 	public const VariableThread = 'NETTE_TESTER_THREAD';
 
 	/** @deprecated use Environment::VariableColors */
@@ -54,7 +52,7 @@ class Environment
 
 
 	/**
-	 * Configures testing environment.
+	 * Sets up error handling, colors, code coverage, and assertion tracking for the test process.
 	 */
 	public static function setup(): void
 	{
@@ -68,8 +66,10 @@ class Environment
 		$annotations = self::getTestAnnotations();
 		self::$checkAssertions = !isset($annotations['outputmatch']) && !isset($annotations['outputmatchfile']);
 
-		if (getenv(self::VariableCoverage) && getenv(self::VariableCoverageEngine)) {
-			CodeCoverage\Collector::start(getenv(self::VariableCoverage), getenv(self::VariableCoverageEngine));
+		$coverageFile = getenv(self::VariableCoverage);
+		$coverageEngine = getenv(self::VariableCoverageEngine);
+		if ($coverageFile && $coverageEngine) {
+			CodeCoverage\Collector::start($coverageFile, $coverageEngine);
 		}
 
 		if (getenv('TERMINAL_EMULATOR') === 'JetBrains-JediTerm') {
@@ -80,7 +80,7 @@ class Environment
 
 
 	/**
-	 * Configures colored output.
+	 * Detects whether ANSI colors should be used and wraps output buffer to strip them when not.
 	 */
 	public static function setupColors(): void
 	{
@@ -103,7 +103,7 @@ class Environment
 
 
 	/**
-	 * Configures PHP error handling.
+	 * Sets error_reporting, exception handler, and shutdown handler for clean test output.
 	 */
 	public static function setupErrors(): void
 	{
@@ -177,8 +177,8 @@ class Environment
 
 
 	/**
-	 * Locks the parallel tests.
-	 * @param  string  $path  lock store directory
+	 * Prevents two parallel tests with the same name from running at the same time.
+	 * @param  string  $path  directory where the lock file is created
 	 */
 	public static function lock(string $name = '', string $path = ''): void
 	{
@@ -192,8 +192,8 @@ class Environment
 
 
 	/**
-	 * Returns current test annotations.
-	 * @return array<string, mixed>
+	 * Returns annotations from the top-level test file's docblock.
+	 * @return array<string|string[]>
 	 */
 	public static function getTestAnnotations(): array
 	{
@@ -205,7 +205,7 @@ class Environment
 
 
 	/**
-	 * Removes keyword final from source codes.
+	 * Strips the `final` keyword from PHP source files on load, allowing subclassing of final classes.
 	 */
 	public static function bypassFinals(): void
 	{
@@ -224,12 +224,14 @@ class Environment
 
 
 	/**
-	 * Loads data according to the file annotation or specified by Tester\Runner\TestHandler::initiateDataProvider()
+	 * Returns the current data set passed via @dataProvider annotation or --dataprovider CLI argument.
 	 * @return array<string, mixed>
 	 */
 	public static function loadData(): array
 	{
-		if (isset($_SERVER['argv']) && ($tmp = preg_filter('#--dataprovider=(.*)#Ai', '$1', $_SERVER['argv']))) {
+		/** @var list<string> $argv */
+		$argv = $_SERVER['argv'] ?? [];
+		if ($argv && ($tmp = preg_filter('#--dataprovider=(.*)#Ai', '$1', $argv))) {
 			[$key, $file] = explode('|', reset($tmp), 2);
 			$data = DataProvider::load($file);
 			if (!array_key_exists($key, $data)) {

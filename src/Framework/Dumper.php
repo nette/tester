@@ -1,16 +1,14 @@
-<?php
+<?php declare(strict_types=1);
 
 /**
  * This file is part of the Nette Tester.
  * Copyright (c) 2009 David Grudl (https://davidgrudl.com)
  */
 
-declare(strict_types=1);
-
 namespace Tester;
 
 use function addcslashes, array_reverse, array_slice, array_splice, dechex, dirname, explode, file, file_put_contents, get_resource_type, implode, is_array, is_bool, is_float, is_int, is_object, is_resource, is_string, ltrim, max, md5, method_exists, min, mkdir, ord, pathinfo, preg_match, preg_replace, preg_replace_callback, spl_object_hash, str_contains, str_pad, str_repeat, str_replace, strlen, strpos, strrpos, strtoupper, strtr, substr, substr_count, substr_replace, trim, uniqid, var_export;
-use const DIRECTORY_SEPARATOR, PATHINFO_FILENAME, STR_PAD_LEFT;
+use const DIRECTORY_SEPARATOR;
 
 
 /**
@@ -27,7 +25,7 @@ class Dumper
 
 
 	/**
-	 * Dumps information about a variable in readable format.
+	 * Converts a variable to a compact single-line string representation.
 	 */
 	public static function toLine(mixed $var): string
 	{
@@ -87,9 +85,6 @@ class Dumper
 	}
 
 
-	/**
-	 * Formats object to line.
-	 */
 	private static function objectToLine(object $object): string
 	{
 		$line = $object::class;
@@ -102,7 +97,7 @@ class Dumper
 
 
 	/**
-	 * Dumps variable in PHP format.
+	 * Converts a variable to a pretty-printed PHP representation.
 	 */
 	public static function toPhp(mixed $var): string
 	{
@@ -110,9 +105,6 @@ class Dumper
 	}
 
 
-	/**
-	 * Returns object's stripped hash.
-	 */
 	private static function hash(object $object): string
 	{
 		return '#' . substr(md5(spl_object_hash($object)), 0, 4);
@@ -294,12 +286,15 @@ class Dumper
 	}
 
 
+	/**
+	 * Formats an exception with its message, trace, and diff command into a human-readable string.
+	 */
 	public static function dumpException(\Throwable $e): string
 	{
 		$trace = $e->getTrace();
 		array_splice($trace, 0, $e instanceof \ErrorException ? 1 : 0, [['file' => $e->getFile(), 'line' => $e->getLine()]]);
 
-		$testFile = null;
+		$testFile = $e->getFile();
 		foreach (array_reverse($trace) as $item) {
 			if (isset($item['file'])) { // in case of shutdown handler, we want to skip inner-code blocks and debugging calls
 				$testFile = $item['file'];
@@ -364,18 +359,21 @@ class Dumper
 				continue;
 			}
 
-			$line = $item['class'] === Assert::class && method_exists($item['class'], $item['function'])
-				&& strpos($tmp = file($item['file'])[$item['line'] - 1], "::$item[function](") ? $tmp : null;
+			$line = $item['class'] === Assert::class && isset($item['function'], $item['file']) && method_exists($item['class'], $item['function'])
+				&& strpos($tmp = (file($item['file']) ?: [])[$item['line'] - 1] ?? '', "::$item[function](") ? $tmp : null;
 
 			$s .= 'in '
 				. ($item['file']
 					? (
 						($item['file'] === $testFile ? Ansi::color('white') : '')
-						. implode(
-							self::$pathSeparator ?? DIRECTORY_SEPARATOR,
-							array_slice(explode(DIRECTORY_SEPARATOR, $item['file']), -self::$maxPathSegments),
+						. Ansi::link(
+							implode(
+								self::$pathSeparator ?? DIRECTORY_SEPARATOR,
+								array_slice(explode(DIRECTORY_SEPARATOR, $item['file']), -self::$maxPathSegments),
+							) . "($item[line])",
+							Ansi::fileUrl($item['file'], $item['line']),
 						)
-						. "($item[line])" . Ansi::color('gray') . ' '
+						. Ansi::color('gray') . ' '
 					)
 					: '[internal function]'
 				)
@@ -395,7 +393,7 @@ class Dumper
 
 
 	/**
-	 * Dumps data to folder 'output'.
+	 * Saves assertion dump to the output directory (configured by $dumpDir).
 	 */
 	public static function saveOutput(string $testFile, mixed $content, string $suffix = ''): string
 	{
