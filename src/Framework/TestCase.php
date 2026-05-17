@@ -55,6 +55,7 @@ class TestCase
 				Environment::skip($e->getMessage());
 			}
 		} else {
+			$failure = null;
 			foreach ($methods as $method) {
 				try {
 					$this->runTest($method);
@@ -62,9 +63,17 @@ class TestCase
 				} catch (TestCaseSkippedException $e) {
 					Environment::print("s $method {$e->getMessage()}");
 				} catch (\Throwable $e) {
-					Environment::print(Ansi::colorize('×', 'red') . " $method\n\n");
-					throw $e;
+					Environment::print(Ansi::colorize('×', 'red') . " $method");
+					if ($failure !== null) {
+						Environment::print(Dumper::dumpException($failure));
+					}
+
+					$failure = $e;
 				}
+			}
+
+			if ($failure !== null) {
+				throw $failure;
 			}
 		}
 	}
