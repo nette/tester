@@ -96,7 +96,7 @@ class Ansi
 	 */
 	public static function stripAnsi(string $text): string
 	{
-		return preg_replace('/\e\[[0-?]*[ -\/]*[@-~]|\e\][^\x07]*(\x07|\e\\\)/', '', $text);
+		return preg_replace('/\e\[[0-?]*[ -\/]*[@-~]|\e][^\x07]*(\x07|\e\\\)/', '', $text);
 	}
 
 

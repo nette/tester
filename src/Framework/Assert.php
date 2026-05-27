@@ -568,7 +568,7 @@ class Assert
 			}, rtrim($pattern, " \t\n\r")) . $suffix;
 		}
 
-		$res = preg_match($pattern, (string) $actual);
+		$res = preg_match($pattern, $actual);
 		ini_set('pcre.backtrack_limit', $old);
 		if ($res === false || preg_last_error()) {
 			throw new \Exception('Error while executing regular expression. (' . preg_last_error_msg() . ')');
