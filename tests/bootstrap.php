@@ -2,7 +2,6 @@
 
 use Tester\Runner\PhpInterpreter;
 
-
 require __DIR__ . '/../src/bootstrap.php';
 require __DIR__ . '/../src/Runner/PhpInterpreter.php';
 

@@ -161,7 +161,8 @@ class CliTester
 		/** @var list<string> $argv */
 		$argv = $_SERVER['argv'] ?? [];
 		if ($argv) {
-			if (($tmp = array_search('-l', $argv, strict: true))
+			if (
+				($tmp = array_search('-l', $argv, strict: true))
 				|| ($tmp = array_search('-log', $argv, strict: true))
 				|| ($tmp = array_search('--log', $argv, strict: true))
 			) {

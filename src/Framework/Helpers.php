@@ -99,11 +99,11 @@ class Helpers
 			return [];
 		}
 
-		if (preg_match('#^[ \t\*]*+([^\s@].*)#mi', $content[1], $matches)) {
+		if (preg_match('#^[ \t*]*+([^\s@].*)#mi', $content[1], $matches)) {
 			$options[0] = trim($matches[1]);
 		}
 
-		preg_match_all('#^[ \t\*]*@(\w+)([^\w\r\n].*)?#mi', $content[1], $matches, PREG_SET_ORDER);
+		preg_match_all('#^[ \t*]*@(\w+)([^\w\r\n].*)?#mi', $content[1], $matches, PREG_SET_ORDER);
 		foreach ($matches as $match) {
 			$name = strtolower($match[1]);
 			$value = isset($match[2]) ? trim($match[2]) : '';

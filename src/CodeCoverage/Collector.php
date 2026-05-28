@@ -6,6 +6,7 @@
  */
 
 namespace Tester\CodeCoverage;
+
 use pcov;
 use function defined, in_array;
 

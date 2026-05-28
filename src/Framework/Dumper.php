@@ -53,7 +53,7 @@ class Dumper
 		} elseif (is_array($var)) {
 			$out = '';
 			$counter = 0;
-			foreach ($var as $k => &$v) {
+			foreach ($var as $k => $v) {
 				$out .= ($out === '' ? '' : ', ');
 				if (strlen($out) > self::$maxLength) {
 					$out .= '...';
@@ -238,7 +238,7 @@ class Dumper
 		$escaped = preg_replace_callback(
 			$utf8 ? '#[\p{C}\\\]#u' : '#[\x00-\x1F\x7F-\xFF\\\]#',
 			fn($m) => $special[$m[0]] ?? (strlen($m[0]) === 1
-				? '\x' . str_pad(strtoupper(dechex(ord($m[0]))), 2, '0', STR_PAD_LEFT) . ''
+				? '\x' . str_pad(strtoupper(dechex(ord($m[0]))), 2, '0', STR_PAD_LEFT)
 				: '\u{' . strtoupper(ltrim(dechex(self::utf8Ord($m[0])), '0')) . '}'),
 			$s,
 		);
@@ -261,10 +261,10 @@ class Dumper
 		$escaped = preg_replace_callback(
 			$utf8 ? '#[\p{C}\']#u' : '#[\x00-\x1F\x7F-\xFF\']#',
 			fn($m) => Ansi::boldOff()
-			. ($special[$m[0]] ?? (strlen($m[0]) === 1
-				? '\x' . str_pad(strtoupper(dechex(ord($m[0]))), 2, '0', STR_PAD_LEFT)
-				: '\u{' . strtoupper(ltrim(dechex(self::utf8Ord($m[0])), '0')) . '}'))
-			. Ansi::boldOn(),
+				. ($special[$m[0]] ?? (strlen($m[0]) === 1
+					? '\x' . str_pad(strtoupper(dechex(ord($m[0]))), 2, '0', STR_PAD_LEFT)
+					: '\u{' . strtoupper(ltrim(dechex(self::utf8Ord($m[0])), '0')) . '}'))
+				. Ansi::boldOn(),
 			$s,
 		);
 		return "'" . $escaped . "'";
@@ -309,7 +309,8 @@ class Dumper
 				? dirname($testFile) . '/' . $e->outputName . '.foo'
 				: $testFile;
 
-			if (is_object($expected) || is_array($expected) || (is_string($expected) && strlen($expected) > self::$maxLength)
+			if (
+				is_object($expected) || is_array($expected) || (is_string($expected) && strlen($expected) > self::$maxLength)
 				|| is_object($actual) || is_array($actual) || (is_string($actual) && (strlen($actual) > self::$maxLength || preg_match('#[\x00-\x1F]#', $actual)))
 			) {
 				$args = isset($_SERVER['argv'][1])
@@ -333,7 +334,8 @@ class Dumper
 			}
 
 			$message = 'Failed: ' . $e->origMessage;
-			if (((is_string($actual) && is_string($expected)) || (is_array($actual) && is_array($expected)))
+			if (
+				((is_string($actual) && is_string($expected)) || (is_array($actual) && is_array($expected)))
 				&& preg_match('#^(.*)(%\d)(.*)(%\d.*)$#Ds', $message, $m)
 			) {
 				$message = ($delta = strlen($m[1]) - strlen($m[3])) >= 3

@@ -103,7 +103,7 @@ class CommandLine
 				continue;
 			}
 
-			[$name, $arg] = strpos($arg, '=') !== false ? explode('=', $arg, 2) : [$arg, true];
+			[$name, $arg] = str_contains($arg, '=') ? explode('=', $arg, 2) : [$arg, true];
 
 			$name = $this->aliases[$name] ?? $name;
 			if (!isset($this->options[$name])) {

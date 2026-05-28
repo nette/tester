@@ -141,10 +141,10 @@ class DomQuery extends \SimpleXMLElement
 						([~*^$]?)=(
 							"[^"]*"|
 							'[^']*'|
-							[^\]]+
+							[^]]+
 						)
 					)?
-				\]|                                       # [attr=val] (3,4,5)
+				]|                                       # [attr=val] (3,4,5)
 				\s*([>,+~])\s*|                           # > , + ~ (6)
 				(\s+)|                                    # whitespace (7)
 				(\*)                                      # * (8)
