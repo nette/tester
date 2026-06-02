@@ -7,7 +7,7 @@
 
 namespace Tester;
 
-use function implode, is_string, lcfirst, preg_match;
+use function is_string;
 
 
 /**

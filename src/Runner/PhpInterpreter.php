@@ -8,7 +8,7 @@
 namespace Tester\Runner;
 
 use Tester\Helpers;
-use function array_map, count, explode, implode, in_array, str_contains;
+use function count, in_array;
 
 
 /**

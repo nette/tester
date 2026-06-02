@@ -7,7 +7,7 @@
 
 namespace Tester\Runner;
 
-use function array_map, implode, is_array, is_int;
+use function is_array, is_int;
 
 
 /**
