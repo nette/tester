@@ -55,6 +55,7 @@ class TestCase
 				Environment::skip($e->getMessage());
 			}
 		} else {
+			$failures = [];
 			foreach ($methods as $method) {
 				try {
 					$this->runTest($method);
@@ -62,9 +63,23 @@ class TestCase
 				} catch (TestCaseSkippedException $e) {
 					Environment::print("s $method {$e->getMessage()}");
 				} catch (\Throwable $e) {
-					Environment::print(Ansi::colorize('×', 'red') . " $method\n\n");
-					throw $e;
+					Environment::print(Ansi::colorize('×', 'red') . " $method");
+					$failures[] = $e;
 				}
+			}
+
+			if ($failures) {
+				// the rethrown failure determines the exit code, so an error takes precedence over a failed assertion
+				$errors = array_filter($failures, fn(\Throwable $e): bool => !$e instanceof AssertException);
+				$rethrown = end($errors) ?: end($failures);
+				foreach ($failures as $failure) {
+					if ($failure !== $rethrown) {
+						Environment::print("\n" . Dumper::dumpException($failure));
+					}
+				}
+
+				Environment::print("\n");
+				throw $rethrown;
 			}
 		}
 	}
