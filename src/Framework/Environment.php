@@ -183,6 +183,12 @@ class Environment
 	public static function lock(string $name = '', string $path = ''): void
 	{
 		static $locks;
+		if (!is_dir($path)) {
+			throw new \RuntimeException($path === ''
+				? 'Lock directory is not specified.'
+				: "Lock directory '$path' is missing.");
+		}
+
 		$file = "$path/lock-" . md5($name);
 		if (!isset($locks[$file])) {
 			$locks[$file] = fopen($file, 'w') ?: throw new \RuntimeException("Unable to create lock file '$file'.");

@@ -18,3 +18,26 @@ Assert::same('30', ini_get('max_execution_time'));
 Environment::lock('environment-lock-' . getmypid(), sys_get_temp_dir());
 
 Assert::same('30', ini_get('max_execution_time'));
+
+
+testException(
+	'empty lock directory is refused',
+	fn() => Environment::lock('name'),
+	RuntimeException::class,
+	'Lock directory is not specified.',
+);
+
+
+testException(
+	'missing lock directory is refused',
+	fn() => Environment::lock('name', __DIR__ . '/missing-dir'),
+	RuntimeException::class,
+	"Lock directory '%a%missing-dir' is missing.",
+);
+
+
+test('lock file is created in given directory', function () {
+	$dir = Tester\Helpers::prepareTempDir(sys_get_temp_dir());
+	Environment::lock('foo', $dir);
+	Assert::true(is_file($dir . '/lock-' . md5('foo')));
+});
