@@ -8,7 +8,6 @@
 namespace Tester\Runner;
 
 use Tester\{Environment, Helpers};
-use function count;
 
 
 /**
@@ -33,6 +32,9 @@ class Runner
 
 	/** @var Job[] */
 	private array $jobs;
+
+	/** @var \WeakMap<Job, \Closure(Job): void>  jobs finished by a callback instead of test assessment */
+	private \WeakMap $jobCallbacks;
 	private bool $interrupted = false;
 	private ?string $tempDir = null;
 	private bool $result;
@@ -45,6 +47,7 @@ class Runner
 		private PhpInterpreter $interpreter,
 	) {
 		$this->testHandler = new TestHandler($this);
+		$this->jobCallbacks = new \WeakMap;
 	}
 
 
@@ -101,7 +104,7 @@ class Runner
 			}
 
 			$threads = range(1, $this->threadCount);
-			$async = $this->threadCount > 1 && count($this->jobs) > 1;
+			$async = $this->threadCount > 1;
 
 			// once interrupted, no new job is started, but the running ones are finished and assessed
 			while (($this->jobs && !$this->interrupted) || $running) {
@@ -119,7 +122,12 @@ class Runner
 					if (!$job->isRunning()) {
 						$threads[] = $job->getEnvironmentVariable(Environment::VariableThread);
 						unset($running[$key]);
-						$this->testHandler->assess($job);
+						if (isset($this->jobCallbacks[$job])) {
+							($this->jobCallbacks[$job])($job);
+							unset($this->jobCallbacks[$job]);
+						} else {
+							$this->testHandler->assess($job);
+						}
 					}
 				}
 			}
@@ -175,11 +183,16 @@ class Runner
 
 
 	/**
-	 * Appends new job to queue.
+	 * Appends new job to queue. When $onFinished is given, the job is not assessed as a test;
+	 * the callback receives the finished Job instead (used e.g. for TestCase methods discovery).
+	 * @param  ?\Closure(Job): void  $onFinished
 	 */
-	public function addJob(Job $job): void
+	public function addJob(Job $job, ?\Closure $onFinished = null): void
 	{
 		$this->jobs[] = $job;
+		if ($onFinished) {
+			$this->jobCallbacks[$job] = $onFinished;
+		}
 	}
 
 

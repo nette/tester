@@ -51,13 +51,53 @@ Assert::same([
 	['multiple.phptx', [['multiple', '0']]],
 	['multiple.phptx', [['multiple', '1']]],
 
+	// TestCase methods are not known yet, the queue contains a discovery job
+	['testcase.phptx', [['method', 'nette-tester-list-methods']]],
+], $jobs);
+
+
+// TestCase methods are discovered in parallel during run and expanded to individual jobs
+class Collector implements Tester\Runner\OutputHandler
+{
+	public $tests = [];
+
+
+	public function begin(): void
+	{
+	}
+
+
+	public function prepare(Test $test): void
+	{
+	}
+
+
+	public function finish(Test $test): void
+	{
+		$this->tests[] = [basename($test->getFile()), $test->getArguments()];
+	}
+
+
+	public function end(): void
+	{
+	}
+}
+
+$runner = new Tester\Runner\Runner(createInterpreter());
+$runner->paths[] = __DIR__ . '/multiple/testcase.phptx';
+$runner->outputHandlers[] = $collector = new Collector;
+$runner->run();
+
+sort($collector->tests);
+
+Assert::same([
 	['testcase.phptx', [['method', 'test1']]],
 	['testcase.phptx', [['method', 'testBar']]],
 	['testcase.phptx', [['method', 'testFoo']]],
 	['testcase.phptx', [['method', 'testPrivate']]],
 	['testcase.phptx', [['method', 'testProtected']]],
 	['testcase.phptx', [['method', 'test_foo']]],
-], $jobs);
+], $collector->tests);
 
 
 // invalid @multiple value

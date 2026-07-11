@@ -180,79 +180,122 @@ class TestHandler
 	}
 
 
-	/** @return Test|list<Test> */
-	private function initiateTestCase(Test $test, mixed $value, PhpInterpreter $interpreter): Test|array
+	/** @return list<Test> */
+	private function initiateTestCase(Test $test, string $value, PhpInterpreter $interpreter): array
 	{
-		$methods = null;
-
-		if ($this->tempDir) {
-			$cacheFile = $this->tempDir . DIRECTORY_SEPARATOR . 'TestHandler.testCase.' . md5($test->getSignature()) . '.list';
-			if (is_file($cacheFile)) {
-				$cache = unserialize(Helpers::readFile($cacheFile));
-
-				$valid = true;
-				foreach ($cache['files'] as $path => $mTime) {
-					if (!is_file($path) || filemtime($path) !== $mTime) {
-						$valid = false;
-						break;
-					}
-				}
-
-				if ($valid) {
-					$methods = $cache['methods'];
-				}
-			}
+		if (($methods = $this->loadTestCaseMethods($test)) !== null) {
+			return $this->createTestCaseVariants($test, $methods);
 		}
 
-		if ($methods === null) {
-			$job = new Job(
-				$test->withArguments(['method' => TestCase::ListMethods]),
-				$interpreter,
-				$this->runner->getEnvironmentVariables(),
+		// discovers methods in a job running in parallel with other tests
+		$job = new Job($test->withArguments(['method' => TestCase::ListMethods]), $interpreter, $this->runner->getEnvironmentVariables());
+		$job->setTempDirectory($this->tempDir);
+		$this->runner->addJob(
+			$job,
+			fn(Job $job) => $this->finishTestCaseDiscovery($job, $test, $interpreter),
+		);
+		return [];
+	}
+
+
+	/**
+	 * Processes the result of the methods-listing job: either finishes the test with an error,
+	 * or schedules a job for each discovered method.
+	 */
+	private function finishTestCaseDiscovery(Job $job, Test $test, PhpInterpreter $interpreter): void
+	{
+		$methods = $this->processTestCaseDiscovery($job, $test);
+		if ($methods instanceof Test) {
+			$this->runner->prepareTest($methods);
+			$this->runner->finishTest($methods);
+			return;
+		}
+
+		foreach ($this->createTestCaseVariants($test, $methods) as $variant) {
+			$this->runner->prepareTest($variant);
+			$variantJob = new Job($variant, $interpreter, $this->runner->getEnvironmentVariables());
+			$variantJob->setTempDirectory($this->tempDir);
+			$this->runner->addJob($variantJob);
+		}
+	}
+
+
+	/** @return Test|list<string>  finished test on error, or list of method names */
+	private function processTestCaseDiscovery(Job $job, Test $test): Test|array
+	{
+		if (in_array($job->getExitCode(), [Job::CodeError, Job::CodeFail, Job::CodeSkip], true)) {
+			return $test->withResult($job->getExitCode() === Job::CodeSkip ? Test::Skipped : Test::Failed, $job->getTest()->getOutput());
+		}
+
+		$stdout = $job->getTest()->stdout;
+
+		if (!preg_match('#^TestCase:([^\n]+)$#m', $stdout, $m)) {
+			return $test->withResult(
+				Test::Failed,
+				"Cannot list TestCase methods in file '{$test->getFile()}'. Do you call TestCase::run() in it?",
 			);
-			$job->setTempDirectory($this->tempDir);
-			$job->run();
+		}
 
-			if (in_array($job->getExitCode(), [Job::CodeError, Job::CodeFail, Job::CodeSkip], true)) {
-				return $test->withResult(
-					$job->getExitCode() === Job::CodeSkip ? Test::Skipped : Test::Failed,
-					$job->getTest()->getOutput(),
-				);
-			}
+		$testCaseClass = $m[1];
 
-			$stdout = $job->getTest()->stdout;
+		preg_match_all('#^Method:([^\n]+)$#m', $stdout, $m);
+		if (count($m[1]) < 1) {
+			return $test->withResult(Test::Skipped, "Class $testCaseClass in file '{$test->getFile()}' does not contain test methods.");
+		}
 
-			if (!preg_match('#^TestCase:([^\n]+)$#m', $stdout, $m)) {
-				return $test->withResult(
-					Test::Failed,
-					"Cannot list TestCase methods in file '{$test->getFile()}'. Do you call TestCase::run() in it?",
-				);
-			}
+		$methods = $m[1];
 
-			$testCaseClass = $m[1];
+		if ($cacheFile = $this->getTestCaseCacheFile($test)) {
+			preg_match_all('#^Dependency:([^\n]+)$#m', $stdout, $m);
+			file_put_contents($cacheFile, serialize([
+				'methods' => $methods,
+				'files' => array_combine($m[1], array_map('filemtime', $m[1])),
+			]));
+		}
 
-			preg_match_all('#^Method:([^\n]+)$#m', $stdout, $m);
-			if (count($m[1]) < 1) {
-				return $test->withResult(Test::Skipped, "Class $testCaseClass in file '{$test->getFile()}' does not contain test methods.");
-			}
+		return $methods;
+	}
 
-			$methods = $m[1];
 
-			if ($this->tempDir) {
-				preg_match_all('#^Dependency:([^\n]+)$#m', $stdout, $m);
-				file_put_contents($cacheFile, serialize([
-					'methods' => $methods,
-					'files' => array_combine($m[1], array_map('filemtime', $m[1])),
-				]));
+	/** @return ?list<string>  method names from a valid cache, or null */
+	private function loadTestCaseMethods(Test $test): ?array
+	{
+		$cacheFile = $this->getTestCaseCacheFile($test);
+		if (!$cacheFile || !is_file($cacheFile)) {
+			return null;
+		}
+
+		$cache = unserialize(Helpers::readFile($cacheFile));
+		foreach ($cache['files'] as $path => $mTime) {
+			if (!is_file($path) || filemtime($path) !== $mTime) {
+				return null;
 			}
 		}
 
-		return array_values(array_map(
+		return $cache['methods'];
+	}
+
+
+	private function getTestCaseCacheFile(Test $test): ?string
+	{
+		return $this->tempDir
+			? $this->tempDir . DIRECTORY_SEPARATOR . 'TestHandler.testCase.' . md5($test->getSignature()) . '.list'
+			: null;
+	}
+
+
+	/**
+	 * @param  list<string>  $methods
+	 * @return list<Test>
+	 */
+	private function createTestCaseVariants(Test $test, array $methods): array
+	{
+		return array_map(
 			fn(string $method): Test => $test
 				->withTitle(trim("$test->title $method"))
 				->withArguments(['method' => $method]),
 			$methods,
-		));
+		);
 	}
 
 
