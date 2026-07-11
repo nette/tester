@@ -20,6 +20,12 @@ class TestHandler
 	private const HttpOk = 200;
 	private ?string $tempDir = null;
 
+	/**
+	 * file => [[mtime, size], [annotations, title]]
+	 * @var array<string, array{array{int|false, int|false}, array{array<string|string[]>, ?string}}>
+	 */
+	private array $annotationsCache = [];
+
 
 	public function __construct(
 		private Runner $runner,
@@ -313,10 +319,15 @@ class TestHandler
 	/** @return array{array<string|string[]>, ?string}  [annotations, test title] */
 	private function getAnnotations(string $file): array
 	{
-		$annotations = Helpers::parseDocComment(Helpers::readFile($file));
-		$testTitle = is_string($annotations[0] ?? null)
-			? preg_replace('#^TEST:\s*#i', '', $annotations[0])
-			: null;
-		return [$annotations, $testTitle];
+		$stamp = [@filemtime($file), @filesize($file)]; // @ - file may not exist
+		if (!isset($this->annotationsCache[$file]) || $this->annotationsCache[$file][0] !== $stamp) {
+			$annotations = Helpers::parseDocComment(Helpers::readFile($file));
+			$testTitle = is_string($annotations[0] ?? null)
+				? preg_replace('#^TEST:\s*#i', '', $annotations[0])
+				: null;
+			$this->annotationsCache[$file] = [$stamp, [$annotations, $testTitle]];
+		}
+
+		return $this->annotationsCache[$file][1];
 	}
 }
