@@ -78,14 +78,45 @@ class TestHandler
 			$this->runner->prepareTest($test);
 			$job = new Job($test, $php, $this->runner->getEnvironmentVariables());
 			$job->setTempDirectory($this->tempDir);
+			$job->setTimeout($this->resolveTimeout($annotations));
 			$this->runner->addJob($job);
 		}
+	}
+
+
+	private function createTimeoutResult(Job $job, Test $test, string $activity = ''): Test
+	{
+		return $test->withResult(
+			Test::Failed,
+			rtrim("Timed out after {$job->getTimeout()} s $activity"),
+			$job->getDuration(),
+		);
+	}
+
+
+	/**
+	 * Returns the test time limit given by the @timeout annotation or the runner default.
+	 * @param  array<string|string[]>  $annotations
+	 */
+	private function resolveTimeout(array $annotations): ?float
+	{
+		if (isset($annotations['timeout'])) {
+			$values = (array) $annotations['timeout'];
+			return (float) reset($values);
+		}
+
+		return $this->runner->timeout;
 	}
 
 
 	public function assess(Job $job): void
 	{
 		$test = $job->getTest();
+		if ($job->isTimedOut()) {
+			$this->runner->finishTest($this->createTimeoutResult($job, $test));
+			return;
+		}
+
 		$annotations = $this->getAnnotations($test->getFile())[0] += [
 			'exitcode' => Job::CodeOk,
 			'httpcode' => self::HttpOk,
@@ -188,11 +219,13 @@ class TestHandler
 		}
 
 		// discovers methods in a job running in parallel with other tests
+		$timeout = $this->resolveTimeout($this->getAnnotations($test->getFile())[0]);
 		$job = new Job($test->withArguments(['method' => TestCase::ListMethods]), $interpreter, $this->runner->getEnvironmentVariables());
 		$job->setTempDirectory($this->tempDir);
+		$job->setTimeout($timeout);
 		$this->runner->addJob(
 			$job,
-			fn(Job $job) => $this->finishTestCaseDiscovery($job, $test, $interpreter),
+			fn(Job $job) => $this->finishTestCaseDiscovery($job, $test, $interpreter, $timeout),
 		);
 		return [];
 	}
@@ -202,7 +235,7 @@ class TestHandler
 	 * Processes the result of the methods-listing job: either finishes the test with an error,
 	 * or schedules a job for each discovered method.
 	 */
-	private function finishTestCaseDiscovery(Job $job, Test $test, PhpInterpreter $interpreter): void
+	private function finishTestCaseDiscovery(Job $job, Test $test, PhpInterpreter $interpreter, ?float $timeout): void
 	{
 		$methods = $this->processTestCaseDiscovery($job, $test);
 		if ($methods instanceof Test) {
@@ -215,6 +248,7 @@ class TestHandler
 			$this->runner->prepareTest($variant);
 			$variantJob = new Job($variant, $interpreter, $this->runner->getEnvironmentVariables());
 			$variantJob->setTempDirectory($this->tempDir);
+			$variantJob->setTimeout($timeout);
 			$this->runner->addJob($variantJob);
 		}
 	}
@@ -223,7 +257,10 @@ class TestHandler
 	/** @return Test|list<string>  finished test on error, or list of method names */
 	private function processTestCaseDiscovery(Job $job, Test $test): Test|array
 	{
-		if (in_array($job->getExitCode(), [Job::CodeError, Job::CodeFail, Job::CodeSkip], true)) {
+		if ($job->isTimedOut()) {
+			return $this->createTimeoutResult($job, $test, 'while listing TestCase methods');
+
+		} elseif (in_array($job->getExitCode(), [Job::CodeError, Job::CodeFail, Job::CodeSkip], true)) {
 			return $test->withResult($job->getExitCode() === Job::CodeSkip ? Test::Skipped : Test::Failed, $job->getTest()->getOutput());
 		}
 

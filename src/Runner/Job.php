@@ -44,6 +44,9 @@ class Job
 	/** @var array<string, string>  output headers */
 	private array $headers = [];
 	private float $duration = 0.0;
+	private ?float $timeout = null;
+	private ?float $terminatedAt = null;
+	private bool $killed = false;
 
 
 	/** @param ?array<string, string>  $envVars */
@@ -80,6 +83,30 @@ class Job
 	public function getEnvironmentVariable(string $name): string
 	{
 		return $this->envVars[$name];
+	}
+
+
+	/**
+	 * Sets the time limit in seconds after which the test process is terminated. Null means no limit.
+	 */
+	public function setTimeout(?float $timeout): void
+	{
+		$this->timeout = $timeout > 0 ? $timeout : null;
+	}
+
+
+	public function getTimeout(): ?float
+	{
+		return $this->timeout;
+	}
+
+
+	/**
+	 * Tells whether the test process has been terminated because it exceeded the time limit.
+	 */
+	public function isTimedOut(): bool
+	{
+		return $this->terminatedAt !== null;
 	}
 
 
@@ -129,6 +156,11 @@ class Job
 		if ($async) {
 			stream_set_blocking($this->stdout, enable: false); // on Windows does not work with proc_open()
 		} else {
+			if (PHP_OS_FAMILY !== 'Windows') {
+				// prevents isRunning() from blocking on the pipe until the process exits, so the timeout can be enforced
+				stream_set_blocking($this->stdout, enable: false);
+			}
+
 			while ($this->isRunning()) {
 				usleep(self::RunSleep);
 			}
@@ -166,6 +198,17 @@ class Job
 		assert($this->proc !== null);
 		$status = proc_get_status($this->proc);
 		if ($status['running']) {
+			$now = microtime(as_float: true);
+			if ($this->timeout !== null && $now + $this->duration >= $this->timeout) { // $duration holds the negative start time while running
+				if ($this->terminatedAt === null) {
+					$this->terminatedAt = $now;
+					proc_terminate($this->proc);
+				} elseif (!$this->killed && $now - $this->terminatedAt > 1) {
+					$this->killed = true;
+					proc_terminate($this->proc, 9); // SIGKILL when the process ignores the previous signal
+				}
+			}
+
 			return true;
 		}
 

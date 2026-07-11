@@ -222,6 +222,7 @@ Options:
     -d <key=value>...            Define INI entry 'key' with value 'value'.
     -s                           Show information about skipped tests.
     --stop-on-fail               Stop execution upon the first failure.
+    --timeout <seconds>          Time limit for each test in seconds, can be overridden by @timeout.
     -j <num>                     Run <num> jobs in parallel (default: 8).
     -o <console|console-lines|github|tap|junit|log|none>  (e.g. -o junit:output.xml)
                                  Specify one or more output formats with optional file name.

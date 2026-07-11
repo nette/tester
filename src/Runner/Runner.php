@@ -21,6 +21,9 @@ class Runner
 	/** @var list<string> */
 	public array $ignoreDirs = ['vendor'];
 	public int $threadCount = 1;
+
+	/** time limit for a single test in seconds, overridable by @timeout annotation; null = no limit */
+	public ?float $timeout = null;
 	public TestHandler $testHandler;
 
 	/** @var list<OutputHandler> */
