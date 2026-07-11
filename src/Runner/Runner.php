@@ -46,6 +46,7 @@ class Runner
 	private array $lastResults = [];
 	private int $jobCount = 0;
 	private int $finishedCount = 0;
+	private int $testCount = 0;
 
 
 	public function __construct(
@@ -97,7 +98,7 @@ class Runner
 		$running = [];
 		try {
 			$this->jobs = [];
-			$this->finishedCount = $this->jobCount = 0;
+			$this->finishedCount = $this->jobCount = $this->testCount = 0;
 			foreach ($this->paths as $path) {
 				$this->findTests($path);
 			}
@@ -217,6 +218,7 @@ class Runner
 
 	public function prepareTest(Test $test): void
 	{
+		$this->testCount++;
 		foreach ($this->outputHandlers as $handler) {
 			$handler->prepare($test);
 		}
@@ -262,6 +264,15 @@ class Runner
 	public function getFinishedCount(): int
 	{
 		return $this->finishedCount;
+	}
+
+
+	/**
+	 * Returns the number of discovered tests, including those skipped during initiation.
+	 */
+	public function getTestCount(): int
+	{
+		return $this->testCount;
 	}
 
 

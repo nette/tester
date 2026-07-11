@@ -92,7 +92,7 @@ class CliTester
 			$result = $this->finishCodeCoverage($coverageFile) && $result;
 		}
 
-		return $result ? 0 : 1;
+		return $result && $runner->getTestCount() ? 0 : 1;
 	}
 
 
