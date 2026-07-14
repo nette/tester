@@ -96,18 +96,10 @@ class TestCase
 			throw new TestCaseException("Method {$method->getName()} is not public. Make it public or rename it.");
 		}
 
-		$info = Helpers::parseDocComment((string) $method->getDocComment()) + ['throws' => null];
-
-		if ($info['throws'] === '') {
-			throw new TestCaseException("Missing class name in @throws annotation for {$method->getName()}().");
-		} elseif (is_array($info['throws'])) {
-			throw new TestCaseException("Annotation @throws for {$method->getName()}() can be specified only once.");
-		} else {
-			$throws = is_string($info['throws']) ? preg_split('#\s+#', $info['throws'], 2) : [];
-		}
+		[$throws, $dataproviders] = $this->resolveTestMeta($method);
 
 		$data = $args === null
-			? $this->prepareTestData($method, (array) ($info['dataprovider'] ?? []))
+			? $this->prepareTestData($method, $dataproviders)
 			: [$args];
 
 		if ($this->prevErrorHandler === false) {
@@ -130,7 +122,7 @@ class TestCase
 				$this->handleErrors = true;
 				$params = array_values($params);
 				try {
-					if ($info['throws']) {
+					if ($throws) {
 						$e = Assert::error(function () use ($method, $params): void {
 							$method->invoke($this, ...$params);
 						}, ...$throws);
@@ -160,6 +152,46 @@ class TestCase
 				));
 			}
 		}
+	}
+
+
+	/**
+	 * Resolves @throws and @dataProvider metadata for a method; #[Throws]/#[DataProvider] attributes
+	 * take precedence over the docblock.
+	 * @return array{?array<int, string|int>, string[]}  [throws (class + optional message), data providers]
+	 */
+	private function resolveTestMeta(\ReflectionMethod $method): array
+	{
+		$name = $method->getName();
+		$info = Helpers::parseDocComment((string) $method->getDocComment());
+
+		$attrs = $method->getAttributes(Attributes\Throws::class);
+		if ($attrs) {
+			if (count($attrs) > 1) {
+				throw new TestCaseException("Attribute #[Throws] for $name() can be specified only once.");
+			}
+
+			$throws = $attrs[0]->newInstance();
+			$throws = $throws->message === null ? [$throws->class] : [$throws->class, $throws->message];
+		} elseif (!isset($info['throws'])) {
+			$throws = null;
+		} elseif ($info['throws'] === '') {
+			throw new TestCaseException("Missing class name in @throws annotation for $name().");
+		} elseif (is_array($info['throws'])) {
+			throw new TestCaseException("Annotation @throws for $name() can be specified only once.");
+		} else {
+			$throws = preg_split('#\s+#', $info['throws'], 2);
+		}
+
+		$attrs = $method->getAttributes(Attributes\DataProvider::class);
+		$dataproviders = $attrs
+			? array_map(function (\ReflectionAttribute $attr): string {
+				$dp = $attr->newInstance();
+				return $dp->query === '' ? $dp->provider : "$dp->provider $dp->query";
+			}, $attrs)
+			: (array) ($info['dataprovider'] ?? []);
+
+		return [$throws, $dataproviders];
 	}
 
 
