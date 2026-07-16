@@ -186,7 +186,11 @@ class Environment
 		$file = "$path/lock-" . md5($name);
 		if (!isset($locks[$file])) {
 			$locks[$file] = fopen($file, 'w') ?: throw new \RuntimeException("Unable to create lock file '$file'.");
+			// on Windows the time limit measures real time, so waiting for the lock would consume it
+			$limit = (int) ini_get('max_execution_time');
+			set_time_limit(0);
 			flock($locks[$file], LOCK_EX);
+			set_time_limit($limit);
 		}
 	}
 
