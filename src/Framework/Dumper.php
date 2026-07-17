@@ -85,6 +85,27 @@ class Dumper
 	}
 
 
+	/**
+	 * Formats function call arguments (from a stack trace frame) into a single, length-limited line.
+	 * @param  mixed[]  $args
+	 */
+	private static function argsToLine(array $args): string
+	{
+		$out = '';
+		foreach ($args as $k => $v) {
+			$out .= $out === '' ? '' : ', ';
+			if (strlen($out) > self::$maxLength * 3) { // toLine() already shortens each value; this only caps extreme argument counts
+				$out .= '...';
+				break;
+			}
+
+			$out .= (is_string($k) ? "$k: " : '') . self::toLine($v);
+		}
+
+		return $out;
+	}
+
+
 	private static function objectToLine(object $object): string
 	{
 		$line = $object::class;
@@ -378,7 +399,7 @@ class Dumper
 				)
 				. ($line
 					? trim($line)
-					: $item['class'] . $item['type'] . $item['function'] . ($item['function'] ? '()' : '')
+					: $item['class'] . $item['type'] . $item['function'] . ($item['function'] ? '(' . self::argsToLine($item['args'] ?? []) . ')' : '')
 				)
 				. Ansi::reset() . "\n";
 		}

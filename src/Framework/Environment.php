@@ -111,6 +111,7 @@ class Environment
 		ini_set('display_errors', '1');
 		ini_set('html_errors', '0');
 		ini_set('log_errors', '0');
+		ini_set('zend.exception_ignore_args', '0'); // keep call arguments in stack traces
 
 		set_exception_handler([self::class, 'handleException']);
 
