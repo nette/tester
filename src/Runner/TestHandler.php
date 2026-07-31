@@ -113,8 +113,10 @@ class TestHandler
 
 	private function initiatePhpVersion(Test $test, string $version, PhpInterpreter $interpreter): ?Test
 	{
-		if (preg_match('#^(<=|<|==|=|!=|<>|>=|>)?\s*(.+)#', $version, $matches)
-			&& version_compare($matches[2], $interpreter->getVersion(), $matches[1] ?: '>=')) {
+		if (
+			preg_match('#^(<=|<|==|=|!=|<>|>=|>)?\s*(.+)#', $version, $matches)
+			&& !version_compare($interpreter->getVersion(), $matches[2], $matches[1] ?: '>=')
+		) {
 			return $test->withResult(Test::Skipped, "Requires PHP $version.");
 		}
 
