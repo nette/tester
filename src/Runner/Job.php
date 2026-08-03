@@ -178,10 +178,10 @@ class Job
 
 		if ($this->interpreter->isCgi() && count($tmp = explode("\r\n\r\n", $this->test->stdout, 2)) >= 2) {
 			[$headers, $this->test->stdout] = $tmp;
-			foreach (explode("\r\n", $headers) as $header) {
-				$pos = strpos($header, ':');
-				if ($pos !== false) {
-					$this->headers[trim(substr($header, 0, $pos))] = trim(substr($header, $pos + 1));
+			// lines may be separated by LF alone when the interpreter prints something before the headers
+			foreach (preg_split('#\r?\n#', $headers) as $header) {
+				if (preg_match('#^([^\s:]+)\s*:(.*)#', $header, $m)) {
+					$this->headers[$m[1]] = trim($m[2]);
 				}
 			}
 		}
