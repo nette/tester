@@ -320,9 +320,9 @@ class Assert
 			self::fail("$class was expected, but none was thrown");
 
 		} elseif (!$e instanceof $class) {
-			self::fail("$class was expected but got " . $e::class . ($e->getMessage() ? " ({$e->getMessage()})" : ''), null, null, $e);
+			self::fail("$class was expected but got " . $e::class . ($e->getMessage() !== '' ? " ({$e->getMessage()})" : ''), null, null, $e);
 
-		} elseif ($message && !self::isMatching($message, $e->getMessage())) {
+		} elseif ($message !== null && !self::isMatching($message, $e->getMessage())) {
 			self::fail("$class with a message matching %2 was expected but got %1", $e->getMessage(), $message, $e);
 
 		} elseif ($code !== null && $e->getCode() !== $code) {
@@ -387,7 +387,7 @@ class Assert
 				return false;
 			}
 
-			$errorStr = Helpers::errorTypeToString($severity) . ($message ? " ($message)" : '');
+			$errorStr = Helpers::errorTypeToString($severity) . ($message !== '' ? " ($message)" : '');
 			[$expectedType, $expectedMessage, $expectedTypeStr] = array_shift($expected);
 			if ($expectedType === null) {
 				self::fail("Generated more errors than expected: $errorStr was generated in file $file on line $line");
@@ -395,7 +395,7 @@ class Assert
 			} elseif ($severity !== $expectedType) {
 				self::fail("$expectedTypeStr was expected, but $errorStr was generated in file $file on line $line");
 
-			} elseif ($expectedMessage && !self::isMatching($expectedMessage, $message)) {
+			} elseif ($expectedMessage !== null && !self::isMatching($expectedMessage, $message)) {
 				self::fail("$expectedTypeStr with a message matching %2 was expected but got %1", $message, $expectedMessage);
 			}
 

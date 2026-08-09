@@ -76,6 +76,47 @@ $e = Assert::exception(
 );
 Assert::same($obj->e, $e->getPrevious());
 
+Assert::exception(
+	fn() => throw new Exception(''),
+	Exception::class,
+	'',
+);
+
+Assert::exception(
+	fn() => throw new Exception('0'),
+	Exception::class,
+	'0',
+);
+
+Assert::exception(
+	fn() => Assert::exception(
+		fn() => throw new Exception('WRONG'),
+		Exception::class,
+		'',
+	),
+	Tester\AssertException::class,
+	"Exception with a message matching '' was expected but got 'WRONG'",
+);
+
+Assert::exception(
+	fn() => Assert::exception(
+		fn() => throw new Exception('WRONG'),
+		Exception::class,
+		'0',
+	),
+	Tester\AssertException::class,
+	"Exception with a message matching '0' was expected but got 'WRONG'",
+);
+
+Assert::exception(
+	fn() => Assert::exception(
+		fn() => throw new Exception('0'),
+		'UnknownException',
+	),
+	Tester\AssertException::class,
+	'UnknownException was expected but got Exception (0)',
+);
+
 $old = Assert::$onFailure;
 Assert::$onFailure = function () {};
 $e = Assert::exception(function () {}, Exception::class);

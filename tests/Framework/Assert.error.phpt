@@ -80,6 +80,41 @@ Assert::exception(
 	"E_NOTICE with a message matching 'Abc' was expected but got 'Only variables should be assigned by reference'",
 );
 
+Assert::error(
+	fn() => trigger_error('0', E_USER_NOTICE),
+	E_USER_NOTICE,
+	'0',
+);
+
+Assert::exception(
+	fn() => Assert::error(
+		fn() => trigger_error('WRONG', E_USER_NOTICE),
+		E_USER_NOTICE,
+		'',
+	),
+	Tester\AssertException::class,
+	"E_USER_NOTICE with a message matching '' was expected but got 'WRONG'",
+);
+
+Assert::exception(
+	fn() => Assert::error(
+		fn() => trigger_error('WRONG', E_USER_NOTICE),
+		E_USER_NOTICE,
+		'0',
+	),
+	Tester\AssertException::class,
+	"E_USER_NOTICE with a message matching '0' was expected but got 'WRONG'",
+);
+
+Assert::exception(
+	fn() => Assert::error(
+		fn() => trigger_error('0', E_USER_NOTICE),
+		E_USER_WARNING,
+	),
+	Tester\AssertException::class,
+	'E_USER_WARNING was expected, but E_USER_NOTICE (0) was generated in file %a% on line %d%',
+);
+
 Assert::exception(
 	fn() => Assert::error(
 		function () {
