@@ -136,8 +136,12 @@ class Dumper
 	private static function _toPhp(mixed &$var, array &$list = [], int $level = 0, int &$line = 1): string
 	{
 		if (is_float($var)) {
-			$var = str_replace(',', '.', "$var");
-			return !str_contains($var, '.') ? $var . '.0' : $var;
+			if (!is_finite($var)) {
+				return var_export($var, return: true);
+			}
+
+			$s = str_replace(',', '.', "$var");
+			return str_contains($s, '.') ? $s : $s . '.0';
 
 		} elseif (is_bool($var)) {
 			return $var ? 'true' : 'false';
