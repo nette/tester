@@ -309,6 +309,7 @@ class TestCase
 				throw new TestCaseException("Data provider $provider() doesn't return array or Traversable.");
 			}
 
+			$empty = true;
 			foreach ($res as $k => $set) {
 				if (!is_array($set)) {
 					$type = get_debug_type($set);
@@ -318,6 +319,11 @@ class TestCase
 				$data["$i-$k"] = is_string(key($set))
 					? array_merge($defaultParams, $set)
 					: $set;
+				$empty = false;
+			}
+
+			if ($empty) {
+				throw new TestCaseException("Data provider $provider() returned no data sets.");
 			}
 		}
 
