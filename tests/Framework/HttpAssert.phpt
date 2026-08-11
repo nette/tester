@@ -133,6 +133,26 @@ test('Header existence and non-existence', function () use ($base) {
 		->denyHeader('X-NonExistent-Header');  // Should not exist
 });
 
+test('Header existence checks are counted as assertions', function () use ($base) {
+	$res = HttpAssert::fetch("$base/get");
+	$checks = [
+		fn() => $res->expectHeader('Content-Type'),
+		fn() => $res->expectHeader('X-NonExistent'),
+		fn() => $res->denyHeader('X-NonExistent'),
+		fn() => $res->denyHeader('Content-Type'),
+	];
+
+	foreach ($checks as $check) {
+		$counter = Assert::$counter;
+		try {
+			$check();
+		} catch (AssertException) {
+		}
+
+		Assert::same($counter + 1, Assert::$counter);
+	}
+});
+
 test('expectHeader properly fails when header missing', function () use ($base) {
 	Assert::exception(
 		fn() => HttpAssert::fetch("$base/get")->expectHeader('X-NonExistent'),

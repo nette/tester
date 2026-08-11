@@ -137,6 +137,7 @@ class HttpAssert
 	{
 		$headerValue = $this->headers[strtolower($name)] ?? null;
 		if (!isset($headerValue)) {
+			Assert::$counter++;
 			Assert::fail("Header '$name' should exist");
 		} elseif (is_string($expected)) {
 			Assert::same($expected, $headerValue, "Header '$name' validation failed");
@@ -146,6 +147,8 @@ class HttpAssert
 			Assert::contains($contains, $headerValue, "Header '$name' validation failed");
 		} elseif ($matches !== null) {
 			Assert::match($matches, $headerValue, "Header '$name' validation failed");
+		} else {
+			Assert::$counter++;
 		}
 
 		return $this;
@@ -165,6 +168,7 @@ class HttpAssert
 	{
 		$headerValue = $this->headers[strtolower($name)] ?? null;
 		if (!isset($headerValue)) {
+			Assert::$counter++;
 			return $this;
 		}
 
@@ -177,6 +181,7 @@ class HttpAssert
 		} elseif ($matches !== null) {
 			Assert::notMatch($matches, $headerValue, "Header '$name' validation failed");
 		} else {
+			Assert::$counter++;
 			Assert::fail("Header '$name' should not exist");
 		}
 
