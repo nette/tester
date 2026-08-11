@@ -74,21 +74,33 @@ class HttpAssert
 		}
 
 		$headerSize = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
-		$res = new self(
+		return new self(
 			substr($response, $headerSize),
 			curl_getinfo($ch, CURLINFO_HTTP_CODE),
-			[],
+			self::parseHeaders(substr($response, 0, $headerSize)),
 		);
+	}
 
-		$headerString = substr($response, 0, $headerSize);
-		foreach (explode("\r\n", $headerString) as $line) {
-			if (str_contains($line, ':')) {
+
+	/**
+	 * Parses headers of the final response (curl also returns redirects and interim responses); repeated headers are combined.
+	 * @return array<string, string>
+	 */
+	private static function parseHeaders(string $s): array
+	{
+		$headers = [];
+		foreach (preg_split('#\r?\n#', $s) as $line) {
+			if (str_starts_with($line, 'HTTP/')) {
+				$headers = [];
+			} elseif (str_contains($line, ':')) {
 				[$name, $value] = explode(':', $line, 2);
-				$res->headers[strtolower(trim($name))] = trim($value);
+				$name = strtolower(trim($name));
+				$value = trim($value);
+				$headers[$name] = isset($headers[$name]) ? "$headers[$name], $value" : $value;
 			}
 		}
 
-		return $res;
+		return $headers;
 	}
 
 

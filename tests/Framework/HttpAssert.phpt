@@ -217,12 +217,30 @@ test('Redirect following', function () use ($base) {
 	// Test without following redirects
 	HttpAssert::fetch("$base/redirect", follow: false)
 		->expectCode(302)
-		->expectHeader('Location');
+		->expectHeader('Location')
+		->expectHeader('X-Redirect', 'yes');
 
 	// Test with following redirects
 	HttpAssert::fetch("$base/redirect", follow: true)
 		->expectCode(200)
+		->denyHeader('Location')
+		->denyHeader('X-Redirect')
+		->expectHeader('Content-Type', contains: 'json')
 		->expectBody(contains: "\"url\": \"$base/get\"");
+});
+
+
+test('Repeated headers are combined', function () use ($base) {
+	HttpAssert::fetch("$base/repeated-headers")
+		->expectHeader('X-Repeated', 'one, two');
+});
+
+
+test('Only headers of the final response are used', function () {
+	$headers = Assert::with(HttpAssert::class, fn() => self::parseHeaders(
+		"HTTP/1.1 100 Continue\r\n\r\nHTTP/1.1 302 Found\r\nLocation: /a\r\nX-A: 1\r\n\r\nHTTP/1.1 200 OK\r\nX-B: 2\r\nx-b: 3\r\n\r\n",
+	));
+	Assert::same(['x-b' => '2, 3'], $headers);
 });
 
 

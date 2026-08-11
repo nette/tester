@@ -31,7 +31,15 @@ if ($path === '/response-headers') {
 
 // /redirect - sends a 302 to /get
 if ($path === '/redirect') {
+	header('X-Redirect: yes');
 	header('Location: /get', true, 302);
+	return;
+}
+
+// /repeated-headers - sends the same header twice
+if ($path === '/repeated-headers') {
+	header('X-Repeated: one');
+	header('X-Repeated: two', false);
 	return;
 }
 
