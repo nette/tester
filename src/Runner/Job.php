@@ -38,12 +38,15 @@ class Job
 
 	/** @var resource|null */
 	private $stdout;
-	private ?string $stderrFile;
+	private ?string $stderrFile = null;
+
+	/** @var resource|null  stderr captured to a temporary file when no temp directory is set */
+	private $stderr;
 	private int $exitCode = self::CodeNone;
 
 	/** @var array<string, string>  output headers */
 	private array $headers = [];
-	private float $duration;
+	private float $duration = 0.0;
 
 
 	/** @param ?array<string, string>  $envVars */
@@ -93,6 +96,10 @@ class Job
 			putenv("$name=$value");
 		}
 
+		if (!$this->stderrFile) {
+			$this->stderr = tmpfile() ?: null;
+		}
+
 		$args = array_map(fn($arg) => is_array($arg) ? "--$arg[0]=$arg[1]" : $arg, $this->test->getArguments());
 		$this->duration = -microtime(as_float: true);
 		try {
@@ -103,7 +110,7 @@ class Job
 				[
 					['pipe', 'r'],
 					['pipe', 'w'],
-					$this->stderrFile ? ['file', $this->stderrFile, 'w'] : ['pipe', 'w'],
+					$this->stderrFile ? ['file', $this->stderrFile, 'w'] : ($this->stderr ?? ['pipe', 'w']),
 				],
 				$pipes,
 				dirname($this->test->getFile()),
@@ -173,6 +180,10 @@ class Job
 		if ($this->stderrFile) {
 			$this->test->stderr .= Helpers::readFile($this->stderrFile);
 			unlink($this->stderrFile);
+		} elseif ($this->stderr) {
+			rewind($this->stderr);
+			$this->test->stderr .= stream_get_contents($this->stderr);
+			fclose($this->stderr);
 		}
 
 		$code = proc_close($this->proc);

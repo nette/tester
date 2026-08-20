@@ -95,8 +95,9 @@ loop (Ctrl+C, a throwing output handler), running processes are terminated
 (`Job::terminate`). `end()` is called on every handler even if discovery or another
 handler throws.
 
-**Child I/O:** with a temp dir, the child's **stderr goes to a file, not a pipe**
-(`Job.pid-*.stderr`, read and deleted on finish). Stdout handling is
+**Child I/O:** the child's **stderr goes to a file, not a pipe**
+(`Job.pid-*.stderr` in the temp dir, read and deleted on finish, or a `tmpfile()`
+when no temp dir is set). Stdout handling is
 platform-forked for a reason: on Windows < PHP 8.5 the runner must keep reading
 the pipe with blocking `stream_get_contents`, otherwise a child producing more
 than the ~64 KB pipe buffer **deadlocks**; PHP 8.5+ on Windows has a fixed

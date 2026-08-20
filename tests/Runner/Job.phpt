@@ -32,7 +32,6 @@ test('environment variables of the runner are restored', function () {
 	putenv('TESTER_JOB_ENV=original');
 	try {
 		$job = new Job(new Test(__DIR__ . '/Job.env.phptx'), createInterpreter(), ['TESTER_JOB_ENV' => 'override', 'TESTER_JOB_NEW' => 'new']);
-		$job->setTempDirectory(Tester\Helpers::prepareTempDir(sys_get_temp_dir()));
 		$job->run();
 
 		Assert::same('override|new', $job->getTest()->stdout);
@@ -41,6 +40,22 @@ test('environment variables of the runner are restored', function () {
 	} finally {
 		putenv('TESTER_JOB_ENV');
 	}
+});
+
+
+test('job without temp directory', function () {
+	$job = new Job(new Test(__DIR__ . '/Job.test.phptx'), createInterpreter());
+	Assert::null($job->getDuration());
+	$job->run();
+
+	Assert::same(231, $job->getExitCode());
+	Assert::same('+stderr1+stderr2', $job->getTest()->stderr);
+	Assert::type('float', $job->getDuration());
+
+	$job = new Job(new Test(__DIR__ . '/Job.test.phptx'), createInterpreter());
+	$job->setTempDirectory(null);
+	$job->run();
+	Assert::same('+stderr1+stderr2', $job->getTest()->stderr);
 });
 
 
