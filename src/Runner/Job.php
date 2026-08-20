@@ -190,6 +190,21 @@ class Job
 	}
 
 
+	/**
+	 * Terminates the test process if it is still running and waits for it to end.
+	 * @internal
+	 */
+	public function terminate(): void
+	{
+		if ($this->proc && is_resource($this->stdout)) {
+			proc_terminate($this->proc);
+			while ($this->isRunning()) {
+				usleep(self::RunSleep);
+			}
+		}
+	}
+
+
 	public function getTest(): Test
 	{
 		return $this->test;

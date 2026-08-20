@@ -89,25 +89,26 @@ class Runner
 			$handler->begin();
 		}
 
-		$this->jobs = $running = [];
-		foreach ($this->paths as $path) {
-			$this->findTests($path);
-		}
-
-		if ($this->tempDir) {
-			usort(
-				$this->jobs,
-				fn(Job $a, Job $b): int => $this->getLastResult($a->getTest()) - $this->getLastResult($b->getTest()),
-			);
-		}
-
-		$threads = range(1, $this->threadCount);
-
-		$async = $this->threadCount > 1 && count($this->jobs) > 1;
-
+		$running = [];
 		try {
-			while (($this->jobs || $running) && !$this->interrupted) {
-				while ($threads && $this->jobs) {
+			$this->jobs = [];
+			foreach ($this->paths as $path) {
+				$this->findTests($path);
+			}
+
+			if ($this->tempDir) {
+				usort(
+					$this->jobs,
+					fn(Job $a, Job $b): int => $this->getLastResult($a->getTest()) - $this->getLastResult($b->getTest()),
+				);
+			}
+
+			$threads = range(1, $this->threadCount);
+			$async = $this->threadCount > 1 && count($this->jobs) > 1;
+
+			// once interrupted, no new job is started, but the running ones are finished and assessed
+			while (($this->jobs && !$this->interrupted) || $running) {
+				while ($threads && $this->jobs && !$this->interrupted) {
 					$running[] = $job = array_shift($this->jobs);
 					$job->setEnvironmentVariable(Environment::VariableThread, (string) array_shift($threads));
 					$job->run(async: $async);
@@ -118,20 +119,29 @@ class Runner
 				}
 
 				foreach ($running as $key => $job) {
-					if ($this->interrupted) {
-						break 2;
-					}
-
 					if (!$job->isRunning()) {
 						$threads[] = $job->getEnvironmentVariable(Environment::VariableThread);
-						$this->testHandler->assess($job);
 						unset($running[$key]);
+						$this->testHandler->assess($job);
 					}
 				}
 			}
 		} finally {
+			foreach ($running as $job) {
+				$job->terminate();
+			}
+
+			$error = null;
 			foreach ($this->outputHandlers as $handler) {
-				$handler->end();
+				try {
+					$handler->end();
+				} catch (\Throwable $e) {
+					$error ??= $e;
+				}
+			}
+
+			if ($error) {
+				throw $error;
 			}
 		}
 

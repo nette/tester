@@ -88,6 +88,13 @@ when any of those files' mtimes change — edit `sendMethodList` and
 (`Test::Prepared`=0, `Failed`=1, `Passed`=2, `Skipped`=3) — so new tests run
 first, then last run's failures, and previously skipped tests go last.
 
+**Run lifecycle:** no test process outlives `Runner::run`. Once interrupted
+(`--stop-on-fail`), no new job is started, but the jobs already running are
+finished and assessed, so their results are reported. When an exception leaves the
+loop (Ctrl+C, a throwing output handler), running processes are terminated
+(`Job::terminate`). `end()` is called on every handler even if discovery or another
+handler throws.
+
 **Child I/O:** with a temp dir, the child's **stderr goes to a file, not a pipe**
 (`Job.pid-*.stderr`, read and deleted on finish). Stdout handling is
 platform-forked for a reason: on Windows < PHP 8.5 the runner must keep reading

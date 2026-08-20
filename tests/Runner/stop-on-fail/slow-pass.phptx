@@ -1,0 +1,8 @@
+<?php declare(strict_types=1);
+
+require __DIR__ . '/../../bootstrap.php';
+
+
+usleep(400_000);
+file_put_contents(getenv('TESTER_STOP_ON_FAIL_MARKER'), 'done');
+Tester\Assert::true(true);

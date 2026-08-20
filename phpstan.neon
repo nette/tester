@@ -44,8 +44,3 @@ parameters:
 			identifier: while.alwaysTrue
 			count: 1
 			path: src/Runner/CliTester.php
-
-		- # False positive: $interrupted is mutated transitively through $this->testHandler->assess() -> Runner::finishTest(); PHPStan cannot track cross-method property mutation.
-			identifier: if.alwaysFalse
-			count: 1
-			path: src/Runner/Runner.php
