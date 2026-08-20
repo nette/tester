@@ -87,27 +87,31 @@ class Job
 	 */
 	public function run(bool $async = false): void
 	{
+		$prevEnvVars = [];
 		foreach ($this->envVars as $name => $value) {
+			$prevEnvVars[$name] = getenv($name);
 			putenv("$name=$value");
 		}
 
 		$args = array_map(fn($arg) => is_array($arg) ? "--$arg[0]=$arg[1]" : $arg, $this->test->getArguments());
 		$this->duration = -microtime(as_float: true);
-		$this->proc = proc_open(
-			$this->interpreter
-				->withArguments(['-d', 'register_argc_argv=on', $this->test->getFile(), ...$args])
-				->getCommand(),
-			[
-				['pipe', 'r'],
-				['pipe', 'w'],
-				$this->stderrFile ? ['file', $this->stderrFile, 'w'] : ['pipe', 'w'],
-			],
-			$pipes,
-			dirname($this->test->getFile()),
-		) ?: throw new \RuntimeException('Cannot start test process.');
-
-		foreach (array_keys($this->envVars) as $name) {
-			putenv($name);
+		try {
+			$this->proc = proc_open(
+				$this->interpreter
+					->withArguments(['-d', 'register_argc_argv=on', $this->test->getFile(), ...$args])
+					->getCommand(),
+				[
+					['pipe', 'r'],
+					['pipe', 'w'],
+					$this->stderrFile ? ['file', $this->stderrFile, 'w'] : ['pipe', 'w'],
+				],
+				$pipes,
+				dirname($this->test->getFile()),
+			) ?: throw new \RuntimeException('Cannot start test process.');
+		} finally {
+			foreach ($prevEnvVars as $name => $value) {
+				putenv($value === false ? $name : "$name=$value");
+			}
 		}
 
 		[$stdin, $this->stdout] = $pipes;

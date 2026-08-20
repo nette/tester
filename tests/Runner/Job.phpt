@@ -28,6 +28,22 @@ test('appending arguments to Test', function () {
 });
 
 
+test('environment variables of the runner are restored', function () {
+	putenv('TESTER_JOB_ENV=original');
+	try {
+		$job = new Job(new Test(__DIR__ . '/Job.env.phptx'), createInterpreter(), ['TESTER_JOB_ENV' => 'override', 'TESTER_JOB_NEW' => 'new']);
+		$job->setTempDirectory(Tester\Helpers::prepareTempDir(sys_get_temp_dir()));
+		$job->run();
+
+		Assert::same('override|new', $job->getTest()->stdout);
+		Assert::same('original', getenv('TESTER_JOB_ENV'));
+		Assert::false(getenv('TESTER_JOB_NEW'));
+	} finally {
+		putenv('TESTER_JOB_ENV');
+	}
+});
+
+
 test('appending title to a Test', function () {
 	$testA = (new Test('Job.test.phptx'));
 	Assert::null($testA->title);
