@@ -33,7 +33,7 @@ class Assert
 		'%d%' => '[0-9]+',      // one or more digits
 		'%d\?%' => '[0-9]*',    // zero or more digits
 		'%i%' => '[+-]?[0-9]+', // signed integer value
-		'%f%' => '[+-]?\.?\d+\.?\d*(?:[Ee][+-]?\d+)?', // floating point number
+		'%f%' => '[+-]?(?:\d+\.?\d*|\.\d+)(?:[Ee][+-]?\d+)?', // floating point number
 		'%h%' => '[0-9a-fA-F]+', // one or more HEX digits
 		'%w%' => '[0-9a-zA-Z_]+', // one or more alphanumeric characters
 		'%ds%' => '[\\\/]',    // directory separator
@@ -548,28 +548,32 @@ class Assert
 	public static function isMatching(string $pattern, string $actual, bool $strict = false): bool
 	{
 		$old = ini_set('pcre.backtrack_limit', '10000000');
-
-		if (!self::isPcre($pattern)) {
-			$utf8 = preg_match('#\x80-\x{10FFFF}]#u', $pattern) ? 'u' : '';
-			$suffix = ($strict ? '$#DsU' : '\s*$#sU') . $utf8;
-			$patterns = static::$patterns + [
-				'[.\\\+*?[^$(){|\#]' => '\$0', // preg quoting
-				'\x00' => '\x00',
-				'[\t ]*\r?\n' => '[\t ]*\r?\n', // right trim
-			];
-			$pattern = '#^' . preg_replace_callback('#' . implode('|', array_keys($patterns)) . '#U' . $utf8, function ($m) use ($patterns): string {
-				foreach ($patterns as $re => $replacement) {
-					$s = preg_replace("#^$re$#D", str_replace('\\', '\\\\', $replacement), $m[0], 1, $count);
-					if ($count) {
-						return $s ?? $m[0];
+		try {
+			if (!self::isPcre($pattern)) {
+				// characters are matched as UTF-8 only when both strings are UTF-8 text, otherwise as bytes
+				$utf8 = preg_match('#[\x80-\x{10FFFF}]#u', $pattern) && preg_match('##u', $actual) ? 'u' : '';
+				$suffix = ($strict ? '$#DsU' : '\s*$#sU') . $utf8;
+				$patterns = static::$patterns + [
+					'[.\\\+*?[^$(){|\#]' => '\$0', // preg quoting
+					'\x00' => '\x00',
+					'[\t ]*\r?\n' => '[\t ]*\r?\n', // right trim
+				];
+				$pattern = '#^' . preg_replace_callback('#' . implode('|', array_keys($patterns)) . '#U' . $utf8, function ($m) use ($patterns): string {
+					foreach ($patterns as $re => $replacement) {
+						$s = preg_replace("#^$re$#D", str_replace('\\', '\\\\', $replacement), $m[0], 1, $count);
+						if ($count) {
+							return $s ?? $m[0];
+						}
 					}
-				}
-				return $m[0];
-			}, rtrim($pattern, " \t\n\r")) . $suffix;
+					return $m[0];
+				}, rtrim($pattern, " \t\n\r")) . $suffix;
+			}
+
+			$res = preg_match($pattern, $actual);
+		} finally {
+			ini_set('pcre.backtrack_limit', $old);
 		}
 
-		$res = preg_match($pattern, $actual);
-		ini_set('pcre.backtrack_limit', $old);
 		if ($res === false || preg_last_error()) {
 			throw new \Exception('Error while executing regular expression. (' . preg_last_error_msg() . ')');
 		}

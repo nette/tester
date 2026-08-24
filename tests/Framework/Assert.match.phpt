@@ -27,6 +27,8 @@ $matches = [
 	['%s?%', ''],
 	['a%c%c', 'abc'],
 	['a%c%c', 'a c'],
+	["\u{11B}%c%", "\u{11B}\u{10D}"],
+	["\u{11B}%c%", "\u{11B}\xFF"],
 	['%d%', '123'],
 	['%d?%', '123'],
 	['%d?%', ''],
@@ -35,6 +37,9 @@ $matches = [
 	['%f%', '-123'],
 	['%f%', '+123.5'],
 	['%f%', '-1e5'],
+	['%f%', '1.'],
+	['%f%', '.5'],
+	['%f%', '1.5E-3'],
 	['%h%', 'aBcDeF01'],
 	['%w%', 'aBzZ_01'],
 	['%ds%%ds%', '\/'],
@@ -62,10 +67,14 @@ $notMatches = [
 	['a%c%c', 'abbc', 'abc', 'abbc'],
 	['a%c%c', 'ac', 'acc', 'ac'],
 	['a%c%c', "a\nc", 'a%c%c', "a\nc"],
+	["\u{11B}%c%", "\u{11B}\u{10D}\u{159}", "\u{11B}\u{10D}", "\u{11B}\u{10D}\u{159}"],
 	['%d%', '', '%d%', ''],
 	['%i%', '-123.5', '-123', '-123.5'],
 	['%i%', '', '%i%', ''],
 	['%f%', '', '%f%', ''],
+	['%f%', '.1.2', '%f%', '.1.2'],
+	['%f%', '1..2', '%f%', '1..2'],
+	['%f%', '.', '%f%', '.'],
 	['%h%', 'gh', '%h%', 'gh'],
 	['%h%', '', '%h%', ''],
 	['%w%', ',', '%w%', ','],
@@ -97,12 +106,26 @@ Assert::same('ab', Assert::expandMatchingPatterns('ab', 'abc')[0]);
 Assert::same('abcx', Assert::expandMatchingPatterns('%a%x', 'abc')[0]);
 Assert::same('a123c', Assert::expandMatchingPatterns('a%d%c', 'a123x')[0]);
 Assert::same('a%A%b', Assert::expandMatchingPatterns('a%A%b', 'axc')[0]);
+Assert::same("\u{11B}\u{10D}x", Assert::expandMatchingPatterns("\u{11B}%c%x", "\u{11B}\u{10D}y")[0]);
 
 
 Assert::exception(
 	fn() => Assert::match(null, ''),
 	TypeError::class,
 );
+
+
+$limit = ini_get('pcre.backtrack_limit');
+set_error_handler(fn(int $severity, string $message) => throw new ErrorException($message, 0, $severity));
+try {
+	Assert::exception(
+		fn() => Assert::isMatching('~[~', 'x'),
+		ErrorException::class,
+	);
+} finally {
+	restore_error_handler();
+}
+Assert::same($limit, ini_get('pcre.backtrack_limit'));
 
 
 Assert::matchFile(__DIR__ . '/Assert.matchFile.txt', '! Hello !');
