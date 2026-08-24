@@ -56,32 +56,34 @@ class FileMock
 
 	public function stream_open(string $path, string $mode): bool
 	{
-		if (!preg_match('#^([rwaxc]).*?(\+)?#', $mode, $m)) {
+		if (!preg_match('#^[rwaxc]#', $mode)) {
 			// Windows: failed to open stream: Bad file descriptor
 			// Linux: failed to open stream: Illegal seek
 			$this->warning("failed to open stream: Invalid mode '$mode'");
 			return false;
 
-		} elseif ($m[1] === 'x' && isset(self::$files[$path])) {
+		} elseif ($mode[0] === 'x' && isset(self::$files[$path])) {
 			$this->warning('failed to open stream: File exists');
 			return false;
 
-		} elseif ($m[1] === 'r' && !isset(self::$files[$path])) {
+		} elseif ($mode[0] === 'r' && !isset(self::$files[$path])) {
 			$this->warning('failed to open stream: No such file or directory');
 			return false;
 
-		} elseif ($m[1] === 'w' || $m[1] === 'x') {
+		} elseif ($mode[0] === 'w' || $mode[0] === 'x') {
 			self::$files[$path] = '';
 		}
 
+		// like PHP, only the first character and the presence of '+' matter; flags such as 'b' can be anywhere
+		$update = str_contains($mode, '+');
 		$tmp = &self::$files[$path];
 		$tmp = (string) $tmp;
 		$this->content = &$tmp;
-		$this->appendMode = $m[1] === 'a';
+		$this->appendMode = $mode[0] === 'a';
 		$this->readingPos = 0;
-		$this->writingPos = $this->appendMode ? strlen($this->content) : 0;
-		$this->isReadable = isset($m[2]) || $m[1] === 'r';
-		$this->isWritable = isset($m[2]) || $m[1] !== 'r';
+		$this->writingPos = 0;
+		$this->isReadable = $update || $mode[0] === 'r';
+		$this->isWritable = $update || $mode[0] !== 'r';
 
 		return true;
 	}
@@ -95,7 +97,7 @@ class FileMock
 
 		$result = substr($this->content, $this->readingPos, $length);
 		$this->readingPos += strlen($result);
-		$this->writingPos += $this->appendMode ? 0 : strlen($result);
+		$this->writingPos += strlen($result);
 		return $result;
 	}
 
@@ -104,6 +106,10 @@ class FileMock
 	{
 		if (!$this->isWritable) {
 			return false;
+		}
+
+		if ($this->appendMode) { // the content may have been changed through another handle
+			$this->writingPos = strlen($this->content);
 		}
 
 		$length = strlen($data);
@@ -137,7 +143,7 @@ class FileMock
 
 		if ($offset >= 0) {
 			$this->readingPos = $offset;
-			$this->writingPos = $this->appendMode ? $this->writingPos : $offset;
+			$this->writingPos = $offset;
 			return true;
 		} else {
 			return false;
@@ -152,7 +158,6 @@ class FileMock
 		}
 
 		$this->content = substr(str_pad($this->content, $size, "\x00"), 0, $size);
-		$this->writingPos = $this->appendMode ? $size : $this->writingPos;
 		return true;
 	}
 
@@ -187,10 +192,12 @@ class FileMock
 
 	public function stream_metadata(string $path, int $option, mixed $value): bool
 	{
-		return match ($option) {
-			STREAM_META_TOUCH => true,
-			default => false,
-		};
+		if ($option === STREAM_META_TOUCH) {
+			self::$files[$path] ??= '';
+			return true;
+		}
+
+		return false;
 	}
 
 

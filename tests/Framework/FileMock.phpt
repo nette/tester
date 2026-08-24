@@ -259,4 +259,44 @@ test('Position handling across modes', function () {
 test('touch', function () {
 	fopen($name = Tester\FileMock::create('foo'), 'r');
 	Assert::true(touch($name));
+	Assert::same('foo', file_get_contents($name));
+
+	$name = 'mock://touched.txt';
+	Assert::false(is_file($name));
+	Assert::true(touch($name));
+	Assert::true(is_file($name));
+	Assert::same('', file_get_contents($name));
+});
+
+
+test('Append through multiple handles', function () {
+	@mkdir(__DIR__ . '/output'); // @ - directory may already exist
+	$pathReal = __DIR__ . '/output/real-file-append.txt';
+	file_put_contents($pathReal, 'a');
+	$pathMock = FileMock::create('a');
+
+	foreach ([$pathReal, $pathMock] as $path) {
+		$f1 = fopen($path, 'a');
+		$f2 = fopen($path, 'a');
+		fwrite($f1, 'b');
+		fwrite($f2, 'c');
+		fclose($f1);
+		fclose($f2);
+	}
+
+	Assert::same('abc', file_get_contents($pathReal));
+	Assert::same('abc', file_get_contents($pathMock));
+	unlink($pathReal);
+});
+
+
+test('Mode flags', function () {
+	foreach (['rb+' => '_BC', 'r+b' => '_BC', 'rt+' => '_BC', 'wb' => '_', 'ab+' => 'ABC_'] as $mode => $contents) {
+		$name = FileMock::create('ABC');
+		$f = fopen($name, $mode);
+		Assert::same(1, fwrite($f, '_'), "Mode $mode");
+		Assert::same($contents, FileMock::$files[$name], "Mode $mode");
+	}
+
+	Assert::false(@fwrite(fopen(FileMock::create('ABC'), 'rb'), '_')); // @ - triggers E_NOTICE since PHP 7.4
 });
