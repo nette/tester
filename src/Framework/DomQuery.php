@@ -80,8 +80,8 @@ class DomQuery extends \SimpleXMLElement
 	{
 		if (PHP_VERSION_ID < 80400) {
 			return (str_starts_with($selector, ':scope')
-				? $this->xpath('self::' . self::css2xpath(substr($selector, 6)))
-				: $this->xpath('descendant::' . self::css2xpath($selector))) ?: [];
+				? $this->xpath(self::selectorToXpath(substr($selector, 6), 'self::'))
+				: $this->xpath(self::selectorToXpath($selector, 'descendant::'))) ?: [];
 		}
 
 		return array_map(
@@ -108,7 +108,7 @@ class DomQuery extends \SimpleXMLElement
 	public function matches(string $selector): bool
 	{
 		return PHP_VERSION_ID < 80400
-			? (bool) $this->xpath('self::' . self::css2xpath($selector))
+			? (bool) $this->xpath(self::selectorToXpath($selector, 'self::'))
 			: Dom\import_simplexml($this)->matches($selector);
 	}
 
@@ -131,7 +131,17 @@ class DomQuery extends \SimpleXMLElement
 	 */
 	public static function css2xpath(string $css): string
 	{
-		$xpath = '*';
+		// historical format: the first alternative of a selector list has no axis, the others start with //
+		return substr(self::selectorToXpath($css, '//'), 2);
+	}
+
+
+	/**
+	 * Converts a CSS selector into an XPath expression, each alternative of a selector list starts with the given axis.
+	 */
+	private static function selectorToXpath(string $css, string $axis): string
+	{
+		$xpath = $axis . '*';
 		preg_match_all(<<<'XX'
 			/
 				([#.:]?)([a-z][a-z0-9_-]*)|               # id, class, pseudoclass (1,2)
@@ -166,22 +176,22 @@ class DomQuery extends \SimpleXMLElement
 					continue;
 				}
 
-				$val = trim($m[5], '"\'');
+				$val = preg_match('#^(["\'])(.*)\1$#Ds', $m[5], $quoted) ? $quoted[2] : $m[5];
 				if ($m[4] === '') {
-					$xpath .= "[$attr='$val']";
+					$xpath .= "[$attr=" . self::quote($val) . ']';
 				} elseif ($m[4] === '~') {
-					$xpath .= "[contains(concat(' ', normalize-space($attr), ' '), ' $val ')]";
+					$xpath .= "[contains(concat(' ', normalize-space($attr), ' '), " . self::quote(" $val ") . ')]';
 				} elseif ($m[4] === '*') {
-					$xpath .= "[contains($attr, '$val')]";
+					$xpath .= "[contains($attr, " . self::quote($val) . ')]';
 				} elseif ($m[4] === '^') {
-					$xpath .= "[starts-with($attr, '$val')]";
+					$xpath .= "[starts-with($attr, " . self::quote($val) . ')]';
 				} elseif ($m[4] === '$') {
-					$xpath .= "[substring($attr, string-length($attr)-0)='$val']";
+					$xpath .= "[substring($attr, string-length($attr) - string-length(" . self::quote($val) . ') + 1)=' . self::quote($val) . ']';
 				}
 			} elseif ($m[6] === '>') {
 				$xpath .= '/*';
 			} elseif ($m[6] === ',') {
-				$xpath .= '|//*';
+				$xpath .= "|$axis*";
 			} elseif ($m[6] === '~') {
 				$xpath .= '/following-sibling::*';
 			} elseif ($m[6] === '+') {
@@ -192,5 +202,20 @@ class DomQuery extends \SimpleXMLElement
 		}
 
 		return $xpath;
+	}
+
+
+	/**
+	 * Formats a string as an XPath 1.0 literal, which has no escape sequences.
+	 */
+	private static function quote(string $s): string
+	{
+		if (!str_contains($s, "'")) {
+			return "'$s'";
+		} elseif (!str_contains($s, '"')) {
+			return "\"$s\"";
+		}
+
+		return "concat('" . str_replace("'", "', \"'\", '", $s) . "')";
 	}
 }
