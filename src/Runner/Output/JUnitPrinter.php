@@ -48,10 +48,11 @@ class JUnitPrinter implements Tester\Runner\OutputHandler
 
 	public function finish(Test $test): void
 	{
+		$signature = htmlspecialchars(self::sanitize($test->getSignature()));
 		$this->results[$test->getResult()]++;
-		$this->buffer .= "\t\t<testcase classname=\"" . htmlspecialchars($test->getSignature()) . '" name="' . htmlspecialchars($test->getSignature()) . '"';
+		$this->buffer .= "\t\t<testcase classname=\"" . $signature . '" name="' . $signature . '"';
 		$this->buffer .= match ($test->getResult()) {
-			Test::Failed => ">\n\t\t\t<failure message=\"" . htmlspecialchars($test->message ?? '', ENT_COMPAT | ENT_HTML5) . "\"/>\n\t\t</testcase>\n",
+			Test::Failed => ">\n\t\t\t<failure message=\"" . htmlspecialchars(self::sanitize($test->message ?? ''), ENT_COMPAT | ENT_HTML5) . "\"/>\n\t\t</testcase>\n",
 			Test::Skipped => ">\n\t\t\t<skipped/>\n\t\t</testcase>\n",
 			Test::Passed => "/>\n",
 		};
@@ -67,5 +68,15 @@ class JUnitPrinter implements Tester\Runner\OutputHandler
 		$this->buffer .= "\t</testsuite>";
 
 		fwrite($this->file, $this->buffer . "\n</testsuites>\n");
+	}
+
+
+	/**
+	 * Replaces invalid UTF-8 sequences and characters not allowed in XML 1.0, which may come from the test output.
+	 */
+	private static function sanitize(string $s): string
+	{
+		$s = htmlspecialchars_decode(htmlspecialchars($s, ENT_NOQUOTES | ENT_SUBSTITUTE, 'UTF-8'), ENT_NOQUOTES);
+		return preg_replace('#[\x00-\x08\x0B\x0C\x0E-\x1F\x{FFFE}\x{FFFF}]#u', "\u{FFFD}", $s);
 	}
 }
