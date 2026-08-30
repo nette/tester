@@ -29,3 +29,23 @@ test('report is well-formed XML for any test output', function () {
 		$dom->getElementsByTagName('failure')->item(0)->getAttribute('message'),
 	);
 });
+
+
+test('summary attributes match the reported test cases', function () {
+	$printer = new JUnitPrinter($file = FileMock::create(''));
+	$printer->begin();
+	$printer->finish((new Test('a.phpt'))->withResult(Test::Passed, null));
+	$printer->finish((new Test('b.phpt'))->withResult(Test::Failed, 'failed'));
+	$printer->finish((new Test('c.phpt'))->withResult(Test::Failed, 'failed'));
+	$printer->finish((new Test('d.phpt'))->withResult(Test::Skipped, 'skipped'));
+	$printer->end();
+
+	$dom = new DOMDocument;
+	$dom->loadXML(file_get_contents($file));
+	$suite = $dom->getElementsByTagName('testsuite')->item(0);
+	Assert::same('4', $suite->getAttribute('tests'));
+	Assert::same('2', $suite->getAttribute('failures'));
+	Assert::same((string) $dom->getElementsByTagName('failure')->length, $suite->getAttribute('failures'));
+	Assert::same((string) $dom->getElementsByTagName('skipped')->length, $suite->getAttribute('skipped'));
+	Assert::same('0', $suite->getAttribute('errors'));
+});
