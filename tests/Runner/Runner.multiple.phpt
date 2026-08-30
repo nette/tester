@@ -1,8 +1,10 @@
 <?php declare(strict_types=1);
 
 use Tester\Assert;
+use Tester\Runner\Test;
 
 require __DIR__ . '/../bootstrap.php';
+require __DIR__ . '/../../src/Runner/OutputHandler.php';
 require __DIR__ . '/../../src/Runner/Test.php';
 require __DIR__ . '/../../src/Runner/TestHandler.php';
 require __DIR__ . '/../../src/Runner/Runner.php';
@@ -56,3 +58,45 @@ Assert::same([
 	['testcase.phptx', [['method', 'testProtected']]],
 	['testcase.phptx', [['method', 'test_foo']]],
 ], $jobs);
+
+
+// invalid @multiple value
+$runner = new Tester\Runner\Runner(createInterpreter());
+$runner->outputHandlers[] = $logger = new class implements Tester\Runner\OutputHandler {
+	public $results = [];
+
+
+	public function begin(): void
+	{
+	}
+
+
+	public function prepare(Test $test): void
+	{
+	}
+
+
+	public function finish(Test $test): void
+	{
+		$this->results[basename($test->getFile())] = [$test->getResult(), $test->message];
+	}
+
+
+	public function end(): void
+	{
+	}
+};
+
+$jobs = Assert::with($runner, function () {
+	$this->result = true;
+	$this->jobs = [];
+	$this->findTests(__DIR__ . '/multiple-invalid/*.phptx');
+	return $this->jobs;
+});
+
+Assert::same([], $jobs);
+ksort($logger->results);
+Assert::same([
+	'text.phptx' => [Test::Failed, "Annotation @multiple expects a positive integer, 'abc' given."],
+	'zero.phptx' => [Test::Failed, "Annotation @multiple expects a positive integer, '0' given."],
+], $logger->results);

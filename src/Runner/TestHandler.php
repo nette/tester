@@ -163,9 +163,13 @@ class TestHandler
 	}
 
 
-	/** @return list<Test> */
-	private function initiateMultiple(Test $test, string $count): array
+	/** @return list<Test>|Test */
+	private function initiateMultiple(Test $test, string $count): array|Test
 	{
+		if (!preg_match('#^[1-9]\d*$#D', $count)) {
+			return $test->withResult(Test::Failed, "Annotation @multiple expects a positive integer, '$count' given.");
+		}
+
 		return array_map(
 			fn(int $i): Test => $test->withArguments(['multiple' => $i]),
 			range(0, (int) $count - 1),
