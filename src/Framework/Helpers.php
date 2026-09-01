@@ -36,7 +36,7 @@ class Helpers
 	 */
 	public static function purge(string $dir): void
 	{
-		if (preg_match('#^(\w:)?[/\\\]?$#', $dir)) {
+		if (self::isRootPath($dir)) {
 			throw new \InvalidArgumentException('Directory must not be an empty string or root path.');
 		}
 
@@ -51,6 +51,17 @@ class Helpers
 				unlink((string) $entry);
 			}
 		}
+	}
+
+
+	/**
+	 * Checks whether the path is empty or refers to a root directory, also after resolving '..' and symbolic links.
+	 */
+	private static function isRootPath(string $path): bool
+	{
+		$real = realpath($path);
+		return preg_match('#^(\w:)?[/\\\]?$#D', $path)
+			|| ($real !== false && preg_match('#^(\w:)?[/\\\]?$#D', $real));
 	}
 
 
