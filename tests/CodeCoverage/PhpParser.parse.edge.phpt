@@ -38,3 +38,27 @@ Assert::equal((object) [
 	'traits' => [],
 	'interfaces' => [],
 ], $parser->parse('<?php class A {}  echo A::class;  class B {}'));
+
+
+// function returning by reference
+Assert::equal([
+	'foo' => (object) ['start' => 1, 'end' => 1],
+], $parser->parse('<?php function &foo() { static $x; return $x; }')->functions);
+
+Assert::equal([
+	'bar' => (object) ['start' => 1, 'end' => 1, 'visibility' => 'public'],
+], $parser->parse('<?php class C { public function &bar() { return $this->x; } }')->classes['C']->methods);
+
+
+// enum
+if (PHP_VERSION_ID >= 80100) {
+	$parsed = $parser->parse('<?php enum E: string { case A = "a"; public function f() { return 1; } }');
+	Assert::equal([], $parsed->functions);
+	Assert::equal([
+		'E' => (object) [
+			'start' => 1,
+			'end' => 1,
+			'methods' => ['f' => (object) ['start' => 1, 'end' => 1, 'visibility' => 'public']],
+		],
+	], $parsed->classes);
+}

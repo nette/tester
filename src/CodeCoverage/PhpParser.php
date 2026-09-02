@@ -72,8 +72,9 @@ class PhpParser
 		while ($token = current($tokens)) {
 			next($tokens);
 			$line = $token->line;
+			$id = PHP_VERSION_ID >= 80100 && $token->is(T_ENUM) ? T_CLASS : $token->id; // enums are listed among classes
 
-			switch ($token->id) {
+			switch ($id) {
 				case T_NAMESPACE:
 					$namespace = self::fetch($tokens, [T_STRING, T_NAME_QUALIFIED]);
 					$namespace = ltrim($namespace . '\\', '\\');
@@ -83,9 +84,9 @@ class PhpParser
 				case T_INTERFACE:
 				case T_TRAIT:
 					if ($name = self::fetch($tokens, T_STRING)) {
-						if ($token->id === T_CLASS) {
+						if ($id === T_CLASS) {
 							$class = &$result->classes[$namespace . $name];
-						} elseif ($token->id === T_INTERFACE) {
+						} elseif ($id === T_INTERFACE) {
 							$class = &$result->interfaces[$namespace . $name];
 						} else {
 							$class = &$result->traits[$namespace . $name];
@@ -180,7 +181,7 @@ class PhpParser
 		while ($token = current($tokens)) {
 			if ($token->is($take)) {
 				$res .= $token->text;
-			} elseif (!$token->is([T_DOC_COMMENT, T_WHITESPACE, T_COMMENT])) {
+			} elseif (!$token->is([T_DOC_COMMENT, T_WHITESPACE, T_COMMENT]) && $token->text !== '&') { // & of a function returning by reference
 				break;
 			}
 
