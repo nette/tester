@@ -123,9 +123,20 @@ class CloverXMLGenerator extends AbstractGenerator
 				}
 
 				$elClassMetrics = $elClass->appendChild($doc->createElement('metrics'));
-				$classMetrics = $this->calculateClassMetrics($info, $coverageData);
+				$classMetrics = $this->calculateMethodMetrics($info->methods, $coverageData);
 				self::setMetricAttributes($elClassMetrics, $classMetrics);
 				self::appendMetrics($fileMetrics, $classMetrics);
+			}
+
+			// functions have no element of their own, they are part of the file metrics
+			self::appendMetrics($fileMetrics, $this->calculateMethodMetrics($code->functions, $coverageData));
+
+			if ($coverageData !== null) { // statements outside classes and functions are known only from the coverage data
+				$statements = array_filter($coverageData, fn(int $count): bool => $count !== self::LineDead);
+				$fileMetrics->statementCount = count($statements);
+				$fileMetrics->coveredStatementCount = count(array_filter($statements, fn(int $count): bool => $count > 0));
+				$fileMetrics->elementCount = $fileMetrics->methodCount + $fileMetrics->statementCount;
+				$fileMetrics->coveredElementCount = $fileMetrics->coveredMethodCount + $fileMetrics->coveredStatementCount;
 			}
 
 			self::setMetricAttributes($elFileMetrics, $fileMetrics);
@@ -149,18 +160,20 @@ class CloverXMLGenerator extends AbstractGenerator
 			self::appendMetrics($projectMetrics, $fileMetrics);
 		}
 
-		// TODO: What about reported (covered) lines outside of class/trait definition?
 		self::setMetricAttributes($elProjectMetrics, $projectMetrics);
 
 		echo $doc->saveXML();
 	}
 
 
-	/** @param ?array<int, int>  $coverageData  line number => coverage count */
-	private function calculateClassMetrics(\stdClass $info, ?array $coverageData = null): \stdClass
+	/**
+	 * @param  array<string, \stdClass>  $methods  name => info about methods or functions
+	 * @param  ?array<int, int>  $coverageData  line number => coverage count
+	 */
+	private function calculateMethodMetrics(array $methods, ?array $coverageData = null): \stdClass
 	{
 		$stats = (object) [
-			'methodCount' => count($info->methods),
+			'methodCount' => count($methods),
 			'coveredMethodCount' => 0,
 			'statementCount' => 0,
 			'coveredStatementCount' => 0,
@@ -170,7 +183,7 @@ class CloverXMLGenerator extends AbstractGenerator
 			'coveredElementCount' => null,
 		];
 
-		foreach ($info->methods as $name => $methodInfo) {
+		foreach ($methods as $methodInfo) {
 			[$lineCount, $coveredLineCount] = $this->analyzeMethod($methodInfo, $coverageData);
 
 			$stats->statementCount += $lineCount;

@@ -36,3 +36,8 @@ class Logger
 
 $logger = new Logger('php://stdout');  # 1
 $logger->log('foo');  # 1
+
+function helper()
+{
+	return 1;  # 1
+}  # -2
