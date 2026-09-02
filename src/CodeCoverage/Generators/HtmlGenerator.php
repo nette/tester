@@ -89,7 +89,7 @@ class HtmlGenerator extends AbstractGenerator
 					}
 				}
 
-				$coverage = round($covered * 100 / $total);
+				$coverage = $total ? round($covered * 100 / $total) : 100; // only dead code, nothing left uncovered
 				$this->totalSum += $total;
 				$this->coveredSum += $covered;
 			} else {
