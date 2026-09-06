@@ -85,7 +85,7 @@ class CliTester
 		$result = $runner->run();
 
 		if (isset($coverageFile) && preg_match('#\.(?:html?|xml)$#D', $coverageFile)) {
-			$this->finishCodeCoverage($coverageFile);
+			$result = $this->finishCodeCoverage($coverageFile) && $result;
 		}
 
 		return $result ? 0 : 1;
@@ -292,22 +292,37 @@ class CliTester
 	}
 
 
-	private function finishCodeCoverage(string $file): void
+	/**
+	 * Generates the coverage report; returns false when it cannot be generated.
+	 */
+	private function finishCodeCoverage(string $file): bool
 	{
-		if (!in_array($this->stdoutFormat, ['none', 'tap', 'junit'], strict: true)) {
+		// stdout with a machine-readable format must contain nothing else
+		$quiet = in_array($this->stdoutFormat, ['none', 'tap', 'junit'], strict: true);
+		if (!$quiet) {
 			echo 'Generating code coverage report... ';
 		}
 
 		if (filesize($file) === 0) {
-			echo 'failed. Coverage file is empty. Do you call Tester\Environment::setup() in tests?' . "\n";
-			return;
+			$message = 'Coverage file is empty. Do you call Tester\Environment::setup() in tests?';
+			if ($quiet) {
+				fwrite(STDERR, "Error: $message\n");
+			} else {
+				echo "failed. $message\n";
+			}
+
+			return false;
 		}
 
 		$generator = pathinfo($file, PATHINFO_EXTENSION) === 'xml'
 			? new CodeCoverage\Generators\CloverXMLGenerator($file, $this->options['--coverage-src'])
 			: new CodeCoverage\Generators\HtmlGenerator($file, $this->options['--coverage-src']);
 		$generator->render($file);
-		echo round($generator->getCoveredPercent()) . "% covered\n";
+		if (!$quiet) {
+			echo round($generator->getCoveredPercent()) . "% covered\n";
+		}
+
+		return true;
 	}
 
 
