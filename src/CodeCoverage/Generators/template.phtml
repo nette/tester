@@ -237,7 +237,7 @@ $directories = [];
 $allLinesCount = 0;
 foreach ($files as $id => $info) {
 	$code = Tester\Helpers::readFile($info->file);
-	$lineCount = substr_count($code, "\n") + 1;
+	$lineCount = substr_count($code, "\n") + (str_ends_with($code, "\n") ? 0 : 1);
 	$digits = ceil(log10($lineCount)) + 1;
 
 	$allLinesCount += $lineCount;
@@ -473,7 +473,7 @@ foreach ($files as $id => $info) {
 			let aside = '';
 			let prevClass = null;
 			let closeTag = '', buffer = '';
-			for (let i = 1; i < file.lineCount; i++) {
+			for (let i = 1; i <= file.lineCount; i++) {
 				let currentClass = file.lines[i] && classes[file.lines[i]] ? classes[file.lines[i]] : '';
 				if (currentClass !== prevClass) {
 					aside += (buffer + closeTag);
