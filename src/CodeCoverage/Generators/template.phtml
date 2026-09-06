@@ -215,8 +215,7 @@
 
 <?php
 
-function assignArrayByPath(array &$arr, stdClass $info, string $value): void
-{
+$assignArrayByPath = function (array &$arr, stdClass $info, string $value): void {
 	$keys = explode(DIRECTORY_SEPARATOR, $info->name);
 
 	$currentFile = '';
@@ -231,7 +230,7 @@ function assignArrayByPath(array &$arr, stdClass $info, string $value): void
 		$arr['coverage'] = isset($arr['coverage']) ? $arr['coverage'] + $info->coverage : $info->coverage;
 	}
 	$arr = $value;
-}
+};
 
 $jsonData = [];
 $directories = [];
@@ -244,7 +243,7 @@ foreach ($files as $id => $info) {
 	$allLinesCount += $lineCount;
 
 	$currentId = "F{$id}";
-	assignArrayByPath($directories, $info, $currentId);
+	$assignArrayByPath($directories, $info, $currentId);
 
 	$html = highlight_string($code, true);
 	if (PHP_VERSION_ID < 80300) {  // Normalize to HTML introduced by PHP 8.3

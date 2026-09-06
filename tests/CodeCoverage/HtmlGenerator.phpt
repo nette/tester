@@ -16,3 +16,13 @@ test('file containing only dead code', function () {
 
 	Assert::contains('"coverage":100', file_get_contents($output));
 });
+
+
+test('report can be rendered repeatedly in one process', function () {
+	$source = realpath(__DIR__ . '/fixtures.clover/Logger.php');
+	foreach ([1, 2] as $i) {
+		$generator = new HtmlGenerator(FileMock::create(serialize([$source => [19 => 1]])), [$source]);
+		$generator->render($output = FileMock::create('', 'html'));
+		Assert::contains('Logger.php', file_get_contents($output));
+	}
+});
