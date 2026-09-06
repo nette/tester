@@ -381,6 +381,8 @@ foreach ($files as $id => $info) {
 			isDirectoriesInitialized = true;
 		}
 
+		let directoryCounter = 0;
+
 		function createDirectory(directory) {
 			let out = '';
 			Object.keys(directory).sort(function(a, b) {
@@ -396,24 +398,25 @@ foreach ($files as $id => $info) {
 				let id, coverage;
 				let isFile = typeof dir === 'string';
 				if (isFile) {
-					id = dir;
+					id = 'D' + dir;
 					dir = _files[dir];
 					coverage = dir.coverage;
 				} else {
-					id = null;
+					id = 'T' + (++directoryCounter); // paths may contain characters not usable in an id
 					coverage = dir.count === 0 ? 0 : Math.round(dir.coverage / dir.count);
 				}
 
-				let html = createFileInfo(isFile ? ('D' + id) : dir.name, {
+				let html = createFileInfo(id, {
 					coverage: coverage,
-					name: isFile ? i : (i + ' <small>(' + dir.count + ')</small>'),
+					name: i,
+					count: isFile ? null : dir.count,
 					class: isFile ? dir.class : 'dir',
 				}, isFile ? 'toggle' : 'toggle-dir');
 
 				if (isFile) {
-					html += '<div class="code" id="D' + id + '"></div>';
+					html += '<div class="code" id="' + id + '"></div>';
 				} else {
-					html += '<div class="directory" id="' + dir.name + '">' + createDirectory(dir.files) + '</div>';
+					html += '<div class="directory" id="' + id + '">' + createDirectory(dir.files) + '</div>';
 				}
 
 				out += '<div>' + html + '</div>';
@@ -447,9 +450,13 @@ foreach ($files as $id => $info) {
 				'<tbody><tr' + (file.class ? (' class="' + file.class + '"') : '') + '>' +
 				'<td class="number"><small>' + file.coverage + ' %</small></td>' +
 				'<td><div class="bar"><div style="width: ' + file.coverage + '%"></div></div></td>' +
-				'<td><a href="#' + id + '" class="' + toggleClass + '">' + file.name + '</a></td>' +
+				'<td><a href="#' + id + '" class="' + toggleClass + '">' + escapeHtml(file.name) + (file.count ? ' <small>(' + file.count + ')</small>' : '') + '</a></td>' +
 				'</tr>' +
 				'</tbody></table>';
+		}
+
+		function escapeHtml(s) {
+			return String(s).replace(/[&<>"']/g, (c) => '&#' + c.charCodeAt(0) + ';');
 		}
 
 		function initFileContent(el) {
