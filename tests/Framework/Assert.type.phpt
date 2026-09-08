@@ -16,7 +16,6 @@ $cases = [
 	['callable', function () {}],
 	['float', 0.0],
 	['int', 0],
-	['integer', 0],
 	['null', null],
 	['object', new stdClass],
 	['resource', fopen(__FILE__, 'r')],
@@ -51,4 +50,10 @@ Assert::exception(
 	fn() => Assert::type('int', 'string', 'Custom description'),
 	Tester\AssertException::class,
 	'Custom description: string should be int',
+);
+
+Assert::error(
+	fn() => Assert::type('integer', 0),
+	E_USER_DEPRECATED,
+	"Type 'integer' is deprecated, use 'int'.",
 );
