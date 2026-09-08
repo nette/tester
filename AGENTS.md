@@ -21,7 +21,7 @@ runs in a **fully isolated PHP process**; tests run in parallel by default (8
 threads), are annotation-driven, and the framework is **self-hosting** (it tests
 itself).
 
-- **PHP Version**: 8.0–8.5 (composer upper bound)
+- **PHP Version**: 8.0–8.6 (composer upper bound)
 - **Package**: `nette/tester`
 
 ## Essential Commands

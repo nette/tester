@@ -15,7 +15,7 @@ test('Opening non-existing', function () {
 	$cases = [
 		'r' => $tmp = [
 			[E_USER_WARNING, 'fopen(mock://none): failed to open stream: No such file or directory'],
-			[E_WARNING, 'fopen(mock://none): %[fF]%ailed to open stream: "Tester\FileMock::stream_open" call failed'],
+			[E_WARNING, 'fopen(%a?%): %[fF]%ailed to open stream: "Tester\FileMock::stream_open" call failed'],
 		],
 		'r+' => $tmp,
 		'w' => [],
@@ -52,7 +52,7 @@ test('Opening existing', function () {
 		'a+' => [],
 		'x' => $tmp = [
 			[E_USER_WARNING, 'fopen(mock://%i%.): failed to open stream: File exists'],
-			[E_WARNING, 'fopen(mock://%i%.): %[fF]%ailed to open stream: "Tester\FileMock::stream_open" call failed'],
+			[E_WARNING, 'fopen(%a?%): %[fF]%ailed to open stream: "Tester\FileMock::stream_open" call failed'],
 		],
 		'x+' => $tmp,
 		'c' => [],

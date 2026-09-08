@@ -129,6 +129,8 @@ class TestCase
 			});
 		}
 
+		$object = $method->isStatic() ? null : $this;
+
 		foreach ($data as $k => $params) {
 			try {
 				$this->setUp();
@@ -137,14 +139,14 @@ class TestCase
 				$params = array_values($params);
 				try {
 					if ($info['throws']) {
-						$e = Assert::error(function () use ($method, $params): void {
-							$method->invoke($this, ...$params);
+						$e = Assert::error(function () use ($method, $object, $params): void {
+							$method->invoke($object, ...$params);
 						}, ...$throws);
 						if ($e instanceof AssertException) {
 							throw $e;
 						}
 					} else {
-						$method->invoke($this, ...$params);
+						$method->invoke($object, ...$params);
 					}
 				} catch (\Throwable $e) {
 					$this->handleErrors = false;

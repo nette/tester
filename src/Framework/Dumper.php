@@ -128,7 +128,7 @@ class Dumper
 
 	private static function hash(object $object): string
 	{
-		return '#' . substr(md5(spl_object_hash($object)), 0, 4);
+		return '#' . substr(md5((string) spl_object_id($object)), 0, 4);
 	}
 
 
@@ -209,7 +209,7 @@ class Dumper
 			$arr = (array) $var;
 			$space = str_repeat("\t", $level);
 			$class = $var::class;
-			$used = &$list[spl_object_hash($var)];
+			$used = &$list[spl_object_id($var)];
 
 			if (empty($arr)) {
 				$out = '';
