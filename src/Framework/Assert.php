@@ -277,14 +277,19 @@ class Assert
 	public static function type(string|object $type, mixed $value, ?string $description = null): void
 	{
 		self::$counter++;
+		if ($type === 'integer') {
+			trigger_error("Type 'integer' is deprecated, use 'int'.", E_USER_DEPRECATED);
+			$type = 'int';
+		}
+
 		if ($type === 'list') {
 			if (!is_array($value) || ($value && array_keys($value) !== range(0, count($value) - 1))) {
 				self::fail(self::describe("%1 should be $type", $description), $value);
 			}
 		} elseif (in_array($type, ['array', 'bool', 'callable', 'float',
-			'int', 'integer', 'null', 'object', 'resource', 'scalar', 'string'], strict: true)
+			'int', 'null', 'object', 'resource', 'scalar', 'string'], strict: true)
 		) {
-			if (!('is_' . ($type === 'integer' ? 'int' : $type))($value)) {
+			if (!("is_$type")($value)) {
 				self::fail(self::describe(get_debug_type($value) . " should be $type", $description));
 			}
 		} elseif (!$value instanceof $type) {
