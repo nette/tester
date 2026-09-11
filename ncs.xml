@@ -1,6 +1,0 @@
-<?xml version="1.0"?>
-<ruleset name="Custom" namespace="Nette">
-	<rule ref="SlevomatCodingStandard.Exceptions.ReferenceThrowableOnly">
-		<exclude-pattern>./tests/*/*.phpt</exclude-pattern>
-	</rule>
-</ruleset>
