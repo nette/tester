@@ -282,7 +282,7 @@ class Assert
 				self::fail(self::describe("%1 should be $type", $description), $value);
 			}
 		} elseif (in_array($type, ['array', 'bool', 'callable', 'float',
-			'int', 'integer', 'null', 'object', 'resource', 'scalar', 'string', ], strict: true)
+			'int', 'integer', 'null', 'object', 'resource', 'scalar', 'string'], strict: true)
 		) {
 			if (!('is_' . ($type === 'integer' ? 'int' : $type))($value)) {
 				self::fail(self::describe(get_debug_type($value) . " should be $type", $description));

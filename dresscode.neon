@@ -1,0 +1,33 @@
+presets:
+	- nette
+
+paths:
+	- src
+	- tests
+
+excludePaths:
+	- fixtures*
+
+fileExtensions:
+	- php
+	- phpt
+
+overrides:
+	- paths: [src]
+	  rules: {global-imports: {functions: optimized}}
+
+	# the wrappers implement the streamWrapper interface, whose method names PHP prescribes
+	- paths: [src/Framework/FileMock.php, src/Framework/FileMutator.php]
+	  rules: {name-casing: {methods: keep}}
+
+	# the underscore tells the recursive worker from the public toPhp()
+	- paths: [src/Framework/Dumper.php]
+	  rules: {name-casing: {methods: keep}}
+
+	# the name is part of the API
+	- paths: [src/CodeCoverage/Generators/AbstractGenerator.php]
+	  rules: {kind-in-class-name: keep}
+
+	# the construct is what the test is about
+	- paths: [tests/Framework/Expect.phpt]
+	  rules: {no-direct-invoke-call: keep}
