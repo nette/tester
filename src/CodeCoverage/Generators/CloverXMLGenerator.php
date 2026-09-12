@@ -113,7 +113,7 @@ class CloverXMLGenerator extends AbstractGenerator
 				'coveredConditionalCount' => 0,
 			];
 
-			foreach (array_merge($code->classes, $code->traits) as $name => $info) { // TODO: interfaces?
+			foreach ([...$code->classes, ...$code->traits] as $name => $info) { // TODO: interfaces?
 				$elClass = $elFile->appendChild($doc->createElement('class'));
 				if (($tmp = strrpos($name, '\\')) === false) {
 					$elClass->setAttribute('name', $name);

@@ -8,7 +8,6 @@
 namespace Tester\CodeCoverage;
 
 use function ord;
-use const PHP_VERSION_ID;
 
 
 /**
@@ -73,7 +72,7 @@ class PhpParser
 		while ($token = current($tokens)) {
 			next($tokens);
 			$line = $token->line;
-			$id = PHP_VERSION_ID >= 80100 && $token->is(T_ENUM) ? T_CLASS : $token->id; // enums are listed among classes
+			$id = $token->is(T_ENUM) ? T_CLASS : $token->id; // enums are listed among classes
 
 			switch ($id) {
 				case T_NAMESPACE:
