@@ -219,7 +219,7 @@ class TestCase
 	/**
 	 * Skips the current test with an optional reason message.
 	 */
-	protected function skip(string $message = ''): void
+	protected function skip(string $message = ''): never
 	{
 		throw new TestCaseSkippedException($message);
 	}
@@ -284,7 +284,7 @@ class TestCase
 				}
 
 				$data["$i-$k"] = is_string(key($set))
-					? array_merge($defaultParams, $set)
+					? [...$defaultParams, ...$set]
 					: $set;
 			}
 		}

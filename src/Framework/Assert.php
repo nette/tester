@@ -278,7 +278,7 @@ class Assert
 	{
 		self::$counter++;
 		if ($type === 'list') {
-			if (!is_array($value) || ($value && array_keys($value) !== range(0, count($value) - 1))) {
+			if (!is_array($value) || !array_is_list($value)) {
 				self::fail(self::describe("%1 should be $type", $description), $value);
 			}
 		} elseif (in_array($type, ['array', 'bool', 'callable', 'float',
