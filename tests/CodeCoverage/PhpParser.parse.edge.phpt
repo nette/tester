@@ -51,14 +51,12 @@ Assert::equal([
 
 
 // enum
-if (PHP_VERSION_ID >= 80100) {
-	$parsed = $parser->parse('<?php enum E: string { case A = "a"; public function f() { return 1; } }');
-	Assert::equal([], $parsed->functions);
-	Assert::equal([
-		'E' => (object) [
-			'start' => 1,
-			'end' => 1,
-			'methods' => ['f' => (object) ['start' => 1, 'end' => 1, 'visibility' => 'public']],
-		],
-	], $parsed->classes);
-}
+$parsed = $parser->parse('<?php enum E: string { case A = "a"; public function f() { return 1; } }');
+Assert::equal([], $parsed->functions);
+Assert::equal([
+	'E' => (object) [
+		'start' => 1,
+		'end' => 1,
+		'methods' => ['f' => (object) ['start' => 1, 'end' => 1, 'visibility' => 'public']],
+	],
+], $parsed->classes);
