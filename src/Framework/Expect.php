@@ -28,7 +28,11 @@ use function is_string;
  * @method static self count(int $count)
  * @method static self type(string|object $type)
  * @method static self match(string $pattern)
+ * @method static self notMatch(string $pattern)
  * @method static self matchFile(string $file)
+ * @method static self notNull()
+ * @method static self hasKey(string|int $key)
+ * @method static self hasNotKey(string|int $key)
  *
  * @method self andSame($expected)
  * @method self andNotSame($expected)
@@ -45,7 +49,11 @@ use function is_string;
  * @method self andCount(int $count)
  * @method self andType(string|object $type)
  * @method self andMatch(string $pattern)
+ * @method self andNotMatch(string $pattern)
  * @method self andMatchFile(string $file)
+ * @method self andNotNull()
+ * @method self andHasKey(string|int $key)
+ * @method self andHasNotKey(string|int $key)
  */
 class Expect
 {

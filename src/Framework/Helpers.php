@@ -169,7 +169,7 @@ class Helpers
 	{
 		$real = realpath($path);
 		if ($real === false || !is_dir($real) || !is_writable($real)) {
-			throw new \RuntimeException("Path '$real' is not a writable directory.");
+			throw new \RuntimeException("Path '$path' is not a writable directory.");
 		}
 
 		$path = $real . DIRECTORY_SEPARATOR . 'Tester';

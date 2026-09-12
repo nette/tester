@@ -11,7 +11,7 @@ use function is_array, is_int;
 
 
 /**
- * Immutable value object representing a single test and its execution result.
+ * Represents a single test and its execution result.
  */
 class Test
 {

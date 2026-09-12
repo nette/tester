@@ -9,7 +9,7 @@ the seams cross-reference through that bridge.
 ## Assertion model: soft-by-default, exception-based, and deliberately catchable
 
 - **`Assert::$counter` is incremented at the top of every assertion, before the
-  actual check.** It backs the "this test forgets to execute an assertion" guard:
+  actual check.** It backs the "No assertions were executed in this test" guard:
   `Environment`'s shutdown handler fails a test where `$checkAssertions` is on and
   `Assert::$counter` is still 0. So the counter counts *attempts*, not successes.
 - **`Assert::fail()` either throws or delegates, depending on `$onFailure`.** With
@@ -127,7 +127,7 @@ description). So **rewording the help text can change parsing behavior** — e.g
 `-j`'s default of 8 lives only in that string. The second constructor argument
 (`$defaults`) adds normalizers/realpath flags to parsed options and defines
 **hidden options that are deliberately absent from the help** (`--debug`,
-`--cider`, `--coverage-src`, `paths`). Editing help wording and editing option
+`--cider`, `paths`). Editing help wording and editing option
 behavior are the same act; treat the string as code.
 
 ## Coverage: every child merges into one shared file

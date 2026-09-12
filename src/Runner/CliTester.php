@@ -145,7 +145,7 @@ class CliTester
 						throw new \Exception(
 							$file === null
 								? 'Option -o <format> without file name parameter can be used only once.'
-								: "Cannot specify output by -o into file '$file' more then once.",
+								: "Cannot specify output by -o into file '$file' more than once.",
 						);
 					} elseif ($file === null) {
 						$this->stdoutFormat = $format;
@@ -250,7 +250,7 @@ class CliTester
 				'junit' => $runner->outputHandlers[] = new Output\JUnitPrinter($file),
 				'log' => $runner->outputHandlers[] = new Output\Logger($runner, $file),
 				'none' => null,
-				default => throw new \LogicException("Undefined output printer '$format'.'"),
+				default => throw new \LogicException("Undefined output printer '$format'."),
 			};
 		}
 

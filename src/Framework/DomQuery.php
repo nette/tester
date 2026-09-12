@@ -166,7 +166,7 @@ class DomQuery extends \SimpleXMLElement
 			} elseif ($m[1] === '.') { // .class
 				$xpath .= "[contains(concat(' ', normalize-space(@class), ' '), ' $m[2] ')]";
 			} elseif ($m[1] === ':') { // :pseudo-class
-				throw new \InvalidArgumentException('Not implemented.');
+				throw new \InvalidArgumentException("Pseudo-class ':$m[2]' is not supported by css2xpath(); find() supports it on PHP 8.4 and newer.");
 			} elseif ($m[2]) { // tag
 				$xpath = rtrim($xpath, '*') . $m[2];
 			} elseif ($m[3]) { // [attribute]
@@ -195,7 +195,7 @@ class DomQuery extends \SimpleXMLElement
 			} elseif ($m[6] === '~') {
 				$xpath .= '/following-sibling::*';
 			} elseif ($m[6] === '+') {
-				throw new \InvalidArgumentException('Not implemented.');
+				throw new \InvalidArgumentException("Adjacent sibling combinator '+' is not supported by css2xpath(); find() supports it on PHP 8.4 and newer.");
 			} elseif ($m[7]) {
 				$xpath .= '//*';
 			}

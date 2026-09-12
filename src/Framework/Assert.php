@@ -120,7 +120,7 @@ class Assert
 				self::fail(self::describe('%1 should contain %2', $description), $actual, $needle);
 			}
 		} elseif (!is_string($needle)) {
-			self::fail(self::describe('Needle %1 should be string'), $needle);
+			self::fail(self::describe('Needle %1 should be string', $description), $needle);
 
 		} elseif ($needle !== '' && !str_contains($actual, $needle)) {
 			self::fail(self::describe('%1 should contain %2', $description), $actual, $needle);
@@ -140,7 +140,7 @@ class Assert
 				self::fail(self::describe('%1 should not contain %2', $description), $actual, $needle);
 			}
 		} elseif (!is_string($needle)) {
-			self::fail(self::describe('Needle %1 should be string'), $needle);
+			self::fail(self::describe('Needle %1 should be string', $description), $needle);
 
 		} elseif ($needle === '' || str_contains($actual, $needle)) {
 			self::fail(self::describe('%1 should not contain %2', $description), $actual, $needle);
@@ -344,7 +344,7 @@ class Assert
 		callable $function,
 		string $class,
 		?string $message = null,
-		mixed $code = null,
+		int|string|null $code = null,
 	): ?\Throwable
 	{
 		return self::exception($function, $class, $message, $code);
@@ -499,7 +499,7 @@ class Assert
 
 
 	/**
-	 * Throws AssertException with given message, triggering any registered onFailure handler.
+	 * Throws AssertException with given message, or passes it to the onFailure handler if one is registered.
 	 */
 	public static function fail(
 		string $message,

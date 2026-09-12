@@ -45,12 +45,12 @@ panel; needs `-j` >= 2, otherwise falls back to console-lines).
 
 ## Conventions
 
-- Every file starts with `declare(strict_types=1);`; **tabs**; Nette Coding Standard,
-  but **PSR-12 same-line braces** here (return type and opening brace on the same
-  line - unlike most Nette packages).
+- Every file starts with `declare(strict_types=1);`; **tabs**; Nette Coding Standard.
 - Tests are `.phpt` (auto-discovered) or `*Test.php`; **`.phptx` is deliberately
   NOT auto-discovered** (used in Tester's own suite for fixtures). There is **no
   autoloading** - `tester.php` loads classes manually to avoid autoloader conflicts.
+- Code must run on all supported PHP versions; run changed tests on the lowest one
+  too, as the platform branches (Windows < PHP 8.5, DOM < PHP 8.4) behave differently.
 
 ## Working in this repo
 
@@ -61,7 +61,7 @@ panel; needs `-j` >= 2, otherwise falls back to console-lines).
   continues after one method fails and `test()` can print its × marker. **Never
   turn `Assert::fail()` into a hard `exit`.**
 - **`Assert::$counter` increments at the top of every assertion, before the check**
-  (it counts attempts). It backs the "this test forgets to execute an assertion"
+  (it counts attempts). It backs the "No assertions were executed in this test"
   guard, which `setup()` disables for `@outputMatch`/`@outputMatchFile` tests.
   `fail()` throws during the test body but delegates to `$onFailure` once
   `Environment` installs it in a shutdown handler.
@@ -73,7 +73,10 @@ panel; needs `-j` >= 2, otherwise falls back to console-lines).
   Consequences: file-level annotations **cannot** be replaced by PHP attributes, and
   adding a new annotation means adding a method. `@testCase` fans out in two phases
   (list `test*` methods, then one job per method); the method list is cached in
-  temp and invalidated by mtimes of the class + parents + traits files.
+  temp and invalidated by mtime and size of the class + parents + traits files, so
+  it must not depend on the environment.
+- **No test process outlives `Runner::run()`**: after `--stop-on-fail` running jobs
+  are finished, on an exception they are terminated.
 - **`FileMutator` (`bypassFinals`) registers itself as the `file://` stream
   wrapper;** its `native()` must restore the original wrapper and re-register itself
   in a `finally`, or every internal fs call recurses. Preserve that dance.

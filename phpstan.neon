@@ -18,7 +18,7 @@ parameters:
 			path: src/Framework/DomQuery.php
 		- # DomQuery: regex match group offsets
 			identifier: offsetAccess.notFound
-			count: 9
+			count: 10
 			path: src/Framework/DomQuery.php
 		- # DomQuery: regex analysis false positive
 			identifier: identical.alwaysFalse

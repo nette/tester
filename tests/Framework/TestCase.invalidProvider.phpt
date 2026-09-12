@@ -44,7 +44,7 @@ Assert::exception(function () {
 Assert::exception(function () {
 	$test = new InvalidProviderTest;
 	$test->runTest('testMissingDataProvider');
-}, Tester\TestCaseException::class, 'Method testMissingDataProvider() has arguments, but @dataProvider is missing.');
+}, Tester\TestCaseException::class, 'Method testMissingDataProvider() has arguments, but no data provider is configured.');
 
 Assert::exception(function () {
 	$test = new InvalidProviderTest;

@@ -291,7 +291,7 @@ class TestCase
 
 		if (!$dataprovider) {
 			if ($method->getNumberOfRequiredParameters()) {
-				throw new TestCaseException("Method {$method->getName()}() has arguments, but @dataProvider is missing.");
+				throw new TestCaseException("Method {$method->getName()}() has arguments, but no data provider is configured.");
 			}
 
 			$data[] = [];

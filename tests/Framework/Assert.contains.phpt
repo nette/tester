@@ -51,6 +51,18 @@ Assert::exception(
 );
 
 Assert::exception(
+	fn() => Assert::contains(1, '1', 'Custom description'),
+	Tester\AssertException::class,
+	'Custom description: Needle 1 should be string',
+);
+
+Assert::exception(
+	fn() => Assert::notContains(1, '1', 'Custom description'),
+	Tester\AssertException::class,
+	'Custom description: Needle 1 should be string',
+);
+
+Assert::exception(
 	fn() => Assert::notContains('', '1'),
 	Tester\AssertException::class,
 	"'1' should not contain ''",

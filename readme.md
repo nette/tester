@@ -47,7 +47,7 @@ Nette Tester 2.6 is compatible with PHP 8.0 to 8.6. Collecting and processing co
 Writing Tests
 -------------
 
-Imagine that we are testing this simple class:
+Imagine that we are testing this simple class stored in `Greeting.php`:
 
 ```php
 class Greeting
@@ -62,12 +62,16 @@ class Greeting
 }
 ```
 
-So we create test file named `greeting.test.phpt`:
+So we create test file named `greeting.test.phpt`. Tester is loaded by Composer's
+autoloader, so the test has to set up the Tester environment:
 
 ```php
-require 'src/bootstrap.php';
-
 use Tester\Assert;
+
+require __DIR__ . '/vendor/autoload.php';
+require __DIR__ . '/Greeting.php';
+
+Tester\Environment::setup();
 
 $h = new Greeting;
 
@@ -75,23 +79,23 @@ $h = new Greeting;
 Assert::same('Hello John', $h->say('John'));
 ```
 
-Thats' all!
+That's all!
 
 Now we run tests from command-line using the `tester` command:
 
 ```
-> tester
+> tester .
  _____ ___  ___ _____ ___  ___
 |_   _/ __)( __/_   _/ __)| _ )
   |_| \___ /___) |_| \___ |_|_\  v2.6
 
-PHP 8.2.0 | php | 8 threads
+PHP 8.5.0 | php | 8 threads
 .
-OK (1 tests, 0 skipped, 0.0 seconds)
+OK (1 test, 0.0 seconds)
 ```
 
 Nette Tester prints dot for successful test, F for failed test
-and S when the test has been skipped.
+and s when the test has been skipped.
 
  <!---->
 
@@ -108,19 +112,24 @@ This table shows all assertions (class `Assert` means `Tester\Assert`):
 - `Assert::contains($needle, string $haystack)` - Reports an error if $needle is not a substring of $haystack.
 - `Assert::notContains($needle, array $haystack)` - Reports an error if $needle is an element of $haystack.
 - `Assert::notContains($needle, string $haystack)` - Reports an error if $needle is a substring of $haystack.
+- `Assert::hasKey($key, array $actual)` - Reports an error if $actual does not have the key $key.
+- `Assert::hasNotKey($key, array $actual)` - Reports an error if $actual has the key $key.
 - `Assert::true($value)` - Reports an error if $value is not true.
 - `Assert::false($value)` - Reports an error if $value is not false.
 - `Assert::truthy($value)` - Reports an error if $value is not truthy.
 - `Assert::falsey($value)` - Reports an error if $value is not falsey.
 - `Assert::null($value)` - Reports an error if $value is not null.
+- `Assert::notNull($value)` - Reports an error if $value is null.
 - `Assert::nan($value)` - Reports an error if $value is not NAN.
 - `Assert::type($type, $value)` -  Reports an error if the variable $value is not of PHP or class type $type.
-- `Assert::exception($closure, $class, $message = null, $code = null)` -  Checks if the function throws exception.
+- `Assert::exception($closure, $class, $message = null, $code = null)` -  Checks if the function throws exception. `Assert::throws()` is an alias.
 - `Assert::error($closure, $level, $message = null)` -  Checks if the function $closure throws PHP warning/notice/error.
 - `Assert::noError($closure)` -  Checks that the function $closure does not throw PHP warning/notice/error or exception.
 - `Assert::match($pattern, $value)` - Compares result using regular expression or mask.
-- `Assert::matchFile($file, $value)` - Compares result using regular expression or mask sorted in file.
+- `Assert::notMatch($pattern, $value)` - Reports an error if $value matches the regular expression or mask.
+- `Assert::matchFile($file, $value)` - Compares result using regular expression or mask stored in a file.
 - `Assert::count($count, $value)` - Reports an error if number of items in $value is not $count.
+- `Assert::fail($message)` - Always reports an error.
 - `Assert::with($objectOrClass, $closure)` - Executes function that can access private and protected members of given object via $this.
 
 Testing exceptions:
@@ -138,7 +147,7 @@ Testing PHP errors, warnings or notices:
 Assert::error(function () {
 	$h = new Greeting;
 	echo $h->abc;
-}, E_NOTICE, 'Undefined property: Greeting::$abc');
+}, E_WARNING, 'Undefined property: Greeting::$abc');
 ```
 
 Testing private access methods:
@@ -178,15 +187,6 @@ extension, or you are using PHPDBG SAPI. This will generate nice HTML report in 
 tester . -c php.ini --coverage coverage.html --coverage-src /my/source/codes
 ```
 
-We can load Nette Tester using Composer's autoloader. In this case
-it is important to setup Nette Tester environment:
-
-```php
-require 'vendor/autoload.php';
-
-Tester\Environment::setup();
-```
-
 We can also test HTML pages. Let the [template engine](https://latte.nette.org) generate
 HTML code or download existing page to `$html` variable. We will check whether
 the page contains form fields for username and password. The syntax is the
@@ -219,13 +219,12 @@ Options:
     -p <path>                    Specify PHP interpreter to run (default: php).
     -c <path>                    Use custom php.ini, ignore system configuration.
     -C                           With -c, include system configuration as well.
-    -l | --log <path>            Write log to file <path>.
-    -d <key=value>...            Define INI entry 'key' with value 'val'.
+    -d <key=value>...            Define INI entry 'key' with value 'value'.
     -s                           Show information about skipped tests.
     --stop-on-fail               Stop execution upon the first failure.
     -j <num>                     Run <num> jobs in parallel (default: 8).
-    -o <console|console-lines|tap|junit|none>
-                                 Specify output format.
+    -o <console|console-lines|tap|junit|log|none>  (e.g. -o junit:output.xml)
+                                 Specify one or more output formats with optional file name.
     -w | --watch <path>          Watch directory.
     -i | --info                  Show tests environment info and exit.
     --setup <path>               Script for runner setup.

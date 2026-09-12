@@ -113,7 +113,7 @@ class CommandLine
 			$opt = $this->options[$name];
 
 			if ($arg !== true && empty($opt[self::Argument])) {
-				throw new \Exception("Option $name has not argument.");
+				throw new \Exception("Option $name does not accept an argument.");
 
 			} elseif ($arg === true && !empty($opt[self::Argument])) {
 				if (isset($args[$i]) && $args[$i][0] !== '-') {

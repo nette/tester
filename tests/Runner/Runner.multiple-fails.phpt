@@ -49,7 +49,7 @@ $runner->setTempDirectory(Tester\Helpers::prepareTempDir(sys_get_temp_dir()));
 $runner->run();
 
 Assert::match(
-	"No records in data provider file '%a%dataprovider-empty.phptx' for query 'non-existent'.",
+	"No records in data provider file '%a%dataprovider.query.ini' for query 'non-existent'.",
 	$logger->results['dataprovider-empty.phptx'][1],
 );
 Assert::same(Test::Failed, $logger->results['dataprovider-empty.phptx'][0]);
@@ -63,7 +63,7 @@ Assert::same(Test::Skipped, $logger->results['testcase-no-methods.phptx'][0]);
 
 
 Assert::match(
-	'Error: This test forgets to execute an assertion.',
+	'Error: No assertions were executed in this test.',
 	trim(Ansi::stripAnsi($logger->results['testcase-not-call-run.phptx'][1])),
 );
 Assert::same(Test::Failed, $logger->results['testcase-not-call-run.phptx'][0]);

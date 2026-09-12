@@ -59,7 +59,7 @@ test('alias', function () {
 	Assert::exception(
 		fn() => $cmd->parse(['-p=val']),
 		Exception::class,
-		'Option --param has not argument.',
+		'Option --param does not accept an argument.',
 	);
 
 	$cmd = new Cmd('

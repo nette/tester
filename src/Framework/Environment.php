@@ -136,7 +136,7 @@ class Environment
 						self::print("\n" . Ansi::colorize("Fatal error: $error[message] in $error[file] on line $error[line]", 'white/red'));
 					}
 				} elseif (self::$checkAssertions && !Assert::$counter) {
-					self::print("\n" . Ansi::colorize('Error: This test forgets to execute an assertion.', 'white/red'));
+					self::print("\n" . Ansi::colorize('Error: No assertions were executed in this test.', 'white/red'));
 					self::exit(Runner\Job::CodeFail);
 				} elseif (!getenv(self::VariableRunner) && self::$exitCode !== Runner\Job::CodeSkip) {
 					self::print("\n" . (self::$exitCode ? Ansi::colorize('FAILURE', 'white/red') : Ansi::colorize('OK', 'white/green')));
