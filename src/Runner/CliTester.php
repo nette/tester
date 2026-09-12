@@ -176,7 +176,7 @@ class CliTester
 
 			if ($tmp = array_search('--tap', $argv, strict: true)) {
 				unset($argv[$tmp]);
-				$argv = array_merge($argv, ['-o', 'tap']);
+				$argv = [...$argv, '-o', 'tap'];
 			}
 
 			$_SERVER['argv'] = $argv;

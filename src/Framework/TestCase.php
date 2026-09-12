@@ -284,7 +284,7 @@ class TestCase
 				}
 
 				$data["$i-$k"] = is_string(key($set))
-					? array_merge($defaultParams, $set)
+					? [...$defaultParams, ...$set]
 					: $set;
 			}
 		}
