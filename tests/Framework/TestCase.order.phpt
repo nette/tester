@@ -46,7 +46,6 @@ Assert::same([
 ], SuccessTest::$order);
 
 
-
 class FailingTest extends Tester\TestCase
 {
 	public static $order;

@@ -8,7 +8,7 @@
 namespace Tester\Runner;
 
 use Tester\Helpers;
-use function count, in_array;
+use function count;
 
 
 /**
@@ -142,7 +142,7 @@ class PhpInterpreter
 
 	public function hasExtension(string $name): bool
 	{
-		return in_array(strtolower($name), array_map('strtolower', $this->info->extensions), strict: true);
+		return in_array(strtolower($name), array_map('strtolower', $this->info->extensions), true);
 	}
 
 

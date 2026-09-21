@@ -7,8 +7,8 @@
 
 namespace Tester;
 
-use function array_key_exists, count, in_array;
-use const PHP_OUTPUT_HANDLER_FLUSHABLE, PHP_SAPI;
+use function array_key_exists, count, function_exists, in_array, ini_get;
+use const PHP_SAPI;
 
 
 /**
@@ -117,7 +117,7 @@ class Environment
 
 		set_error_handler(function (int $severity, string $message, string $file, int $line): bool {
 			if (
-				in_array($severity, [E_RECOVERABLE_ERROR, E_USER_ERROR], strict: true)
+				in_array($severity, [E_RECOVERABLE_ERROR, E_USER_ERROR], true)
 				|| ($severity & error_reporting()) === $severity
 			) {
 				self::handleException(new \ErrorException($message, 0, $severity, $file, $line));
@@ -131,7 +131,7 @@ class Environment
 
 			$error = error_get_last();
 			register_shutdown_function(function () use ($error): void {
-				if (in_array($error['type'] ?? null, [E_ERROR, E_CORE_ERROR, E_COMPILE_ERROR, E_PARSE], strict: true)) {
+				if (in_array($error['type'] ?? null, [E_ERROR, E_CORE_ERROR, E_COMPILE_ERROR, E_PARSE], true)) {
 					if (($error['type'] & error_reporting()) !== $error['type']) { // show fatal errors hidden by @shutup
 						self::print("\n" . Ansi::colorize("Fatal error: $error[message] in $error[file] on line $error[line]", 'white/red'));
 					}

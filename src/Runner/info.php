@@ -32,8 +32,7 @@ if (isset($_SERVER['argv'][1])) {
 
 foreach ([
 	'PHP binary' => $info->binary ?? '(not available)',
-	'PHP version' . ($isPhpDbg ? '; PHPDBG version' : '')
-		=> "$info->version ($info->sapi)" . ($isPhpDbg ? "; $info->phpDbgVersion" : ''),
+	'PHP version' . ($isPhpDbg ? '; PHPDBG version' : '') => "$info->version ($info->sapi)" . ($isPhpDbg ? "; $info->phpDbgVersion" : ''),
 	'Loaded php.ini files' => count($info->iniFiles) ? implode(', ', $info->iniFiles) : '(none)',
 	'Code coverage engines' => count($info->codeCoverageEngines)
 		? implode(', ', array_map(fn(array $engineInfo) => vsprintf('%s (%s)', $engineInfo), $info->codeCoverageEngines))

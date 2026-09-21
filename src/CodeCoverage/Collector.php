@@ -8,7 +8,7 @@
 namespace Tester\CodeCoverage;
 
 use pcov;
-use function defined, in_array;
+use function defined, extension_loaded, in_array;
 
 
 /**
@@ -55,7 +55,7 @@ class Collector
 		} elseif (!in_array(
 			$engine,
 			array_map(fn(array $engineInfo) => $engineInfo[0], self::detectEngines()),
-			strict: true,
+			true,
 		)) {
 			throw new \LogicException("Code coverage engine '$engine' is not supported.");
 		}

@@ -12,7 +12,6 @@ use Tester\Dumper;
 use Tester\Helpers;
 use Tester\TestCase;
 use function count, in_array, is_array, is_string;
-use const DIRECTORY_SEPARATOR;
 
 
 /**
@@ -206,7 +205,7 @@ class TestHandler
 			$job->setTempDirectory($this->tempDir);
 			$job->run();
 
-			if (in_array($job->getExitCode(), [Job::CodeError, Job::CodeFail, Job::CodeSkip], strict: true)) {
+			if (in_array($job->getExitCode(), [Job::CodeError, Job::CodeFail, Job::CodeSkip], true)) {
 				return $test->withResult($job->getExitCode() === Job::CodeSkip ? Test::Skipped : Test::Failed, $job->getTest()->getOutput());
 			}
 

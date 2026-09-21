@@ -8,7 +8,6 @@
 namespace Tester;
 
 use function is_array;
-use const DIRECTORY_SEPARATOR;
 
 
 /**

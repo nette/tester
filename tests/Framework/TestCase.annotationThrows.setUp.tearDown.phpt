@@ -18,7 +18,6 @@ class SuccessTestCase extends TestCase
 (new SuccessTestCase)->run();
 
 
-
 class FailingTestCase extends TestCase
 {
 	/** @throws RuntimeException  Wrong message */
@@ -33,7 +32,6 @@ Assert::exception(
 	Tester\AssertException::class,
 	'RuntimeException was expected but got Exception (FailingTestCase::testMe) in testMe()',
 );
-
 
 
 class SuccessButSetUpFails extends SuccessTestCase
@@ -51,7 +49,6 @@ Assert::exception(
 );
 
 
-
 class SuccessButTearDownFails extends SuccessTestCase
 {
 	public function tearDown()
@@ -67,7 +64,6 @@ Assert::exception(
 );
 
 
-
 class FailingAndSetUpFails extends FailingTestCase
 {
 	public function setUp()
@@ -81,7 +77,6 @@ Assert::exception(
 	Exception::class,
 	'FailingAndSetUpFails::setUp',
 );
-
 
 
 class FailingAndTearDownFails extends FailingTestCase

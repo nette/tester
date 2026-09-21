@@ -116,7 +116,7 @@ class Assert
 	{
 		self::$counter++;
 		if (is_array($actual)) {
-			if (!in_array($needle, $actual, strict: true)) {
+			if (!in_array($needle, $actual, true)) {
 				self::fail(self::describe('%1 should contain %2', $description), $actual, $needle);
 			}
 		} elseif (!is_string($needle)) {
@@ -136,7 +136,7 @@ class Assert
 	{
 		self::$counter++;
 		if (is_array($actual)) {
-			if (in_array($needle, $actual, strict: true)) {
+			if (in_array($needle, $actual, true)) {
 				self::fail(self::describe('%1 should not contain %2', $description), $actual, $needle);
 			}
 		} elseif (!is_string($needle)) {
@@ -282,7 +282,7 @@ class Assert
 				self::fail(self::describe("%1 should be $type", $description), $value);
 			}
 		} elseif (in_array($type, ['array', 'bool', 'callable', 'float',
-			'int', 'integer', 'null', 'object', 'resource', 'scalar', 'string', ], strict: true)
+			'int', 'integer', 'null', 'object', 'resource', 'scalar', 'string'], true)
 		) {
 			if (!('is_' . ($type === 'integer' ? 'int' : $type))($value)) {
 				self::fail(self::describe(get_debug_type($value) . " should be $type", $description));

@@ -10,6 +10,7 @@ namespace Tester\Runner\Output;
 use Tester;
 use Tester\Runner\Test;
 use function sprintf;
+use const ENT_COMPAT, ENT_HTML5, ENT_NOQUOTES, ENT_SUBSTITUTE;
 
 
 /**

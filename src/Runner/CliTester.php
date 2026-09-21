@@ -12,7 +12,7 @@ use Tester\CodeCoverage;
 use Tester\Dumper;
 use Tester\Environment;
 use Tester\Helpers;
-use function count, in_array;
+use function count, function_exists, in_array, ini_get;
 use const PHP_SAPI;
 
 
@@ -39,7 +39,7 @@ class CliTester
 		$this->debugMode = (bool) $this->options['--debug'];
 		if (isset($this->options['--colors'])) {
 			Environment::$useColors = (bool) $this->options['--colors'];
-		} elseif (in_array($this->stdoutFormat, ['tap', 'junit'], strict: true)) {
+		} elseif (in_array($this->stdoutFormat, ['tap', 'junit'], true)) {
 			Environment::$useColors = false;
 		}
 
@@ -213,7 +213,7 @@ class CliTester
 			array_push($args, '-c', $this->options['-c']);
 		}
 
-		if (in_array($this->stdoutFormat, ['tap', 'junit'], strict: true)) {
+		if (in_array($this->stdoutFormat, ['tap', 'junit'], true)) {
 			array_push($args, '-d', 'html_errors=off');
 		}
 
@@ -306,7 +306,7 @@ class CliTester
 	private function finishCodeCoverage(string $file): bool
 	{
 		// stdout with a machine-readable format must contain nothing else
-		$quiet = in_array($this->stdoutFormat, ['none', 'tap', 'junit'], strict: true);
+		$quiet = in_array($this->stdoutFormat, ['none', 'tap', 'junit'], true);
 		if (!$quiet) {
 			echo 'Generating code coverage report... ';
 		}

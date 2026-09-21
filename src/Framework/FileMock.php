@@ -7,7 +7,7 @@
 
 namespace Tester;
 
-use function in_array, strlen;
+use function strlen;
 
 
 /**
@@ -48,7 +48,7 @@ class FileMock
 
 	public static function register(): void
 	{
-		if (!in_array(self::Protocol, stream_get_wrappers(), strict: true)) {
+		if (!in_array(self::Protocol, stream_get_wrappers(), true)) {
 			stream_wrapper_register(self::Protocol, self::class);
 		}
 	}
