@@ -22,6 +22,7 @@ $info = (object) [
 	'extensions' => $extensions,
 	'tempDir' => sys_get_temp_dir(),
 	'codeCoverageEngines' => Tester\CodeCoverage\Collector::detectEngines(),
+	'xdebugModes' => function_exists('xdebug_info') ? xdebug_info('mode') : [],
 ];
 
 if (isset($_SERVER['argv'][1])) {
