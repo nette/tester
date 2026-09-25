@@ -74,6 +74,14 @@ class CliTester
 
 		ob_end_flush();
 
+		if (
+			$this->interpreter->isXdebugActive()
+			&& in_array($this->stdoutFormat, [null, 'console', 'console-lines'], true)
+			&& ($runner->getEnvironmentVariables()[Environment::VariableCoverageEngine] ?? null) !== CodeCoverage\Collector::EngineXdebug
+		) {
+			echo Ansi::colorize('Warning: Xdebug is active and makes the run many times slower.', 'red') . "\n";
+		}
+
 		echo Ansi::hideCursor();
 		register_shutdown_function(fn() => print Ansi::showCursor());
 

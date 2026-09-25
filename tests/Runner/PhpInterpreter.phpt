@@ -41,3 +41,10 @@ if (!$interpreter->isCgi()) {
 	$output = shell_exec($interpreter->withArguments(['-r', 'echo php_ini_loaded_file();'])->getCommandLine());
 	Assert::same(php_ini_loaded_file(), $output);
 }
+
+
+// the runner may run tests with a different xdebug.mode, so ask the interpreter itself
+if (!$interpreter->isCgi()) {
+	$output = shell_exec($interpreter->withArguments(['-r', "echo (int) (function_exists('xdebug_info') && xdebug_info('mode'));"])->getCommandLine());
+	Assert::same($output === '1', $interpreter->isXdebugActive());
+}

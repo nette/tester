@@ -144,4 +144,13 @@ class PhpInterpreter
 	{
 		return in_array(strtolower($name), array_map('strtolower', $this->info->extensions), strict: true);
 	}
+
+
+	/**
+	 * Checks whether Xdebug runs in any mode, which slows down every process.
+	 */
+	public function isXdebugActive(): bool
+	{
+		return (bool) $this->info->xdebugModes;
+	}
 }
