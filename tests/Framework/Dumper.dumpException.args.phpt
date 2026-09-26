@@ -46,6 +46,24 @@ test('long values are shortened, extreme argument counts are capped', function (
 });
 
 
+test('each frame stays on a single line without ANSI codes in arguments', function () {
+	$e = Assert::exception(
+		fn() => failingHelper("line1\nline2\r\n'q'", 302, ["a\nb"], new Exception("multi\nline")),
+		AssertException::class,
+	);
+	preg_match('#failingHelper\(.*$#m', Tester\Dumper::dumpException($e), $m);
+	Assert::match('failingHelper("line1\nline2\r\n\'q\'", 302, ["a\nb"], Exception(#%h%))%a?%', $m[0]);
+	Assert::notContains("\e[1m", $m[0]);
+
+	$e = Assert::exception(
+		fn() => failingHelper('', 302, [], Tester\Expect::same("a\nb")),
+		AssertException::class,
+	);
+	preg_match('#failingHelper\(.*$#m', Tester\Dumper::dumpException($e), $m);
+	Assert::match("failingHelper('', 302, [], Tester\\Expect(#%h%))%a?%", $m[0]);
+});
+
+
 function manyArgs(int ...$a): void
 {
 	Assert::fail('boom');
