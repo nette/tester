@@ -29,6 +29,13 @@ class Dumper
 	 */
 	public static function toLine(mixed $var): string
 	{
+		return self::_toLine($var);
+	}
+
+
+	/** $plain produces output without line breaks and ANSI codes */
+	private static function _toLine(mixed $var, bool $plain = false): string
+	{
 		if (is_bool($var)) {
 			return $var ? 'true' : 'false';
 
@@ -48,7 +55,7 @@ class Dumper
 				$var = substr($var, 0, self::$maxLength) . '...';
 			}
 
-			return self::encodeStringLine($var);
+			return $plain ? self::encodeStringPhp($var) : self::encodeStringLine($var);
 
 		} elseif (is_array($var)) {
 			$out = '';
@@ -60,17 +67,17 @@ class Dumper
 					break;
 				}
 
-				$out .= ($k === $counter ? '' : self::toLine($k) . ' => ')
-					. (is_array($v) && $v ? '[...]' : self::toLine($v));
+				$out .= ($k === $counter ? '' : self::_toLine($k, $plain) . ' => ')
+					. (is_array($v) && $v ? '[...]' : self::_toLine($v, $plain));
 				$counter = is_int($k) ? max($k + 1, $counter) : $counter;
 			}
 
 			return "[$out]";
 
-		} elseif ($var instanceof \Throwable) {
+		} elseif ($var instanceof \Throwable && !$plain) {
 			return 'Exception ' . $var::class . ': ' . ($var->getCode() ? '#' . $var->getCode() . ' ' : '') . $var->getMessage();
 
-		} elseif ($var instanceof Expect) {
+		} elseif ($var instanceof Expect && !$plain) {
 			return $var->dump();
 
 		} elseif (is_object($var)) {
@@ -99,7 +106,7 @@ class Dumper
 				break;
 			}
 
-			$out .= (is_string($k) ? "$k: " : '') . self::toLine($v);
+			$out .= (is_string($k) ? "$k: " : '') . self::_toLine($v, plain: true);
 		}
 
 		return $out;
