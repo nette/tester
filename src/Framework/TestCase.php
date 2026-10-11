@@ -251,7 +251,7 @@ class TestCase
 	/**
 	 * Skips the current test with an optional reason message.
 	 */
-	protected function skip(string $message = ''): void
+	protected function skip(string $message = ''): never
 	{
 		throw new TestCaseSkippedException($message);
 	}
