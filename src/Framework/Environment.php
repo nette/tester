@@ -158,7 +158,7 @@ class Environment
 	/**
 	 * @internal
 	 */
-	public static function handleException(\Throwable $e): void
+	public static function handleException(\Throwable $e): never
 	{
 		self::$checkAssertions = false;
 		self::print(Dumper::dumpException($e));
@@ -169,7 +169,7 @@ class Environment
 	/**
 	 * Skips this test.
 	 */
-	public static function skip(string $message = ''): void
+	public static function skip(string $message = ''): never
 	{
 		self::$checkAssertions = false;
 		self::print("\nSkipped:\n$message");
@@ -264,7 +264,7 @@ class Environment
 	}
 
 
-	public static function exit(int $code = 0): void
+	public static function exit(int $code = 0): never
 	{
 		self::$exitCode = $code;
 		exit($code);
