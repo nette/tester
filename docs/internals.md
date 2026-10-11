@@ -49,14 +49,16 @@ the delimiter is the only signal.
 Test metadata is parsed from the file's **first docblock without executing the
 file** (`TestHandler::getAnnotations`, regex over the source). This is a hard
 constraint, not an implementation detail: the runner must decide skips and variants
-*before* spawning the process.
+*before* spawning the process. The parsed annotations are cached in memory per
+file, keyed by mtime and size, so `--watch` re-reads only changed files.
 
 Dispatch is **convention + reflection**, not a switch:
 
 - `initiate()` scans its own `initiate<Name>` methods (via `get_class_methods` +
   a name match against annotation keys) and runs each. A method returns **`null`**
   (keep the test), a **`Test`** (replace it — possibly already carrying a skip
-  result), or an **array of `Test`s** (variants). This is how `@dataProvider`,
+  result), or an **array of `Test`s** (variants; an empty array drops the test,
+  which `initiateTestCase` uses when it defers to a discovery job). This is how `@dataProvider`,
   `@multiple`, and `@testCase` **fan one file out into many tests** before
   execution. One outlier: `initiatePhpIni` returns nothing and instead takes the
   interpreter **by reference** (`PhpInterpreter &$interpreter`), mutating it for
@@ -65,28 +67,38 @@ Dispatch is **convention + reflection**, not a switch:
 - `assess(Job)` similarly dispatches `assess<Name>` methods (`@exitCode`,
   `@httpCode`, `@outputMatch`, `@outputMatchFile`) against the finished job; the
   first one that returns a failing `Test` wins, else the test passes. Defaults
-  `exitcode=0`, `httpcode=200` are injected.
+  `exitcode=0`, `httpcode=200` are injected. A timed-out job is reported as failed
+  before any `assess*` method runs.
 
 Two consequences worth knowing: **file-level annotations cannot be fully replaced
 by PHP attributes** (a `.phpt` with no class gives an attribute nothing to attach
 to, and the runner needs the metadata without loading the file); and adding a new
 annotation means adding an `initiate*` or `assess*` method — nothing registers it
-explicitly.
+explicitly. The one exception is `@timeout`, read directly by `resolveTimeout`.
+Method-level metadata is a different story: `@dataProvider` and `@throws` of a
+`TestCase` method are resolved in the child by `TestCase::resolveTestMeta`, where
+the `#[DataProvider]`/`#[Throws]` attributes take precedence over the docblock.
 
 **Process isolation:** every test runs in its own PHP process (`Job` via
-`proc_open`). A `@testCase` file is handled in **two phases** — the runner first
-asks it to list `test*` methods (`--method=nette-tester-list-methods`, the
-`TestCase::ListMethods` sentinel), then schedules each method as a **separate**
-job (`--method=testFoo`). Phase 1 is **cached** in the temp dir
-(`TestHandler.testCase.<md5>.list`): the listing child also prints `Dependency:`
-lines (the class file plus all parents and traits), and the cache is invalidated
-when any of those files' mtimes change — edit `sendMethodList` and
-`initiateTestCase` together.
+`proc_open`). A `@testCase` file is handled in **two phases** — a discovery job
+lists the `test*` methods (`--method=nette-tester-list-methods`, the
+`TestCase::ListMethods` sentinel), then each method is scheduled as a **separate**
+job (`--method=testFoo`). The discovery job runs in parallel with other tests: it
+is added by `Runner::addJob($job, $onFinished)`, and when it finishes the runner
+calls `finishTestCaseDiscovery` **instead of `assess()`**, which adds the method
+jobs. So the number of tests grows during the run: output handlers get
+`prepare()` calls mid-run and `Runner::getJobCount()` is not final until the end.
+Phase 1 is **cached** in the temp dir (`TestHandler.testCase.<md5>.list`): the
+listing child also prints `Dependency:` lines (the class file plus all parents
+and traits), and the cache is invalidated when any of those files' mtimes change
+— edit `sendMethodList` and `initiateTestCase` together.
 
 **Scheduling:** with a temp dir, each finished test's result is persisted to a
 `<name>.<hash>.result` file, and the next run sorts jobs ascending by that value
 (`Test::Prepared`=0, `Failed`=1, `Passed`=2, `Skipped`=3) — so new tests run
-first, then last run's failures, and previously skipped tests go last.
+first, then last run's failures, and previously skipped tests go last. The sort
+happens once before the loop; jobs added by a discovery callback are appended
+unsorted.
 
 **Run lifecycle:** no test process outlives `Runner::run`. Once interrupted
 (`--stop-on-fail`), no new job is started, but the jobs already running are
@@ -94,6 +106,10 @@ finished and assessed, so their results are reported. When an exception leaves t
 loop (Ctrl+C, a throwing output handler), running processes are terminated
 (`Job::terminate`). `end()` is called on every handler even if discovery or another
 handler throws.
+
+**Time limit:** `--timeout` (overridden per file by `@timeout`) is enforced by
+`Job::isRunning`, which terminates the process once it runs over and kills it a
+second later if it still lives; it applies to discovery jobs too.
 
 **Child I/O:** the child's **stderr goes to a file, not a pipe**
 (`Job.pid-*.stderr` in the temp dir, read and deleted on finish, or a `tmpfile()`
@@ -103,7 +119,9 @@ the pipe with blocking `stream_get_contents`, otherwise a child producing more
 than the ~64 KB pipe buffer **deadlocks**; PHP 8.5+ on Windows has a fixed
 `stream_select` and uses the non-blocking path like Linux/macOS
 (`Job::isRunning`/`waitForActivity`). Keep the deadlock rationale in mind before
-"simplifying" that branch.
+"simplifying" that branch. Its price: on Windows < PHP 8.5 `isRunning` blocks until
+the child exits, so **the time limit is not enforced there**. For the same reason
+the synchronous path (`-j 1`) switches the pipe to non-blocking elsewhere.
 
 ## The runner↔child bridge: exit codes and environment variables
 
@@ -115,6 +133,9 @@ the other way through env vars — `NETTE_TESTER_RUNNER`, `NETTE_TESTER_THREAD`,
 `NETTE_TESTER_COVERAGE(_ENGINE)`, and **`NETTE_TESTER_COLORS`**. That last one is the
 runner→child color channel; an explicit color override in a bootstrap can therefore
 disagree with the runner's decision (e.g. under `-o tap` / `--colors 0`).
+
+The runner itself exits 0 only when all tests passed **and at least one test
+ran** (`Runner::getTestCount()`), so a mistyped path fails in CI.
 
 ## The CLI option grammar IS the help text
 
@@ -161,6 +182,13 @@ duck-typed `OutputHandler` hooks**: `Runner` calls `jobStarted(Job)` and
 `OutputHandler` interface, so adding a runner→handler hook means duck-typing,
 not extending the interface.
 
+`GitHubActionsPrinter` (`-o github`, added automatically by
+`CliTester::createRunner` when `GITHUB_ACTIONS` is set and no `-o` writes to
+stdout) buffers its `::error` lines until `end()`, so they never break into the
+dots line. It takes the line number from the failure message by matching
+`<basename>(<line>)`, the frame format of `Dumper::dumpException`; changing that
+format silently drops the line from the annotations.
+
 ## FileMutator: a `file://` stream wrapper, and the re-entrancy dance
 
 `FileMutator` powers `bypassFinals()` by **registering itself as the `file` stream
@@ -182,7 +210,10 @@ when touching this class (it is `@internal` and excluded from PHPStan).
 | Assert counter, soft/throw, catchability | `Assert::$counter`/`fail`, `Environment::setupErrors` (`$onFailure`) |
 | Mask vs regex | `Assert::isMatching`/`isPcre` |
 | Static annotations, variant/skip fan-out | `TestHandler::initiate`/`assess`, `Helpers::parseDocComment` |
-| Process isolation, TestCase two-phase + cache | `Runner\Job`, `TestHandler::initiateTestCase`, `TestCase::sendMethodList` |
+| Process isolation, TestCase two-phase + cache | `Runner\Job`, `TestHandler::initiateTestCase`/`finishTestCaseDiscovery`, `TestCase::sendMethodList` |
+| Jobs with a completion callback | `Runner::addJob`, `Runner::run` (`jobCallbacks`) |
+| Method-level metadata, attributes | `TestCase::resolveTestMeta`, `Tester\Attributes` |
+| Time limit | `Job::setTimeout`/`isRunning`, `TestHandler::resolveTimeout`/`assess` |
 | Job ordering by last result | `Runner::run`/`getLastResult` |
 | CLI grammar parsed from help text, hidden options | `Runner\CommandLine::__construct`, `CliTester::loadOptions` |
 | Child stderr file, Windows pipe deadlock | `Job::setTempDirectory`/`isRunning` |
@@ -190,4 +221,5 @@ when touching this class (it is `@internal` and excluded from PHPStan).
 | Exit-code + env-var bridge | `Environment::handleException`/`exit`, `Job::Code*` (Skip=177, Fail=178, Error=255) |
 | Color decision & output channels | `Environment::setupColors`/`print` |
 | Console modes incl. cider, duck-typed hooks | `Output\ConsolePrinter`, `Runner::run` (`method_exists`) |
+| GitHub annotations, auto-enabling | `Output\GitHubActionsPrinter`, `CliTester::createRunner` |
 | Final-stripping loader | `FileMutator` (`stream_open`, `native`), `Environment::bypassFinals` |

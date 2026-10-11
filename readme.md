@@ -87,7 +87,7 @@ Now we run tests from command-line using the `tester` command:
 > tester .
  _____ ___  ___ _____ ___  ___
 |_   _/ __)( __/_   _/ __)| _ )
-  |_| \___ /___) |_| \___ |_|_\  v2.6
+  |_| \___ /___) |_| \___ |_|_\  v2.7.0
 
 PHP 8.5.0 | php | 8 threads
 .
@@ -177,6 +177,15 @@ If you wish to run the tests in series use:
 
 ```
 tester -j 1
+```
+
+Tester feels at home in CI. On GitHub Actions it marks failed tests right in the pull request
+diff view, with no configuration needed. A hanging test does not have to hang the whole pipeline:
+set a time limit for each test, and the test that runs over is terminated and reported as a failure.
+And to find out where the time goes, print the slowest tests after the run:
+
+```
+tester --timeout 30 --slowest
 ```
 
 How do you find code that is not yet tested? Use Code-Coverage Analysis. This feature

@@ -1,5 +1,17 @@
 # Upgrading nette/tester
 
+## 2.7.0
+
+- **Deprecated** `$type` of `Tester\Assert::type()` with the value `'integer'`: use `'int'`; passing it triggers E_USER_DEPRECATED (5f7cf133)
+- **Signature** `Tester\TestCase::skip()`: the return type is now `never`; a subclass overriding it with `void` is a fatal error (e040ba78)
+- **Signature** `Tester\Environment::skip()`: the return type is now `never`; affects subclasses overriding it (e040ba78)
+- **Signature** `Tester\Environment::exit()`: the return type is now `never`; affects subclasses overriding it (e040ba78)
+- **Changed** `Tester\Environment::lock()` now throws `RuntimeException` when the lock directory is not given or does not exist; previously the lock file was silently created in the filesystem root, so pass an existing directory as `$path` (e3a09b04)
+- **Changed** `Tester\HttpAssert::fetch()` now aborts a request after 30 seconds; previously there was no time limit, pass a larger `$timeout` for slower requests (e6b1c748)
+- **Changed** the `@dataProvider` annotation of a `Tester\TestCase` method now fails the test with `Tester\TestCaseException` when the provider returns no data sets; previously the method was silently not run and the test passed (02c4cc64)
+- **Changed** the `tester` command now exits with code 1 when no tests are found; previously it exited with 0 (edd17303)
+- **Changed** the `tester` command now appends GitHub Actions `::error` annotations of failed tests to stdout when the `GITHUB_ACTIONS` environment variable is set and no `-o` option writes to stdout; previously the output was the same as elsewhere (3497f01f)
+
 ## 2.6.2
 
 - **Signature** `Tester\Assert::throws()`: the `$code` parameter is now typed `int|string|null`; passing another type throws `TypeError` (e9d9cd13)

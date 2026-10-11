@@ -45,8 +45,8 @@ composer phpstan
 ```
 
 Useful runner flags: `-j <n>` (parallel jobs; `-j 1` = serial for debugging),
-`-o <format>` (console/console-lines/tap/junit/log/none), `-C`/`-c`/`-d` (php.ini),
-`--watch`, `--stop-on-fail`, `--cider` (hidden, not in `--help`: live per-thread
+`-o <format>` (console/console-lines/github/tap/junit/log/none), `-C`/`-c`/`-d` (php.ini),
+`--watch`, `--stop-on-fail`, `--timeout <s>`, `--slowest`, `--cider` (hidden, not in `--help`: live per-thread
 panel; needs `-j` >= 2, otherwise falls back to console-lines).
 
 ## Conventions
@@ -56,7 +56,8 @@ panel; needs `-j` >= 2, otherwise falls back to console-lines).
   NOT auto-discovered** (used in Tester's own suite for fixtures). There is **no
   autoloading** - `tester.php` loads classes manually to avoid autoloader conflicts.
 - Code must run on all supported PHP versions; run changed tests on the lowest one
-  too, as the platform branches (Windows < PHP 8.5, DOM < PHP 8.4) behave differently.
+  too, as the platform branches (Windows < PHP 8.5, DOM < PHP 8.4) behave differently;
+  on Windows < PHP 8.5 the test time limit (`--timeout`, `@timeout`) is not enforced.
 
 ## Working in this repo
 
@@ -77,12 +78,16 @@ panel; needs `-j` >= 2, otherwise falls back to console-lines).
 - **The runner reads annotations statically (regex over the source) before spawning
   the process,** then dispatches by reflection to `initiate*`/`assess*` methods.
   Consequences: file-level annotations **cannot** be replaced by PHP attributes, and
-  adding a new annotation means adding a method. `@testCase` fans out in two phases
-  (list `test*` methods, then one job per method); the method list is cached in
-  temp and invalidated by mtime and size of the class + parents + traits files, so
-  it must not depend on the environment.
+  adding a new annotation usually means adding a method (`@timeout` is the exception,
+  read by `resolveTimeout`). Method-level `@dataProvider`/`@throws` are resolved in the
+  child by `TestCase`, which is why `#[DataProvider]`/`#[Throws]` attributes work there.
+  `@testCase` fans out in two phases: a listing job runs in parallel with other
+  tests and its completion callback adds one job per method; the method list is
+  cached in temp and invalidated by mtime of the class + parents + traits files, so
+  it must not depend on the environment. The test count thus grows during the run.
 - **No test process outlives `Runner::run()`**: after `--stop-on-fail` running jobs
-  are finished, on an exception they are terminated.
+  are finished, on an exception they are terminated; a job over its time limit is
+  terminated and reported as failed.
 - **`FileMutator` (`bypassFinals`) registers itself as the `file://` stream
   wrapper;** its `native()` must restore the original wrapper and re-register itself
   in a `finally`, or every internal fs call recurses. Preserve that dance.
@@ -93,6 +98,7 @@ panel; needs `-j` >= 2, otherwise falls back to console-lines).
   `-j`'s default lives), so rewording `--help` can change parsing; hidden options
   (`--debug`, `--cider`, ...) exist only in the `$defaults` array.
 - Jobs are ordered by the previous run's result (cache in temp): new tests first,
-  then failed, passed, and skipped last.
+  then failed, passed, and skipped last. Jobs discovered during the run are appended
+  unsorted.
 - User-facing how-to (writing tests, the assertion/annotation catalog, HttpAssert,
   DomQuery, FileMock, coverage usage) is manual material and lives in the web docs.
