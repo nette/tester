@@ -1,5 +1,11 @@
 # Upgrading nette/tester
 
+## 2.7.0
+
+- **Signature** `Tester\TestCase::skip()`: the return type is now `never`; a subclass overriding it with `void` is a fatal error (bea9e922)
+- **Signature** `Tester\Environment::skip()`: the return type is now `never`; affects subclasses overriding it (bea9e922)
+- **Signature** `Tester\Environment::exit()`: the return type is now `never`; affects subclasses overriding it (bea9e922)
+
 ## 2.6.2
 
 - **Signature** `Tester\Assert::throws()`: the `$code` parameter is now typed `int|string|null`; passing another type throws `TypeError` (e9d9cd13)
