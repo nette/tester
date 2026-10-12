@@ -4,11 +4,8 @@
  * TEST: Output handlers.
  */
 
-use Tester\Ansi;
-use Tester\Assert;
-use Tester\FileMock;
-use Tester\Runner\Output;
-use Tester\Runner\Runner;
+use Tester\{Ansi, Assert, FileMock};
+use Tester\Runner\{Output, Runner};
 
 require __DIR__ . '/../bootstrap.php';
 require __DIR__ . '/../../src/Runner/Test.php';

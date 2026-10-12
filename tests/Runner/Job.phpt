@@ -1,8 +1,7 @@
 <?php declare(strict_types=1);
 
 use Tester\Assert;
-use Tester\Runner\Job;
-use Tester\Runner\Test;
+use Tester\Runner\{Job, Test};
 
 require __DIR__ . '/../../src/Runner/Test.php';
 require __DIR__ . '/../bootstrap.php';

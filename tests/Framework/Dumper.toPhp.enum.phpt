@@ -4,8 +4,7 @@
  * @phpVersion 8.1
  */
 
-use Tester\Assert;
-use Tester\Dumper;
+use Tester\{Assert, Dumper};
 
 require __DIR__ . '/../bootstrap.php';
 

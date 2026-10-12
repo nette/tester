@@ -8,9 +8,7 @@
 namespace Tester\Runner;
 
 use Tester;
-use Tester\Dumper;
-use Tester\Helpers;
-use Tester\TestCase;
+use Tester\{Dumper, Helpers, TestCase};
 use function count, is_array, is_string;
 
 

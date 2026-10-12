@@ -1,7 +1,6 @@
 <?php declare(strict_types=1);
 
-use Tester\Assert;
-use Tester\FileMock;
+use Tester\{Assert, FileMock};
 
 require __DIR__ . '/../bootstrap.php';
 

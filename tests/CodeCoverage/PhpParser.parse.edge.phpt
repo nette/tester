@@ -1,7 +1,6 @@
 <?php declare(strict_types=1);
 
-use Tester\Assert;
-use Tester\CodeCoverage;
+use Tester\{Assert, CodeCoverage};
 
 require __DIR__ . '/../bootstrap.php';
 require __DIR__ . '/../../src/CodeCoverage/PhpParser.php';

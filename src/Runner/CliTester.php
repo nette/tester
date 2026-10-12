@@ -7,11 +7,7 @@
 
 namespace Tester\Runner;
 
-use Tester\Ansi;
-use Tester\CodeCoverage;
-use Tester\Dumper;
-use Tester\Environment;
-use Tester\Helpers;
+use Tester\{Ansi, CodeCoverage, Dumper, Environment, Helpers};
 use function count, function_exists, in_array, ini_get;
 use const PHP_SAPI;
 

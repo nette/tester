@@ -4,8 +4,7 @@
  * @phpVersion 8.4
  */
 
-use Tester\Assert;
-use Tester\DomQuery;
+use Tester\{Assert, DomQuery};
 
 require __DIR__ . '/../bootstrap.php';
 

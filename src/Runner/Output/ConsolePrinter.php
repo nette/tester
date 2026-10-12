@@ -9,8 +9,7 @@ namespace Tester\Runner\Output;
 
 use Tester;
 use Tester\Ansi;
-use Tester\Runner\Runner;
-use Tester\Runner\Test;
+use Tester\Runner\{Runner, Test};
 use function sprintf, strlen;
 
 

@@ -1,8 +1,6 @@
 <?php declare(strict_types=1);
 
-use Tester\Ansi;
-use Tester\Assert;
-use Tester\Environment;
+use Tester\{Ansi, Assert, Environment};
 
 
 /**
