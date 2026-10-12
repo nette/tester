@@ -41,7 +41,7 @@ register_shutdown_function(function () use ($proc) {
 
 $base = "http://127.0.0.1:$port";
 for ($i = 0; $i < 100; $i++) {
-	if ($conn = @fsockopen('127.0.0.1', $port, $errno, $errstr, 0.1)) {
+	if ($conn = @fsockopen('127.0.0.1', $port, $errno, $errstr, 0.1)) { // @ the server may not be listening yet
 		fclose($conn);
 		break;
 	}

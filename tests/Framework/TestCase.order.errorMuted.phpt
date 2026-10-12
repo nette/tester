@@ -21,7 +21,7 @@ class Test extends Tester\TestCase
 	public function testMe($arg)
 	{
 		echo __METHOD__ . ',';
-		@trigger_error('MUTED', E_USER_WARNING);
+		@trigger_error('MUTED', E_USER_WARNING); // @ muted on purpose
 	}
 
 

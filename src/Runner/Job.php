@@ -151,7 +151,7 @@ class Job
 		if (PHP_OS_FAMILY === 'Windows' && PHP_VERSION_ID >= 80500) {
 			$read = [$this->stdout];
 			$w = $e = [];
-			while (@stream_select($read, $w, $e, 0, 0) > 0) {
+			while (@stream_select($read, $w, $e, 0, 0) > 0) { // @ a signal may interrupt the call
 				$chunk = fread($this->stdout, 8192);
 				if ($chunk === false || $chunk === '') {
 					break;
@@ -270,7 +270,7 @@ class Job
 		$streams = array_filter(array_map(fn($job) => $job->stdout, $jobs));
 		if ($streams) {
 			$w = $e = [];
-			@stream_select($streams, $w, $e, 0, self::RunSleep);
+			@stream_select($streams, $w, $e, 0, self::RunSleep); // @ a signal may interrupt the call
 		}
 	}
 }

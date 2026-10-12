@@ -61,7 +61,7 @@ class PhpInterpreter
 		$this->cgi = count($parts) === 2;
 		$output = $parts[(int) $this->cgi];
 		$pos = strpos($output, 'O:8:"stdClass"');
-		$info = $pos === false ? false : @unserialize(substr($output, $pos));
+		$info = $pos === false ? false : @unserialize(substr($output, $pos)); // @ is escalated to exception
 		if (!$info) {
 			throw new \Exception("Unable to detect PHP version (output: $output).");
 		}

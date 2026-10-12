@@ -30,7 +30,7 @@ $cases = [
 ];
 
 foreach ($cases as $case) {
-	@[$type, $value, $message] = $case;
+	@[$type, $value, $message] = $case; // @ a case without a message has no third item
 	if ($message) {
 		Assert::exception(
 			fn() => Assert::type($type, $value),

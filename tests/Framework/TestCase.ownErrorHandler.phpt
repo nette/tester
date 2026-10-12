@@ -16,7 +16,7 @@ class Test extends Tester\TestCase
 		if ($arg === 1) {
 			set_error_handler(function () {});
 		} else {
-			@trigger_error('MUTED', E_USER_WARNING);
+			@trigger_error('MUTED', E_USER_WARNING); // @ muted on purpose
 			Assert::true(true);
 		}
 	}
