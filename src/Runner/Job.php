@@ -27,9 +27,6 @@ class Job
 	/** waiting time between process activity check in microseconds */
 	public const RunSleep = 10000;
 
-	private Test $test;
-	private PhpInterpreter $interpreter;
-
 	/** @var string[]  environment variables for test */
 	private array $envVars;
 
@@ -50,8 +47,11 @@ class Job
 
 
 	/** @param ?array<string, string>  $envVars */
-	public function __construct(Test $test, PhpInterpreter $interpreter, ?array $envVars = null)
-	{
+	public function __construct(
+		private Test $test,
+		private PhpInterpreter $interpreter,
+		?array $envVars = null,
+	) {
 		if ($test->hasResult()) {
 			throw new \LogicException("Test '{$test->getSignature()}' already has result '{$test->getResult()}'.");
 		}
@@ -59,8 +59,6 @@ class Job
 		$test->stdout = '';
 		$test->stderr = '';
 
-		$this->test = $test;
-		$this->interpreter = $interpreter;
 		$this->envVars = (array) $envVars;
 	}
 

@@ -7,7 +7,7 @@
 
 namespace Tester\Runner;
 
-use function call_user_func, count, is_array;
+use function count, is_array;
 
 
 /**
@@ -32,13 +32,13 @@ class CommandLine
 
 	/** @var string[] */
 	private array $positional = [];
-	private string $help;
 
 
 	/** @param array<string, array<string, mixed>>  $defaults */
-	public function __construct(string $help, array $defaults = [])
-	{
-		$this->help = $help;
+	public function __construct(
+		private string $help,
+		array $defaults = [],
+	) {
 		$this->options = $defaults;
 
 		preg_match_all('#^[ \t]+(--?\w.*?)(?:  .*\(default: (.*)\)|  |\r|$)#m', $help, $lines, PREG_SET_ORDER);
@@ -173,7 +173,7 @@ class CommandLine
 	public function checkArg(array $opt, mixed &$arg): void
 	{
 		if (!empty($opt[self::Normalizer])) {
-			$arg = call_user_func($opt[self::Normalizer], $arg);
+			$arg = $opt[self::Normalizer]($arg);
 		}
 
 		if (!empty($opt[self::RealPath])) {

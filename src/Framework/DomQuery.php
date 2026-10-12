@@ -186,7 +186,11 @@ class DomQuery extends \SimpleXMLElement
 				} elseif ($m[4] === '^') {
 					$xpath .= "[starts-with($attr, " . self::quote($val) . ')]';
 				} elseif ($m[4] === '$') {
-					$xpath .= "[substring($attr, string-length($attr) - string-length(" . self::quote($val) . ') + 1)=' . self::quote($val) . ']';
+					$xpath .= "[substring($attr, string-length($attr) - string-length("
+						. self::quote($val)
+						. ') + 1)='
+						. self::quote($val)
+						. ']';
 				}
 			} elseif ($m[6] === '>') {
 				$xpath .= '/*';

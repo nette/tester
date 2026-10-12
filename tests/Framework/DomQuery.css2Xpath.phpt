@@ -19,7 +19,10 @@ test('#ID', function () {
 test('class', function () {
 	Assert::same("*[contains(concat(' ', normalize-space(@class), ' '), ' foo ')]", DomQuery::css2xpath('.foo'));
 	Assert::same("*[contains(concat(' ', normalize-space(@class), ' '), ' foo ')]", DomQuery::css2xpath('*.foo'));
-	Assert::same("*[contains(concat(' ', normalize-space(@class), ' '), ' foo ')][contains(concat(' ', normalize-space(@class), ' '), ' bar ')]", DomQuery::css2xpath('.foo.bar'));
+	Assert::same(
+		"*[contains(concat(' ', normalize-space(@class), ' '), ' foo ')][contains(concat(' ', normalize-space(@class), ' '), ' bar ')]",
+		DomQuery::css2xpath('.foo.bar'),
+	);
 });
 
 

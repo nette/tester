@@ -27,7 +27,6 @@ class Runner
 	/** @var list<OutputHandler> */
 	public array $outputHandlers = [];
 	public bool $stopOnFail = false;
-	private PhpInterpreter $interpreter;
 
 	/** @var array<string, string>  environment variables for test processes */
 	private array $envVars = [];
@@ -42,9 +41,9 @@ class Runner
 	private array $lastResults = [];
 
 
-	public function __construct(PhpInterpreter $interpreter)
-	{
-		$this->interpreter = $interpreter;
+	public function __construct(
+		private PhpInterpreter $interpreter,
+	) {
 		$this->testHandler = new TestHandler($this);
 	}
 

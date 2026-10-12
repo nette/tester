@@ -30,7 +30,11 @@ test('appending arguments to Test', function () {
 test('environment variables of the runner are restored', function () {
 	putenv('TESTER_JOB_ENV=original');
 	try {
-		$job = new Job(new Test(__DIR__ . '/Job.env.phptx'), createInterpreter(), ['TESTER_JOB_ENV' => 'override', 'TESTER_JOB_NEW' => 'new']);
+		$job = new Job(
+			new Test(__DIR__ . '/Job.env.phptx'),
+			createInterpreter(),
+			['TESTER_JOB_ENV' => 'override', 'TESTER_JOB_NEW' => 'new'],
+		);
 		$job->run();
 
 		Assert::same('override|new', $job->getTest()->stdout);

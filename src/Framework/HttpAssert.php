@@ -47,11 +47,7 @@ class HttpAssert
 		if ($headers) {
 			$headerList = [];
 			foreach ($headers as $key => $value) {
-				if (is_int($key)) {
-					$headerList[] = $value;
-				} else {
-					$headerList[] = "$key: $value";
-				}
+				$headerList[] = is_int($key) ? $value : "$key: $value";
 			}
 			curl_setopt($ch, CURLOPT_HTTPHEADER, $headerList);
 		}

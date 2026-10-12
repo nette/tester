@@ -199,18 +199,28 @@ class TestHandler
 		}
 
 		if ($methods === null) {
-			$job = new Job($test->withArguments(['method' => TestCase::ListMethods]), $interpreter, $this->runner->getEnvironmentVariables());
+			$job = new Job(
+				$test->withArguments(['method' => TestCase::ListMethods]),
+				$interpreter,
+				$this->runner->getEnvironmentVariables(),
+			);
 			$job->setTempDirectory($this->tempDir);
 			$job->run();
 
 			if (in_array($job->getExitCode(), [Job::CodeError, Job::CodeFail, Job::CodeSkip], true)) {
-				return $test->withResult($job->getExitCode() === Job::CodeSkip ? Test::Skipped : Test::Failed, $job->getTest()->getOutput());
+				return $test->withResult(
+					$job->getExitCode() === Job::CodeSkip ? Test::Skipped : Test::Failed,
+					$job->getTest()->getOutput(),
+				);
 			}
 
 			$stdout = $job->getTest()->stdout;
 
 			if (!preg_match('#^TestCase:([^\n]+)$#m', $stdout, $m)) {
-				return $test->withResult(Test::Failed, "Cannot list TestCase methods in file '{$test->getFile()}'. Do you call TestCase::run() in it?");
+				return $test->withResult(
+					Test::Failed,
+					"Cannot list TestCase methods in file '{$test->getFile()}'. Do you call TestCase::run() in it?",
+				);
 			}
 
 			$testCaseClass = $m[1];

@@ -18,16 +18,16 @@ class Logger implements Tester\Runner\OutputHandler
 {
 	/** @var resource */
 	private $file;
-	private Runner $runner;
 	private int $count;
 
 	/** @var array<int, int>  result type (Test::*) => count */
 	private array $results;
 
 
-	public function __construct(Runner $runner, ?string $file = null)
-	{
-		$this->runner = $runner;
+	public function __construct(
+		private Runner $runner,
+		?string $file = null,
+	) {
 		$this->file = fopen($file ?? 'php://output', 'w') ?: throw new \RuntimeException("Cannot open file '$file' for writing.");
 	}
 

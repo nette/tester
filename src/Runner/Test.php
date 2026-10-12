@@ -28,11 +28,9 @@ class Test
 		PASSED = self::Passed,
 		SKIPPED = self::Skipped;
 
-	public ?string $title;
 	public ?string $message = null;
 	public string $stdout = '';
 	public string $stderr = '';
-	private string $file;
 
 	/** @var self::Prepared|self::Failed|self::Passed|self::Skipped */
 	private int $result = self::Prepared;
@@ -42,10 +40,10 @@ class Test
 	private $args = [];
 
 
-	public function __construct(string $file, ?string $title = null)
-	{
-		$this->file = $file;
-		$this->title = $title;
+	public function __construct(
+		private string $file,
+		public ?string $title = null,
+	) {
 	}
 
 

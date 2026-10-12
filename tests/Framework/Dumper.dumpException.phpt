@@ -20,10 +20,30 @@ $cases = [
 	'Failed: bool should be instance of x' => function () { Assert::type('x', true); },
 	'Failed: resource (stream) should be int' => function () { Assert::type('int', fopen(__FILE__, 'r')); },
 	"Failed: 'Hello\\n\nWorld' should match\n    ... 'Hello'" => function () { Assert::match('%a%', "Hello\nWorld"); },
-	"Failed: '...xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx' should be \n    ... '...xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'" => function () { Assert::same(str_repeat('x', 100), str_repeat('x', 120)); },
-	"Failed: '...xxxxxxxxxxxxxxxxxxxxxxxxxxx****************************************' should be \n    ... '...xxxxxxxxxxxxxxxxxxxxxxxxxxx'" => function () { Assert::same(str_repeat('x', 30), str_repeat('x', 30) . str_repeat('*', 40)); },
-	"Failed: 'xxxxx*****************************************************************...' should be \n    ... 'xxxxx'" => function () { Assert::same(str_repeat('x', 5), str_repeat('x', 5) . str_repeat('*', 90)); },
-	"Failed: '...xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx*' should be \n    ... '...xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'" => function () { Assert::same(str_repeat('x', 70), str_repeat('x', 70) . '*'); },
+	"Failed: '...xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx' should be \n    ... '...xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'" => function () {
+		Assert::same(
+			str_repeat('x', 100),
+			str_repeat('x', 120),
+		);
+	},
+	"Failed: '...xxxxxxxxxxxxxxxxxxxxxxxxxxx****************************************' should be \n    ... '...xxxxxxxxxxxxxxxxxxxxxxxxxxx'" => function () {
+		Assert::same(
+			str_repeat('x', 30),
+			str_repeat('x', 30) . str_repeat('*', 40),
+		);
+	},
+	"Failed: 'xxxxx*****************************************************************...' should be \n    ... 'xxxxx'" => function () {
+		Assert::same(
+			str_repeat('x', 5),
+			str_repeat('x', 5) . str_repeat('*', 90),
+		);
+	},
+	"Failed: '...xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx*' should be \n    ... '...xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'" => function () {
+		Assert::same(
+			str_repeat('x', 70),
+			str_repeat('x', 70) . '*',
+		);
+	},
 ];
 
 foreach ($cases as $message => $closure) {
