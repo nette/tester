@@ -81,8 +81,8 @@ class DataProvider
 			'>=', '=>' => $l >= $r,
 			'<' => $l < $r,
 			'=<', '<=' => $l <= $r,
-			'=', '==' => $l == $r,
-			'!', '!=', '<>' => $l != $r,
+			'=', '==' => $l == $r, // intentionally ==
+			'!', '!=', '<>' => $l != $r, // intentionally !=
 			default => throw new \InvalidArgumentException("Unknown operator '$operator'"),
 		};
 	}

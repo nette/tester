@@ -37,7 +37,7 @@ foreach ([
 	'Code coverage engines' => count($info->codeCoverageEngines)
 		? implode(', ', array_map(fn(array $engineInfo) => vsprintf('%s (%s)', $engineInfo), $info->codeCoverageEngines))
 		: '(not available)',
-	'PHP temporary directory' => $info->tempDir == '' ? '(empty)' : $info->tempDir,
+	'PHP temporary directory' => $info->tempDir === '' ? '(empty)' : $info->tempDir,
 	'Loaded extensions' => count($info->extensions) ? implode(', ', $info->extensions) : '(none)',
 ] as $title => $value) {
 	echo "\e[1;32m$title\e[0m:\n$value\n\n";

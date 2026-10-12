@@ -210,7 +210,7 @@ class FileMutator
 	{
 		$func = $flags & STREAM_URL_STAT_LINK ? 'lstat' : 'stat';
 		return $flags & STREAM_URL_STAT_QUIET
-			? @$this->native($func, $path)
+			? @$this->native($func, $path) // @ STREAM_URL_STAT_QUIET asks for no warning
 			: $this->native($func, $path);
 	}
 

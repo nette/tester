@@ -34,7 +34,7 @@ Assert::true($q->has('script'));
 Assert::true($q->has('br'));
 Assert::true($q->has('script[type]'));
 
-$q = @DomQuery::fromHtml('<custom-element></custom-element>');
+$q = DomQuery::fromHtml('<custom-element></custom-element>');
 Assert::true($q->has('custom-element'));
 
 

@@ -24,7 +24,7 @@ Assert::error(
 Assert::error(
 	function () {
 		$a = &pi();
-		@$a++;
+		@$a = &pi(); // @ muted on purpose
 		$a = &pi();
 	},
 	[

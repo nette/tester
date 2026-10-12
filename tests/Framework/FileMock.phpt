@@ -203,7 +203,7 @@ test('Filesystem functions', function () {
 test('Unlink', function () {
 	fopen($name = Tester\FileMock::create('foo'), 'r');
 	Assert::true(unlink($name));
-	Assert::false(@unlink($name));
+	Assert::false(@unlink($name)); // @ the warning is tested below
 	Assert::error(
 		fn() => unlink($name),
 		E_USER_WARNING,

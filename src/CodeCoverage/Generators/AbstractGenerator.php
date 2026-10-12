@@ -44,7 +44,7 @@ abstract class AbstractGenerator
 			throw new \Exception("Content of file '$file' is invalid.");
 		}
 
-		$this->data = array_filter($data, fn(string $path): bool => @is_file($path), ARRAY_FILTER_USE_KEY);
+		$this->data = array_filter($data, fn(string $path): bool => @is_file($path), ARRAY_FILTER_USE_KEY); // @ the path may be outside open_basedir
 
 		if (!$sources) {
 			$sources = [Helpers::findCommonDirectory(array_keys($this->data))];
