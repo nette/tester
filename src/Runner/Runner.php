@@ -7,8 +7,7 @@
 
 namespace Tester\Runner;
 
-use Tester\Environment;
-use Tester\Helpers;
+use Tester\{Environment, Helpers};
 use function count;
 
 

@@ -1,8 +1,7 @@
 <?php declare(strict_types=1);
 
-use Tester\Assert;
+use Tester\{Assert, FileMock};
 use Tester\CodeCoverage\Generators\HtmlGenerator;
-use Tester\FileMock;
 
 require __DIR__ . '/../bootstrap.php';
 require __DIR__ . '/../../src/CodeCoverage/Generators/AbstractGenerator.php';

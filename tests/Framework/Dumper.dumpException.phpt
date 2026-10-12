@@ -1,7 +1,6 @@
 <?php declare(strict_types=1);
 
-use Tester\Ansi;
-use Tester\Assert;
+use Tester\{Ansi, Assert};
 
 require __DIR__ . '/../bootstrap.php';
 

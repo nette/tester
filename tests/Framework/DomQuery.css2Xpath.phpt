@@ -1,7 +1,6 @@
 <?php declare(strict_types=1);
 
-use Tester\Assert;
-use Tester\DomQuery;
+use Tester\{Assert, DomQuery};
 
 require __DIR__ . '/../bootstrap.php';
 

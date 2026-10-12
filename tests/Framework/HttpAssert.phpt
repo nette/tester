@@ -1,9 +1,7 @@
 <?php declare(strict_types=1);
 
 
-use Tester\Assert;
-use Tester\AssertException;
-use Tester\HttpAssert;
+use Tester\{Assert, AssertException, HttpAssert};
 
 require __DIR__ . '/../bootstrap.php';
 
