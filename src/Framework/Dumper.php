@@ -7,7 +7,7 @@
 
 namespace Tester;
 
-use function array_slice, is_array, is_bool, is_float, is_int, is_object, is_resource, is_string, ord, strlen;
+use function is_array, is_bool, is_float, is_int, is_object, is_resource, is_string, strlen;
 use const DIRECTORY_SEPARATOR;
 
 

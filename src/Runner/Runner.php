@@ -9,8 +9,7 @@ namespace Tester\Runner;
 
 use Tester\Environment;
 use Tester\Helpers;
-use function count, in_array;
-use const DIRECTORY_SEPARATOR;
+use function count;
 
 
 /**
@@ -157,7 +156,7 @@ class Runner
 
 		if (is_dir($path)) {
 			foreach (glob(str_replace('[', '[[]', $path) . '/*', GLOB_ONLYDIR) ?: [] as $dir) {
-				if (in_array(basename($dir), $this->ignoreDirs, strict: true)) {
+				if (in_array(basename($dir), $this->ignoreDirs, true)) {
 					continue;
 				}
 

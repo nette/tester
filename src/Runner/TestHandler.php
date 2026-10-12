@@ -11,8 +11,7 @@ use Tester;
 use Tester\Dumper;
 use Tester\Helpers;
 use Tester\TestCase;
-use function count, in_array, is_array, is_string;
-use const DIRECTORY_SEPARATOR;
+use function count, is_array, is_string;
 
 
 /**
@@ -56,7 +55,7 @@ class TestHandler
 						$prepared[] = $test;
 					} else {
 						foreach (is_array($res) ? $res : [$res] as $testVariety) {
-							\assert($testVariety instanceof Test);
+							assert($testVariety instanceof Test);
 							if ($testVariety->hasResult()) {
 								$this->runner->prepareTest($testVariety);
 								$this->runner->finishTest($testVariety);
@@ -206,7 +205,7 @@ class TestHandler
 			$job->setTempDirectory($this->tempDir);
 			$job->run();
 
-			if (in_array($job->getExitCode(), [Job::CodeError, Job::CodeFail, Job::CodeSkip], strict: true)) {
+			if (in_array($job->getExitCode(), [Job::CodeError, Job::CodeFail, Job::CodeSkip], true)) {
 				return $test->withResult($job->getExitCode() === Job::CodeSkip ? Test::Skipped : Test::Failed, $job->getTest()->getOutput());
 			}
 
