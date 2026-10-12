@@ -7,7 +7,7 @@
 
 namespace Tester\Runner;
 
-use function array_slice, call_user_func, count, in_array, is_array;
+use function call_user_func, count, is_array;
 
 
 /**
@@ -127,7 +127,7 @@ class CommandLine
 
 			if (
 				!empty($opt[self::Enum])
-				&& !in_array(is_array($arg) ? reset($arg) : $arg, $opt[self::Enum], strict: true)
+				&& !in_array(is_array($arg) ? reset($arg) : $arg, $opt[self::Enum], true)
 				&& !(
 					$opt[self::Optional]
 					&& $arg === true

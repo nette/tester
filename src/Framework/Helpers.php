@@ -7,8 +7,7 @@
 
 namespace Tester;
 
-use function array_slice, count, defined;
-use const DIRECTORY_SEPARATOR;
+use function count, defined;
 
 
 /**

@@ -11,7 +11,7 @@ use DOMDocument;
 use DOMElement;
 use Tester\CodeCoverage\PhpParser;
 use Tester\Helpers;
-use function count;
+use function count, extension_loaded;
 
 
 class CloverXMLGenerator extends AbstractGenerator

@@ -9,7 +9,7 @@ namespace Tester\Runner;
 
 use Tester\Helpers;
 use function count, is_array, is_resource;
-use const DIRECTORY_SEPARATOR, PHP_OS_FAMILY, PHP_VERSION_ID;
+use const PHP_OS_FAMILY, PHP_VERSION_ID;
 
 
 /**

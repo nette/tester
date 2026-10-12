@@ -8,6 +8,7 @@
 namespace Tester\CodeCoverage;
 
 use function ord;
+use const PHP_VERSION_ID;
 
 
 /**
