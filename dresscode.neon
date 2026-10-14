@@ -1,0 +1,36 @@
+use:
+	- nette
+	- modernizations
+
+typeAnalysis: phpstan
+
+paths:
+	- src
+	- tests
+	- src/tester
+
+excludePaths:
+	- tests/**/output
+	- tests/**/fixtures*
+
+fileExtensions:
+	- php
+	- phpt
+
+imports: {grouping: {class: grouped}}
+
+overrides:
+	-
+		paths: [src]
+		nameResolution: certain
+		use:
+			- compilerOptimizations
+			- deprecations
+
+	- # the name is part of the API
+		paths: [src/CodeCoverage/Generators/AbstractGenerator.php]
+		naming: {abstractClassAffix: keep}
+
+	- # the class names in strings are the data the tests compare
+		paths: [tests/CodeCoverage/PhpParser.parse.namespaces.phpt, tests/Framework/Assert.type.phpt]
+		literals: {classNameInString: keep}
