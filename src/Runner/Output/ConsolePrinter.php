@@ -105,14 +105,17 @@ class ConsolePrinter implements Tester\Runner\OutputHandler
 	public function end(): void
 	{
 		$run = array_sum($this->results);
-		fwrite($this->file, !$this->count ? "No tests found\n" :
-			"\n\n" . $this->buffer . "\n"
-			. ($this->results[Test::Failed] ? Ansi::color('white/red') . 'FAILURES!' : Ansi::color('white/green') . 'OK')
-			. " ($this->count test" . ($this->count > 1 ? 's' : '') . ', '
-			. ($this->results[Test::Failed] ? $this->results[Test::Failed] . ' failure' . ($this->results[Test::Failed] > 1 ? 's' : '') . ', ' : '')
-			. ($this->results[Test::Skipped] ? $this->results[Test::Skipped] . ' skipped, ' : '')
-			. ($this->count !== $run ? ($this->count - $run) . ' not run, ' : '')
-			. sprintf('%0.1f', $this->time + microtime(as_float: true)) . ' seconds)' . Ansi::reset() . "\n");
+		fwrite($this->file, !$this->count
+			? "No tests found\n"
+			: "\n\n" . $this->buffer . "\n"
+				. ($this->results[Test::Failed] ? Ansi::color('white/red') . 'FAILURES!' : Ansi::color('white/green') . 'OK')
+				. " ($this->count test" . ($this->count > 1 ? 's' : '') . ', '
+				. ($this->results[Test::Failed]
+					? $this->results[Test::Failed] . ' failure' . ($this->results[Test::Failed] > 1 ? 's' : '') . ', '
+					: '')
+				. ($this->results[Test::Skipped] ? $this->results[Test::Skipped] . ' skipped, ' : '')
+				. ($this->count !== $run ? ($this->count - $run) . ' not run, ' : '')
+				. sprintf('%0.1f', $this->time + microtime(as_float: true)) . ' seconds)' . Ansi::reset() . "\n");
 
 		$this->buffer = '';
 	}
@@ -150,7 +153,9 @@ class ConsolePrinter implements Tester\Runner\OutputHandler
 			$fileText,
 			$titleText,
 			match ($result) {
-				Test::Passed => Ansi::colorize('OK', 'lime'), Test::Skipped => Ansi::colorize('SKIP', 'yellow'), Test::Failed => Ansi::colorize('FAIL', 'white/red')
+				Test::Passed => Ansi::colorize('OK', 'lime'),
+				Test::Skipped => Ansi::colorize('SKIP', 'yellow'),
+				Test::Failed => Ansi::colorize('FAIL', 'white/red'),
 			},
 			Ansi::colorize(sprintf('in %.2f s', $test->getDuration()), 'gray'),
 			$message,

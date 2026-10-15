@@ -81,7 +81,8 @@ class DomQuery extends \SimpleXMLElement
 		if (PHP_VERSION_ID < 80400) {
 			return (str_starts_with($selector, ':scope')
 				? $this->xpath(self::selectorToXpath(substr($selector, 6), 'self::'))
-				: $this->xpath(self::selectorToXpath($selector, 'descendant::'))) ?: [];
+				: $this->xpath(self::selectorToXpath($selector, 'descendant::')))
+				?: [];
 		}
 
 		return array_map(
@@ -186,7 +187,11 @@ class DomQuery extends \SimpleXMLElement
 				} elseif ($m[4] === '^') {
 					$xpath .= "[starts-with($attr, " . self::quote($val) . ')]';
 				} elseif ($m[4] === '$') {
-					$xpath .= "[substring($attr, string-length($attr) - string-length(" . self::quote($val) . ') + 1)=' . self::quote($val) . ']';
+					$xpath .= "[substring($attr, string-length($attr) - string-length("
+						. self::quote($val)
+						. ') + 1)='
+						. self::quote($val)
+						. ']';
 				}
 			} elseif ($m[6] === '>') {
 				$xpath .= '/*';

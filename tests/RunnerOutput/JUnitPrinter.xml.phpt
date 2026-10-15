@@ -11,7 +11,7 @@ require __DIR__ . '/../../src/Runner/Output/JUnitPrinter.php';
 
 
 test('report is well-formed XML for any test output', function () {
-	$printer = new JUnitPrinter($file = FileMock::create(''));
+	$printer = new JUnitPrinter($file = FileMock::create());
 	$printer->begin();
 	$printer->finish(
 		(new Test('test.phpt'))
@@ -31,7 +31,7 @@ test('report is well-formed XML for any test output', function () {
 
 
 test('summary attributes match the reported test cases', function () {
-	$printer = new JUnitPrinter($file = FileMock::create(''));
+	$printer = new JUnitPrinter($file = FileMock::create());
 	$printer->begin();
 	$printer->finish((new Test('a.phpt'))->withResult(Test::Passed, null));
 	$printer->finish((new Test('b.phpt'))->withResult(Test::Failed, 'failed'));

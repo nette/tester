@@ -52,7 +52,9 @@ class JUnitPrinter implements Tester\Runner\OutputHandler
 		$this->results[$test->getResult()]++;
 		$this->buffer .= "\t\t<testcase classname=\"" . $signature . '" name="' . $signature . '"';
 		$this->buffer .= match ($test->getResult()) {
-			Test::Failed => ">\n\t\t\t<failure message=\"" . htmlspecialchars(self::sanitize($test->message ?? ''), ENT_COMPAT | ENT_HTML5) . "\"/>\n\t\t</testcase>\n",
+			Test::Failed => ">\n\t\t\t<failure message=\""
+				. htmlspecialchars(self::sanitize($test->message ?? ''), ENT_COMPAT | ENT_HTML5)
+				. "\"/>\n\t\t</testcase>\n",
 			Test::Skipped => ">\n\t\t\t<skipped/>\n\t\t</testcase>\n",
 			Test::Passed => "/>\n",
 		};

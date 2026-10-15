@@ -43,7 +43,10 @@ class Helpers
 			mkdir($dir);
 		}
 
-		foreach (new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($dir, \RecursiveDirectoryIterator::SKIP_DOTS), \RecursiveIteratorIterator::CHILD_FIRST) as $entry) {
+		foreach (new \RecursiveIteratorIterator(
+			new \RecursiveDirectoryIterator($dir, \RecursiveDirectoryIterator::SKIP_DOTS),
+			\RecursiveIteratorIterator::CHILD_FIRST,
+		) as $entry) {
 			if ($entry->isDir()) {
 				rmdir((string) $entry);
 			} else {

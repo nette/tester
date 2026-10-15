@@ -25,7 +25,7 @@ if (CodeCoverage\Collector::isStarted()) {
 	Tester\Environment::skip('Requires running without --coverage.');
 }
 
-$outputFile = FileMock::create('');
+$outputFile = FileMock::create();
 
 Assert::false(CodeCoverage\Collector::isStarted());
 CodeCoverage\Collector::start($outputFile, $engine);

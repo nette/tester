@@ -1,5 +1,6 @@
 <?php declare(strict_types=1);
 
+// dresscode:disable hygiene.defaultArgument -- the named arguments say what the call does
 
 use Tester\{Assert, AssertException, HttpAssert};
 

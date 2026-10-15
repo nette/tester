@@ -33,4 +33,7 @@ Assert::match('[]', Dumper::toLine([]));
 Assert::match("[1, 2, 3, 4, 'x']", Dumper::toLine([1, 2, 3, 4, 'x']));
 Assert::match('[1 => 1, 2, 3]', Dumper::toLine([1 => 1, 2, 3]));
 Assert::match("['a' => [...]]", Dumper::toLine(['a' => [1, 2]]));
-Assert::match("['one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', ...]", Dumper::toLine(['one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'eleven', 'twelve']));
+Assert::match(
+	"['one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', ...]",
+	Dumper::toLine(['one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'eleven', 'twelve']),
+);

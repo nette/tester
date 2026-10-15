@@ -5,7 +5,7 @@ use Tester\{Ansi, Assert, Environment};
 
 /**
  * Runs a labeled test closure, calling setUp and tearDown around it.
- * @param \Closure(): mixed  $closure
+ * @param Closure(): mixed  $closure
  */
 function test(string $description, Closure $closure): void
 {
@@ -39,8 +39,8 @@ function test(string $description, Closure $closure): void
 
 /**
  * Runs a labeled test that asserts the closure throws a specific exception.
- * @param \Closure(): mixed  $function
- * @param class-string<\Throwable>  $class
+ * @param Closure(): mixed  $function
+ * @param class-string<Throwable>  $class
  */
 function testException(
 	string $description,
@@ -56,7 +56,7 @@ function testException(
 
 /**
  * Runs a labeled test that asserts the closure generates no errors or exceptions.
- * @param \Closure(): mixed  $function
+ * @param Closure(): mixed  $function
  */
 function testNoError(string $description, Closure $function): void
 {
@@ -70,7 +70,7 @@ function testNoError(string $description, Closure $function): void
 
 /**
  * Sets the closure to call before each test() invocation.
- * @param (\Closure(): mixed)|null  $closure
+ * @param (Closure(): mixed)|null  $closure
  */
 function setUp(?Closure $closure): void
 {
@@ -81,7 +81,7 @@ function setUp(?Closure $closure): void
 
 /**
  * Sets the closure to call after each test() invocation.
- * @param (\Closure(): mixed)|null  $closure
+ * @param (Closure(): mixed)|null  $closure
  */
 function tearDown(?Closure $closure): void
 {

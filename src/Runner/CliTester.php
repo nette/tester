@@ -268,7 +268,8 @@ class CliTester
 		}
 
 		file_put_contents($this->options['--coverage'], '');
-		$file = realpath($this->options['--coverage']) ?: throw new \RuntimeException("Cannot resolve path '{$this->options['--coverage']}'.");
+		$file = realpath($this->options['--coverage'])
+			?: throw new \RuntimeException("Cannot resolve path '{$this->options['--coverage']}'.");
 
 		[$engine, $version] = reset($engines);
 
@@ -358,7 +359,11 @@ class CliTester
 				$idle .= ' sec';
 			}
 
-			echo 'Watching ' . implode(', ', $this->options['--watch']) . " (idle for $idle) " . str_repeat('.', ++$counter % 5) . Ansi::clearLine();
+			echo 'Watching '
+				. implode(', ', $this->options['--watch'])
+				. " (idle for $idle) "
+				. str_repeat('.', ++$counter % 5)
+				. Ansi::clearLine();
 			sleep(2);
 		}
 	}

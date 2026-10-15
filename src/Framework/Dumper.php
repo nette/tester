@@ -122,7 +122,7 @@ class Dumper
 	 */
 	public static function toPhp(mixed $var): string
 	{
-		return self::_toPhp($var);
+		return self::varToPhp($var);
 	}
 
 
@@ -133,7 +133,7 @@ class Dumper
 
 
 	/** @param mixed[]  $list */
-	private static function _toPhp(mixed &$var, array &$list = [], int $level = 0, int &$line = 1): string
+	private static function varToPhp(mixed &$var, array &$list = [], int $level = 0, int &$line = 1): string
 	{
 		if (is_float($var)) {
 			if (!is_finite($var)) {
@@ -177,7 +177,8 @@ class Dumper
 				$counter = 0;
 				foreach ($var as $k => &$v) {
 					if ($k !== $marker) {
-						$item = ($k === $counter ? '' : self::_toPhp($k, $list, $level + 1, $line) . ' => ') . self::_toPhp($v, $list, $level + 1, $line);
+						$item = ($k === $counter ? '' : self::varToPhp($k, $list, $level + 1, $line) . ' => ')
+							. self::varToPhp($v, $list, $level + 1, $line);
 						$counter = is_int($k) ? max($k + 1, $counter) : $counter;
 						$outShort .= ($outShort === '' ? '' : ', ') . $item;
 						$out .= "\t$item,\n$space";
@@ -229,7 +230,11 @@ class Dumper
 						$k = substr($k, strrpos($k, "\x00") + 1);
 					}
 
-					$out .= "$space\t" . self::_toPhp($k, $list, $level + 1, $line) . ' => ' . self::_toPhp($v, $list, $level + 1, $line) . ",\n";
+					$out .= "$space\t"
+						. self::varToPhp($k, $list, $level + 1, $line)
+						. ' => '
+						. self::varToPhp($v, $list, $level + 1, $line)
+						. ",\n";
 					$line++;
 				}
 
@@ -336,10 +341,16 @@ class Dumper
 
 			if (
 				is_object($expected) || is_array($expected) || (is_string($expected) && strlen($expected) > self::$maxLength)
-				|| is_object($actual) || is_array($actual) || (is_string($actual) && (strlen($actual) > self::$maxLength || preg_match('#[\x00-\x1F]#', $actual)))
+				|| is_object($actual) || is_array($actual) || (is_string($actual)
+					&& (strlen($actual) > self::$maxLength || preg_match('#[\x00-\x1F]#', $actual)))
 			) {
 				$args = isset($_SERVER['argv'][1])
-					? '.[' . implode(' ', preg_replace(['#^-*([^|]+).*#i', '#[^=a-z0-9. -]+#i'], ['$1', '-'], array_slice($_SERVER['argv'], 1))) . ']'
+					? '.['
+						. implode(
+							' ',
+							preg_replace(['#^-*([^|]+).*#i', '#[^=a-z0-9. -]+#i'], ['$1', '-'], array_slice($_SERVER['argv'], 1)),
+						)
+						. ']'
 					: '';
 				$stored[] = self::saveOutput($testFile, $expected, $args . '.expected');
 				$stored[] = self::saveOutput($testFile, $actual, $args . '.actual');
@@ -372,6 +383,7 @@ class Dumper
 				'%1' => Ansi::color('yellow') . self::toLine($actual) . Ansi::color('white'),
 				'%2' => Ansi::color('yellow') . self::toLine($expected) . Ansi::color('white'),
 			]);
+
 		} else {
 			$message = ($e instanceof \ErrorException ? Helpers::errorTypeToString($e->getSeverity()) : $e::class)
 				. ': ' . preg_replace('#[\x00-\x09\x0B-\x1F]+#', ' ', $e->getMessage());
@@ -386,8 +398,12 @@ class Dumper
 				continue;
 			}
 
-			$line = $item['class'] === Assert::class && isset($item['function'], $item['file']) && method_exists($item['class'], $item['function'])
-				&& strpos($tmp = (file($item['file']) ?: [])[$item['line'] - 1] ?? '', "::$item[function](") ? $tmp : null;
+			$line = $item['class'] === Assert::class
+				&& isset($item['function'], $item['file'])
+				&& method_exists($item['class'], $item['function'])
+				&& strpos($tmp = (file($item['file']) ?: [])[$item['line'] - 1] ?? '', "::$item[function](")
+				? $tmp
+				: null;
 
 			$s .= 'in '
 				. ($item['file']
@@ -403,7 +419,10 @@ class Dumper
 				)
 				. ($line
 					? trim($line)
-					: $item['class'] . $item['type'] . $item['function'] . ($item['function'] ? '(' . self::argsToLine($item['args'] ?? []) . ')' : '')
+					: $item['class']
+						. $item['type']
+						. $item['function']
+						. ($item['function'] ? '(' . self::argsToLine($item['args'] ?? []) . ')' : '')
 				)
 				. Ansi::reset() . "\n";
 		}

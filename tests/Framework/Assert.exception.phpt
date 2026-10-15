@@ -77,7 +77,7 @@ $e = Assert::exception(
 Assert::same($obj->e, $e->getPrevious());
 
 Assert::exception(
-	fn() => throw new Exception(''),
+	fn() => throw new Exception,
 	Exception::class,
 	'',
 );

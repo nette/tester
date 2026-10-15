@@ -282,7 +282,7 @@ class Assert
 				self::fail(self::describe("%1 should be $type", $description), $value);
 			}
 		} elseif (in_array($type, ['array', 'bool', 'callable', 'float',
-			'int', 'integer', 'null', 'object', 'resource', 'scalar', 'string', ], true)
+			'int', 'integer', 'null', 'object', 'resource', 'scalar', 'string'], true)
 		) {
 			if (!('is_' . ($type === 'integer' ? 'int' : $type))($value)) {
 				self::fail(self::describe(get_debug_type($value) . " should be $type", $description));
@@ -320,7 +320,12 @@ class Assert
 			self::fail("$class was expected, but none was thrown");
 
 		} elseif (!$e instanceof $class) {
-			self::fail("$class was expected but got " . $e::class . ($e->getMessage() !== '' ? " ({$e->getMessage()})" : ''), null, null, $e);
+			self::fail(
+				"$class was expected but got " . $e::class . ($e->getMessage() !== '' ? " ({$e->getMessage()})" : ''),
+				null,
+				null,
+				$e,
+			);
 
 		} elseif ($message !== null && !self::isMatching($message, $e->getMessage())) {
 			self::fail("$class with a message matching %2 was expected but got %1", $e->getMessage(), $message, $e);
@@ -558,18 +563,25 @@ class Assert
 					'\x00' => '\x00',
 					'[\t ]*\r?\n' => '[\t ]*\r?\n', // right trim
 				];
-				$pattern = '#^' . preg_replace_callback('#' . implode('|', array_keys($patterns)) . '#U' . $utf8, function ($m) use ($patterns): string {
-					foreach ($patterns as $re => $replacement) {
-						$s = preg_replace("#^$re$#D", str_replace('\\', '\\\\', $replacement), $m[0], 1, $count);
-						if ($count) {
-							return $s ?? $m[0];
-						}
-					}
-					return $m[0];
-				}, rtrim($pattern, " \t\n\r")) . $suffix;
+				$pattern = '#^'
+					. preg_replace_callback(
+						'#' . implode('|', array_keys($patterns)) . '#U' . $utf8,
+						function ($m) use ($patterns): string {
+							foreach ($patterns as $re => $replacement) {
+								$s = preg_replace("#^$re$#D", str_replace('\\', '\\\\', $replacement), $m[0], 1, $count);
+								if ($count) {
+									return $s ?? $m[0];
+								}
+							}
+							return $m[0];
+						},
+						rtrim($pattern, " \t\n\r"),
+					)
+					. $suffix;
 			}
 
 			$res = preg_match($pattern, $actual);
+
 		} finally {
 			ini_set('pcre.backtrack_limit', $old);
 		}

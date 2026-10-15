@@ -12,13 +12,16 @@ require __DIR__ . '/../../src/CodeCoverage/Generators/CloverXMLGenerator.php';
 
 $source = realpath(__DIR__ . '/../../src/Runner/Test.php');
 
-$finishCoverage = fn(?string $stdoutFormat, string $data): array => Assert::with(new CliTester, function () use ($stdoutFormat, $data, $source): array {
-	$this->stdoutFormat = $stdoutFormat;
-	$this->options = ['--coverage-src' => [$source]];
-	ob_start();
-	$result = $this->finishCodeCoverage(FileMock::create($data, 'xml'));
-	return [$result, ob_get_clean()];
-});
+$finishCoverage = fn(?string $stdoutFormat, string $data): array => Assert::with(
+	new CliTester,
+	function () use ($stdoutFormat, $data, $source): array {
+		$this->stdoutFormat = $stdoutFormat;
+		$this->options = ['--coverage-src' => [$source]];
+		ob_start();
+		$result = $this->finishCodeCoverage(FileMock::create($data, 'xml'));
+		return [$result, ob_get_clean()];
+	},
+);
 
 
 test('console output', function () use ($finishCoverage, $source) {

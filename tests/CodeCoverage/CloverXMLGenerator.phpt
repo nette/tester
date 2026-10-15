@@ -26,7 +26,7 @@ $dom->load($output);
 $files = $sorted = iterator_to_array($dom->getElementsByTagName('file'));
 usort($sorted, fn($a, $b) => strcmp($a->getAttribute('name'), $b->getAttribute('name')));
 foreach ($files as $file) {
-	$file->parentNode->replaceChild(array_shift($sorted)->cloneNode(true), $file);
+	$file->parentNode->replaceChild(array_shift($sorted)->cloneNode(deep: true), $file);
 }
 $xml = $dom->saveXML();
 

@@ -4,7 +4,6 @@
  * Test: @phpVersion is evaluated against the interpreter version, boundaries included.
  */
 
-
 use Tester\Assert;
 use Tester\Runner\Test;
 

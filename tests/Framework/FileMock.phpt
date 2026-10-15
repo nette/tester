@@ -6,7 +6,7 @@ require __DIR__ . '/../bootstrap.php';
 
 
 Assert::notContains('mock', stream_get_wrappers());
-FileMock::create('');
+FileMock::create();
 Assert::contains('mock', stream_get_wrappers());
 
 
@@ -60,7 +60,7 @@ test('Opening existing', function () {
 
 	foreach ($cases as $mode => $errors) {
 		Assert::error(
-			fn() => fopen(FileMock::create(''), $mode),
+			fn() => fopen(FileMock::create(), $mode),
 			$errors,
 		);
 	}
@@ -217,7 +217,7 @@ test('Runtime include', function () {
 
 
 test('Locking', function () {
-	Assert::false(flock(fopen(FileMock::create(''), 'w'), LOCK_EX));
+	Assert::false(flock(fopen(FileMock::create(), 'w'), LOCK_EX));
 });
 
 

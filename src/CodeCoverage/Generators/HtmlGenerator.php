@@ -21,7 +21,6 @@ class HtmlGenerator extends AbstractGenerator
 		self::LineUntested => 'u', // untested
 		self::LineDead => 'dead', // dead code
 	];
-	private ?string $title;
 
 	/** @var list<object{name: string, file: string, lines: array<int, int>, coverage: int|float, total: int, class: string|null}> */
 	private array $files = [];
@@ -31,10 +30,12 @@ class HtmlGenerator extends AbstractGenerator
 	 * @param  string    $file  path to coverage.dat file
 	 * @param  string[]  $sources  files/directories
 	 */
-	public function __construct(string $file, array $sources = [], ?string $title = null)
-	{
+	public function __construct(
+		string $file,
+		array $sources = [],
+		private ?string $title = null,
+	) {
 		parent::__construct($file, $sources);
-		$this->title = $title;
 	}
 
 
