@@ -1,8 +1,8 @@
 {
 	"name": "nette/tester",
-	"description": "Nette Tester: enjoyable unit testing in PHP with code coverage reporter. 🍏🍏🍎🍏",
+	"description": "🍏 Nette Tester: enjoyable unit testing in PHP. Tests are plain PHP scripts that run in parallel, with readable assertions and code coverage.",
 	"homepage": "https://tester.nette.org",
-	"keywords": ["testing", "unit", "nette", "phpunit", "code coverage", "xdebug", "phpdbg", "pcov", "clover", "assertions"],
+	"keywords": ["nette", "testing", "unit testing", "test framework", "assertions", "code coverage", "parallel", "phpunit"],
 	"license": ["BSD-3-Clause", "GPL-2.0-only", "GPL-3.0-only"],
 	"authors": [
 		{
@@ -12,10 +12,6 @@
 		{
 			"name": "Miloslav Hůla",
 			"homepage": "https://github.com/milo"
-		},
-		{
-			"name": "Nette Community",
-			"homepage": "https://nette.org/contributors"
 		}
 	],
 	"require": {
