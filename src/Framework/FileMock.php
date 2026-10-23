@@ -121,6 +121,12 @@ class FileMock
 	}
 
 
+	public function stream_flush(): bool
+	{
+		return true;
+	}
+
+
 	public function stream_tell(): int
 	{
 		return $this->readingPos;
