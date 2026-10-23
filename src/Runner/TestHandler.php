@@ -306,13 +306,13 @@ class TestHandler
 			$message = preg_match('#.*Skipped:\n(.*?)$#Ds', $output = $job->getTest()->stdout, $m)
 				? $m[1]
 				: $output;
-			return $job->getTest()->withResult(Test::Skipped, trim($message));
+			return $job->getTest()->withResult(Test::Skipped, trim($message), $job->getDuration());
 
 		} elseif ($job->getExitCode() !== $code) {
 			$message = $job->getExitCode() !== Job::CodeFail
 				? "Exited with error code {$job->getExitCode()} (expected $code)"
 				: '';
-			return $job->getTest()->withResult(Test::Failed, trim($message . "\n" . $job->getTest()->getOutput()));
+			return $job->getTest()->withResult(Test::Failed, trim($message . "\n" . $job->getTest()->getOutput()), $job->getDuration());
 		}
 
 		return null;
@@ -329,7 +329,7 @@ class TestHandler
 		$actual = (int) ($headers['Status'] ?? self::HttpOk);
 		$code = (int) $code;
 		return $code && $code !== $actual
-			? $job->getTest()->withResult(Test::Failed, "Exited with HTTP code $actual (expected $code)")
+			? $job->getTest()->withResult(Test::Failed, "Exited with HTTP code $actual (expected $code)", $job->getDuration())
 			: null;
 	}
 
@@ -338,7 +338,7 @@ class TestHandler
 	{
 		$file = dirname($job->getTest()->getFile()) . DIRECTORY_SEPARATOR . $file;
 		if (!is_file($file)) {
-			return $job->getTest()->withResult(Test::Failed, "Missing matching file '$file'.");
+			return $job->getTest()->withResult(Test::Failed, "Missing matching file '$file'.", $job->getDuration());
 		}
 
 		return $this->assessOutputMatch($job, Helpers::readFile($file));
@@ -352,7 +352,8 @@ class TestHandler
 			[$content, $actual] = Tester\Assert::expandMatchingPatterns($content, $actual);
 			Dumper::saveOutput($job->getTest()->getFile(), $actual, '.actual');
 			Dumper::saveOutput($job->getTest()->getFile(), $content, '.expected');
-			return $job->getTest()->withResult(Test::Failed, 'Failed: output should match ' . Dumper::toLine($content));
+			return $job->getTest()
+				->withResult(Test::Failed, 'Failed: output should match ' . Dumper::toLine($content), $job->getDuration());
 		}
 
 		return null;

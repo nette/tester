@@ -50,7 +50,8 @@ class JUnitPrinter implements Tester\Runner\OutputHandler
 	{
 		$signature = htmlspecialchars(self::sanitize($test->getSignature()));
 		$this->results[$test->getResult()]++;
-		$this->buffer .= "\t\t<testcase classname=\"" . $signature . '" name="' . $signature . '"';
+		$this->buffer .= "\t\t<testcase classname=\"" . $signature . '" name="' . $signature . '"'
+			. ($test->getDuration() === null ? '' : sprintf(' time="%0.3f"', $test->getDuration()));
 		$this->buffer .= match ($test->getResult()) {
 			Test::Failed => ">\n\t\t\t<failure message=\""
 				. htmlspecialchars(self::sanitize($test->message ?? ''), ENT_COMPAT | ENT_HTML5)

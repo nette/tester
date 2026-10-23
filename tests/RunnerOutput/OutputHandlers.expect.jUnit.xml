@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <testsuites>
 	<testsuite errors="0" failures="4" skipped="4" tests="11" time="%a%" timestamp="%a%">
-		<testcase classname="%a%01-basic.fail.phptx" name="%a%01-basic.fail.phptx">
+		<testcase classname="%a%01-basic.fail.phptx" name="%a%01-basic.fail.phptx" time="%f%">
 			<failure message="Multi
 line
 stdout.Failed:
@@ -13,11 +13,11 @@ Multi
 line
 stderr."/>
 		</testcase>
-		<testcase classname="%a%01-basic.pass.phptx" name="%a%01-basic.pass.phptx"/>
-		<testcase classname="%a%01-basic.skip.phptx" name="%a%01-basic.skip.phptx">
+		<testcase classname="%a%01-basic.pass.phptx" name="%a%01-basic.pass.phptx" time="%f%"/>
+		<testcase classname="%a%01-basic.skip.phptx" name="%a%01-basic.skip.phptx" time="%f%">
 			<skipped/>
 		</testcase>
-		<testcase classname="%a%02-title.fail.phptx" name="%a%02-title.fail.phptx">
+		<testcase classname="%a%02-title.fail.phptx" name="%a%02-title.fail.phptx" time="%f%">
 			<failure message="Multi
 line
 stdout.Failed:
@@ -29,11 +29,11 @@ Multi
 line
 stderr."/>
 		</testcase>
-		<testcase classname="%a%02-title.pass.phptx" name="%a%02-title.pass.phptx"/>
-		<testcase classname="%a%02-title.skip.phptx" name="%a%02-title.skip.phptx">
+		<testcase classname="%a%02-title.pass.phptx" name="%a%02-title.pass.phptx" time="%f%"/>
+		<testcase classname="%a%02-title.skip.phptx" name="%a%02-title.skip.phptx" time="%f%">
 			<skipped/>
 		</testcase>
-		<testcase classname="%a%03-message.fail.phptx" name="%a%03-message.fail.phptx">
+		<testcase classname="%a%03-message.fail.phptx" name="%a%03-message.fail.phptx" time="%f%">
 			<failure message="Multi
 line
 stdout.Failed: Multi
@@ -47,10 +47,10 @@ Multi
 line
 stderr."/>
 		</testcase>
-		<testcase classname="%a%03-message.skip.phptx" name="%a%03-message.skip.phptx">
+		<testcase classname="%a%03-message.skip.phptx" name="%a%03-message.skip.phptx" time="%f%">
 			<skipped/>
 		</testcase>
-		<testcase classname="%a%04-args.fail.phptx dataprovider=thisIsAVeryVeryVeryLongArgumentNameToTestHowOutputHandlersDealWithItsLengthInTheirOutputFormatting|%a%provider.ini" name="%a%04-args.fail.phptx dataprovider=thisIsAVeryVeryVeryLongArgumentNameToTestHowOutputHandlersDealWithItsLengthInTheirOutputFormatting|%a%provider.ini">
+		<testcase classname="%a%04-args.fail.phptx dataprovider=thisIsAVeryVeryVeryLongArgumentNameToTestHowOutputHandlersDealWithItsLengthInTheirOutputFormatting|%a%provider.ini" name="%a%04-args.fail.phptx dataprovider=thisIsAVeryVeryVeryLongArgumentNameToTestHowOutputHandlersDealWithItsLengthInTheirOutputFormatting|%a%provider.ini" time="%f%">
 			<failure message="Multi
 line
 stdout.Failed:
@@ -62,8 +62,8 @@ Multi
 line
 stderr."/>
 		</testcase>
-		<testcase classname="%a%04-args.pass.phptx dataprovider=thisIsAVeryVeryVeryLongArgumentNameToTestHowOutputHandlersDealWithItsLengthInTheirOutputFormatting|%a%provider.ini" name="%a%04-args.pass.phptx dataprovider=thisIsAVeryVeryVeryLongArgumentNameToTestHowOutputHandlersDealWithItsLengthInTheirOutputFormatting|%a%provider.ini"/>
-		<testcase classname="%a%04-args.skip.phptx dataprovider=thisIsAVeryVeryVeryLongArgumentNameToTestHowOutputHandlersDealWithItsLengthInTheirOutputFormatting|%a%provider.ini" name="%a%04-args.skip.phptx dataprovider=thisIsAVeryVeryVeryLongArgumentNameToTestHowOutputHandlersDealWithItsLengthInTheirOutputFormatting|%a%provider.ini">
+		<testcase classname="%a%04-args.pass.phptx dataprovider=thisIsAVeryVeryVeryLongArgumentNameToTestHowOutputHandlersDealWithItsLengthInTheirOutputFormatting|%a%provider.ini" name="%a%04-args.pass.phptx dataprovider=thisIsAVeryVeryVeryLongArgumentNameToTestHowOutputHandlersDealWithItsLengthInTheirOutputFormatting|%a%provider.ini" time="%f%"/>
+		<testcase classname="%a%04-args.skip.phptx dataprovider=thisIsAVeryVeryVeryLongArgumentNameToTestHowOutputHandlersDealWithItsLengthInTheirOutputFormatting|%a%provider.ini" name="%a%04-args.skip.phptx dataprovider=thisIsAVeryVeryVeryLongArgumentNameToTestHowOutputHandlersDealWithItsLengthInTheirOutputFormatting|%a%provider.ini" time="%f%">
 			<skipped/>
 		</testcase>
 	</testsuite>
