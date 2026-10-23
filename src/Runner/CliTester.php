@@ -311,7 +311,7 @@ class CliTester
 		if (filesize($file) === 0) {
 			$message = 'Coverage file is empty. Do you call Tester\Environment::setup() in tests?';
 			if ($quiet) {
-				fwrite(STDERR, "Error: $message\n");
+				file_put_contents('php://stderr', "Error: $message\n");
 			} else {
 				echo "failed. $message\n";
 			}
