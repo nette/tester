@@ -74,10 +74,11 @@ class JUnitPrinter implements Tester\Runner\OutputHandler
 
 
 	/**
-	 * Replaces invalid UTF-8 sequences and characters not allowed in XML 1.0, which may come from the test output.
+	 * Strips ANSI sequences, replaces invalid UTF-8 and characters not allowed in XML 1.0, which may come from the test output.
 	 */
 	private static function sanitize(string $s): string
 	{
+		$s = Tester\Ansi::stripAnsi($s);
 		$s = htmlspecialchars_decode(htmlspecialchars($s, ENT_NOQUOTES | ENT_SUBSTITUTE, 'UTF-8'), ENT_NOQUOTES);
 		return preg_replace('#[\x00-\x08\x0B\x0C\x0E-\x1F\x{FFFE}\x{FFFF}]#u', "\u{FFFD}", $s);
 	}
