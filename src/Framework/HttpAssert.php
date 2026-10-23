@@ -28,6 +28,7 @@ class HttpAssert
 	 * Sends an HTTP request and returns an HttpAssert instance for chaining assertions.
 	 * @param  string[]  $headers  headers as 'Name: Value' strings or name => value pairs
 	 * @param  array<string, string>  $cookies  cookie name => value pairs
+	 * @param  float  $timeout  request timeout in seconds
 	 */
 	public static function fetch(
 		string $url,
@@ -36,12 +37,14 @@ class HttpAssert
 		array $cookies = [],
 		bool $follow = false,
 		?string $body = null,
+		float $timeout = 30,
 	): self
 	{
 		$ch = curl_init($url);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 		curl_setopt($ch, CURLOPT_HEADER, true);
 		curl_setopt($ch, CURLOPT_FOLLOWLOCATION, $follow);
+		curl_setopt($ch, CURLOPT_TIMEOUT_MS, (int) ($timeout * 1000));
 		curl_setopt($ch, CURLOPT_CUSTOMREQUEST, strtoupper($method) ?: 'GET');
 
 		if ($headers) {
