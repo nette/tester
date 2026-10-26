@@ -15,6 +15,7 @@ require __DIR__ . '/Runner/CommandLine.php';
 require __DIR__ . '/Runner/TestHandler.php';
 require __DIR__ . '/Runner/OutputHandler.php';
 require __DIR__ . '/Runner/Output/Logger.php';
+require __DIR__ . '/Runner/Output/GitHubActionsPrinter.php';
 require __DIR__ . '/Runner/Output/TapPrinter.php';
 require __DIR__ . '/Runner/Output/ConsolePrinter.php';
 require __DIR__ . '/Runner/Output/JUnitPrinter.php';

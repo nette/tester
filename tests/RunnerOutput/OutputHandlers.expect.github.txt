@@ -1,0 +1,4 @@
+::error file=%a%01-basic.fail.phptx,line=%d%,title=01-basic.fail.phptx::Multi%0Aline%0Astdout.Failed%a%
+::error file=%a%02-title.fail.phptx,line=%d%,title=Title for output handlers::Multi%0Aline%0Astdout.Failed%a%
+::error file=%a%03-message.fail.phptx,line=%d%,title=03-message.fail.phptx::Multi%0Aline%0Astdout.Failed%a%
+::error file=%a%04-args.fail.phptx,line=%d%,title=04-args.fail.phptx::Multi%0Aline%0Astdout.Failed%a%

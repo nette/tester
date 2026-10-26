@@ -223,7 +223,7 @@ Options:
     -s                           Show information about skipped tests.
     --stop-on-fail               Stop execution upon the first failure.
     -j <num>                     Run <num> jobs in parallel (default: 8).
-    -o <console|console-lines|tap|junit|log|none>  (e.g. -o junit:output.xml)
+    -o <console|console-lines|github|tap|junit|log|none>  (e.g. -o junit:output.xml)
                                  Specify one or more output formats with optional file name.
     -w | --watch <path>          Watch directory.
     -i | --info                  Show tests environment info and exit.

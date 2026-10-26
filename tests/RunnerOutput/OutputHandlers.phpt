@@ -13,6 +13,7 @@ require __DIR__ . '/../../src/Runner/TestHandler.php';
 require __DIR__ . '/../../src/Runner/Runner.php';
 require __DIR__ . '/../../src/Runner/OutputHandler.php';
 require __DIR__ . '/../../src/Runner/Output/ConsolePrinter.php';
+require __DIR__ . '/../../src/Runner/Output/GitHubActionsPrinter.php';
 require __DIR__ . '/../../src/Runner/Output/JUnitPrinter.php';
 require __DIR__ . '/../../src/Runner/Output/Logger.php';
 require __DIR__ . '/../../src/Runner/Output/TapPrinter.php';
@@ -36,6 +37,7 @@ $runner->outputHandlers[] = new Output\ConsolePrinter(
 $runner->outputHandlers[] = new Output\JUnitPrinter($jUnit = FileMock::create());
 $runner->outputHandlers[] = new Output\Logger($runner, $logger = FileMock::create());
 $runner->outputHandlers[] = new Output\TapPrinter($tap = FileMock::create());
+$runner->outputHandlers[] = new Output\GitHubActionsPrinter($gitHub = FileMock::create());
 $runner->run();
 
 Assert::matchFile(__DIR__ . '/OutputHandlers.expect.console.txt', Ansi::stripAnsi(file_get_contents($console)));
@@ -44,3 +46,4 @@ Assert::matchFile(__DIR__ . '/OutputHandlers.expect.consoleLines.txt', Ansi::str
 Assert::matchFile(__DIR__ . '/OutputHandlers.expect.jUnit.xml', file_get_contents($jUnit));
 Assert::matchFile(__DIR__ . '/OutputHandlers.expect.logger.txt', file_get_contents($logger));
 Assert::matchFile(__DIR__ . '/OutputHandlers.expect.tap.txt', file_get_contents($tap));
+Assert::matchFile(__DIR__ . '/OutputHandlers.expect.github.txt', file_get_contents($gitHub));
