@@ -16,7 +16,7 @@ use const PHP_SAPI;
  */
 class Environment
 {
-	public const Version = '2.7-dev';
+	public const Version = '2.7.0';
 
 	/** Enable console colors (1 = yes, 0 = no) */
 	public const VariableColors = 'NETTE_TESTER_COLORS';
