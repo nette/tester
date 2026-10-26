@@ -127,6 +127,7 @@ class CliTester
 				    -o <console|console-lines|github|tap|junit|log|none>  (e.g. -o junit:output.xml)
 				                                 Specify one or more output formats with optional file name.
 				    -w | --watch <path>          Watch directory.
+				    --slowest [<count>]          Print the 10 (or <count>) slowest tests after the run.
 				    -i | --info                  Show tests environment info and exit.
 				    --setup <path>               Script for runner setup.
 				    --temp <path>                Path to temporary directory. Default by sys_get_temp_dir().
@@ -141,6 +142,12 @@ class CliTester
 				'--watch' => [CommandLine::Repeatable => true, CommandLine::RealPath => true],
 				'--setup' => [CommandLine::RealPath => true],
 				'--temp' => [],
+				'--slowest' => [CommandLine::Normalizer => function ($arg) {
+					if ($arg !== true && !ctype_digit((string) $arg)) {
+						throw new \Exception('Value of option --slowest must be a number.');
+					}
+					return $arg;
+				}],
 				'paths' => [CommandLine::Repeatable => true, CommandLine::Value => getcwd()],
 				'--debug' => [],
 				'--cider' => [],
@@ -236,11 +243,16 @@ class CliTester
 		$runner->stopOnFail = (bool) $this->options['--stop-on-fail'];
 		$runner->setTempDirectory($this->options['--temp']);
 
+		$slowest = $this->options['--slowest'] === null
+			? null
+			: ($this->options['--slowest'] === true ? 10 : max(1, (int) $this->options['--slowest']));
+
 		if ($this->stdoutFormat === null) {
 			$runner->outputHandlers[] = new Output\ConsolePrinter(
 				$runner,
 				(bool) $this->options['-s'],
 				mode: $this->options['--cider'] ? Output\ConsolePrinter::ModeCider : Output\ConsolePrinter::ModeDots,
+				slowestCount: $slowest,
 			);
 		}
 
@@ -252,6 +264,7 @@ class CliTester
 					(bool) $this->options['-s'],
 					$file,
 					mode: $format === 'console-lines' ? Output\ConsolePrinter::ModeLines : Output\ConsolePrinter::ModeDots,
+					slowestCount: $slowest,
 				),
 				'github' => $runner->outputHandlers[] = new Output\GitHubActionsPrinter($file),
 				'tap' => $runner->outputHandlers[] = new Output\TapPrinter($file),

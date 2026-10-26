@@ -226,6 +226,7 @@ Options:
     -o <console|console-lines|github|tap|junit|log|none>  (e.g. -o junit:output.xml)
                                  Specify one or more output formats with optional file name.
     -w | --watch <path>          Watch directory.
+    --slowest [<count>]          Print the 10 (or <count>) slowest tests after the run.
     -i | --info                  Show tests environment info and exit.
     --setup <path>               Script for runner setup.
     --temp <path>                Path to temporary directory. Default by sys_get_temp_dir().

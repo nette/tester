@@ -30,6 +30,9 @@ class ConsolePrinter implements Tester\Runner\OutputHandler
 
 	/** @var array<Test::Passed|Test::Skipped|Test::Failed, int>  result type => count */
 	private array $results;
+
+	/** @var array<string, float>  test signature => duration in seconds */
+	private array $durations = [];
 	private ?string $baseDir;
 
 
@@ -39,6 +42,8 @@ class ConsolePrinter implements Tester\Runner\OutputHandler
 		?string $file = null,
 		/** @var self::ModeDots|self::ModeCider|self::ModeLines */
 		private int $mode = self::ModeDots,
+		/** number of slowest tests printed after the run; null = none */
+		private ?int $slowestCount = null,
 	) {
 		$this->file = fopen($file ?? 'php://output', 'w') ?: throw new \RuntimeException("Cannot open file '$file' for writing.");
 	}
@@ -49,6 +54,7 @@ class ConsolePrinter implements Tester\Runner\OutputHandler
 		$this->count = 0;
 		$this->buffer = '';
 		$this->baseDir = null;
+		$this->durations = [];
 		$this->results = [Test::Passed => 0, Test::Skipped => 0, Test::Failed => 0];
 		$this->time = -microtime(as_float: true);
 		fwrite($this->file, $this->runner->getInterpreter()->getShortInfo()
@@ -85,6 +91,9 @@ class ConsolePrinter implements Tester\Runner\OutputHandler
 	{
 		$result = $test->getResult();
 		$this->results[$result]++;
+		if ($this->slowestCount !== null && ($duration = $test->getDuration()) !== null) {
+			$this->durations[$test->getSignature()] = $duration;
+		}
 		fwrite($this->file, match ($this->mode) {
 			self::ModeDots => [Test::Passed => '.', Test::Skipped => 's', Test::Failed => Ansi::colorize('F', 'white/red')][$result],
 			self::ModeCider => [Test::Passed => '🍏', Test::Skipped => 's', Test::Failed => '🍎'][$result],
@@ -116,6 +125,18 @@ class ConsolePrinter implements Tester\Runner\OutputHandler
 				. ($this->results[Test::Skipped] ? $this->results[Test::Skipped] . ' skipped, ' : '')
 				. ($this->count !== $run ? ($this->count - $run) . ' not run, ' : '')
 				. sprintf('%0.1f', $this->time + microtime(as_float: true)) . ' seconds)' . Ansi::reset() . "\n");
+
+		if ($this->slowestCount && $this->durations) {
+			arsort($this->durations);
+			fwrite($this->file, "\nSlowest tests:\n");
+			foreach (array_slice($this->durations, 0, $this->slowestCount, preserve_keys: true) as $signature => $duration) {
+				fwrite($this->file, sprintf(
+					"· %s %s\n",
+					substr($signature, strlen((string) $this->baseDir)),
+					Ansi::colorize(sprintf('in %.3f s', $duration), 'gray'),
+				));
+			}
+		}
 
 		$this->buffer = '';
 	}
