@@ -21,6 +21,7 @@ class GitHubActionsPrinter implements Tester\Runner\OutputHandler
 {
 	/** @var resource */
 	private $file;
+	private string $buffer = '';
 
 
 	public function __construct(?string $file = null)
@@ -59,15 +60,21 @@ class GitHubActionsPrinter implements Tester\Runner\OutputHandler
 			? (int) $m[1]
 			: null;
 
-		fwrite($this->file, '::error file=' . self::escapeProperty($file)
+		$this->buffer .= '::error file=' . self::escapeProperty($file)
 			. ($line ? ",line=$line" : '')
 			. ',title=' . self::escapeProperty($test->title ?: basename($test->getFile()))
-			. '::' . self::escapeData($message) . "\n");
+			. '::' . self::escapeData($message) . "\n";
 	}
 
 
+	/**
+	 * Annotations are written at the end and on a new line, so they do not break into the progress line
+	 * of console output; GitHub recognizes a command only at the start of a line.
+	 */
 	public function end(): void
 	{
+		fwrite($this->file, $this->buffer ? "\n" . $this->buffer : '');
+		$this->buffer = '';
 	}
 
 

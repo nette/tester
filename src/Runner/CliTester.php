@@ -281,6 +281,15 @@ class CliTester
 			})($this->options['--setup']);
 		}
 
+		// annotates failures in the pull request diff view when running on GitHub Actions
+		if (
+			$this->stdoutFormat === null
+			&& getenv('GITHUB_ACTIONS')
+			&& !array_filter($runner->outputHandlers, fn($handler) => $handler instanceof Output\GitHubActionsPrinter)
+		) {
+			$runner->outputHandlers[] = new Output\GitHubActionsPrinter;
+		}
+
 		return $runner;
 	}
 
