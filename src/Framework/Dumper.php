@@ -378,8 +378,8 @@ class Dumper
 			}
 
 			$message = strtr($message, [
-				'%1' => Ansi::color('yellow') . self::toLine($actual) . Ansi::color('white'),
-				'%2' => Ansi::color('yellow') . self::toLine($expected) . Ansi::color('white'),
+				'%1' => Ansi::color('yellow') . self::toLine($actual) . Ansi::reset() . Ansi::boldOn(),
+				'%2' => Ansi::color('yellow') . self::toLine($expected) . Ansi::reset() . Ansi::boldOn(),
 				'%%' => '%',
 			]);
 
@@ -388,7 +388,7 @@ class Dumper
 				. ': ' . preg_replace('#[\x00-\x09\x0B-\x1F]+#', ' ', $e->getMessage());
 		}
 
-		$s = Ansi::colorize($message, 'white') . "\n\n"
+		$s = Ansi::boldOn() . $message . Ansi::reset() . "\n\n"
 			. (isset($stored) ? 'diff ' . Helpers::escapeArg($stored[0]) . ' ' . Helpers::escapeArg($stored[1]) . "\n\n" : '');
 
 		foreach ($trace as $item) {
@@ -407,12 +407,12 @@ class Dumper
 			$s .= 'in '
 				. ($item['file']
 					? (
-						($item['file'] === $testFile ? Ansi::color('white') : '')
+						($item['file'] === $testFile ? Ansi::boldOn() : '')
 						. implode(
 							self::$pathSeparator ?? DIRECTORY_SEPARATOR,
 							array_slice(explode(DIRECTORY_SEPARATOR, $item['file']), -self::$maxPathSegments),
 						)
-						. "($item[line])" . Ansi::color('gray') . ' '
+						. "($item[line])" . Ansi::boldOff() . Ansi::color('gray') . ' '
 					)
 					: '[internal function]'
 				)

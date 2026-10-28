@@ -8,6 +8,7 @@ require __DIR__ . '/../bootstrap.php';
 // returns ANSI sequence only
 Assert::match("\e[0m", Ansi::color(''));
 Assert::match("\e[1m\e[31m", Ansi::color('red'));
+Assert::match("\e[90m", Ansi::color('gray'));
 Assert::match("\e[1m\e[31m\e[42m", Ansi::color('red/green'));
 Assert::match("\e[1m\e[31m\e[42m", Ansi::color('red/lime'));
 

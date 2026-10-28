@@ -15,7 +15,7 @@ namespace Tester;
 class Ansi
 {
 	private const Colors = [
-		'black' => '0;30', 'gray' => '1;30', 'silver' => '0;37', 'white' => '1;37',
+		'black' => '0;30', 'gray' => '90', 'silver' => '0;37', 'white' => '1;37',
 		'navy' => '0;34', 'blue' => '1;34', 'green' => '0;32', 'lime' => '1;32',
 		'teal' => '0;36', 'aqua' => '1;36', 'maroon' => '0;31', 'red' => '1;31',
 		'purple' => '0;35', 'fuchsia' => '1;35', 'olive' => '0;33', 'yellow' => '1;33',
