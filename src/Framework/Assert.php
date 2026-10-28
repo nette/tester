@@ -478,11 +478,14 @@ class Assert
 	{
 		self::$counter++;
 		if (!self::isMatching($pattern, $actual)) {
+			$hint = preg_match('#^/.+/[imsxuUD]*$#Ds', $pattern)
+				? "\n    regular expressions are delimited by ~ or #, so this pattern is a mask"
+				: '';
 			if (self::$expandPatterns) {
 				[$pattern, $actual] = self::expandMatchingPatterns($pattern, $actual);
 			}
 
-			self::fail(self::describe('%1 should match %2', $description), $actual, $pattern);
+			self::fail(self::describe('%1 should match %2', $description) . $hint, $actual, $pattern);
 		}
 	}
 
