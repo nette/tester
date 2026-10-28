@@ -167,7 +167,7 @@ class ConsolePrinter implements Tester\Runner\OutputHandler
 		$basename = basename($shortFilePath);
 		$fileText = $result === Test::Failed
 			? Ansi::colorize($shortDirPath, 'red') . Ansi::colorize($basename, 'white/red')
-			: Ansi::colorize($shortDirPath, 'gray') . Ansi::colorize($basename, 'silver');
+			: Ansi::colorize($shortDirPath, 'gray') . $basename;
 
 		$header = '· ';
 		$titleText = $test->title
