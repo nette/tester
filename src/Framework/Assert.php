@@ -55,7 +55,11 @@ class Assert
 	{
 		self::$counter++;
 		if ($actual !== $expected) {
-			self::fail(self::describe('%1 should be %2', $description), $actual, $expected);
+			self::fail(
+				self::describe('%1 should be %2', $description) . self::locateDifference($expected, $actual, fn($a, $b) => $a === $b),
+				$actual,
+				$expected,
+			);
 		}
 	}
 
@@ -85,7 +89,16 @@ class Assert
 	{
 		self::$counter++;
 		if (!self::isEqual($expected, $actual, $matchOrder, $matchIdentity)) {
-			self::fail(self::describe('%1 should be equal to %2', $description), $actual, $expected);
+			self::fail(
+				self::describe('%1 should be equal to %2', $description) . self::locateDifference(
+					$expected,
+					$actual,
+					fn($a, $b) => self::isEqual($a, $b, $matchOrder, $matchIdentity),
+					intoObjects: !$matchIdentity,
+				),
+				$actual,
+				$expected,
+			);
 		}
 	}
 
@@ -727,6 +740,76 @@ class Assert
 			default:
 				return $expected === $actual;
 		}
+	}
+
+
+	/**
+	 * Describes where in the structures the first difference lies, when their one-line dump does not show it.
+	 * @param  \Closure(mixed, mixed): bool  $isEqual
+	 */
+	private static function locateDifference(mixed $expected, mixed $actual, \Closure $isEqual, bool $intoObjects = false): string
+	{
+		$hidden = str_contains(Dumper::toLine($expected) . Dumper::toLine($actual), '...');
+		$path = self::findDifference($expected, $actual, $isEqual, $intoObjects, $hidden);
+		return $hidden && $path ? "\n    at " . str_replace('%', '%%', $path) : '';
+	}
+
+
+	/**
+	 * Returns the path to the first differing item and its description, or null when there is none to descend to.
+	 * @param  \Closure(mixed, mixed): bool  $isEqual
+	 * @param  object[]  $ancestors
+	 */
+	private static function findDifference(
+		mixed $expected,
+		mixed $actual,
+		\Closure $isEqual,
+		bool $intoObjects,
+		bool &$hidden,
+		array $ancestors = [],
+	): ?string
+	{
+		$isObject = $intoObjects && is_object($expected) && is_object($actual) && $expected::class === $actual::class;
+		if ($isObject) {
+			$hidden = true; // the dump shows no properties
+			$ancestors[] = $expected;
+			$expected = (array) $expected;
+			$actual = (array) $actual;
+		} elseif (!is_array($expected) || !is_array($actual)) {
+			return null;
+		}
+
+		foreach (array_keys($expected + $actual) as $key) {
+			if (is_object($expected[$key] ?? null) && in_array($expected[$key], $ancestors, true)) {
+				continue; // back-reference, the difference lies elsewhere
+			}
+
+			$segment = $isObject
+				? '->' . preg_replace('#^\0.+\0#', '', (string) $key) // strips the class prefix of private and protected properties
+				: '[' . Dumper::toLine($key) . ']';
+			if (!array_key_exists($key, $actual)) {
+				return "$segment: key is missing";
+			} elseif (!array_key_exists($key, $expected)) {
+				return "$segment: key is unexpected";
+			}
+
+			try {
+				$same = $isEqual($expected[$key], $actual[$key]);
+			} catch (AssertException) {
+				$same = false;
+			}
+
+			if (!$same) {
+				[$e, $a] = is_string($expected[$key]) && is_string($actual[$key])
+					? Dumper::cropToDifference($expected[$key], $actual[$key])
+					: [$expected[$key], $actual[$key]];
+				return $segment
+					. (self::findDifference($expected[$key], $actual[$key], $isEqual, $intoObjects, $hidden, $ancestors)
+						?? ': ' . Dumper::toLine($a) . ' should be ' . Dumper::toLine($e));
+			}
+		}
+
+		return null;
 	}
 
 

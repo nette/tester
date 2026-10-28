@@ -34,6 +34,7 @@ class AssertException extends \Exception
 		$this->message = strtr($message, [
 			'%1' => Dumper::toLine($this->actual),
 			'%2' => Dumper::toLine($this->expected),
+			'%%' => '%',
 		]);
 		return $this;
 	}

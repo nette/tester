@@ -364,22 +364,13 @@ class Dumper
 			}
 
 			if ((is_string($actual) && is_string($expected))) {
-				for ($i = 0; $i < strlen($actual) && isset($expected[$i]) && $actual[$i] === $expected[$i]; $i++);
-				for (; $i && $i < strlen($actual) && $actual[$i - 1] >= "\x80" && $actual[$i] >= "\x80" && $actual[$i] < "\xC0"; $i--);
-				$i = max(0, min(
-					$i - (int) (self::$maxLength / 3), // try to display 1/3 of shorter string
-					max(strlen($actual), strlen($expected)) - self::$maxLength + 3, // 3 = length of ...
-				));
-				if ($i) {
-					$expected = substr_replace($expected, '...', 0, $i);
-					$actual = substr_replace($actual, '...', 0, $i);
-				}
+				[$expected, $actual] = self::cropToDifference($expected, $actual);
 			}
 
 			$message = 'Failed: ' . $e->origMessage;
 			if (
 				((is_string($actual) && is_string($expected)) || (is_array($actual) && is_array($expected)))
-				&& preg_match('#^(.*)(%\d)(.*)(%\d.*)$#Ds', $message, $m)
+				&& preg_match('#^(.*?)(%\d)(.*?)(%\d.*)$#Ds', $message, $m)
 			) {
 				$message = ($delta = strlen($m[1]) - strlen($m[3])) >= 3
 					? "$m[1]$m[2]\n" . str_repeat(' ', $delta - 3) . "...$m[3]$m[4]"
@@ -389,6 +380,7 @@ class Dumper
 			$message = strtr($message, [
 				'%1' => Ansi::color('yellow') . self::toLine($actual) . Ansi::color('white'),
 				'%2' => Ansi::color('yellow') . self::toLine($expected) . Ansi::color('white'),
+				'%%' => '%',
 			]);
 
 		} else {
@@ -439,6 +431,24 @@ class Dumper
 		}
 
 		return $s;
+	}
+
+
+	/**
+	 * Cuts the common beginning of both strings so that their one-line dump shows where they differ.
+	 * @return array{string, string}
+	 */
+	public static function cropToDifference(string $expected, string $actual): array
+	{
+		for ($i = 0; $i < strlen($actual) && isset($expected[$i]) && $actual[$i] === $expected[$i]; $i++);
+		for (; $i && $i < strlen($actual) && $actual[$i - 1] >= "\x80" && $actual[$i] >= "\x80" && $actual[$i] < "\xC0"; $i--);
+		$i = max(0, min(
+			$i - (int) (self::$maxLength / 3), // try to display 1/3 of shorter string
+			max(strlen($actual), strlen($expected)) - self::$maxLength + 3, // 3 = length of ...
+		));
+		return $i
+			? [substr_replace($expected, '...', 0, $i), substr_replace($actual, '...', 0, $i)]
+			: [$expected, $actual];
 	}
 
 
