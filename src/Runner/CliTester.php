@@ -39,6 +39,12 @@ class CliTester
 			Environment::$useColors = false;
 		}
 
+		if ($this->options['--version']) {
+			ob_clean();
+			echo 'Nette Tester ', Environment::Version, "\n";
+			return 0;
+		}
+
 		if ($cmd->isEmpty() || $this->options['--help']) {
 			$cmd->help();
 			return 0;
@@ -136,6 +142,7 @@ class CliTester
 				    --coverage <path>            Generate code coverage report to file.
 				    --coverage-src <path>        Path to source code.
 				    -h | --help                  This help.
+				    --version                    Show version and exit.
 
 				XX,
 			[
