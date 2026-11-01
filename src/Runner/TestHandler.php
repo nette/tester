@@ -9,7 +9,7 @@ namespace Tester\Runner;
 
 use Tester;
 use Tester\{Dumper, Helpers, TestCase};
-use function count, is_array, is_string;
+use function is_array, is_string;
 
 
 /**
@@ -183,7 +183,7 @@ class TestHandler
 		try {
 			[$dataFile, $query, $optional] = Tester\DataProvider::parseAnnotation($provider, $test->getFile());
 			$data = Tester\DataProvider::load($dataFile, $query);
-			if (count($data) < 1) {
+			if ($data === []) {
 				throw new \Exception("No records in data provider file '$dataFile'" . ($query ? " for query '$query'" : '') . '.');
 			}
 		} catch (\Throwable $e) {
@@ -276,7 +276,7 @@ class TestHandler
 		$testCaseClass = $m[1];
 
 		preg_match_all('#^Method:([^\n]+)$#m', $stdout, $m);
-		if (count($m[1]) < 1) {
+		if ($m[1] === []) {
 			return $test->withResult(Test::Skipped, "Class $testCaseClass in file '{$test->getFile()}' does not contain test methods.");
 		}
 

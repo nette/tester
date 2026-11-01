@@ -9,7 +9,7 @@ $engines = array_filter(CodeCoverage\Collector::detectEngines(), function (array
 	[$engine] = $engineInfo;
 	return $engine !== CodeCoverage\Collector::EnginePcov; // PCOV needs system pcov.directory INI to be set
 });
-if (count($engines) < 1) {
+if ($engines === []) {
 	Tester\Environment::skip('Requires Xdebug or PHPDB SAPI.');
 }
 [$engine, $version] = reset($engines);

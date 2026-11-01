@@ -299,7 +299,7 @@ class CliTester
 	private function prepareCodeCoverage(Runner $runner): string
 	{
 		$engines = $this->interpreter->getCodeCoverageEngines();
-		if (count($engines) < 1) {
+		if ($engines === []) {
 			throw new \Exception("Code coverage functionality requires Xdebug or PCOV extension or PHPDBG SAPI (used {$this->interpreter->getCommandLine()})");
 		}
 

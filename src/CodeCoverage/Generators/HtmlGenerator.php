@@ -65,7 +65,7 @@ class HtmlGenerator extends AbstractGenerator
 
 	private function parse(): void
 	{
-		if (count($this->files) > 0) {
+		if ($this->files !== []) {
 			return;
 		}
 
