@@ -118,7 +118,9 @@ platform-forked for a reason: on Windows < PHP 8.5 the runner must keep reading
 the pipe with blocking `stream_get_contents`, otherwise a child producing more
 than the ~64 KB pipe buffer **deadlocks**; PHP 8.5+ on Windows has a fixed
 `stream_select` and uses the non-blocking path like Linux/macOS
-(`Job::isRunning`/`waitForActivity`). Keep the deadlock rationale in mind before
+(`Job::isRunning`/`waitForActivity`). There `stream_select()` is called once for all
+jobs, in chunks of 64: without result it takes a timer tick (about 15 ms) even with
+zero timeout, and more than 64 pipes crash PHP 8.5. Keep the deadlock rationale in mind before
 "simplifying" that branch. Its price: on Windows < PHP 8.5 `isRunning` blocks until
 the child exits, so **the time limit is not enforced there**. For the same reason
 the synchronous path (`-j 1`) switches the pipe to non-blocking elsewhere.

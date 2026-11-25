@@ -48,6 +48,9 @@ class Job
 	private ?float $terminatedAt = null;
 	private bool $killed = false;
 
+	/** is there something to read? found out by waitForActivity(), null means unknown */
+	private ?bool $ready = null;
+
 
 	/** @param ?array<string, string>  $envVars */
 	public function __construct(
@@ -162,7 +165,9 @@ class Job
 			}
 
 			while ($this->isRunning()) {
-				usleep(self::RunSleep);
+				PHP_OS_FAMILY === 'Windows' && PHP_VERSION_ID >= 80500
+					? self::waitForActivity([$this])
+					: usleep(self::RunSleep);
 			}
 		}
 	}
@@ -181,7 +186,10 @@ class Job
 		if (PHP_OS_FAMILY === 'Windows' && PHP_VERSION_ID >= 80500) {
 			$read = [$this->stdout];
 			$w = $e = [];
-			while (@stream_select($read, $w, $e, 0, 0) > 0) { // @ a signal may interrupt the call
+			if ($this->ready) {
+				$this->test->stdout .= fread($this->stdout, 8192);
+			}
+			while ($this->ready === null && @stream_select($read, $w, $e, 0, 0) > 0) { // @ a signal may interrupt the call
 				$chunk = fread($this->stdout, 8192);
 				if ($chunk === false || $chunk === '') {
 					break;
@@ -189,6 +197,7 @@ class Job
 				$this->test->stdout .= $chunk;
 				$read = [$this->stdout];
 			}
+			$this->ready = null;
 		} else {
 			// Linux/macOS: stream_get_contents() works without blocking
 			// Windows < 8.5: blocks, but is necessary to prevent deadlock when output exceeds pipe buffer (~64KB)
@@ -308,10 +317,47 @@ class Job
 			return;
 		}
 
+		if (PHP_OS_FAMILY === 'Windows') {
+			self::waitForPipes($jobs);
+			return;
+		}
+
 		$streams = array_filter(array_map(fn($job) => $job->stdout, $jobs));
 		if ($streams) {
 			$w = $e = [];
 			@stream_select($streams, $w, $e, 0, self::RunSleep); // @ a signal may interrupt the call
+		}
+	}
+
+
+	/**
+	 * Every stream_select() without result takes a timer tick on Windows (even with zero timeout), so it is called once for all jobs.
+	 * @param  self[]  $jobs
+	 */
+	private static function waitForPipes(array $jobs): void
+	{
+		$streams = [];
+		foreach ($jobs as $key => $job) {
+			$job->ready = false;
+			if ($job->stdout && !feof($job->stdout)) { // closed pipe would be always ready
+				$streams[$key] = $job->stdout;
+			}
+		}
+
+		$wait = self::RunSleep;
+		$res = false;
+		foreach (array_chunk($streams, 64, preserve_keys: true) as $chunk) { // limit of WaitForMultipleObjects()
+			$read = $chunk;
+			$w = $e = [];
+			$res = @stream_select($read, $w, $e, 0, $wait); // @ failure is handled
+			foreach ($chunk as $key => $_) {
+				$jobs[$key]->ready = $res === false ? null : isset($read[$key]);
+			}
+			$wait = $res ? 0 : $wait;
+		}
+
+		if ($res === false) {
+			usleep(self::RunSleep);
 		}
 	}
 }

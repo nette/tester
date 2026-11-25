@@ -1,0 +1,11 @@
+<?php
+
+// Writes --lines=<count> lines of 100 bytes to both outputs, --sleep=<ms> before it and --after=<ms> after closing STDOUT.
+$options = getopt('', ['lines:', 'sleep:', 'after:']);
+usleep(1000 * (int) ($options['sleep'] ?? 0));
+for ($i = 0; $i < $options['lines']; $i++) {
+	fwrite(STDOUT, sprintf("%099d\n", $i));
+	fwrite(STDERR, sprintf("%099d\n", -$i));
+}
+fclose(STDOUT);
+usleep(1000 * (int) ($options['after'] ?? 0));
