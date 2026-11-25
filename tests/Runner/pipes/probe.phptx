@@ -1,0 +1,39 @@
+<?php
+
+// Runs two asynchronous jobs, the first argument is the file with class Job; prints JSON
+use Tester\Runner\{Job, PhpInterpreter, Test};
+
+$src = __DIR__ . '/../../../src';
+require "$src/Framework/Helpers.php";
+require "$src/Framework/Environment.php";
+require "$src/Runner/PhpInterpreter.php";
+require "$src/Runner/Test.php";
+require $argv[1];
+require __DIR__ . '/data.php';
+
+$run = function (Job $job) {
+	$job->run(async: true);
+	while ($job->isRunning()) {
+		Job::waitForActivity([$job]);
+	}
+	return $job;
+};
+$interpreter = new PhpInterpreter(PHP_BINARY, ['-n']);
+$job = new Job(new Test(__DIR__ . '/short.phptx'), $interpreter);
+$job->setTimeout(1.5);
+$start = microtime(true);
+$run($job);
+$total = microtime(true) - $start;
+// a simulated success of the probe may not be true on this platform, so a large output is not tried then
+$canPoll = Closure::bind(fn() => Job::$canPoll, null, Job::class)();
+$large = $canPoll ? null : $run(new Job((new Test(__DIR__ . '/emit.phptx'))->withArguments(['out' => '300001', 'err' => '0', 'chunk' => '5000']), $interpreter));
+echo json_encode([
+	'timedOut' => $job->isTimedOut(),
+	'exitCode' => $job->getExitCode(),
+	'stdout' => $job->getTest()->stdout,
+	'duration' => $job->getDuration(),
+	'total' => $total,
+	'length' => $large ? strlen($large->getTest()->stdout) : null,
+	'sameOutput' => $large?->getTest()->stdout === pipeData(0, 0, 300_001),
+	'canPoll' => $canPoll,
+]);

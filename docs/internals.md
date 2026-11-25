@@ -120,8 +120,12 @@ than the ~64 KB pipe buffer **deadlocks**; PHP 8.5+ on Windows has a fixed
 `stream_select` and uses the non-blocking path like Linux/macOS
 (`Job::isRunning`/`waitForActivity`). Keep the deadlock rationale in mind before
 "simplifying" that branch. Its price: on Windows < PHP 8.5 `isRunning` blocks until
-the child exits, so **the time limit is not enforced there**. For the same reason
+the child exits, so **the time limit is not enforced there** by itself. For the same reason
 the synchronous path (`-j 1`) switches the pipe to non-blocking elsewhere.
+The limit is still enforced there when `fstat()` of the pipe tells how
+many bytes wait in it (an undocumented Windows behaviour), and `Job::poll()` reads only
+those. `pipe-probe.php` verifies this in its own process before the first job; if it
+fails, or `fstat()` fails later, the blocking read above is used.
 
 ## The runner↔child bridge: exit codes and environment variables
 

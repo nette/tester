@@ -9,8 +9,12 @@ require __DIR__ . '/../../src/Runner/Test.php';
 require __DIR__ . '/../../src/Runner/TestHandler.php';
 require __DIR__ . '/../../src/Runner/Runner.php';
 
-if (PHP_OS_FAMILY === 'Windows' && PHP_VERSION_ID < 80500) {
-	Tester\Environment::skip('Requires PHP 8.5 on Windows, where reading the output of a running process does not block.');
+if (
+	PHP_OS_FAMILY === 'Windows'
+	&& PHP_VERSION_ID < 80500
+	&& !Closure::bind(fn() => Tester\Runner\Job::canPoll(), null, Tester\Runner\Job::class)()
+) {
+	Tester\Environment::skip('Reading the output of a running process blocks here, so the time limit cannot be enforced.');
 }
 
 
