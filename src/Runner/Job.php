@@ -27,6 +27,15 @@ class Job
 	/** waiting time between process activity check in microseconds */
 	public const RunSleep = 10000;
 
+	/** number of checks without output before waiting, because the writer fills the small pipe much sooner than the wait ends */
+	private const BusyChecks = 50;
+
+	/** maximum number of bytes read in one check */
+	private const ReadLimit = 65536;
+
+	/** time limit in seconds for verifying that the pipe can be polled */
+	private const ProbeTimeout = 5;
+
 	/** @var string[]  environment variables for test */
 	private array $envVars;
 
@@ -47,6 +56,9 @@ class Job
 	private ?float $timeout = null;
 	private ?float $terminatedAt = null;
 	private bool $killed = false;
+	private bool $polled = false;
+	private int $idleChecks = self::BusyChecks;
+	private static ?bool $canPoll = null;
 
 
 	/** @param ?array<string, string>  $envVars */
@@ -115,6 +127,7 @@ class Job
 	 */
 	public function run(bool $async = false): void
 	{
+		$this->polled = ($async || $this->timeout !== null) && self::canPoll(); // the probe must not prolong the test
 		$prevEnvVars = [];
 		foreach ($this->envVars as $name => $value) {
 			$prevEnvVars[$name] = getenv($name);
@@ -162,7 +175,9 @@ class Job
 			}
 
 			while ($this->isRunning()) {
-				usleep(self::RunSleep);
+				$this->polled
+					? self::waitForActivity([$this])
+					: usleep(self::RunSleep);
 			}
 		}
 	}
@@ -189,13 +204,15 @@ class Job
 				$this->test->stdout .= $chunk;
 				$read = [$this->stdout];
 			}
+		} elseif ($this->polled) {
+			$this->poll();
 		} else {
 			// Linux/macOS: stream_get_contents() works without blocking
-			// Windows < 8.5: blocks, but is necessary to prevent deadlock when output exceeds pipe buffer (~64KB)
+			// Windows < 8.5 that cannot be polled: blocks, but is necessary to prevent deadlock when output exceeds pipe buffer (~64KB)
 			$this->test->stdout .= stream_get_contents($this->stdout);
 		}
 
-		assert($this->proc !== null);
+		assert($this->proc !== null && $this->stdout !== null);
 		$status = proc_get_status($this->proc);
 		if ($status['running']) {
 			$now = microtime(as_float: true);
@@ -243,6 +260,55 @@ class Job
 		}
 
 		return false;
+	}
+
+
+	/**
+	 * Reads what is waiting in the pipe. When something unexpected happens, this job and all jobs started later are read
+	 * with blocking, so no output is lost, but the time limit is not enforced. Other running jobs are polled until they fail too.
+	 */
+	private function poll(): void
+	{
+		assert($this->stdout !== null);
+		$stat = @fstat($this->stdout); // @ failure is handled
+		// @phpstan-ignore identical.alwaysFalse (fstat() returns false on failure)
+		$size = $stat === false ? -1 : $stat['size'];
+		$chunk = $size > 0
+			? (string) stream_get_contents($this->stdout, min($size, self::ReadLimit))
+			: '';
+		$this->test->stdout .= $chunk;
+		$this->idleChecks = $chunk === '' ? $this->idleChecks + 1 : 0;
+		if ($size < 0 || ($size > 0 && $chunk === '')) {
+			self::$canPoll = $this->polled = false;
+			$this->idleChecks = self::BusyChecks;
+		}
+	}
+
+
+	/**
+	 * PHP < 8.5 on Windows cannot read from a pipe without blocking, but fstat() tells how many bytes are waiting in it.
+	 * It is not documented, so it is verified once.
+	 */
+	private static function canPoll(): bool
+	{
+		if (PHP_OS_FAMILY !== 'Windows' || PHP_VERSION_ID >= 80500) {
+			return false;
+		} elseif (self::$canPoll === null) {
+			self::$canPoll = false;
+			$proc = proc_open([PHP_BINARY, '-n', __DIR__ . '/pipe-probe.php'], [['null'], ['null'], ['null']], $pipes);
+			if ($proc) {
+				$limit = microtime(as_float: true) + self::ProbeTimeout;
+				while (($status = proc_get_status($proc))['running'] && microtime(as_float: true) < $limit) {
+					usleep(self::RunSleep);
+				}
+
+				self::$canPoll = !$status['running'] && $status['exitcode'] === 0;
+				proc_terminate($proc);
+				proc_close($proc);
+			}
+		}
+
+		return self::$canPoll;
 	}
 
 
@@ -304,6 +370,12 @@ class Job
 	public static function waitForActivity(array $jobs): void
 	{
 		if (PHP_OS_FAMILY === 'Windows' && PHP_VERSION_ID < 80500) {
+			foreach ($jobs as $job) {
+				if ($job->idleChecks < self::BusyChecks) {
+					return;
+				}
+			}
+
 			usleep(self::RunSleep);
 			return;
 		}

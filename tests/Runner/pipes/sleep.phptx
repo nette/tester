@@ -1,0 +1,4 @@
+<?php
+
+echo 'start';
+sleep(15);

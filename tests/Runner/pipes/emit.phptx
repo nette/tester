@@ -1,0 +1,23 @@
+<?php
+
+// Writes deterministic binary data: --out=<bytes> --err=<bytes> --chunk=<bytes> --sleep=<ms before writing>; every 8 bytes are unique, so order and gaps show.
+require __DIR__ . '/data.php';
+
+$options = getopt('', ['out:', 'err:', 'chunk:', 'sleep:']);
+usleep(1000 * (int) ($options['sleep'] ?? 0));
+$remaining = [(int) $options['out'], (int) $options['err']];
+$offset = [0, 0];
+$streams = [STDOUT, STDERR];
+while (array_sum($remaining)) {
+	foreach ($streams as $i => $stream) {
+		if ($count = min($remaining[$i], (int) $options['chunk'])) {
+			$data = pipeData($i, $offset[$i], $count);
+			for ($written = 0; $written < $count; ) {
+				$written += fwrite($stream, substr($data, $written)) ?: exit(99);
+			}
+			$offset[$i] += $count;
+			$remaining[$i] -= $count;
+		}
+	}
+}
+exit(0);

@@ -1,0 +1,6 @@
+<?php
+
+$end = microtime(true) + 15;
+while (microtime(true) < $end) {
+	echo str_repeat('x', 1024);
+}

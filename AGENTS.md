@@ -57,7 +57,8 @@ panel; needs `-j` >= 2, otherwise falls back to console-lines).
   autoloading** - `tester.php` loads classes manually to avoid autoloader conflicts.
 - Code must run on all supported PHP versions; run changed tests on the lowest one
   too, as the platform branches (Windows < PHP 8.5, DOM < PHP 8.4) behave differently;
-  on Windows < PHP 8.5 the test time limit (`--timeout`, `@timeout`) is not enforced.
+  on Windows < PHP 8.5 the test time limit (`--timeout`, `@timeout`) is enforced only when
+  `src/Runner/pipe-probe.php` succeeds.
 
 ## Working in this repo
 
